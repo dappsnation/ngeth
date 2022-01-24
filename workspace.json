@@ -1,0 +1,7 @@
+{
+  "version": 2,
+  "projects": {
+    "plugin": "packages/plugin",
+    "plugin-e2e": "e2e\\plugin-e2e"
+  }
+}
