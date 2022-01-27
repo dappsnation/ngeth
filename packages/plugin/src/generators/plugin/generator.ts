@@ -1,5 +1,6 @@
 import {
   addProjectConfiguration,
+  addDependenciesToPackageJson,
   formatFiles,
   generateFiles,
   getWorkspaceLayout,
@@ -44,7 +45,7 @@ function addFiles(tree: Tree, options: NormalizedSchema) {
   const templateOptions = {
     ...options,
     ...names(options.name),
-    offsetFromRoot: offsetFromRoot(options.projectRoot),
+    offset: offsetFromRoot(options.projectRoot),
     template: '',
   };
   generateFiles(
@@ -60,14 +61,33 @@ export default async function (tree: Tree, options: PluginGeneratorSchema) {
   addProjectConfiguration(tree, normalizedOptions.projectName, {
     root: normalizedOptions.projectRoot,
     projectType: 'library',
-    sourceRoot: `${normalizedOptions.projectRoot}/src`,
+    sourceRoot: `${normalizedOptions.projectRoot}/contracts`,
     targets: {
       build: {
-        executor: '@nxeth/plugin:build',
+        executor: '@nrwl/workspace:run-commands',
+        options: {
+          command: 'hardhat compile',
+          cwd: normalizedOptions.projectRoot
+        }
+      },
+      test: {
+        executor: '@nxeth/plugin:test',
       },
     },
     tags: normalizedOptions.parsedTags,
   });
   addFiles(tree, normalizedOptions);
   await formatFiles(tree);
+  const installTask = addDependenciesToPackageJson(tree, {
+    "ethers": "^5.5.3"
+  }, {
+    "@nomiclabs/hardhat-ethers": "^2.0.4",
+    "@nrwl/workspace": "13.4.6",
+    "@openzeppelin/contracts": "^4.4.2",
+    "@typechain/hardhat": "", 
+    "@typechain/ethers-v5": "",
+    "typechain": "",
+    "hardhat": "^2.8.3",
+  });
+  return () => installTask();
 }
