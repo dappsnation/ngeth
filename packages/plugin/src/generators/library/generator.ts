@@ -46,7 +46,7 @@ function addFiles(tree: Tree, options: NormalizedSchema) {
     ...options,
     ...names(options.name),
     offset: offsetFromRoot(options.projectRoot),
-    template: '',
+    tmpl: '',
   };
   generateFiles(
     tree,
@@ -66,7 +66,14 @@ export default async function (tree: Tree, options: PluginGeneratorSchema) {
       build: {
         executor: '@nrwl/workspace:run-commands',
         options: {
-          command: 'hardhat compile',
+          command: 'npx hardhat compile --tsconfig tsconfig.lib.json',
+          cwd: normalizedOptions.projectRoot
+        }
+      },
+      serve: {
+        executor: '@nrwl/workspace:run-commands',
+        options: {
+          command: 'npx hardhat node --tsconfig tsconfig.lib.json',
           cwd: normalizedOptions.projectRoot
         }
       },
@@ -84,10 +91,11 @@ export default async function (tree: Tree, options: PluginGeneratorSchema) {
     "@nomiclabs/hardhat-ethers": "^2.0.4",
     "@nrwl/workspace": "13.4.6",
     "@openzeppelin/contracts": "^4.4.2",
-    "@typechain/hardhat": "", 
-    "@typechain/ethers-v5": "",
-    "typechain": "",
+    "@typechain/ethers-v5": "^7.2.0",
+    "@typechain/hardhat": "^2.3.1",
     "hardhat": "^2.8.3",
+    "typechain": "^5.2.0",
+    "ts-node": "^10.4.0",
   });
   return () => installTask();
 }

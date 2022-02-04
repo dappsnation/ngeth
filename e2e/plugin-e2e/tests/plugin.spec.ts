@@ -15,20 +15,21 @@ describe('plugin e2e', () => {
   describe('--contracts', () => {
     it('should create contract in the specified directory', async () => {
       await runNxCommandAsync(
-        `generate @nxeth/plugin:plugin ${plugin} --directory subdir`
+        `generate @nxeth/plugin:library ${plugin} --directory subdir`
       );
-      expect(() =>
-        checkFilesExist(`libs/subdir/${plugin}/contracts/ERC20.sol`)
-      ).not.toThrow();
+      const checkFile = (path: string) => {
+        expect(() => checkFilesExist(path)).not.toThrow();
+      }
+      checkFile(`libs/subdir/${plugin}/contracts/ERC20.sol`);
+      checkFile(`libs/subdir/${plugin}/environments/environment.ts`);
     }, 120000);
   });
 
   describe('--build-contracts', () => {
     it('should compile contract', async () => {
       try {
-        await runNxCommandAsync(`generate @nxeth/plugin:plugin ${plugin}`);
-        await runNxCommandAsync(`build ${plugin}`);
-        expect(true);
+        await runNxCommandAsync(`generate @nxeth/plugin:library ${plugin}`);
+        expect(async () => await runNxCommandAsync(`build ${plugin}`)).not.toThrow()
       } catch(err) {
         expect(false);
       }

@@ -3,10 +3,10 @@
   "name": "plugin",
   "version": "0.0.1",
   "generators": {
-    "plugin": {
-      "factory": "./src/generators/plugin/generator",
-      "schema": "./src/generators/plugin/schema.json",
-      "description": "plugin generator"
+    "library": {
+      "factory": "./src/generators/library/generator",
+      "schema": "./src/generators/library/schema.json",
+      "description": "library generator"
     }
   }
 }
