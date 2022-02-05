@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { BigNumberish, ContractFunction, ContractInterface, Event, PopulatedTransaction, Signer, VoidSigner } from "ethers";
-import { Provider, TransactionRequest } from '@ethersproject/providers';
+import { Provider, TransactionRequest, Web3Provider } from '@ethersproject/providers';
 import { EventFilter, BlockTag, Log, FilterByBlockHash, Filter, TransactionResponse } from "@ethersproject/abstract-provider";
 import { EventFragment, Fragment, getAddress, getContractAddress, Indexed, Interface, isHexString, BytesLike } from "ethers/lib/utils";
-import { Observable, shareReplay } from "rxjs";
+import { map, Observable, shareReplay } from "rxjs";
 import { fromEthEvent } from "./metamask";
 import { buildCall, buildDefault, resolveName } from "./contract.utils";
 import { inject, NgZone } from "@angular/core";
@@ -43,7 +43,7 @@ function warnDuplicates(duplicates: [string, string[]][]) {
   }
 }
 
-export class BaseContract {
+export class NgContract {
   address: string;
   signer?: Signer;
   provider?: Provider;
@@ -182,6 +182,7 @@ export class BaseContract {
       signerOrProvider = new VoidSigner(signerOrProvider, this.provider);
     }
     if (Provider.isProvider(signerOrProvider)) {
+      if (signerOrProvider instanceof Web3Provider) this.signer = signerOrProvider.getSigner();
       this.provider = signerOrProvider;
     } else if (Signer.isSigner(signerOrProvider)) {
       this.signer = signerOrProvider;
@@ -223,10 +224,15 @@ export class BaseContract {
     }
   }
 
-  async queryFilter(event: EventFilter, fromBlockOrBlockhash?: BlockTag | string, toBlock?: BlockTag): Promise<Event[]> {
-    if (!this.provider) throw new Error("events require a provider or a signer with a provider");
+  private getFragment(event: EventFilter) {
     const topic = event.topics?.[0];
     if (typeof topic !== 'string') throw new Error("Invalid topic");
+    return this.interface.getEvent(topic);
+  }
+
+  async queryFilter(event: EventFilter, fromBlockOrBlockhash?: BlockTag | string, toBlock?: BlockTag): Promise<Event[]> {
+    if (!this.provider) throw new Error("events require a provider or a signer with a provider");
+    const fragment = this.getFragment(event);
     
     const filter = { ...event };
 
@@ -240,8 +246,6 @@ export class BaseContract {
       (filter as Filter).toBlock =  toBlock ?? "latest";
     }
 
-    const fragment = this.interface.getEvent(topic);
-
     const logs = await this.provider.getLogs(filter);
     return logs.map((log) => this.logToEvent(log, fragment));
   }
@@ -249,9 +253,11 @@ export class BaseContract {
   from(event: EventFilter | string) {
     if (!this.provider) throw new Error('Provider required for event');
     const eventFilter = typeof event === 'string' ? this.getEventFilter(event) : event;
+    const fragment = this.getFragment(eventFilter);
     const tag = getEventTag(eventFilter);
     if (!this._events[tag]) {
-      this._events[tag] = fromEthEvent(this.provider, this.ngZone, eventFilter).pipe(
+      this._events[tag] = fromEthEvent<Log>(this.provider, this.ngZone, eventFilter).pipe(
+        map(log => this.logToEvent(log, fragment)),
         shareReplay(1)
       );
     }

@@ -2,7 +2,7 @@ import { BigNumber, CallOverrides, ContractFunction, logger, PopulatedTransactio
 import { Provider, TransactionResponse } from '@ethersproject/providers';
 import { accessListify, arrayify, FunctionFragment, getAddress, Logger, ParamType, resolveProperties } from "ethers/lib/utils";
 
-import type { BaseContract } from "./contract";
+import type { NgContract } from "./contract";
 
 export async function resolveName(resolver: Signer | Provider, nameOrPromise: string | Promise<string>): Promise<string> {
   const name = await nameOrPromise;
@@ -65,7 +65,7 @@ export async function resolveAddresses(resolver: Signer | Provider, value: any, 
 
 
 
-export async function populateTransaction(contract: BaseContract, fragment: FunctionFragment, args: Array<any>): Promise<PopulatedTransaction> {
+export async function populateTransaction(contract: NgContract, fragment: FunctionFragment, args: Array<any>): Promise<PopulatedTransaction> {
   // If an extra argument is given, it is overrides
   let overrides: CallOverrides = { };
   if (args.length === fragment.inputs.length + 1 && typeof(args[args.length - 1]) === "object") {
@@ -192,7 +192,7 @@ export async function populateTransaction(contract: BaseContract, fragment: Func
 }
 
 
-// function addContractWait(contract: BaseContract, tx: TransactionResponse) {
+// function addContractWait(contract: NgContract, tx: TransactionResponse) {
 //   const wait = tx.wait.bind(tx);
 //   tx.wait = (confirmations?: number) => {
 //     return wait(confirmations).then((receipt: ContractReceipt) => {
@@ -229,7 +229,7 @@ export async function populateTransaction(contract: BaseContract, fragment: Func
 
 
 
-export function buildCall(contract: BaseContract, fragment: FunctionFragment): ContractFunction {
+export function buildCall(contract: NgContract, fragment: FunctionFragment): ContractFunction {
   
   return async function(...args: Array<any>): Promise<any> {
     const signerOrProvider = (contract.signer || contract.provider);
@@ -254,6 +254,7 @@ export function buildCall(contract: BaseContract, fragment: FunctionFragment): C
     const tx = await populateTransaction(contract, fragment, args);
     const result = await signerOrProvider.call(tx, blockTag);
 
+    console.log({tx, result, fragment});
     let value = contract.interface.decodeFunctionResult(fragment, result);
     if (fragment.outputs?.length === 1) {
       value = value[0];
@@ -262,7 +263,7 @@ export function buildCall(contract: BaseContract, fragment: FunctionFragment): C
   };
 }
 
-export function buildSend(contract: BaseContract, fragment: FunctionFragment): ContractFunction<TransactionResponse> {
+export function buildSend(contract: NgContract, fragment: FunctionFragment): ContractFunction<TransactionResponse> {
   return async function(...args: Array<any>): Promise<TransactionResponse> {
     if (!contract.signer) {
         logger.throwError("sending a transaction requires a signer", Logger.errors.UNSUPPORTED_OPERATION, {
@@ -286,7 +287,7 @@ export function buildSend(contract: BaseContract, fragment: FunctionFragment): C
   };
 }
 
-export function buildDefault(contract: BaseContract, fragment: FunctionFragment): ContractFunction {
+export function buildDefault(contract: NgContract, fragment: FunctionFragment): ContractFunction {
   if (fragment.constant) {
     return buildCall(contract, fragment);
   }

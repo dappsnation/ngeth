@@ -1,2 +1,12 @@
 <p>{{ account$ | async }}</p>
+<p *ngIf="latestContribution$ | async as contribution">
+  {{ contribution[0] }}: {{ contribution[1] }}
+</p>
 <button (click)="connect()">connect</button>
+<button (click)="getTotal()">getTotal</button>
+<button (click)="getContributions()">getContributions</button>
+
+<form (submit)="contribute($event)">
+  <input type="number" [formControl]="form">
+  <button type="submit">Contribute</button>
+</form>

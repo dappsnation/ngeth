@@ -27,7 +27,7 @@ function normalizeOptions(
     ? `${names(options.directory).fileName}/${name}`
     : name;
   const projectName = projectDirectory.replace(new RegExp('/', 'g'), '-');
-  const projectRoot = `${getWorkspaceLayout(tree).libsDir}/${projectDirectory}`;
+  const projectRoot = `${getWorkspaceLayout(tree).appsDir}/${projectDirectory}`;
   const parsedTags = options.tags
     ? options.tags.split(',').map((s) => s.trim())
     : [];
@@ -66,14 +66,14 @@ export default async function (tree: Tree, options: PluginGeneratorSchema) {
       build: {
         executor: '@nrwl/workspace:run-commands',
         options: {
-          command: 'npx hardhat compile --tsconfig tsconfig.lib.json',
+          command: 'npx hardhat compile --tsconfig tsconfig.app.json',
           cwd: normalizedOptions.projectRoot
         }
       },
       serve: {
         executor: '@nrwl/workspace:run-commands',
         options: {
-          command: 'npx hardhat node --tsconfig tsconfig.lib.json',
+          command: 'npx hardhat node --tsconfig tsconfig.app.json',
           cwd: normalizedOptions.projectRoot
         }
       },

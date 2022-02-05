@@ -1,0 +1,28 @@
+{
+  "root": "e2e/playground-contracts",
+  "projectType": "application",
+  "sourceRoot": "e2e/playground-contracts/contracts",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "npx hardhat compile --tsconfig tsconfig.app.json",
+        "cwd": "e2e/playground-contracts"
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "npx hardhat compile --tsconfig tsconfig.app.json",
+          "npx hardhat node --tsconfig tsconfig.app.json"
+        ],
+        "cwd": "e2e/playground-contracts"
+      }
+    },
+    "test": {
+      "executor": "@nxeth/plugin:test"
+    }
+  },
+  "tags": []
+}

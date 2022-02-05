@@ -15,6 +15,9 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@contracts": ["e2e/playground-contracts/src/index.ts"],
+      "@contracts/*": ["e2e/playground-contracts/src/contracts/*"],
+      "ngeth": ["packages/ngeth/src/index.ts"],
       "nxeth/plugin": ["packages/plugin/src/index.ts"]
     }
   },

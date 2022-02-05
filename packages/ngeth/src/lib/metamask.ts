@@ -2,7 +2,7 @@ import { Inject, Injectable, InjectionToken, NgZone, Optional } from '@angular/c
 import { ExternalProvider, Web3Provider, Networkish, Provider } from '@ethersproject/providers';
 import { EventFilter } from "@ethersproject/abstract-provider";
 import { defer, Observable } from 'rxjs';
-import { map, shareReplay, startWith } from 'rxjs/operators';
+import { map, shareReplay } from 'rxjs/operators';
 
 interface RequestArguments {
   method: string;
@@ -36,7 +36,8 @@ interface MetaMaskProvider extends ExternalProvider {
   networkVersion: string;
   selectedAddress?: string;
   enable(): Promise<string>;
-  request(args: RequestArguments): Promise<unknown>;
+  send(args: RequestArguments | 'eth_requestAccounts'): Promise<unknown>
+  request(args: RequestArguments | 'eth_requestAccounts'): Promise<unknown>;
   on<K extends keyof MetaMaskEvents>(event: K, listener: MetaMaskEvents[K]): this;
   once<K extends keyof MetaMaskEvents>(event: K, listener: MetaMaskEvents[K]): this;
   addListener<K extends keyof MetaMaskEvents>(event: K, listener: MetaMaskEvents[K]): this;
@@ -91,6 +92,9 @@ export class MetaMask extends Web3Provider {
     super(provider, network);
   }
 
+  enable() {
+    return this.provider.send('eth_requestAccounts');
+  }
 
   /** Listen on event from MetaMask Provider */
   protected fromMetaMaskEvent<T>(event: keyof MetaMaskEvents, initial?: T) {
