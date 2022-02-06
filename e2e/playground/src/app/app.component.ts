@@ -38,6 +38,6 @@ export class AppComponent {
     event.preventDefault();
     const from = this.metamask.account;
     if (!from) return;
-    this.contract.safeTransferFrom(from, to, tokenId);
+    this.contract['safeTransferFrom(address,address,uint256)'](from, to, tokenId);
   }
 }

@@ -80,15 +80,25 @@ export class Playground extends TypedContract<PlaygroundEvents> {
     super(env.addresses.Playground, abi, signer);
   }
 
-  getEvent(_eventName: BytesLike, overrides?: CallOverrides): Promise<>;
-  getEvent(_account: string, overrides?: CallOverrides): Promise<BigNumberish>;
-  getEvent(_eventName: BytesLike | string, overrides?: CallOverrides): Promise<void | BigNumberish> {
-    return super.functions.getEvent(...arguments);
+  ["getEvent(bytes32)"](_eventName: BytesLike, overrides?: CallOverrides): Promise<void> {
+    return this.functions["getEvent(bytes32)"](...arguments);
+  }
+  ["getEvent(address)"](_account: string, overrides?: CallOverrides): Promise<BigNumberish> {
+    return this.functions["getEvent(address)"](...arguments);
   }
 
-  emitEvent(_eventName: BytesLike, _account: string, overrides?: Overrides): Promise<ContractTransaction>;
-  emitEvent(_eventName: BytesLike, _isTrue: boolean, overrides?: Overrides): Promise<ContractTransaction>;
-  emitEvent(_eventName: BytesLike, _account: string | boolean, overrides?: Overrides): Promise<ContractTransaction> {
-    return super.functions.emitEvent(...arguments);
+  ["emitEvent(bytes32,address)"](
+    _eventName: BytesLike,
+    _account: string,
+    overrides?: Overrides
+  ): Promise<ContractTransaction> {
+    return this.functions["emitEvent(bytes32,address)"](...arguments);
+  }
+  ["emitEvent(bytes32,bool)"](
+    _eventName: BytesLike,
+    _isTrue: boolean,
+    overrides?: Overrides
+  ): Promise<ContractTransaction> {
+    return this.functions["emitEvent(bytes32,bool)"](...arguments);
   }
 }

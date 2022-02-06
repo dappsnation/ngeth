@@ -232,71 +232,66 @@ export class MyToken extends TypedContract<MyTokenEvents> {
   }
 
   balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumberish> {
-    return super.functions.balanceOf(...arguments);
+    return this.functions["balanceOf"](...arguments);
   }
   getApproved(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string> {
-    return super.functions.getApproved(...arguments);
+    return this.functions["getApproved"](...arguments);
   }
   isApprovedForAll(owner: string, operator: string, overrides?: CallOverrides): Promise<boolean> {
-    return super.functions.isApprovedForAll(...arguments);
+    return this.functions["isApprovedForAll"](...arguments);
   }
   name(overrides?: CallOverrides): Promise<string> {
-    return super.functions.name(...arguments);
+    return this.functions["name"](...arguments);
   }
   owner(overrides?: CallOverrides): Promise<string> {
-    return super.functions.owner(...arguments);
+    return this.functions["owner"](...arguments);
   }
   ownerOf(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string> {
-    return super.functions.ownerOf(...arguments);
+    return this.functions["ownerOf"](...arguments);
   }
   supportsInterface(interfaceId: BytesLike, overrides?: CallOverrides): Promise<boolean> {
-    return super.functions.supportsInterface(...arguments);
+    return this.functions["supportsInterface"](...arguments);
   }
   symbol(overrides?: CallOverrides): Promise<string> {
-    return super.functions.symbol(...arguments);
+    return this.functions["symbol"](...arguments);
   }
   tokenURI(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string> {
-    return super.functions.tokenURI(...arguments);
+    return this.functions["tokenURI"](...arguments);
   }
 
   approve(to: string, tokenId: BigNumberish, overrides?: Overrides): Promise<ContractTransaction> {
-    return super.functions.approve(...arguments);
+    return this.functions["approve"](...arguments);
   }
   renounceOwnership(overrides?: Overrides): Promise<ContractTransaction> {
-    return super.functions.renounceOwnership(...arguments);
+    return this.functions["renounceOwnership"](...arguments);
   }
   safeMint(to: string, tokenId: BigNumberish, uri: string, overrides?: Overrides): Promise<ContractTransaction> {
-    return super.functions.safeMint(...arguments);
+    return this.functions["safeMint"](...arguments);
   }
-  safeTransferFrom(
+  ["safeTransferFrom(address,address,uint256)"](
     from: string,
     to: string,
     tokenId: BigNumberish,
     overrides?: Overrides
-  ): Promise<ContractTransaction>;
-  safeTransferFrom(
+  ): Promise<ContractTransaction> {
+    return this.functions["safeTransferFrom(address,address,uint256)"](...arguments);
+  }
+  ["safeTransferFrom(address,address,uint256,bytes)"](
     from: string,
     to: string,
     tokenId: BigNumberish,
     _data: BytesLike,
     overrides?: Overrides
-  ): Promise<ContractTransaction>;
-  safeTransferFrom(
-    from: string,
-    to: string,
-    tokenId: BigNumberish,
-    _data?: BytesLike | Overrides,
-    overrides?: Overrides
   ): Promise<ContractTransaction> {
-    return super.functions.safeTransferFrom(...arguments);
+    return this.functions["safeTransferFrom(address,address,uint256,bytes)"](...arguments);
   }
   setApprovalForAll(operator: string, approved: boolean, overrides?: Overrides): Promise<ContractTransaction> {
-    return super.functions.setApprovalForAll(...arguments);
+    return this.functions["setApprovalForAll"](...arguments);
   }
   transferFrom(from: string, to: string, tokenId: BigNumberish, overrides?: Overrides): Promise<ContractTransaction> {
-    return super.functions.transferFrom(...arguments);
+    return this.functions["transferFrom"](...arguments);
   }
   transferOwnership(newOwner: string, overrides?: Overrides): Promise<ContractTransaction> {
-    return super.functions.transferOwnership(...arguments);
+    return this.functions["transferOwnership"](...arguments);
   }
 }

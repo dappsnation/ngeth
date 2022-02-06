@@ -193,7 +193,7 @@ export async function generate(hre: HardhatRuntimeEnvironment) {
 
 
 const getOutputs = (outputs: ABIParameter[] = []) => {
-  if (!outputs.length) return "";
+  if (!outputs.length) return "void";
   if (outputs.length === 1) return getType(outputs[0]);
   return `[${outputs.map(getType)}]`;
 }
@@ -218,7 +218,7 @@ const getOverrides = (description: FunctionDescription) => {
   return 'CallOverrides';
 }
 
-const getSuperCall = (name: string) => `return super.functions.${name}(...arguments);`
+const getSuperCall = (name: string) => `return this.functions['${name}'](...arguments);`
 
 const getArray = (param: ABIParameter) => {
   const [type, end] = param.type.split('[');
@@ -238,40 +238,39 @@ const getOverloadType = (types: string[]) => {
   return types.map(type => `(${type})`).join(' | ');
 }
 
-// TODO: add the overloads
-const getOverload = (nodes: FunctionDescription[], isMethod = false) => {
-  const maxSize = Math.max(...nodes.map(node => node.inputs.length));
-  const outputs = isMethod
-    ? 'ContractTransaction'
-    : Array.from(new Set(nodes.map(node => node.outputs).map(getOutputs).map(o => o || 'void'))).join(' | ');
-  const inputs: (ABIParameter[] | undefined)[] = [];
-  const first = nodes[0];
-  const overrides = getOverrides(first);
-  // Get all inputs
-  for (let i = 0; i < maxSize; i++) {
-    let type = first.inputs[i]?.type;
-    let isSameType = true;
-    for (const node of nodes) {
-      if (type !== node.inputs[i]?.type) {
-        isSameType = false;
-        break;
-      }
-    }
-    if (isSameType) {
-      inputs.push([ first.inputs[i] ]);
-    } else {
-      inputs.push(nodes.map(node => node.inputs[i]));
-    }
-  }
-  const getParams = (paramList: ABIParameter[]) => {
-    const name = paramList.find(param => param?.name).name;
-    const types = paramList.filter(param => param).map(param => getType(param)).join(' | ');
-    const optional = paramList.some(param => !param);
-    return optional ? `${name}?: ${types} | ${overrides}` : `${name}: ${types}`;
-  }
-  const params = inputs.map(getParams).join(', ');
-  return `${first.name}(${params}, overrides?: ${overrides}): Promise<${outputs || 'void'}> { ${getSuperCall(first.name)} }`;
-}
+// const getOverload = (nodes: FunctionDescription[], isMethod = false) => {
+//   const maxSize = Math.max(...nodes.map(node => node.inputs.length));
+//   const outputs = isMethod
+//     ? 'ContractTransaction'
+//     : Array.from(new Set(nodes.map(node => node.outputs).map(getOutputs).map(o => o || 'void'))).join(' | ');
+//   const inputs: (ABIParameter[] | undefined)[] = [];
+//   const first = nodes[0];
+//   const overrides = getOverrides(first);
+//   // Get all inputs
+//   for (let i = 0; i < maxSize; i++) {
+//     let type = first.inputs[i]?.type;
+//     let isSameType = true;
+//     for (const node of nodes) {
+//       if (type !== node.inputs[i]?.type) {
+//         isSameType = false;
+//         break;
+//       }
+//     }
+//     if (isSameType) {
+//       inputs.push([ first.inputs[i] ]);
+//     } else {
+//       inputs.push(nodes.map(node => node.inputs[i]));
+//     }
+//   }
+//   const getParams = (paramList: ABIParameter[]) => {
+//     const name = paramList.find(param => param?.name).name;
+//     const types = paramList.filter(param => param).map(param => getType(param)).join(' | ');
+//     const optional = paramList.some(param => !param);
+//     return optional ? `${name}?: ${types} | ${overrides}` : `${name}: ${types}`;
+//   }
+//   const params = inputs.map(getParams).join(', ');
+//   return `${first.name}(${params}, overrides?: ${overrides}): Promise<${outputs || 'void'}> { ${getSuperCall(first.name)} }`;
+// }
 
 // STRUCT //
 
@@ -312,21 +311,27 @@ const getAllCalls = (nodes: FunctionDescription[]) => {
   for (const duplicates of Object.values(record)) {
     if (duplicates.length === 1) {
       const node = duplicates[0];
-      calls.push(`${getCall(node)} { ${getSuperCall(node.name)} }`);
+      calls.push(getCall(node));
     } else {
-      duplicates.forEach(node => calls.push(getCall(node)));
-      calls.push(getOverload(duplicates, false));
+      duplicates.forEach(node => calls.push(getSignatureCall(node)));
     }
   }
 
   return calls.join('\n');
 }
 
+const getSignatureCall = (call: FunctionDescription) => {
+  const name = `${call.name}(${call.inputs.map(i => i.type).join()})`;
+  const params = call.inputs.map(getParam).concat('overrides?: CallOverrides').join(', ');
+  const output = getOutputs(call.outputs);
+  return `['${name}'](${params}): Promise<${output}> { ${getSuperCall(name)} }`;
+}
+
 const getCall = (call: FunctionDescription) => {
   const name = call.name;
   const params = call.inputs.map(getParam).concat('overrides?: CallOverrides').join(', ');
   const output = getOutputs(call.outputs);
-  return `${name}(${params}): Promise<${output}>`;
+  return `${name}(${params}): Promise<${output}> { ${getSuperCall(name)} }`;
 }
 
 
@@ -345,21 +350,27 @@ const getAllMethods = (nodes: FunctionDescription[]) => {
     if (duplicates.length === 0) continue;
     if (duplicates.length === 1) {
       const node = duplicates[0];
-      methods.push(`${getMethod(node)} { ${getSuperCall(node.name)} }`);
+      methods.push(getMethod(node));
     } else {
-      duplicates.forEach(node => methods.push(getMethod(node)));
-      methods.push(getOverload(duplicates, true));
+      duplicates.forEach(node => methods.push(getSignatureMethod(node)));
     }
   }
 
   return methods.join('\n');
 }
 
+const getSignatureMethod = (method: FunctionDescription) => {
+  const name = `${method.name}(${method.inputs.map(i => i.type).join()})`;
+  const override = method.stateMutability === 'payable' ? 'PayableOverrides' : 'Overrides';
+  const params = method.inputs.map(getParam).concat(`overrides?: ${override}`).join(', ');
+  return `['${name}'](${params}): Promise<ContractTransaction> { ${getSuperCall(name)} }`;
+}
+
 const getMethod = (method: FunctionDescription) => {
   const name = method.name;
   const override = method.stateMutability === 'payable' ? 'PayableOverrides' : 'Overrides';
   const params = method.inputs.map(getParam).concat(`overrides?: ${override}`).join(', ');
-  return `${name}(${params}): Promise<ContractTransaction>`;
+  return `${name}(${params}): Promise<ContractTransaction> { ${getSuperCall(name)} }`;
 }
 
 // EVENTS //

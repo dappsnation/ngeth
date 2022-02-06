@@ -21,6 +21,7 @@
           <span>{{ tokenId }}: </span>
           <form (submit)="transfer($event, tokenId, to.value)">
             <input type="text" #to placeholder="Send to address">
+            <button type="submit">Send</button>
           </form>
         </li>
       </ul>
