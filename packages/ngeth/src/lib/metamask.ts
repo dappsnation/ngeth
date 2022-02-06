@@ -1,8 +1,8 @@
 import { Inject, Injectable, InjectionToken, NgZone, Optional } from '@angular/core';
 import { ExternalProvider, Web3Provider, Networkish, Provider } from '@ethersproject/providers';
 import { EventFilter } from "@ethersproject/abstract-provider";
-import { defer, Observable } from 'rxjs';
-import { map, shareReplay } from 'rxjs/operators';
+import { timer, defer, Observable, of, from } from 'rxjs';
+import { map, shareReplay, switchMap } from 'rxjs/operators';
 
 interface RequestArguments {
   method: string;
@@ -31,10 +31,10 @@ interface MetaMaskEvents {
 }
 
 interface MetaMaskProvider extends ExternalProvider {
-  isConnected: boolean;
   chainId: string;
   networkVersion: string;
   selectedAddress?: string;
+  isConnected(): boolean;
   enable(): Promise<string>;
   send(args: RequestArguments | 'eth_requestAccounts'): Promise<unknown>
   request(args: RequestArguments | 'eth_requestAccounts'): Promise<unknown>;
@@ -62,7 +62,7 @@ export function fromEthEvent<T>(
   initial?: any,
 ) {
   return new Observable<T>((subscriber) => {
-    if (initial) zone.run(() => subscriber.next(initial as any));
+    if (arguments.length === 4) zone.run(() => subscriber.next(initial as any));
     const handler = (...args: any[]) => {
       zone.run(() => subscriber.next(1 < args.length ? args : args[0]));
     };
@@ -76,9 +76,21 @@ export function fromEthEvent<T>(
 export class MetaMask extends Web3Provider {
   override provider!: MetaMaskProvider;
 
+  connected$ = defer(() => {
+    const initial = this.provider.isConnected();
+    return this.fromMetaMaskEvent('connect', initial).pipe(
+      map(connected => !!connected),
+      shareReplay(1),
+    );
+  })
+
   account$ = defer(() => {
-    const initial = this.provider.selectedAddress ? [this.provider.selectedAddress] : [];
-    return this.fromMetaMaskEvent<string[]>('accountsChanged', initial).pipe(
+    // Sometime Metamask takes time to find selected Address. Delay in this case
+    const start = (this.account)
+      ? of([this.account])
+      : timer(500).pipe(map(() => this.account ? [this.account] : []));
+    return start.pipe(
+      switchMap(initial => this.fromMetaMaskEvent<string[]>('accountsChanged', initial)),
       map(accounts => accounts[0]),
       shareReplay(1),
     );
@@ -90,6 +102,10 @@ export class MetaMask extends Web3Provider {
     @Optional() @Inject(ETH_NETWORK) network?: Networkish,
   ) {
     super(provider, network);
+  }
+
+  get account() {
+    return this.provider.selectedAddress;
   }
 
   enable() {

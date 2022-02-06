@@ -1,35 +1,31 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
-
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+pragma solidity ^0.8.2;
 
 contract Playground {
-    uint256 public total;
-    mapping(address => uint256) public contributions;
-    address[] private participants;
+    function emitEvent(bytes32 _eventName, bool _isTrue) public {
+        emit LogEvent(_eventName, _isTrue);
+    }
+    
+    function emitEvent(bytes32 _eventName, address _account) public {
+        emit LogEvent(_eventName, _account);
+    }
+    
 
-    event Contribution(address indexed from, uint256 indexed amount);
+    function getEvent(bytes32 _eventName) public pure {
 
-    using SafeMath for uint;
-
-    constructor() {}
-
-    function contribute() public payable {
-        require(msg.value > 0, 'Send more than 0 Wei');
-        if (contributions[msg.sender] == uint256(0)) {
-            participants.push(msg.sender);
-        } 
-        total += msg.value;
-        contributions[msg.sender] += msg.value;
-        emit Contribution(msg.sender, msg.value);
     }
 
-    function retrieve() public {
-        for (uint8 i = 0; 0 < participants.length; i++) {
-            address payable participant = payable(participants[i]);
-            uint256 contribution = contributions[participant];
-            uint256 balance = address(this).balance;
-            participant.transfer(contribution.mul(balance).div(total));
-        }
+    function getEvent(address _account) public view returns (uint256) {
+        return address(_account).balance;
     }
+
+    event LogEvent(
+        bytes32 eventName,
+        bool isTrue
+    );
+
+    event LogEvent(
+        bytes32 eventName,
+        address account
+    );
 }

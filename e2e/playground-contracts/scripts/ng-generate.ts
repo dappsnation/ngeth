@@ -79,11 +79,10 @@ interface EventRecord {
 interface ContractTemplate {
   contractName: string;
   abi: ABIDescription[];
-  calls: string[];
-  methods: string[];
-  deploy?: string;
-  events: EventRecord;
-  filters: EventRecord;
+  deploy?: FunctionDescription;
+  calls: FunctionDescription[];
+  methods: FunctionDescription[];
+  events: EventDescription[];
   structs: string;
 }
 
@@ -97,40 +96,47 @@ import type { Observable } from 'rxjs';
 
 export type FilterParam<T> = T | T[] | null;
 export interface TypedFilter<T> extends EventFilter {}
-export interface TypedEvent<T extends (...args: any[]) => any> extends Event {
-  args: Parameters<T>;
+
+
+export type EventArgs<T extends ContractEvents<any, any>, K extends keyof T['filters']> = Parameters<T['filters'][K]> & T['queries'][K];
+export interface TypedEvent<T extends ContractEvents<any, any>, K extends keyof T['filters']> extends Event {
+  args: EventArgs<T, K>;
 }
-type ContractEvents<keys extends string> = {[name in keys]: Listener; };
-type ContractFilters<keys extends string> = {[name in keys]: (...args: any[]) => TypedFilter<name>; };
+
+interface ContractEvents<EventKeys extends string, FilterKeys extends string> {
+  events: {[name in EventKeys]: Listener; }
+  filters: {[name in FilterKeys]: (...args: any[]) => TypedFilter<name>; }
+  queries: {[name in FilterKeys]: any }
+}
 
 export class TypedContract<
-  Events extends ContractEvents<EventKeys>,
-  Filters extends ContractFilters<EventKeys>,
-  EventKeys extends Extract<keyof Events, string> = Extract<keyof Events, string>
+  Events extends ContractEvents<EventKeys, FilterKeys>,
+  EventKeys extends Extract<keyof Events['events'], string> = Extract<keyof Events['events'], string>,
+  FilterKeys extends Extract<keyof Events['filters'], string> = Extract<keyof Events['filters'], string>,
 > extends NgContract {
   override attach!: (addressOrName: string) => typeof this;
   override connect!: (providerOrSigner: Provider | Signer) => typeof this;
   deloyed?: () => Promise<typeof this>;
-
-  // Observable
-  override from!: <K extends EventKeys>(event: TypedFilter<K> | K) => Observable<Parameters<Events[K]>>;
   
   // Events
   override listenerCount!: (eventName?: EventFilter | EventKeys) => number;
   override listeners!: <K extends EventKeys>(eventName?: TypedFilter<K> | K) => Listener[];
-  override off!: <K extends EventKeys>(eventName: TypedFilter<K> | K, listener: Events[K]) => this;
-  override on!: <K extends EventKeys>(eventName: TypedFilter<K> | K, listener: Events[K]) => this;
-  override once!: <K extends EventKeys>(eventName: TypedFilter<K> | K, listener: Events[K]) => this;
-  override removeListener!: <K extends EventKeys>(eventName: TypedFilter<K> | K, listener: Events[K]) => this;
+  override off!: <K extends EventKeys>(eventName: TypedFilter<K> | K, listener: Events['events'][K]) => this;
+  override on!: <K extends EventKeys>(eventName: TypedFilter<K> | K, listener: Events['events'][K]) => this;
+  override once!: <K extends EventKeys>(eventName: TypedFilter<K> | K, listener: Events['events'][K]) => this;
+  override removeListener!: <K extends EventKeys>(eventName: TypedFilter<K> | K, listener: Events['events'][K]) => this;
   override removeAllListeners!: (eventName?: EventFilter | EventKeys) => this;
   
   // FILTERS
-  override filters!: Filters;
-  override queryFilter!: <K extends EventKeys>(
+  override filters!: Events['filters'];
+  override queryFilter!: <K extends FilterKeys>(
     event: TypedFilter<K>,
     fromBlockOrBlockhash?: BlockTag,
     toBlock?: BlockTag,
-  ) => Promise<TypedEvent<Events[K]>[]>
+  ) => Promise<TypedEvent<Events, K>[]>;
+
+  // Observable
+  override from!: <K extends FilterKeys>(event: TypedFilter<K> | K) => Observable<EventArgs<Events, K>[]>;
 }
 `
 
@@ -138,6 +144,19 @@ export async function getContractNames(hre: HardhatRuntimeEnvironment) {
   const allNames = await hre.artifacts.getAllFullyQualifiedNames();
   const src = resolve(hre.config.paths.sources);
   return allNames.filter(name => resolve(name).startsWith(src));
+}
+
+function isEvent(node: ABIDescription): node is EventDescription {
+  return node.type === 'event';
+}
+function isCall(node: ABIDescription): node is FunctionDescription {
+  return node.type === 'function' && (node.stateMutability === "view" || node.stateMutability === "pure");
+}
+function isMethod(node: ABIDescription): node is FunctionDescription {
+  return node.type === 'function' && (node.stateMutability === "nonpayable" || node.stateMutability === "payable");
+}
+function isConstrutor(node: ABIDescription): node is FunctionDescription {
+  return node.type === 'constructor';
 }
 
 export async function generate(hre: HardhatRuntimeEnvironment) {
@@ -157,29 +176,12 @@ export async function generate(hre: HardhatRuntimeEnvironment) {
   for (const name of names) {
     const { contractName, abi, bytecode } = await hre.artifacts.readArtifact(name);
     allContracts.push(contractName);
-    let deploy;
-    const calls: string[] = [];
-    const methods: string[] = [];
-    const events: EventRecord = {};
-    const filters: EventRecord = {};
-    const structs = getAllStructs(abi)
-    for (const node of abi as ABIDescription[]) {
-      if (node.type === "event") {
-        events[node.name] = `(${getParams(node.inputs)}) => void`;
-        filters[node.name] = `(${getFilterParams(node)}) => TypedFilter<"${node.name}">`
-      } else {
-        if (node.type === "constructor") {
-          deploy = getDeploy(contractName, node.inputs);
-        } else if (node.type === "function") {
-          if (node.stateMutability === "view" || node.stateMutability === "pure") {
-            calls.push(getCall(node));
-          } else {
-            methods.push(getMethod(node));
-          }
-        }
-      }
-    }
-    const contract = getContract({ contractName, calls, methods, deploy, events, filters, structs, abi });
+    const deploy = abi.find(isConstrutor);
+    const calls: FunctionDescription[] = abi.filter(isCall);
+    const methods: FunctionDescription[] = abi.filter(isMethod);
+    const events: EventDescription[] = abi.filter(isEvent);
+    const structs = getAllStructs(abi);
+    const contract = getContract({ contractName, calls, methods, deploy, events, structs, abi });
     const code = prettier.format(contract, { parser: 'typescript', printWidth: 120 });
     const path = join(folder, `${contractName}.ts`);
     fs.writeFile(path, code);
@@ -204,11 +206,19 @@ const getType = (param: ABIParameter): string => {
   if (type === "string") return "string";
   if (type === "address") return "string";
   if (type === "bool") return "boolean";
-  if (type.startsWith("bytes")) return "string";
-  if (type.startsWith("uint")) return "BigNumber";
-  if (type.startsWith("int")) return "BigNumber";
+  if (type.startsWith("bytes")) return "BytesLike";
+  if (type.startsWith("uint")) return "BigNumberish";
+  if (type.startsWith("int")) return "BigNumberish";
   return "";
 }
+
+const getOverrides = (description: FunctionDescription) => {
+  if (description.stateMutability === 'payable') return 'PayableOverrides';
+  if (description.stateMutability === 'nonpayable') return 'Overrides';
+  return 'CallOverrides';
+}
+
+const getSuperCall = (name: string) => `return super.functions.${name}(...arguments);`
 
 const getArray = (param: ABIParameter) => {
   const [type, end] = param.type.split('[');
@@ -220,6 +230,47 @@ const getArray = (param: ABIParameter) => {
   } else {
     return `${itemType}[]`;
   }
+}
+
+/** Enable overload methods */
+const getOverloadType = (types: string[]) => {
+  if (types.length === 1) return types[0];
+  return types.map(type => `(${type})`).join(' | ');
+}
+
+// TODO: add the overloads
+const getOverload = (nodes: FunctionDescription[], isMethod = false) => {
+  const maxSize = Math.max(...nodes.map(node => node.inputs.length));
+  const outputs = isMethod
+    ? 'ContractTransaction'
+    : Array.from(new Set(nodes.map(node => node.outputs).map(getOutputs).map(o => o || 'void'))).join(' | ');
+  const inputs: (ABIParameter[] | undefined)[] = [];
+  const first = nodes[0];
+  const overrides = getOverrides(first);
+  // Get all inputs
+  for (let i = 0; i < maxSize; i++) {
+    let type = first.inputs[i]?.type;
+    let isSameType = true;
+    for (const node of nodes) {
+      if (type !== node.inputs[i]?.type) {
+        isSameType = false;
+        break;
+      }
+    }
+    if (isSameType) {
+      inputs.push([ first.inputs[i] ]);
+    } else {
+      inputs.push(nodes.map(node => node.inputs[i]));
+    }
+  }
+  const getParams = (paramList: ABIParameter[]) => {
+    const name = paramList.find(param => param?.name).name;
+    const types = paramList.filter(param => param).map(param => getType(param)).join(' | ');
+    const optional = paramList.some(param => !param);
+    return optional ? `${name}?: ${types} | ${overrides}` : `${name}: ${types}`;
+  }
+  const params = inputs.map(getParams).join(', ');
+  return `${first.name}(${params}, overrides?: ${overrides}): Promise<${outputs || 'void'}> { ${getSuperCall(first.name)} }`;
 }
 
 // STRUCT //
@@ -247,85 +298,171 @@ const getAllStructs = (abi: ABIDescription[]) => {
 }
 
 
-// CALLS //
 
-const getCalls = (calls: string[]) => {
-  if (!calls.length) return '';
-  return `// Calls
-  ${calls.join('\n')}`
+// CALLS //
+const getAllCalls = (nodes: FunctionDescription[]) => {
+  if (!nodes.length) return '';
+  const record: Record<string, FunctionDescription[]> = {};
+  for (const node of nodes) {
+    if (!record[node.name]) record[node.name] = [];
+    record[node.name].push(node);
+  }
+
+  const calls: string[] = [];
+  for (const duplicates of Object.values(record)) {
+    if (duplicates.length === 1) {
+      const node = duplicates[0];
+      calls.push(`${getCall(node)} { ${getSuperCall(node.name)} }`);
+    } else {
+      duplicates.forEach(node => calls.push(getCall(node)));
+      calls.push(getOverload(duplicates, false));
+    }
+  }
+
+  return calls.join('\n');
 }
 
 const getCall = (call: FunctionDescription) => {
+  const name = call.name;
   const params = call.inputs.map(getParam).concat('overrides?: CallOverrides').join(', ');
   const output = getOutputs(call.outputs);
-  return `${call.name}!: (${params}) => Promise<${output}>`;
+  return `${name}(${params}): Promise<${output}>`;
 }
 
-// METHODS //
 
-const getMethods = (methods: string[]) => {
-  if (!methods.length) return '';
-  return `// Methods
-  ${methods.join('\n')}`
+
+// METHODS //
+const getAllMethods = (nodes: FunctionDescription[]) => {
+  if (!nodes.length) return '';
+  const record: Record<string, FunctionDescription[]> = {};
+  for (const node of nodes) {
+    if (!record[node.name]) record[node.name] = [];
+    record[node.name].push(node);
+  }
+
+  const methods: string[] = [];
+  for (const duplicates of Object.values(record)) {
+    if (duplicates.length === 0) continue;
+    if (duplicates.length === 1) {
+      const node = duplicates[0];
+      methods.push(`${getMethod(node)} { ${getSuperCall(node.name)} }`);
+    } else {
+      duplicates.forEach(node => methods.push(getMethod(node)));
+      methods.push(getOverload(duplicates, true));
+    }
+  }
+
+  return methods.join('\n');
 }
 
 const getMethod = (method: FunctionDescription) => {
+  const name = method.name;
   const override = method.stateMutability === 'payable' ? 'PayableOverrides' : 'Overrides';
   const params = method.inputs.map(getParam).concat(`overrides?: ${override}`).join(', ');
-  return `${method.name}!: (${params}) => Promise<TransactionResponse>`;
+  return `${name}(${params}): Promise<ContractTransaction>`;
 }
 
 // EVENTS //
-const getEventFields = (events: EventRecord) => {
-  const entries = Object.entries(events);
-  if (!entries.length) return '';
-  return entries.map(([ event, listener ]) => `${event}: ${listener}`).join(';\n');
+const getAllEvents = (nodes: EventDescription[]) => {
+  if (!nodes.length) return '';
+  const record: Record<string, string[]> = {};
+  for (const node of nodes) {
+    if (!record[node.name]) record[node.name] = [];
+    record[node.name].push(getEvent(node));
+  }
+  return Object.entries(record)
+    .map(([name, type]) => `${name}: ${getOverloadType(type)}`)
+    .join('\n'); 
+}
+
+const getEvent = (node: EventDescription) => {
+  return `(${getParams(node.inputs)}) => void`;
 }
 
 
 // FILTERS //
-const getFilterFields = (filters: EventRecord) => {
-  const entries = Object.entries(filters);
-  if (!entries.length) return '';
-  return entries.map(([ filter, listener ]) => `${filter}: ${listener}`).join(';\n');
+const getAllFilters = (nodes: EventDescription[]) => {
+  if (!nodes.length) return '';
+  const record: Record<string, string[]> = {};
+  for (const node of nodes) {
+    // Only gets indexed events
+    if (!node.inputs.some(input => input.indexed)) continue;
+    if (!record[node.name]) record[node.name] = [];
+    record[node.name].push(getFilter(node));
+  }
+  return Object.entries(record)
+    .map(([name, type]) => `${name}: ${getOverloadType(type)}`)
+    .join('\n'); 
 }
+
+const getFilter = (node: EventDescription) => {
+  return `(${getFilterParams(node)}) => TypedFilter<"${node.name}">`
+}
+
 const getFilterParams = (node: EventDescription) => {
-  return node.inputs.filter(input => input.indexed).map(input => {
-    return `${input.name}?: FilterParam<${getType(input)}>`;
-  }).join(", ");
+  return node.inputs
+    .filter(input => input.indexed)
+    .map(input => `${input.name}?: FilterParam<${getType(input)}>`)
+    .join(", ");
+}
+
+
+// QUERIES //
+const getAllQueries = (nodes: EventDescription[]) => {
+  if (!nodes.length) return '';
+  const record: Record<string, string[]> = {};
+  for (const node of nodes) {
+    // Only gets indexed events
+    if (!node.inputs.some(input => input.indexed)) continue;
+    if (!record[node.name]) record[node.name] = [];
+    record[node.name].push(getQuery(node));
+  }
+  return Object.entries(record)
+    .map(([name, type]) => `${name}: ${getOverloadType(type)}`)
+    .join('\n'); 
+}
+
+const getQuery = (node: EventDescription) => {
+  const fields = node.inputs
+    .filter(input => input.indexed)
+    .map(input => `${input.name}: ${getType(input)}`)
+    .join(', ');
+  return `{ ${fields} }`;
 }
 
 
 // CONTRACT //
 
-const getContract = ({ abi, contractName, structs, calls, methods, events, filters }: ContractTemplate) => `
+const getContract = ({ abi, contractName, structs, calls, methods, events }: ContractTemplate) => `
 import { TypedContract, FilterParam, TypedFilter } from './common';
-import { BigNumber, Overrides, CallOverrides, PayableOverrides, Signer } from "ethers";
-import { Provider, TransactionResponse } from '@ethersproject/providers';
+import { BigNumber, Overrides, CallOverrides, PayableOverrides, Signer, ContractTransaction, BytesLike, BigNumberish } from "ethers";
+import { Provider } from '@ethersproject/providers';
 import env from '../../environments/environment';
 
 interface ${contractName}Events {
-  ${getEventFields(events)}
-}
-interface ${contractName}Filters {
-  ${getFilterFields(filters)}
+  events: {
+    ${getAllEvents(events)}
+  },
+  filters: {
+    ${getAllFilters(events)}
+  },
+  queries: {
+    ${getAllQueries(events)}
+  }
 }
 
 ${structs}
 
 export const abi = ${JSON.stringify(abi)};
 
-export class ${contractName} extends TypedContract<${contractName}Events, ${contractName}Filters> {
-  
-  ${getCalls(calls)}
-
-  ${getMethods(methods)}
-
-  override filters!: ${contractName}Filters;
-
+export class ${contractName} extends TypedContract<${contractName}Events> {
   constructor(signer?: Signer | Provider) {
     super(env.addresses.${contractName}, abi, signer);
   }
+
+  ${getAllCalls(calls)}
+
+  ${getAllMethods(methods)}
 }
 `;
 

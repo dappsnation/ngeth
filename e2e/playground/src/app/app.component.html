@@ -1,12 +1,33 @@
-<p>{{ account$ | async }}</p>
-<p *ngIf="latestContribution$ | async as contribution">
-  {{ contribution[0] }}: {{ contribution[1] }}
-</p>
-<button (click)="connect()">connect</button>
-<button (click)="getTotal()">getTotal</button>
-<button (click)="getContributions()">getContributions</button>
 
-<form (submit)="contribute($event)">
-  <input type="number" [formControl]="form">
-  <button type="submit">Contribute</button>
-</form>
+<p>{{ connected$ | async }}</p>
+<ng-container *ngIf="account$ | async as account; else signin">
+  <p>{{ account }}</p>
+  <form [formGroup]="form" (ngSubmit)="mint()">
+    <input type="text" formControlName="address" placeholder="Address">
+    <input type="number" formControlName="tokenId" placeholder="Token Id">
+    <input type="text" formControlName="url" placeholder="URL">
+    <button type="submit">Contribute</button>
+  </form>
+
+  <h3>All Tokens</h3>
+  <ul>
+    <li *ngFor="let token of tokens$ | async">{{ token.tokenId }}</li>
+  </ul>
+  <ng-container *ngIf="myTokens$ | async as myTokens">
+    <ng-container *ngIf="myTokens.length">
+      <h3>My Tokens</h3>
+      <ul>
+        <li *ngFor="let tokenId of myTokens$ | async">
+          <span>{{ tokenId }}: </span>
+          <form (submit)="transfer($event, tokenId, to.value)">
+            <input type="text" #to placeholder="Send to address">
+          </form>
+        </li>
+      </ul>
+    </ng-container>
+  </ng-container>
+</ng-container>
+
+<ng-template #signin>
+  <button (click)="connect()">connect</button>
+</ng-template>

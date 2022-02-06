@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { ethers } from 'ethers';
+import { FormControl, FormGroup } from '@angular/forms';
+import { BigNumber, BigNumberish } from 'ethers';
 import { MetaMask } from 'ngeth';
-import { PlaygroundContract } from './playground.contract';
+import { MyTokenContract } from './my-token.service';
 
 @Component({
   selector: 'nxeth-root',
@@ -10,32 +10,34 @@ import { PlaygroundContract } from './playground.contract';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-  form = new FormControl();
+  form = new FormGroup({
+    address: new FormControl(),
+    tokenId: new FormControl(),
+    url: new FormControl(),
+  });
+  connected$ = this.metamask.connected$;
   account$ = this.metamask.account$;
-  latestContribution$ = this.contract.from('Contribution');
+  tokens$ = this.contract.allTokens$;
+  myTokens$ = this.contract.myTokens$;
+
   constructor(
     private metamask: MetaMask,
-    private contract: PlaygroundContract
+    private contract: MyTokenContract
   ) {}
 
   connect() {
     this.metamask.enable();
   }
 
-  async getTotal() {
-    const total = await this.contract.total();
-    console.log("total", total.toString());
+  mint() {
+    const { address, tokenId, url } = this.form.value;
+    this.contract.safeMint(address, tokenId, url);
   }
 
-  async contribute(event: Event) {
+  transfer(event: Event, tokenId: BigNumberish, to: string) {
     event.preventDefault();
-    const eth = this.form.value as number;
-    const tx = await this.contract.contribute({ value: ethers.utils.parseEther(`${eth}`) });
-    await tx.wait();
-  }
-
-  async getContributions() {
-    const contributions = await this.contract.queryFilter(this.contract.filters.Contribution())
-    console.log(contributions.map(c => c.args));
+    const from = this.metamask.account;
+    if (!from) return;
+    this.contract.safeTransferFrom(from, to, tokenId);
   }
 }

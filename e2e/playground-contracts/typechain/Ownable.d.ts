@@ -19,37 +19,45 @@ import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
-interface PlaygroundInterface extends ethers.utils.Interface {
+interface OwnableInterface extends ethers.utils.Interface {
   functions: {
-    "emitEvent(bytes32,address)": FunctionFragment;
-    "getEvent(bytes32)": FunctionFragment;
+    "owner()": FunctionFragment;
+    "renounceOwnership()": FunctionFragment;
+    "transferOwnership(address)": FunctionFragment;
   };
 
+  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "emitEvent",
-    values: [BytesLike, string]
+    functionFragment: "renounceOwnership",
+    values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "getEvent", values: [BytesLike]): string;
+  encodeFunctionData(
+    functionFragment: "transferOwnership",
+    values: [string]
+  ): string;
 
-  decodeFunctionResult(functionFragment: "emitEvent", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "getEvent", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "renounceOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "transferOwnership",
+    data: BytesLike
+  ): Result;
 
   events: {
-    "LogEvent(bytes32,bool)": EventFragment;
+    "OwnershipTransferred(address,address)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "LogEvent"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
 }
 
-export type LogEvent_bytes32_bool_Event = TypedEvent<
-  [string, boolean] & { eventName: string; isTrue: boolean }
+export type OwnershipTransferredEvent = TypedEvent<
+  [string, string] & { previousOwner: string; newOwner: string }
 >;
 
-export type LogEvent_bytes32_address_Event = TypedEvent<
-  [string, string] & { eventName: string; account: string }
->;
-
-export class Playground extends BaseContract {
+export class Ownable extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
@@ -90,141 +98,84 @@ export class Playground extends BaseContract {
     toBlock?: string | number | undefined
   ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
 
-  interface: PlaygroundInterface;
+  interface: OwnableInterface;
 
   functions: {
-    "emitEvent(bytes32,address)"(
-      _eventName: BytesLike,
-      _account: string,
+    owner(overrides?: CallOverrides): Promise<[string]>;
+
+    renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "emitEvent(bytes32,bool)"(
-      _eventName: BytesLike,
-      _isTrue: boolean,
+    transferOwnership(
+      newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
-
-    "getEvent(bytes32)"(
-      _eventName: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[void]>;
-
-    "getEvent(address)"(
-      _account: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
   };
 
-  "emitEvent(bytes32,address)"(
-    _eventName: BytesLike,
-    _account: string,
+  owner(overrides?: CallOverrides): Promise<string>;
+
+  renounceOwnership(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "emitEvent(bytes32,bool)"(
-    _eventName: BytesLike,
-    _isTrue: boolean,
+  transferOwnership(
+    newOwner: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
-
-  "getEvent(bytes32)"(
-    _eventName: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<void>;
-
-  "getEvent(address)"(
-    _account: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
 
   callStatic: {
-    "emitEvent(bytes32,address)"(
-      _eventName: BytesLike,
-      _account: string,
+    owner(overrides?: CallOverrides): Promise<string>;
+
+    renounceOwnership(overrides?: CallOverrides): Promise<void>;
+
+    transferOwnership(
+      newOwner: string,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    "emitEvent(bytes32,bool)"(
-      _eventName: BytesLike,
-      _isTrue: boolean,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "getEvent(bytes32)"(
-      _eventName: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "getEvent(address)"(
-      _account: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
   };
 
   filters: {
-    "LogEvent(bytes32,bool)"(
-      eventName?: null,
-      isTrue?: null
-    ): TypedEventFilter<
-      [string, boolean],
-      { eventName: string; isTrue: boolean }
-    >;
-
-    "LogEvent(bytes32,address)"(
-      eventName?: null,
-      account?: null
+    "OwnershipTransferred(address,address)"(
+      previousOwner?: string | null,
+      newOwner?: string | null
     ): TypedEventFilter<
       [string, string],
-      { eventName: string; account: string }
+      { previousOwner: string; newOwner: string }
+    >;
+
+    OwnershipTransferred(
+      previousOwner?: string | null,
+      newOwner?: string | null
+    ): TypedEventFilter<
+      [string, string],
+      { previousOwner: string; newOwner: string }
     >;
   };
 
   estimateGas: {
-    "emitEvent(bytes32,address)"(
-      _eventName: BytesLike,
-      _account: string,
+    owner(overrides?: CallOverrides): Promise<BigNumber>;
+
+    renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "emitEvent(bytes32,bool)"(
-      _eventName: BytesLike,
-      _isTrue: boolean,
+    transferOwnership(
+      newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    "getEvent(bytes32)"(
-      _eventName: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "getEvent(address)"(
-      _account: string,
-      overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    "emitEvent(bytes32,address)"(
-      _eventName: BytesLike,
-      _account: string,
+    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "emitEvent(bytes32,bool)"(
-      _eventName: BytesLike,
-      _isTrue: boolean,
+    transferOwnership(
+      newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "getEvent(bytes32)"(
-      _eventName: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "getEvent(address)"(
-      _account: string,
-      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
 }
