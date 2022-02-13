@@ -17,29 +17,25 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Ownable__factory>;
     getContractFactory(
+      name: "ERC1155",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC1155__factory>;
+    getContractFactory(
+      name: "IERC1155MetadataURI",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC1155MetadataURI__factory>;
+    getContractFactory(
       name: "IERC1155",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC1155__factory>;
     getContractFactory(
-      name: "ERC721",
+      name: "IERC1155Receiver",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ERC721__factory>;
-    getContractFactory(
-      name: "ERC721URIStorage",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ERC721URIStorage__factory>;
-    getContractFactory(
-      name: "IERC721Metadata",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IERC721Metadata__factory>;
+    ): Promise<Contracts.IERC1155Receiver__factory>;
     getContractFactory(
       name: "IERC721",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC721__factory>;
-    getContractFactory(
-      name: "IERC721Receiver",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IERC721Receiver__factory>;
     getContractFactory(
       name: "IERC777",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -53,17 +49,13 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC165__factory>;
     getContractFactory(
-      name: "MyToken",
+      name: "BaseERC1155",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.MyToken__factory>;
+    ): Promise<Contracts.BaseERC1155__factory>;
     getContractFactory(
       name: "FullMarket",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.FullMarket__factory>;
-    getContractFactory(
-      name: "Market",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Market__factory>;
     getContractFactory(
       name: "Market",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -79,35 +71,30 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.Ownable>;
     getContractAt(
+      name: "ERC1155",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC1155>;
+    getContractAt(
+      name: "IERC1155MetadataURI",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC1155MetadataURI>;
+    getContractAt(
       name: "IERC1155",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IERC1155>;
     getContractAt(
-      name: "ERC721",
+      name: "IERC1155Receiver",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.ERC721>;
-    getContractAt(
-      name: "ERC721URIStorage",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.ERC721URIStorage>;
-    getContractAt(
-      name: "IERC721Metadata",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.IERC721Metadata>;
+    ): Promise<Contracts.IERC1155Receiver>;
     getContractAt(
       name: "IERC721",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IERC721>;
-    getContractAt(
-      name: "IERC721Receiver",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.IERC721Receiver>;
     getContractAt(
       name: "IERC777",
       address: string,
@@ -124,20 +111,15 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IERC165>;
     getContractAt(
-      name: "MyToken",
+      name: "BaseERC1155",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.MyToken>;
+    ): Promise<Contracts.BaseERC1155>;
     getContractAt(
       name: "FullMarket",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.FullMarket>;
-    getContractAt(
-      name: "Market",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.Market>;
     getContractAt(
       name: "Market",
       address: string,

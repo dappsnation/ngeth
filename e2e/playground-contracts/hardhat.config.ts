@@ -48,7 +48,7 @@ task(
  * @type import('hardhat/config').HardhatUserConfig
  */
 export default {
-  solidity: '0.8.2',
+  solidity: '0.8.11',
   paths: {
     sources: './contracts',
     tests: './tests',

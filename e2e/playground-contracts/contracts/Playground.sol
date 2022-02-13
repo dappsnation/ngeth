@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.2;
+pragma solidity ^0.8.11;
 
 contract Playground {
     function emitEvent(bytes32 _eventName, bool _isTrue) public {

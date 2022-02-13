@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.2;
+pragma solidity ^0.8.11;
 
 import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
@@ -38,7 +38,8 @@ contract Market {
     IERC1155 erc1155 = IERC1155(address(contractAddress));
     require(amount != 0);
     require(price != 0);
-    require(erc1155.balanceOf(msg.sender, tokenId).sub(amount) >= 0);
+    require(erc1155.isApprovedForAll(msg.sender, address(this)), 'Market contract should be approve for all');
+    require(erc1155.balanceOf(msg.sender, tokenId) >= amount);
     offers[contractAddress][msg.sender][tokenId] = Offer(amount, price, data);
     emit UpsertOffer(contractAddress, msg.sender, tokenId, amount, price, data);
   }

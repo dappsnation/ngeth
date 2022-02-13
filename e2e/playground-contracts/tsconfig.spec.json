@@ -5,6 +5,6 @@
     "module": "commonjs",
     "types": ["node", "jest"]
   },
-  "include": ["./tests"],
+  "include": ["./tests", "./typechain"],
   "files": ["./hardhat.config.ts"]
 }
