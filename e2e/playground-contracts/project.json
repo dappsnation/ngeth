@@ -21,7 +21,15 @@
       }
     },
     "test": {
-      "executor": "@nxeth/plugin:test"
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "npx hardhat compile --tsconfig tsconfig.spec.json",
+          "npx hardhat test --tsconfig tsconfig.spec.json"
+        ],
+        "parallel": false,
+        "cwd": "e2e/playground-contracts"
+      }
     }
   },
   "tags": []

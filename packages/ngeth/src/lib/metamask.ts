@@ -3,6 +3,7 @@ import { ExternalProvider, Web3Provider, Networkish, Provider } from '@etherspro
 import { EventFilter } from "@ethersproject/abstract-provider";
 import { timer, defer, Observable, of, from } from 'rxjs';
 import { map, shareReplay, switchMap } from 'rxjs/operators';
+import { getAddress } from 'ethers/lib/utils';
 
 interface RequestArguments {
   method: string;
@@ -91,7 +92,7 @@ export class MetaMask extends Web3Provider {
       : timer(500).pipe(map(() => this.account ? [this.account] : []));
     return start.pipe(
       switchMap(initial => this.fromMetaMaskEvent<string[]>('accountsChanged', initial)),
-      map(accounts => accounts[0]),
+      map(accounts => getAddress(accounts[0])),
       shareReplay(1),
     );
   });
@@ -105,7 +106,8 @@ export class MetaMask extends Web3Provider {
   }
 
   get account() {
-    return this.provider.selectedAddress;
+    if (!this.provider.selectedAddress) return;
+    return getAddress(this.provider.selectedAddress);
   }
 
   enable() {

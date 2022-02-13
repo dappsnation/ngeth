@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { BigNumber, BigNumberish } from 'ethers';
+import { BigNumberish } from 'ethers';
 import { MetaMask } from 'ngeth';
 import { MyTokenContract } from './my-token.service';
 

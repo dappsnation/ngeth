@@ -3,8 +3,8 @@
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
     "module": "commonjs",
-    "types": ["node"]
+    "types": ["node", "jest"]
   },
-  "include": ["src", "scripts"],
+  "include": ["./tests"],
   "files": ["./hardhat.config.ts"]
 }
