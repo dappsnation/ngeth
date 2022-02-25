@@ -12,7 +12,7 @@ import {
 import { Provider } from "@ethersproject/providers";
 import env from "../../environments/environment";
 
-interface MarketEvents {
+export interface MarketEvents {
   events: {
     AcceptOffer: (
       contractAddress: string,
@@ -51,9 +51,24 @@ interface MarketEvents {
     ) => TypedFilter<"UpsertOffer">;
   };
   queries: {
-    AcceptOffer: { contractAddress: string; from: string; tokenId: BigNumberish };
-    CancelOffer: { contractAddress: string; from: string; tokenId: BigNumberish };
-    UpsertOffer: { contractAddress: string; from: string; tokenId: BigNumberish };
+    AcceptOffer: {
+      contractAddress: string;
+      from: string;
+      tokenId: BigNumber;
+      to: string;
+      amount: BigNumber;
+      price: BigNumber;
+      data: BytesLike;
+    };
+    CancelOffer: { contractAddress: string; from: string; tokenId: BigNumber };
+    UpsertOffer: {
+      contractAddress: string;
+      from: string;
+      tokenId: BigNumber;
+      amount: BigNumber;
+      price: BigNumber;
+      data: BytesLike;
+    };
   };
 }
 
@@ -158,7 +173,7 @@ export class Market extends TypedContract<MarketEvents> {
     arg: string,
     arg: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<[BigNumberish, BigNumberish, BytesLike]> {
+  ): Promise<[BigNumber, BigNumber, BytesLike]> {
     return this.functions["offers"](...arguments);
   }
 

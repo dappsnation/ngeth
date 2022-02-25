@@ -23,24 +23,30 @@ task(
     await runSuper();
     await generate(hre);
 
+    const setEnv = (addresses: Record<string, string>) => {
+      const envPath = join(__dirname, 'environments/environment.ts');
+      return fs.writeFile(envPath, `export default ${JSON.stringify({ addresses })};`);
+    } 
+
     // Deploy all contract and update environment
     const names = await getContractNames(hre);
-
+    
     const addresses = {};
+    const params = {
+      BaseERC1155: [''],
+    };
+
     const deploy = async (name: string) => {
-      const Contract = await hre.ethers.getContractFactory(name);
-      const contract = await Contract.deploy();
-      await contract.deployed();
       const [_, contractName] = name.split(':');
+      const Contract = await hre.ethers.getContractFactory(name);
+      const contract = (contractName in params)
+        ? await Contract.deploy(...params[contractName])
+        : await Contract.deploy();
+      await contract.deployed();
       addresses[contractName] = contract.address;
     };
     await Promise.all(names.map(deploy));
-
-    const envPath = join(__dirname, 'environments/environment.ts');
-    await fs.writeFile(
-      envPath,
-      `export default ${JSON.stringify({ addresses })};`
-    );
+    await setEnv(addresses);
   }
 );
 

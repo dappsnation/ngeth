@@ -12,7 +12,7 @@ import {
 import { Provider } from "@ethersproject/providers";
 import env from "../../environments/environment";
 
-interface FullMarketEvents {
+export interface FullMarketEvents {
   events: {
     ERC1155AcceptOffer: (
       contractAddress: string,
@@ -104,15 +104,37 @@ interface FullMarketEvents {
     ) => TypedFilter<"ERC777UpsertOffer">;
   };
   queries: {
-    ERC1155AcceptOffer: { contractAddress: string; from: string; tokenId: BigNumberish };
-    ERC1155CancelOffer: { contractAddress: string; from: string; tokenId: BigNumberish };
-    ERC1155UpsertOffer: { contractAddress: string; from: string; tokenId: BigNumberish };
-    ERC721AcceptOffer: { contractAddress: string; from: string; tokenId: BigNumberish };
-    ERC721CancelOffer: { contractAddress: string; from: string; tokenId: BigNumberish };
-    ERC721CreateOffer: { contractAddress: string; from: string; tokenId: BigNumberish };
-    ERC777AcceptOffer: { contractAddress: string; from: string; to: string };
+    ERC1155AcceptOffer: {
+      contractAddress: string;
+      from: string;
+      tokenId: BigNumber;
+      to: string;
+      amount: BigNumber;
+      price: BigNumber;
+      data: BytesLike;
+    };
+    ERC1155CancelOffer: { contractAddress: string; from: string; tokenId: BigNumber };
+    ERC1155UpsertOffer: {
+      contractAddress: string;
+      from: string;
+      tokenId: BigNumber;
+      amount: BigNumber;
+      price: BigNumber;
+      data: BytesLike;
+    };
+    ERC721AcceptOffer: { contractAddress: string; from: string; tokenId: BigNumber; to: string; price: BigNumber };
+    ERC721CancelOffer: { contractAddress: string; from: string; tokenId: BigNumber };
+    ERC721CreateOffer: { contractAddress: string; from: string; tokenId: BigNumber; price: BigNumber };
+    ERC777AcceptOffer: {
+      contractAddress: string;
+      from: string;
+      to: string;
+      amount: BigNumber;
+      price: BigNumber;
+      data: BytesLike;
+    };
     ERC777CancelOffer: { contractAddress: string; from: string };
-    ERC777UpsertOffer: { contractAddress: string; from: string };
+    ERC777UpsertOffer: { contractAddress: string; from: string; amount: BigNumber; price: BigNumber; data: BytesLike };
   };
 }
 
@@ -371,13 +393,13 @@ export class FullMarket extends TypedContract<FullMarketEvents> {
     arg: string,
     arg: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<[BigNumberish, BigNumberish, BytesLike]> {
+  ): Promise<[BigNumber, BigNumber, BytesLike]> {
     return this.functions["erc1155Offers"](...arguments);
   }
-  erc721Offers(arg: string, arg: BigNumberish, overrides?: CallOverrides): Promise<BigNumberish> {
+  erc721Offers(arg: string, arg: BigNumberish, overrides?: CallOverrides): Promise<BigNumber> {
     return this.functions["erc721Offers"](...arguments);
   }
-  erc777Offers(arg: string, arg: string, overrides?: CallOverrides): Promise<[BigNumberish, BigNumberish, BytesLike]> {
+  erc777Offers(arg: string, arg: string, overrides?: CallOverrides): Promise<[BigNumber, BigNumber, BytesLike]> {
     return this.functions["erc777Offers"](...arguments);
   }
 

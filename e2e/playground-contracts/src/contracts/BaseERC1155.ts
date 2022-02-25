@@ -12,7 +12,7 @@ import {
 import { Provider } from "@ethersproject/providers";
 import env from "../../environments/environment";
 
-interface BaseERC1155Events {
+export interface BaseERC1155Events {
   events: {
     ApprovalForAll: (account: string, operator: string, approved: boolean) => void;
     OwnershipTransferred: (previousOwner: string, newOwner: string) => void;
@@ -39,11 +39,11 @@ interface BaseERC1155Events {
     URI: (id?: FilterParam<BigNumberish>) => TypedFilter<"URI">;
   };
   queries: {
-    ApprovalForAll: { account: string; operator: string };
+    ApprovalForAll: { account: string; operator: string; approved: boolean };
     OwnershipTransferred: { previousOwner: string; newOwner: string };
-    TransferBatch: { operator: string; from: string; to: string };
-    TransferSingle: { operator: string; from: string; to: string };
-    URI: { id: BigNumberish };
+    TransferBatch: { operator: string; from: string; to: string; ids: BigNumber[]; values: BigNumber[] };
+    TransferSingle: { operator: string; from: string; to: string; id: BigNumber; value: BigNumber };
+    URI: { value: string; id: BigNumber };
   };
 }
 
@@ -238,10 +238,10 @@ export class BaseERC1155 extends TypedContract<BaseERC1155Events> {
     super(env.addresses.BaseERC1155, abi, signer);
   }
 
-  balanceOf(account: string, id: BigNumberish, overrides?: CallOverrides): Promise<BigNumberish> {
+  balanceOf(account: string, id: BigNumberish, overrides?: CallOverrides): Promise<BigNumber> {
     return this.functions["balanceOf"](...arguments);
   }
-  balanceOfBatch(accounts: string[], ids: BigNumberish[], overrides?: CallOverrides): Promise<BigNumberish[]> {
+  balanceOfBatch(accounts: string[], ids: BigNumberish[], overrides?: CallOverrides): Promise<BigNumber[]> {
     return this.functions["balanceOfBatch"](...arguments);
   }
   isApprovedForAll(account: string, operator: string, overrides?: CallOverrides): Promise<boolean> {

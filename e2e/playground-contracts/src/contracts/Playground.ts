@@ -12,7 +12,7 @@ import {
 import { Provider } from "@ethersproject/providers";
 import env from "../../environments/environment";
 
-interface PlaygroundEvents {
+export interface PlaygroundEvents {
   events: {
     LogEvent: ((eventName: BytesLike, isTrue: boolean) => void) | ((eventName: BytesLike, account: string) => void);
   };
@@ -83,7 +83,7 @@ export class Playground extends TypedContract<PlaygroundEvents> {
   ["getEvent(bytes32)"](_eventName: BytesLike, overrides?: CallOverrides): Promise<void> {
     return this.functions["getEvent(bytes32)"](...arguments);
   }
-  ["getEvent(address)"](_account: string, overrides?: CallOverrides): Promise<BigNumberish> {
+  ["getEvent(address)"](_account: string, overrides?: CallOverrides): Promise<BigNumber> {
     return this.functions["getEvent(address)"](...arguments);
   }
 

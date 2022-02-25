@@ -98,7 +98,7 @@ export type FilterParam<T> = T | T[] | null;
 export interface TypedFilter<T> extends EventFilter {}
 
 
-export type EventArgs<T extends ContractEvents<any, any>, K extends keyof T['filters']> = Parameters<T['filters'][K]> & T['queries'][K];
+export type EventArgs<T extends ContractEvents<any, any>, K extends keyof T['filters']> = Parameters<T['events'][K]> & T['queries'][K];
 export interface TypedEvent<T extends ContractEvents<any, any>, K extends keyof T['filters']> extends Event {
   args: EventArgs<T, K>;
 }
@@ -194,21 +194,21 @@ export async function generate(hre: HardhatRuntimeEnvironment) {
 
 const getOutputs = (outputs: ABIParameter[] = []) => {
   if (!outputs.length) return "void";
-  if (outputs.length === 1) return getType(outputs[0]);
-  return `[${outputs.map(getType)}]`;
+  if (outputs.length === 1) return getType(outputs[0], 'output');
+  return `[${outputs.map((output => getType(output, 'output')))}]`;
 }
 const getParams = (params: ABIParameter[] = []) => params.map(getParam).join(", ");
-const getParam = (param: ABIParameter) => `${param.name || 'arg'}: ${getType(param)}`;
-const getType = (param: ABIParameter): string => {
+const getParam = (param: ABIParameter) => `${param.name || 'arg'}: ${getType(param, 'input')}`;
+const getType = (param: ABIParameter, kind: 'input' | 'output'): string => {
   const type = param.type;
-  if (type.endsWith("]")) return getArray(param);
+  if (type.endsWith("]")) return getArray(param, kind);
   if (type === "tuple") return getStructName(param.internalType);
   if (type === "string") return "string";
   if (type === "address") return "string";
   if (type === "bool") return "boolean";
   if (type.startsWith("bytes")) return "BytesLike";
-  if (type.startsWith("uint")) return "BigNumberish";
-  if (type.startsWith("int")) return "BigNumberish";
+  if (type.startsWith("uint")) return kind === 'input' ? "BigNumberish" : "BigNumber";
+  if (type.startsWith("int")) return kind === 'input' ? "BigNumberish" : "BigNumber";
   return "";
 }
 
@@ -220,11 +220,11 @@ const getOverrides = (description: FunctionDescription) => {
 
 const getSuperCall = (name: string) => `return this.functions['${name}'](...arguments);`
 
-const getArray = (param: ABIParameter) => {
+const getArray = (param: ABIParameter, kind: 'input' | 'output') => {
   const [type, end] = param.type.split('[');
   const amountString = end.substring(0, end.length - 1); // Remove last "]"
   const amount = parseInt(amountString);
-  const itemType = getType({ ...param, type });
+  const itemType = getType({ ...param, type }, kind);
   if (!isNaN(amount)) {
     return `[${new Array(amount).fill(itemType).join(', ')}]`;
   } else {
@@ -413,7 +413,7 @@ const getFilter = (node: EventDescription) => {
 const getFilterParams = (node: EventDescription) => {
   return node.inputs
     .filter(input => input.indexed)
-    .map(input => `${input.name}?: FilterParam<${getType(input)}>`)
+    .map(input => `${input.name}?: FilterParam<${getType(input, 'input')}>`)
     .join(", ");
 }
 
@@ -423,7 +423,7 @@ const getAllQueries = (nodes: EventDescription[]) => {
   if (!nodes.length) return '';
   const record: Record<string, string[]> = {};
   for (const node of nodes) {
-    // Only gets indexed events
+    // If there are no indexed events you cannot query it
     if (!node.inputs.some(input => input.indexed)) continue;
     if (!record[node.name]) record[node.name] = [];
     record[node.name].push(getQuery(node));
@@ -435,8 +435,7 @@ const getAllQueries = (nodes: EventDescription[]) => {
 
 const getQuery = (node: EventDescription) => {
   const fields = node.inputs
-    .filter(input => input.indexed)
-    .map(input => `${input.name}: ${getType(input)}`)
+    .map(input => `${input.name}: ${getType(input, 'output')}`)
     .join(', ');
   return `{ ${fields} }`;
 }
@@ -450,7 +449,7 @@ import { BigNumber, Overrides, CallOverrides, PayableOverrides, Signer, Contract
 import { Provider } from '@ethersproject/providers';
 import env from '../../environments/environment';
 
-interface ${contractName}Events {
+export interface ${contractName}Events {
   events: {
     ${getAllEvents(events)}
   },

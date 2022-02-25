@@ -7,7 +7,7 @@ export type FilterParam<T> = T | T[] | null;
 export interface TypedFilter<T> extends EventFilter {}
 
 
-export type EventArgs<T extends ContractEvents<any, any>, K extends keyof T['filters']> = Parameters<T['filters'][K]> & T['queries'][K];
+export type EventArgs<T extends ContractEvents<any, any>, K extends keyof T['filters']> = Parameters<T['events'][K]> & T['queries'][K];
 export interface TypedEvent<T extends ContractEvents<any, any>, K extends keyof T['filters']> extends Event {
   args: EventArgs<T, K>;
 }
