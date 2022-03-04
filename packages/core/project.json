@@ -1,14 +1,14 @@
 {
   "projectType": "library",
-  "root": "packages/ngeth",
-  "sourceRoot": "packages/ngeth/src",
+  "root": "packages/core",
+  "sourceRoot": "packages/core/src",
   "prefix": "nxeth",
   "targets": {
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/packages/ngeth"],
+      "outputs": ["coverage/packages/core"],
       "options": {
-        "jestConfig": "packages/ngeth/jest.config.js",
+        "jestConfig": "packages/core/jest.config.js",
         "passWithNoTests": true
       }
     },
@@ -16,8 +16,8 @@
       "executor": "@nrwl/linter:eslint",
       "options": {
         "lintFilePatterns": [
-          "packages/ngeth/src/**/*.ts",
-          "packages/ngeth/src/**/*.html"
+          "packages/core/src/**/*.ts",
+          "packages/core/src/**/*.html"
         ]
       }
     }

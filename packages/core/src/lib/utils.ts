@@ -8,7 +8,6 @@ export class BigNumberPipe implements PipeTransform {
   }
 }
 
-
 @NgModule({
   exports: [BigNumberPipe],
   declarations: [BigNumberPipe],

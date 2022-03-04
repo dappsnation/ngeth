@@ -3,19 +3,22 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 
-import { EthModule } from 'ngeth';
+import { EthModule } from '@ngeth/core';
 import { AppComponent } from './app.component';
 
 @NgModule({
   declarations: [AppComponent],
   imports: [
     BrowserModule,
-    RouterModule.forRoot([{
-      path: 'admin',
-      loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule)
-    }]),
+    RouterModule.forRoot([
+      {
+        path: 'admin',
+        loadChildren: () =>
+          import('./admin/admin.module').then((m) => m.AdminModule),
+      },
+    ]),
     ReactiveFormsModule,
-    EthModule
+    EthModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

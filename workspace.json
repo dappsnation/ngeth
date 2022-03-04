@@ -1,7 +1,7 @@
 {
   "version": 2,
   "projects": {
-    "ngeth": "packages/ngeth",
+    "core": "packages/core",
     "playground": "e2e/playground",
     "playground-contracts": "e2e/playground-contracts",
     "plugin": "packages/plugin",

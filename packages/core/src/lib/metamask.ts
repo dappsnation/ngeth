@@ -1,6 +1,17 @@
-import { Inject, Injectable, InjectionToken, NgZone, Optional } from '@angular/core';
-import { ExternalProvider, Web3Provider, Networkish, Provider } from '@ethersproject/providers';
-import { EventFilter } from "@ethersproject/abstract-provider";
+import {
+  Inject,
+  Injectable,
+  InjectionToken,
+  NgZone,
+  Optional,
+} from '@angular/core';
+import {
+  ExternalProvider,
+  Web3Provider,
+  Networkish,
+  Provider,
+} from '@ethersproject/providers';
+import { EventFilter } from '@ethersproject/abstract-provider';
 import { timer, defer, Observable, of, from } from 'rxjs';
 import { map, shareReplay, switchMap } from 'rxjs/operators';
 import { getAddress } from 'ethers/lib/utils';
@@ -22,13 +33,12 @@ interface ProviderMessage {
   data: unknown;
 }
 
-
 interface MetaMaskEvents {
   accountsChanged: (accounts: string[]) => void;
   chainChanged: (chainId: string) => void;
   connect: (connectInfo: ConnectInfo) => void;
   disconnect: (error: ProviderRpcError) => void;
-  message: (message: ProviderMessage) => void
+  message: (message: ProviderMessage) => void;
 }
 
 interface MetaMaskProvider extends ExternalProvider {
@@ -37,12 +47,24 @@ interface MetaMaskProvider extends ExternalProvider {
   selectedAddress?: string;
   isConnected(): boolean;
   enable(): Promise<string>;
-  send(args: RequestArguments | 'eth_requestAccounts'): Promise<unknown>
+  send(args: RequestArguments | 'eth_requestAccounts'): Promise<unknown>;
   request(args: RequestArguments | 'eth_requestAccounts'): Promise<unknown>;
-  on<K extends keyof MetaMaskEvents>(event: K, listener: MetaMaskEvents[K]): this;
-  once<K extends keyof MetaMaskEvents>(event: K, listener: MetaMaskEvents[K]): this;
-  addListener<K extends keyof MetaMaskEvents>(event: K, listener: MetaMaskEvents[K]): this;
-  removeListener<K extends keyof MetaMaskEvents>(event: K, listener: MetaMaskEvents[K]): this;
+  on<K extends keyof MetaMaskEvents>(
+    event: K,
+    listener: MetaMaskEvents[K]
+  ): this;
+  once<K extends keyof MetaMaskEvents>(
+    event: K,
+    listener: MetaMaskEvents[K]
+  ): this;
+  addListener<K extends keyof MetaMaskEvents>(
+    event: K,
+    listener: MetaMaskEvents[K]
+  ): this;
+  removeListener<K extends keyof MetaMaskEvents>(
+    event: K,
+    listener: MetaMaskEvents[K]
+  ): this;
   removeAllListeners(event: keyof MetaMaskEvents): this;
 }
 
@@ -50,8 +72,10 @@ const ETH_PROVIDER = new InjectionToken<MetaMaskProvider>('Ethereum ', {
   providedIn: 'root',
   factory: () => {
     if ('ethereum' in window) return (window as any).ethereum;
-    throw new Error('No provider found in the window object. Is MetaMask enabled ?');
-  }
+    throw new Error(
+      'No provider found in the window object. Is MetaMask enabled ?'
+    );
+  },
 });
 
 const ETH_NETWORK = new InjectionToken<Networkish>('Ethereum Network');
@@ -60,7 +84,7 @@ export function fromEthEvent<T>(
   provider: Provider | MetaMaskProvider,
   zone: NgZone,
   event: string | EventFilter,
-  initial?: any,
+  initial?: any
 ) {
   return new Observable<T>((subscriber) => {
     if (arguments.length === 4) zone.run(() => subscriber.next(initial as any));
@@ -72,7 +96,6 @@ export function fromEthEvent<T>(
   });
 }
 
-
 @Injectable({ providedIn: 'root' })
 export class MetaMask extends Web3Provider {
   override provider!: MetaMaskProvider;
@@ -80,27 +103,29 @@ export class MetaMask extends Web3Provider {
   connected$ = defer(() => {
     const initial = this.provider.isConnected();
     return this.fromMetaMaskEvent('connect', initial).pipe(
-      map(connected => !!connected),
-      shareReplay(1),
+      map((connected) => !!connected),
+      shareReplay(1)
     );
-  })
+  });
 
   account$ = defer(() => {
     // Sometime Metamask takes time to find selected Address. Delay in this case
-    const start = (this.account)
+    const start = this.account
       ? of([this.account])
-      : timer(500).pipe(map(() => this.account ? [this.account] : []));
+      : timer(500).pipe(map(() => (this.account ? [this.account] : [])));
     return start.pipe(
-      switchMap(initial => this.fromMetaMaskEvent<string[]>('accountsChanged', initial)),
-      map(accounts => getAddress(accounts[0])),
-      shareReplay(1),
+      switchMap((initial) =>
+        this.fromMetaMaskEvent<string[]>('accountsChanged', initial)
+      ),
+      map((accounts) => getAddress(accounts[0])),
+      shareReplay(1)
     );
   });
 
   constructor(
     private ngZone: NgZone,
     @Inject(ETH_PROVIDER) provider: MetaMaskProvider,
-    @Optional() @Inject(ETH_NETWORK) network?: Networkish,
+    @Optional() @Inject(ETH_NETWORK) network?: Networkish
   ) {
     super(provider, network);
   }
@@ -119,5 +144,3 @@ export class MetaMask extends Web3Provider {
     return fromEthEvent<T>(this.provider, this.ngZone, event, initial);
   }
 }
-
-

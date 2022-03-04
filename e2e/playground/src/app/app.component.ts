@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { BigNumberish } from 'ethers';
-import { MetaMask } from 'ngeth';
+import { MetaMask } from '@ngeth/core';
 import { MyTokenContract } from './my-token.service';
 
 @Component({
@@ -20,10 +20,7 @@ export class AppComponent {
   tokens$ = this.contract.allTokens$;
   myTokens$ = this.contract.myTokens$;
 
-  constructor(
-    private metamask: MetaMask,
-    private contract: MyTokenContract
-  ) {}
+  constructor(private metamask: MetaMask, private contract: MyTokenContract) {}
 
   connect() {
     this.metamask.enable();
@@ -38,6 +35,10 @@ export class AppComponent {
     event.preventDefault();
     const from = this.metamask.account;
     if (!from) return;
-    this.contract['safeTransferFrom(address,address,uint256)'](from, to, tokenId);
+    this.contract['safeTransferFrom(address,address,uint256)'](
+      from,
+      to,
+      tokenId
+    );
   }
 }

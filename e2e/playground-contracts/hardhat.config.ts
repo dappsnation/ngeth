@@ -1,6 +1,6 @@
 import '@nomiclabs/hardhat-ethers';
 import '@typechain/hardhat';
-import 'ngeth/hardhat';
+import '@ngeth/core/hardhat';
 
 // import { task } from 'hardhat/config';
 // import { join } from 'path';
@@ -27,11 +27,11 @@ import 'ngeth/hardhat';
 //     const setEnv = (addresses: Record<string, string>) => {
 //       const envPath = join(__dirname, 'environments/environment.ts');
 //       return fs.writeFile(envPath, `export default ${JSON.stringify({ addresses })};`);
-//     } 
+//     }
 
 //     // Deploy all contract and update environment
 //     const names = await getContractNames(hre);
-    
+
 //     const addresses = {};
 //     const params = {
 //       BaseERC1155: [''],
