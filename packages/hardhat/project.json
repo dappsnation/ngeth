@@ -1,0 +1,42 @@
+{
+  "projectType": "library",
+  "root": "packages/hardhat",
+  "sourceRoot": "packages/hardhat/src",
+  "prefix": "nxeth",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/angular:package",
+      "outputs": ["dist/packages/hardhat"],
+      "options": {
+        "project": "packages/hardhat/ng-package.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "packages/hardhat/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "packages/hardhat/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/packages/hardhat"],
+      "options": {
+        "jestConfig": "packages/hardhat/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "packages/hardhat/src/**/*.ts",
+          "packages/hardhat/src/**/*.html"
+        ]
+      }
+    }
+  },
+  "tags": []
+}

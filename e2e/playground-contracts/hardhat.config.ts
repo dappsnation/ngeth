@@ -1,6 +1,6 @@
 import '@nomiclabs/hardhat-ethers';
 import '@typechain/hardhat';
-import '@ngeth/core/hardhat';
+import '@ngeth/hardhat';
 
 // import { task } from 'hardhat/config';
 // import { join } from 'path';

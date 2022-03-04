@@ -2,6 +2,7 @@
   "version": 2,
   "projects": {
     "core": "packages/core",
+    "hardhat": "packages/hardhat",
     "playground": "e2e/playground",
     "playground-contracts": "e2e/playground-contracts",
     "plugin": "packages/plugin",
