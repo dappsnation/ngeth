@@ -3,6 +3,7 @@
   "projects": {
     "core": "packages/core",
     "hardhat": "packages/hardhat",
+    "ipfs": "packages/ipfs",
     "playground": "e2e/playground",
     "playground-contracts": "e2e/playground-contracts",
     "plugin": "packages/plugin",

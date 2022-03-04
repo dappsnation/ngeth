@@ -1,0 +1,42 @@
+{
+  "projectType": "library",
+  "root": "packages/ipfs",
+  "sourceRoot": "packages/ipfs/src",
+  "prefix": "nxeth",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/angular:package",
+      "outputs": ["dist/packages/ipfs"],
+      "options": {
+        "project": "packages/ipfs/ng-package.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "packages/ipfs/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "packages/ipfs/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/packages/ipfs"],
+      "options": {
+        "jestConfig": "packages/ipfs/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "packages/ipfs/src/**/*.ts",
+          "packages/ipfs/src/**/*.html"
+        ]
+      }
+    }
+  },
+  "tags": []
+}

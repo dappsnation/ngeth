@@ -19,6 +19,7 @@
       "@contracts/*": ["e2e/playground-contracts/src/contracts/*"],
       "@ngeth/core": ["packages/core/src/index.ts"],
       "@ngeth/hardhat": ["packages/hardhat/src/index.ts"],
+      "@ngeth/ipfs": ["packages/ipfs/src/index.ts"],
       "ngeth/hardhat": ["packages/ngeth/src/hardhat/index.ts"],
       "nxeth/plugin": ["packages/plugin/src/index.ts"]
     }
