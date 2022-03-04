@@ -13,10 +13,7 @@
     "serve": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "commands": [
-          "npx hardhat compile --tsconfig tsconfig.app.json",
-          "npx hardhat node --tsconfig tsconfig.app.json"
-        ],
+        "command": "npx hardhat ngeth:serve --tsconfig tsconfig.app.json",
         "cwd": "e2e/playground-contracts"
       }
     },

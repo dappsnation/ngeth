@@ -12,6 +12,11 @@
       "factory": "./src/generators/library/generator",
       "schema": "./src/generators/library/schema.json",
       "description": "library generator"
+    },
+    "add": {
+      "factory": "./src/generators/add/generator",
+      "schema": "./src/generators/add/schema.json",
+      "description": "Setup"
     }
   }
 }
