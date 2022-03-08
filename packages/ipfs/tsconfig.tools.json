@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../dist/out-tsc",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "declaration": false,
+    "declarationMap": false,
+    "inlineSources": true,
+    "skipLibCheck": true,
+    "types": []
+  },
+  "include": ["builders/**/*.ts", "schematics/**/*.ts"],
+  "exclude": []
+}

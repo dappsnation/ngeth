@@ -1,0 +1,11 @@
+{
+  "$schema": "../../../../node_modules/@angular-devkit/schematics/collection-schema.json",
+  "schematics": {
+    "ng-add": {
+      "factory": "./add/index",
+      "schema": "./add/schema.json",
+      "description": "Initialize the @ngeth/ipfs module",
+      "hidden": true
+    }
+  }
+}

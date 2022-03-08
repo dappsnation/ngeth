@@ -43,3 +43,6 @@ Thumbs.db
 # hardhat
 e2e/*/cache
 e2e/*/artifacts
+
+# IPFS
+.ipfs

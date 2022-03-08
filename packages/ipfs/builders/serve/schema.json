@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "title": "Run IPFS daemon",
+  "description": "Run the IPFS daemon locally to interact with the node through the HTTP client API.",
+  "type": "object",
+  "properties": {
+    "path": {
+      "type": "string",
+      "description": "Path the the folder where IPFS data is store. If not provided node will use global IPFS_PATH variable."
+    },
+    "config": {
+      "type": "string",
+      "description": "The path to the ipfs config relative to root. It'll be merge with default config."
+    },
+    "cors": {
+      "type": "array",
+      "default": ["http://localhost:4200"],
+      "description": "A list of authorized URL for the CORS of the IPFS node."
+    },
+    "disposable": {
+      "type": "boolean",
+      "default": false,
+      "description": "If true, IPFS data will be clean once the node is stopped."
+    }
+  },
+  "additionalProperties": false,
+  "required": []
+}

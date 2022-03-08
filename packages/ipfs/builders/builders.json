@@ -1,0 +1,9 @@
+{
+  "builders": {
+    "serve": {
+      "implementation": "./serve/index",
+      "schema": "./serve/schema.json",
+      "description": "Run IPFS daemon locally."
+    }
+  }
+}

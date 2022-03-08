@@ -1,6 +1,6 @@
 import { inject, Pipe, PipeTransform } from "@angular/core";
 import type { CID } from "ipfs-http-client";
-import { IPFS } from "./token";
+import { IPFS } from "./tokens";
 import { decodeIpfsTo, IpfsFormat } from "./utils";
 
 @Pipe({ name: 'ipfs' })

@@ -54,6 +54,12 @@
       },
       "defaultConfiguration": "production"
     },
+    "ipfs-serve": {
+      "executor": "@ngeth/ipfs:serve",
+      "options": {
+        "path": ".ipfs"
+      }
+    },
     "serve": {
       "executor": "@angular-devkit/build-angular:dev-server",
       "configurations": {

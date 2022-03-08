@@ -5,7 +5,8 @@ import {
   runNxCommandAsync,
   uniq,
 } from '@nrwl/nx-plugin/testing';
-describe('plugin e2e', () => {
+
+describe.skip('plugin e2e', () => {
   let plugin: string;
   beforeEach(() => {
     plugin = uniq('plugin');
