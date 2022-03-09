@@ -1,0 +1,17 @@
+{
+  "root": "packages/devkit",
+  "sourceRoot": "packages/devkit/src",
+  "targets": {
+    "build-tools": {
+      "executor": "@nrwl/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/packages/devkit",
+        "main": "packages/devkit/src/index.ts",
+        "tsConfig": "packages/devkit/tsconfig.lib.json",
+        "assets": ["packages/devkit/*.md"]
+      }
+    }
+  },
+  "tags": []
+}

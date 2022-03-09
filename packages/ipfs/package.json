@@ -12,9 +12,8 @@
     "ipfs": "^0.62.0"
   },
   "dependencies": {
-    "tslib": "^2.3.0"
-  },
-  "devDependencies": {
-    "ipfsd-ctl": "^10.0.6"
+    "tslib": "^2.3.0",
+    "ipfsd-ctl": "^10.0.6",
+    "@nrwl/devkit": "13.8.5"
   }
 }

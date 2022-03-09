@@ -2,6 +2,7 @@
   "version": 2,
   "projects": {
     "core": "packages/core",
+    "devkit": "packages/devkit",
     "hardhat": "packages/hardhat",
     "ipfs": "packages/ipfs",
     "playground": "e2e/playground",
