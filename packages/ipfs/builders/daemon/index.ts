@@ -1,6 +1,6 @@
 import { BuilderContext, BuilderOutput, createBuilder } from '@angular-devkit/architect';
 import { Controller, createController } from 'ipfsd-ctl';
-import * as ipfsHttpModule from 'ipfs-http-client';
+import { create } from 'ipfs-http-client';
 import { path as ipfsPath } from 'ipfs';
 import { join } from 'path';
 import { Observable } from 'rxjs';
@@ -43,7 +43,7 @@ export default createBuilder((options: Options, context: BuilderContext): Observ
 
       // Initialize the controller
       const node = await createController({
-        ipfsHttpModule,
+        ipfsHttpModule: { create },
         ipfsBin: ipfsPath(),
         disposable: options.disposable,
         ipfsOptions: {

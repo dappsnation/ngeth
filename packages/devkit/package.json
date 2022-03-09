@@ -1,5 +1,9 @@
 {
   "name": "@ngeth/devkit",
-  "version": "0.0.1",
-  "type": "commonjs"
+  "version": "0.0.4",
+  "type": "commonjs",
+  "dependencies": {
+    "@nrwl/devkit": "^13.8.5",
+    "@nrwl/workspace": "^13.8.5"
+  }
 }

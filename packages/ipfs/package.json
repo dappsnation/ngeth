@@ -1,19 +1,20 @@
 {
   "name": "@ngeth/ipfs",
-  "version": "0.0.1",
+  "version": "0.0.4",
   "builders": "./tools/builders/builders.json",
   "schematics": "./tools/schematics/schematics.json",
   "ng-add": {
-    "save": true
+    "save": false
   },
   "peerDependencies": {
-    "@angular/common": "^13.2.0",
-    "@angular/core": "^13.2.0",
-    "ipfs": "^0.62.0"
+    "@angular/common": ">13.0.0",
+    "@angular/core": ">13.0.0",
+    "ipfs": "^0.62.0",
+    "ipfsd-ctl": "^10.0.6",
+    "rxjs": ">7.0.0"
   },
   "dependencies": {
     "tslib": "^2.3.0",
-    "ipfsd-ctl": "^10.0.6",
-    "@nrwl/devkit": "13.8.5"
+    "@ngeth/devkit": "0.0.4"
   }
 }
