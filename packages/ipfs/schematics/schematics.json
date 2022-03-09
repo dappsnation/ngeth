@@ -10,7 +10,7 @@
     }
   },
   "generators": {
-    "add": {
+    "ng-add": {
       "factory": "./add/index#nxGenerator",
       "schema": "./add/schema.json",
       "description": "Initialize the @ngeth/ipfs module",

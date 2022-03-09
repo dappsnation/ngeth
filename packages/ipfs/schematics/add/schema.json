@@ -3,6 +3,7 @@
   "$id": "IpfsNgAdd",
   "title": "Add IPFS",
   "type": "object",
+  "cli": "nx",
   "properties": {
     "project": {
       "type": "string",
