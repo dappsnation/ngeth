@@ -6,7 +6,9 @@
   "targets": {
     "build": {
       "executor": "@nrwl/angular:package",
-      "outputs": ["dist/packages/hardhat"],
+      "outputs": [
+        "dist/packages/hardhat"
+      ],
       "options": {
         "project": "packages/hardhat/ng-package.json"
       },
@@ -22,7 +24,9 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/packages/hardhat"],
+      "outputs": [
+        "coverage/packages/hardhat"
+      ],
       "options": {
         "jestConfig": "packages/hardhat/jest.config.js",
         "passWithNoTests": true

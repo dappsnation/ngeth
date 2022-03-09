@@ -3,12 +3,10 @@
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
     "module": "commonjs",
-    "moduleResolution": "node",
-    "declaration": false,
+    "declaration": true,
     "declarationMap": false,
-    "inlineSources": true,
     "skipLibCheck": true,
-    "types": []
+    "types": ["node"]
   },
   "include": ["builders/**/*.ts", "schematics/**/*.ts"],
   "exclude": []

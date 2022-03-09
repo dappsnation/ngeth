@@ -1,8 +1,17 @@
 {
   "$schema": "../../../../node_modules/@angular-devkit/schematics/collection-schema.json",
+  "extends": ["@nrwl/workspace"],
   "schematics": {
     "ng-add": {
-      "factory": "./add/index",
+      "factory": "./add/index#ngSchematic",
+      "schema": "./add/schema.json",
+      "description": "Initialize the @ngeth/ipfs module",
+      "hidden": true
+    }
+  },
+  "generators": {
+    "add": {
+      "factory": "./add/index#nxGenerator",
       "schema": "./add/schema.json",
       "description": "Initialize the @ngeth/ipfs module",
       "hidden": true

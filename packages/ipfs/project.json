@@ -31,22 +31,27 @@
         "outputPath": "dist/packages/ipfs/tools",
         "main": "packages/ipfs/src/tools",
         "tsConfig": "packages/ipfs/tsconfig.tools.json",
-        "assets": [{
-          "input": "packages/ipfs/builders",
-          "glob": "**/*.json",
-          "ignore": [],
-          "output": "/builders"
-        }, {
-          "input": "packages/ipfs/schematics",
-          "glob": "**/*.json",
-          "ignore": [],
-          "output": "/schematics"
-        }]
+        "assets": [
+          {
+            "input": "packages/ipfs/builders",
+            "glob": "**/*.json",
+            "ignore": [],
+            "output": "/builders"
+          },
+          {
+            "input": "packages/ipfs/schematics",
+            "glob": "**/*.json",
+            "ignore": [],
+            "output": "/schematics"
+          }
+        ]
       }
     },
     "build-package": {
       "executor": "@nrwl/angular:package",
-      "outputs": ["dist/packages/ipfs"],
+      "outputs": [
+        "dist/packages/ipfs"
+      ],
       "options": {
         "project": "packages/ipfs/ng-package.json"
       },
@@ -62,7 +67,9 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/packages/ipfs"],
+      "outputs": [
+        "coverage/packages/ipfs"
+      ],
       "options": {
         "jestConfig": "packages/ipfs/jest.config.js",
         "passWithNoTests": true
