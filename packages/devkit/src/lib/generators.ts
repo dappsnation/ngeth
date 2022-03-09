@@ -118,10 +118,10 @@ export function updateTsConfig(tree: Tree, project: string, updates: Record<stri
 // GIT_IGNORE //
 ////////////////
 export function updateGitIgnore(tree: Tree, text: string) {
-  const file = `${tree.root}/.gitignore`;
+  const file = '.gitignore';
   if (!tree.exists(file)) return;
   const content = tree.read(file)?.toString('utf-8');
   if (!content) return;
   if (content.includes(text)) return;
-  tree.write(file, `${content}\n${text}`);
+  tree.write(file, `${content}\n\n${text}`);
 }

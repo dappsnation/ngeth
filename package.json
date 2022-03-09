@@ -36,6 +36,7 @@
     "@angular/cli": "~13.2.0",
     "@angular/compiler-cli": "~13.2.0",
     "@angular/language-service": "~13.2.0",
+    "@ngeth/devkit": "file:./dist/packages/devkit",
     "@ngeth/ipfs": "file:./dist/packages/ipfs",
     "@nomiclabs/hardhat-ethers": "^2.0.4",
     "@nrwl/angular": "^13.7.2",
