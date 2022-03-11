@@ -1,0 +1,94 @@
+{
+  "projectType": "application",
+  "root": "e2e/generators",
+  "sourceRoot": "e2e/generators/src",
+  "prefix": "ngeth",
+  "targets": {
+    "build": {
+      "executor": "@angular-devkit/build-angular:browser",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/e2e/generators",
+        "index": "e2e/generators/src/index.html",
+        "main": "e2e/generators/src/main.ts",
+        "polyfills": "e2e/generators/src/polyfills.ts",
+        "tsConfig": "e2e/generators/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "assets": [
+          "e2e/generators/src/favicon.ico",
+          "e2e/generators/src/assets"
+        ],
+        "styles": ["e2e/generators/src/styles.scss"],
+        "scripts": []
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kb",
+              "maximumError": "1mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "2kb",
+              "maximumError": "4kb"
+            }
+          ],
+          "fileReplacements": [
+            {
+              "replace": "e2e/generators/src/environments/environment.ts",
+              "with": "e2e/generators/src/environments/environment.prod.ts"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "development": {
+          "buildOptimizer": false,
+          "optimization": false,
+          "vendorChunk": true,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve": {
+      "executor": "@angular-devkit/build-angular:dev-server",
+      "configurations": {
+        "production": {
+          "browserTarget": "generators:build:production"
+        },
+        "development": {
+          "browserTarget": "generators:build:development"
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "extract-i18n": {
+      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "options": {
+        "browserTarget": "generators:build"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "e2e/generators/src/**/*.ts",
+          "e2e/generators/src/**/*.html"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/e2e/generators"],
+      "options": {
+        "jestConfig": "e2e/generators/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

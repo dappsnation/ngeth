@@ -1,148 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { join, resolve } from 'path';
-import { existsSync, mkdirSync, promises as fs } from 'fs';
-import * as prettier from 'prettier';
-import { HardhatRuntimeEnvironment } from 'hardhat/types';
+import { ABIDescription, ABIParameter, EventDescription, FunctionDescription } from './types';
 
-// TYPES //
-
-export type ABITypeParameter =
-  | 'uint'
-  | 'uint[]' // TODO : add <M>
-  | 'int'
-  | 'int[]' // TODO : add <M>
-  | 'address'
-  | 'address[]'
-  | 'bool'
-  | 'bool[]'
-  | 'fixed'
-  | 'fixed[]' // TODO : add <M>
-  | 'ufixed'
-  | 'ufixed[]' // TODO : add <M>
-  | 'bytes'
-  | 'bytes[]' // TODO : add <M>
-  | 'function'
-  | 'function[]'
-  | 'tuple'
-  | 'tuple[]'
-  | string; // Fallback
-
-export interface ABIParameter {
-  /** The name of the parameter */
-  name: string;
-  /** The canonical type of the parameter */
-  type: ABITypeParameter;
-  /** Used for tuple types */
-  components?: ABIParameter[];
-  /**
-   * @example "struct StructName"
-   * @example "struct Contract.StructName"
-   */
-  internalType?: string;
-}
-
-export interface FunctionDescription {
-  /** Type of the method. default is 'function' */
-  type?: 'function' | 'constructor' | 'fallback';
-  /** The name of the function. Constructor and fallback functions never have a name */
-  name?: string;
-  /** List of parameters of the method. Fallback functions don’t have inputs. */
-  inputs?: ABIParameter[];
-  /** List of the output parameters for the method, if any */
-  outputs?: ABIParameter[];
-  /** State mutability of the method */
-  stateMutability: 'pure' | 'view' | 'nonpayable' | 'payable';
-  /** true if function accepts Ether, false otherwise. Default is false */
-  payable?: boolean;
-  /** true if function is either pure or view, false otherwise. Default is false  */
-  constant?: boolean;
-}
-
-export interface EventDescription {
-  type: 'event';
-  name: string;
-  inputs: (ABIParameter & {
-    /** true if the field is part of the log’s topics, false if it one of the log’s data segment. */
-    indexed: boolean;
-  })[];
-  /** true if the event was declared as anonymous. */
-  anonymous: boolean;
-}
-
-export type ABIDescription = FunctionDescription | EventDescription;
-
-interface EventRecord {
-  [eventName: string]: string;
-}
-
-interface ContractTemplate {
-  contractName: string;
-  abi: ABIDescription[];
-  deploy?: FunctionDescription;
-  calls: FunctionDescription[];
-  methods: FunctionDescription[];
-  events: EventDescription[];
-  structs: string;
-}
-
-// COMMON //
-
-const common = `import { NgContract } from 'ngeth';
-import type { EventFilter, Signer, Event } from 'ethers';
-import type { Listener, Provider, BlockTag } from "@ethersproject/providers";
-import type { Observable } from 'rxjs';
-
-export type FilterParam<T> = T | T[] | null;
-export interface TypedFilter<T> extends EventFilter {}
-
-
-export type EventArgs<T extends ContractEvents<any, any>, K extends keyof T['filters']> = Parameters<T['events'][K]> & T['queries'][K];
-export interface TypedEvent<T extends ContractEvents<any, any>, K extends keyof T['filters']> extends Event {
-  args: EventArgs<T, K>;
-}
-
-interface ContractEvents<EventKeys extends string, FilterKeys extends string> {
-  events: {[name in EventKeys]: Listener; }
-  filters: {[name in FilterKeys]: (...args: any[]) => TypedFilter<name>; }
-  queries: {[name in FilterKeys]: any }
-}
-
-export class TypedContract<
-  Events extends ContractEvents<EventKeys, FilterKeys>,
-  EventKeys extends Extract<keyof Events['events'], string> = Extract<keyof Events['events'], string>,
-  FilterKeys extends Extract<keyof Events['filters'], string> = Extract<keyof Events['filters'], string>,
-> extends NgContract {
-  override attach!: (addressOrName: string) => typeof this;
-  override connect!: (providerOrSigner: Provider | Signer) => typeof this;
-  deloyed?: () => Promise<typeof this>;
-  
-  // Events
-  override listenerCount!: (eventName?: EventFilter | EventKeys) => number;
-  override listeners!: <K extends EventKeys>(eventName?: TypedFilter<K> | K) => Listener[];
-  override off!: <K extends EventKeys>(eventName: TypedFilter<K> | K, listener: Events['events'][K]) => this;
-  override on!: <K extends EventKeys>(eventName: TypedFilter<K> | K, listener: Events['events'][K]) => this;
-  override once!: <K extends EventKeys>(eventName: TypedFilter<K> | K, listener: Events['events'][K]) => this;
-  override removeListener!: <K extends EventKeys>(eventName: TypedFilter<K> | K, listener: Events['events'][K]) => this;
-  override removeAllListeners!: (eventName?: EventFilter | EventKeys) => this;
-  
-  // FILTERS
-  override filters!: Events['filters'];
-  override queryFilter!: <K extends FilterKeys>(
-    event: TypedFilter<K>,
-    fromBlockOrBlockhash?: BlockTag,
-    toBlock?: BlockTag,
-  ) => Promise<TypedEvent<Events, K>[]>;
-
-  // Observable
-  override from!: <K extends FilterKeys>(event: TypedFilter<K> | K) => Observable<EventArgs<Events, K>[]>;
-}
-`;
-
-export async function getContractNames(hre: HardhatRuntimeEnvironment) {
-  const allNames = await hre.artifacts.getAllFullyQualifiedNames();
-  const src = resolve(hre.config.paths.sources);
-  return allNames.filter((name) => resolve(name).startsWith(src));
-}
 
 function isEvent(node: ABIDescription): node is EventDescription {
   return node.type === 'event';
@@ -164,52 +22,7 @@ function isConstrutor(node: ABIDescription): node is FunctionDescription {
   return node.type === 'constructor';
 }
 
-export async function generate(hre: HardhatRuntimeEnvironment) {
-  const names = await getContractNames(hre);
-  if (!names.length) return;
 
-  const src = resolve('src');
-  if (!existsSync(src)) mkdirSync(src);
-
-  const folder = join(src, 'contracts');
-  if (!existsSync(folder)) mkdirSync(folder);
-
-  const commonPath = join(folder, 'common.ts');
-  fs.writeFile(commonPath, common);
-
-  const allContracts: string[] = [];
-  for (const name of names) {
-    const { contractName, abi, bytecode } = await hre.artifacts.readArtifact(
-      name
-    );
-    allContracts.push(contractName);
-    const deploy = abi.find(isConstrutor);
-    const calls: FunctionDescription[] = abi.filter(isCall);
-    const methods: FunctionDescription[] = abi.filter(isMethod);
-    const events: EventDescription[] = abi.filter(isEvent);
-    const structs = getAllStructs(abi);
-    const contract = getContract({
-      contractName,
-      calls,
-      methods,
-      deploy,
-      events,
-      structs,
-      abi,
-    });
-    const code = prettier.format(contract, {
-      parser: 'typescript',
-      printWidth: 120,
-    });
-    const path = join(folder, `${contractName}.ts`);
-    fs.writeFile(path, code);
-  }
-  // index.ts
-  const exportAll = allContracts
-    .map((name) => `export * from "./contracts/${name}";`)
-    .join('\n');
-  fs.writeFile(join(src, 'index.ts'), exportAll);
-}
 
 const getOutputs = (outputs: ABIParameter[] = []) => {
   if (!outputs.length) return 'void';
@@ -489,45 +302,45 @@ const getQuery = (node: EventDescription) => {
 
 // CONTRACT //
 
-const getContract = ({
-  abi,
-  contractName,
-  structs,
-  calls,
-  methods,
-  events,
-}: ContractTemplate) => `
-import { TypedContract, FilterParam, TypedFilter } from './common';
-import { BigNumber, Overrides, CallOverrides, PayableOverrides, Signer, ContractTransaction, BytesLike, BigNumberish } from "ethers";
-import { Provider } from '@ethersproject/providers';
-import env from '../../environments/environment';
-
-export interface ${contractName}Events {
-  events: {
-    ${getAllEvents(events)}
-  },
-  filters: {
-    ${getAllFilters(events)}
-  },
-  queries: {
-    ${getAllQueries(events)}
+export const getContract = (contractName: string, abi: ABIDescription[]) => {
+  const deploy = abi.find(isConstrutor);
+  const calls: FunctionDescription[] = abi.filter(isCall);
+  const methods: FunctionDescription[] = abi.filter(isMethod);
+  const events: EventDescription[] = abi.filter(isEvent);
+  const structs = getAllStructs(abi);
+  return`
+  import { NgContract, FilterParam, TypedFilter } from '@ngeth/core';
+  import { BigNumber, Overrides, CallOverrides, PayableOverrides, Signer, ContractTransaction, BytesLike, BigNumberish } from "ethers";
+  import { Provider } from '@ethersproject/providers';
+  import env from '../../environments/environment';
+  
+  export interface ${contractName}Events {
+    events: {
+      ${getAllEvents(events)}
+    },
+    filters: {
+      ${getAllFilters(events)}
+    },
+    queries: {
+      ${getAllQueries(events)}
+    }
   }
-}
-
-${structs}
-
-export const abi = ${JSON.stringify(abi)};
-
-export class ${contractName} extends TypedContract<${contractName}Events> {
-  constructor(signer?: Signer | Provider) {
-    super(env.addresses.${contractName}, abi, signer);
+  
+  ${structs}
+  
+  export const abi = ${JSON.stringify(abi)};
+  
+  export class ${contractName} extends NgContract<${contractName}Events> {
+    constructor(signer?: Signer | Provider) {
+      super(env.addresses.${contractName}, abi, signer);
+    }
+  
+    ${getAllCalls(calls)}
+  
+    ${getAllMethods(methods)}
   }
-
-  ${getAllCalls(calls)}
-
-  ${getAllMethods(methods)}
+  `;
 }
-`;
 
 // FACTORY //
 const getDeploy = (contractName: string, inputs: ABIParameter[] = []) => {

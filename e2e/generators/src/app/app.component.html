@@ -1,0 +1,5 @@
+<form [formGroup]="form" (ngSubmit)="generate()">
+  <input formControlName="name" />
+  <textarea formControlName="abi"></textarea>
+  <button type="submit">Submit</button>
+</form>

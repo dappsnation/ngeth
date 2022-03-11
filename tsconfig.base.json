@@ -10,7 +10,7 @@
     "importHelpers": true,
     "target": "es2015",
     "module": "esnext",
-    "lib": ["es2017", "dom"],
+    "lib": ["es2017", "dom", "ES2019.Array"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
@@ -20,8 +20,8 @@
       "@ngeth/core": ["packages/core/src/index.ts"],
       "@ngeth/devkit": ["packages/devkit/src/index.ts"],
       "@ngeth/hardhat": ["packages/hardhat/src/index.ts"],
+      "@ngeth/hardhat/*": ["packages/hardhat/src/*"],
       "@ngeth/ipfs": ["packages/ipfs/src/index.ts"],
-      "ngeth/hardhat": ["packages/ngeth/src/hardhat/index.ts"],
       "nxeth/plugin": ["packages/plugin/src/index.ts"]
     }
   },
