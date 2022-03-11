@@ -10,13 +10,7 @@ import { AppComponent } from './app.component';
   declarations: [AppComponent],
   imports: [
     BrowserModule,
-    RouterModule.forRoot([
-      {
-        path: 'admin',
-        loadChildren: () =>
-          import('./admin/admin.module').then((m) => m.AdminModule),
-      },
-    ]),
+    RouterModule.forRoot([]),
     ReactiveFormsModule,
     EthModule,
   ],

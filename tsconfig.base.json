@@ -22,6 +22,7 @@
       "@ngeth/hardhat": ["packages/hardhat/src/index.ts"],
       "@ngeth/hardhat/*": ["packages/hardhat/src/*"],
       "@ngeth/ipfs": ["packages/ipfs/src/index.ts"],
+      "@ngeth/polygon": ["packages/polygon/src/index.ts"],
       "nxeth/plugin": ["packages/plugin/src/index.ts"]
     }
   },

@@ -1,0 +1,42 @@
+{
+  "projectType": "library",
+  "root": "packages/polygon",
+  "sourceRoot": "packages/polygon/src",
+  "prefix": "ngeth",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/angular:package",
+      "outputs": ["dist/packages/polygon"],
+      "options": {
+        "project": "packages/polygon/ng-package.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "packages/polygon/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "packages/polygon/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/packages/polygon"],
+      "options": {
+        "jestConfig": "packages/polygon/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "packages/polygon/src/**/*.ts",
+          "packages/polygon/src/**/*.html"
+        ]
+      }
+    }
+  },
+  "tags": []
+}

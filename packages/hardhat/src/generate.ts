@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { ABIDescription, ABIParameter, EventDescription, FunctionDescription } from './types';
+import * as parserTypeScript from "prettier/parser-typescript";
+import * as prettier from "prettier/standalone";
 
 
 function isEvent(node: ABIDescription): node is EventDescription {
@@ -169,7 +171,7 @@ const getSignatureCall = (call: FunctionDescription) => {
     .concat('overrides?: CallOverrides')
     .join(', ');
   const output = getOutputs(call.outputs);
-  return `['${name}'](${params}): Promise<${output}> { ${getSuperCall(name)} }`;
+  return `['${name}']!: (${params}) => Promise<${output}>`;
 };
 
 const getCall = (call: FunctionDescription) => {
@@ -180,7 +182,7 @@ const getCall = (call: FunctionDescription) => {
     .concat('overrides?: CallOverrides')
     .join(', ');
   const output = getOutputs(call.outputs);
-  return `${name}(${params}): Promise<${output}> { ${getSuperCall(name)} }`;
+  return `${name}!: (${params}) => Promise<${output}>;`;
 };
 
 // METHODS //
@@ -216,9 +218,7 @@ const getSignatureMethod = (method: FunctionDescription) => {
     .map(getParam)
     .concat(`overrides?: ${override}`)
     .join(', ');
-  return `['${name}'](${params}): Promise<ContractTransaction> { ${getSuperCall(
-    name
-  )} }`;
+  return `['${name}']!: (${params}) => Promise<ContractTransaction>;`;
 };
 
 const getMethod = (method: FunctionDescription) => {
@@ -230,9 +230,7 @@ const getMethod = (method: FunctionDescription) => {
     .map(getParam)
     .concat(`overrides?: ${override}`)
     .join(', ');
-  return `${name}(${params}): Promise<ContractTransaction> { ${getSuperCall(
-    name
-  )} }`;
+  return `${name}!: (${params}) => Promise<ContractTransaction>;`;
 };
 
 // EVENTS //
@@ -308,11 +306,11 @@ export const getContract = (contractName: string, abi: ABIDescription[]) => {
   const methods: FunctionDescription[] = abi.filter(isMethod);
   const events: EventDescription[] = abi.filter(isEvent);
   const structs = getAllStructs(abi);
-  return`
+
+  const code = `
   import { NgContract, FilterParam, TypedFilter } from '@ngeth/core';
   import { BigNumber, Overrides, CallOverrides, PayableOverrides, Signer, ContractTransaction, BytesLike, BigNumberish } from "ethers";
   import { Provider } from '@ethersproject/providers';
-  import env from '../../environments/environment';
   
   export interface ${contractName}Events {
     events: {
@@ -328,18 +326,24 @@ export const getContract = (contractName: string, abi: ABIDescription[]) => {
   
   ${structs}
   
-  export const abi = ${JSON.stringify(abi)};
-  
   export class ${contractName} extends NgContract<${contractName}Events> {
-    constructor(signer?: Signer | Provider) {
-      super(env.addresses.${contractName}, abi, signer);
-    }
-  
+    // Read
     ${getAllCalls(calls)}
-  
+
+    // Write
     ${getAllMethods(methods)}
+
+    constructor(address: string, signer?: Signer | Provider) {
+      super(address, abi, signer);
+    }
   }
-  `;
+
+  export const abi = ${JSON.stringify(abi)};`;
+  return prettier.format(code, {
+    parser: 'typescript',
+    plugins: [parserTypeScript],
+    printWidth: 120,
+  });
 }
 
 // FACTORY //
