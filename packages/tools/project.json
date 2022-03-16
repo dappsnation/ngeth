@@ -2,6 +2,13 @@
   "root": "packages/tools",
   "sourceRoot": "packages/tools/src",
   "targets": {
+    "publish": {
+      "builder": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "npm publish --tag={tag} --access=public",
+        "cwd": "dist/packages/tools"
+      }
+    },
     "build": {
       "executor": "@nrwl/js:tsc",
       "outputs": ["{options.outputPath}"],

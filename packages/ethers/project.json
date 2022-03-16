@@ -4,6 +4,13 @@
   "sourceRoot": "packages/ethers/src",
   "prefix": "ngeth",
   "targets": {
+    "publish": {
+      "builder": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "npm publish --tag={tag} --access=public",
+        "cwd": "dist/packages/ethers"
+      }
+    },
     "build": {
       "executor": "@nrwl/angular:package",
       "outputs": ["dist/packages/ethers"],

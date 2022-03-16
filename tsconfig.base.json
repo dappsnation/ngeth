@@ -22,7 +22,6 @@
       "@ngeth/ethers": ["packages/ethers/src/index.ts"],
       "@ngeth/hardhat": ["packages/hardhat/src/index.ts"],
       "@ngeth/ipfs": ["packages/ipfs/src/index.ts"],
-      "@ngeth/ipfs/tools": ["packages/ipfs/tools/src/index.ts"],
       "@ngeth/polygon": ["packages/polygon/src/index.ts"],
       "@ngeth/tools": ["packages/tools/src/index.ts"],
       "nxeth/plugin": ["packages/plugin/src/index.ts"]

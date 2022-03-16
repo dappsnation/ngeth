@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/schema",
   "name": "plugin",
-  "version": "0.0.1",
+  "version": "0.0.5",
   "generators": {
     "application": {
       "factory": "./src/generators/application/generator",
