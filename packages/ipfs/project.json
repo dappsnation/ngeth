@@ -5,38 +5,6 @@
   "prefix": "nxeth",
   "targets": {
     "build": {
-      "executor": "@nrwl/workspace:run-commands",
-      "options": {
-        "parallel": false,
-        "commands": [
-          "nx run ipfs:build-package:production",
-          "nx run ipfs:build-tools"
-        ]
-      }
-    },
-    "build-tools": {
-      "executor": "@nrwl/js:tsc",
-      "options": {
-        "outputPath": "dist/packages/ipfs/tools",
-        "main": "packages/ipfs/src/tools",
-        "tsConfig": "packages/ipfs/tsconfig.tools.json",
-        "assets": [
-          {
-            "input": "packages/ipfs/builders",
-            "glob": "**/*.json",
-            "ignore": [],
-            "output": "/builders"
-          },
-          {
-            "input": "packages/ipfs/schematics",
-            "glob": "**/*.json",
-            "ignore": [],
-            "output": "/schematics"
-          }
-        ]
-      }
-    },
-    "build-package": {
       "executor": "@nrwl/angular:package",
       "outputs": [
         "dist/packages/ipfs"
@@ -74,5 +42,5 @@
       }
     }
   },
-  "tags": []
+  "tags": ["ipfs"]
 }
