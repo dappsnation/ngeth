@@ -6,6 +6,7 @@
     "ethers": "packages/ethers",
     "generators": "e2e/generators",
     "hardhat": "packages/hardhat",
+    "hardhat-tools": "packages/hardhat/tools",
     "ipfs": "packages/ipfs",
     "playground": "e2e/playground",
     "playground-contracts": "e2e/playground-contracts",
