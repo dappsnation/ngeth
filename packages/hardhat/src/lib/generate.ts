@@ -4,7 +4,6 @@ import * as prettier from 'prettier';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { getContract } from '@ngeth/tools';
 
-
 const common = `import { NgContract } from 'ngeth';
 import type { EventFilter, Signer, Event } from 'ethers';
 import type { Listener, Provider, BlockTag } from "@ethersproject/providers";
@@ -55,8 +54,6 @@ export class TypedContract<
   override from!: <K extends FilterKeys>(event: TypedFilter<K> | K) => Observable<EventArgs<Events, K>[]>;
 }
 `;
-
-
 
 export async function getContractNames(hre: HardhatRuntimeEnvironment) {
   const allNames = await hre.artifacts.getAllFullyQualifiedNames();

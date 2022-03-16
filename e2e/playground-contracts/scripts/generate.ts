@@ -1,8 +1,7 @@
-import { join, resolve } from "path";
-import { existsSync, mkdirSync, promises as fs} from "fs";
+import { join, resolve } from 'path';
+import { existsSync, mkdirSync, promises as fs } from 'fs';
 import * as prettier from 'prettier';
-import { HardhatRuntimeEnvironment } from "hardhat/types";
-
+import { HardhatRuntimeEnvironment } from 'hardhat/types';
 
 // TYPES //
 
@@ -25,7 +24,7 @@ export type ABITypeParameter =
   | 'function[]'
   | 'tuple'
   | 'tuple[]'
-  | string // Fallback
+  | string; // Fallback
 
 export interface ABIParameter {
   /** The name of the parameter */
@@ -35,39 +34,38 @@ export interface ABIParameter {
   /** Used for tuple types */
   components?: ABIParameter[];
   /**
-   * @example "struct StructName" 
-   * @example "struct Contract.StructName" 
+   * @example "struct StructName"
+   * @example "struct Contract.StructName"
    */
   internalType?: string;
 }
 
 export interface FunctionDescription {
   /** Type of the method. default is 'function' */
-  type?: 'function' | 'constructor' | 'fallback'
+  type?: 'function' | 'constructor' | 'fallback';
   /** The name of the function. Constructor and fallback functions never have a name */
-  name?: string
+  name?: string;
   /** List of parameters of the method. Fallback functions don’t have inputs. */
-  inputs?: ABIParameter[]
+  inputs?: ABIParameter[];
   /** List of the output parameters for the method, if any */
-  outputs?: ABIParameter[]
+  outputs?: ABIParameter[];
   /** State mutability of the method */
-  stateMutability: 'pure' | 'view' | 'nonpayable' | 'payable'
+  stateMutability: 'pure' | 'view' | 'nonpayable' | 'payable';
   /** true if function accepts Ether, false otherwise. Default is false */
-  payable?: boolean
+  payable?: boolean;
   /** true if function is either pure or view, false otherwise. Default is false  */
-  constant?: boolean
+  constant?: boolean;
 }
 
 export interface EventDescription {
-  type: 'event'
-  name: string
-  inputs: (ABIParameter &
-    {
-      /** true if the field is part of the log’s topics, false if it one of the log’s data segment. */
-      indexed: boolean
-    })[]
+  type: 'event';
+  name: string;
+  inputs: (ABIParameter & {
+    /** true if the field is part of the log’s topics, false if it one of the log’s data segment. */
+    indexed: boolean;
+  })[];
   /** true if the event was declared as anonymous. */
-  anonymous: boolean
+  anonymous: boolean;
 }
 
 export type ABIDescription = FunctionDescription | EventDescription;
@@ -86,7 +84,6 @@ interface ContractTemplate {
   filters: EventRecord;
   structs: string;
 }
-
 
 // COMMON //
 
@@ -127,12 +124,12 @@ export class TypedContract<
     toBlock?: BlockTag,
   ) => Promise<TypedEvent<Events[K]>[]>
 }
-`
+`;
 
 export async function getContractNames(hre: HardhatRuntimeEnvironment) {
   const allNames = await hre.artifacts.getAllFullyQualifiedNames();
   const src = resolve(hre.config.paths.sources);
-  return allNames.filter(name => resolve(name).startsWith(src));
+  return allNames.filter((name) => resolve(name).startsWith(src));
 }
 
 export async function generate(hre: HardhatRuntimeEnvironment) {
@@ -150,23 +147,30 @@ export async function generate(hre: HardhatRuntimeEnvironment) {
 
   const allContracts: string[] = [];
   for (const name of names) {
-    const { contractName, abi, bytecode } = await hre.artifacts.readArtifact(name);
+    const { contractName, abi, bytecode } = await hre.artifacts.readArtifact(
+      name
+    );
     allContracts.push(contractName);
     let deploy;
     const calls: string[] = [];
     const methods: string[] = [];
     const events: EventRecord = {};
     const filters: EventRecord = {};
-    const structs = getAllStructs(abi)
+    const structs = getAllStructs(abi);
     for (const node of abi as ABIDescription[]) {
-      if (node.type === "event") {
+      if (node.type === 'event') {
         events[node.name] = `(${getParams(node.inputs)}) => void`;
-        filters[node.name] = `(${getFilterParams(node)}) => TypedFilter<"${node.name}">`
+        filters[node.name] = `(${getFilterParams(node)}) => TypedFilter<"${
+          node.name
+        }">`;
       } else {
-        if (node.type === "constructor") {
+        if (node.type === 'constructor') {
           deploy = getDeploy(contractName, node.inputs);
-        } else if (node.type === "function") {
-          if (node.stateMutability === "view" || node.stateMutability === "pure") {
+        } else if (node.type === 'function') {
+          if (
+            node.stateMutability === 'view' ||
+            node.stateMutability === 'pure'
+          ) {
             calls.push(getCall(node));
           } else {
             methods.push(getMethod(node));
@@ -174,36 +178,50 @@ export async function generate(hre: HardhatRuntimeEnvironment) {
         }
       }
     }
-    const contract = getContract({ contractName, calls, methods, deploy, events, filters, structs, abi });
-    const code = prettier.format(contract, { parser: 'typescript', printWidth: 120 });
+    const contract = getContract({
+      contractName,
+      calls,
+      methods,
+      deploy,
+      events,
+      filters,
+      structs,
+      abi,
+    });
+    const code = prettier.format(contract, {
+      parser: 'typescript',
+      printWidth: 120,
+    });
     const path = join(folder, `${contractName}.ts`);
     fs.writeFile(path, code);
   }
   // index.ts
-  const exportAll = allContracts.map(name => `export * from "./contracts/${name}";`).join('\n');
-  fs.writeFile(join(src, "index.ts"), exportAll);
+  const exportAll = allContracts
+    .map((name) => `export * from "./contracts/${name}";`)
+    .join('\n');
+  fs.writeFile(join(src, 'index.ts'), exportAll);
 }
-
 
 const getOutputs = (outputs: ABIParameter[] = []) => {
-  if (!outputs.length) return "";
+  if (!outputs.length) return '';
   if (outputs.length === 1) return getType(outputs[0]);
   return `[${outputs.map(getType)}]`;
-}
-const getParams = (params: ABIParameter[] = []) => params.map(getParam).join(", ");
+};
+const getParams = (params: ABIParameter[] = []) =>
+  params.map(getParam).join(', ');
 const getParam = (param: ABIParameter) => `${param.name}: ${getType(param)}`;
 const getType = (param: ABIParameter): string => {
   const type = param.type;
-  if (type.endsWith("]")) return getArray(param);
-  if (type === "tuple") return getStructName(param.internalType);
-  if (type === "string") return "string";
-  if (type === "address") return "string";
-  if (type === "bool") return "boolean";
-  if (type.startsWith("bytes")) return "string";
-  if (type.startsWith("uint")) return "BigNumber";
-  if (type.startsWith("int")) return "BigNumber";
-  return "";
-}
+  if (type.endsWith(']')) return getArray(param);
+  if (type === 'tuple') return getStructName(param.internalType);
+  if (type === 'string') return 'string';
+  if (type === 'address') return 'string';
+  if (type === 'bool') return 'boolean';
+  if (type.startsWith('bytes')) return 'string';
+  if (type.startsWith('uint')) return 'BigNumber';
+  if (type.startsWith('int')) return 'BigNumber';
+  return '';
+};
 
 const getArray = (param: ABIParameter) => {
   const [type, end] = param.type.split('[');
@@ -215,85 +233,109 @@ const getArray = (param: ABIParameter) => {
   } else {
     return `${itemType}[]`;
   }
-}
+};
 
 // STRUCT //
 
-/** "struct ContractName.StructName" => "StructName" */ 
-const getStructName = (internalType: string) => internalType.split(' ')[1].split('.').pop();
+/** "struct ContractName.StructName" => "StructName" */
+const getStructName = (internalType: string) =>
+  internalType.split(' ')[1].split('.').pop();
 const getStruct = (name: string, fields: ABIParameter[]) => {
   return `interface ${name} {
     ${fields.map(getParam).join('\n')}
-  }`
-}
+  }`;
+};
 const getAllStructs = (abi: ABIDescription[]) => {
   const record: Record<string, string> = {};
   const getAllParams = (description: ABIDescription) => {
     if (description.type === 'event') return description.inputs;
-    if (description.outputs) return description.outputs.concat(description.inputs)
+    if (description.outputs)
+      return description.outputs.concat(description.inputs);
     return description.inputs || [];
-  }
-  const tuples = abi.map(getAllParams).flat().filter(node => node.type === 'tuple');
+  };
+  const tuples = abi
+    .map(getAllParams)
+    .flat()
+    .filter((node) => node.type === 'tuple');
   for (const tuple of tuples) {
     const name = getStructName(tuple.internalType);
     if (!record[name]) record[name] = getStruct(name, tuple.components);
   }
   return Object.values(record).join('\n');
-}
-
+};
 
 // CALLS //
 
 const getCalls = (calls: string[]) => {
   if (!calls.length) return '';
   return `// Calls
-  ${calls.join('\n')}`
-}
+  ${calls.join('\n')}`;
+};
 
 const getCall = (call: FunctionDescription) => {
-  const params = call.inputs.map(getParam).concat('overrides?: CallOverrides').join(', ');
+  const params = call.inputs
+    .map(getParam)
+    .concat('overrides?: CallOverrides')
+    .join(', ');
   const output = getOutputs(call.outputs);
   return `${call.name}: (${params}) => Promise<${output}>`;
-}
+};
 
 // METHODS //
 
 const getMethods = (methods: string[]) => {
   if (!methods.length) return '';
   return `// Methods
-  ${methods.join('\n')}`
-}
+  ${methods.join('\n')}`;
+};
 
 const getMethod = (method: FunctionDescription) => {
-  const override = method.stateMutability === 'payable' ? 'PayableOverrides' : 'Overrides';
-  const params = method.inputs.map(getParam).concat(`overrides?: ${override}`).join(', ');
+  const override =
+    method.stateMutability === 'payable' ? 'PayableOverrides' : 'Overrides';
+  const params = method.inputs
+    .map(getParam)
+    .concat(`overrides?: ${override}`)
+    .join(', ');
   return `${method.name}: (${params}) => Promise<TransactionResponse>`;
-}
+};
 
 // EVENTS //
 const getEventFields = (events: EventRecord) => {
   const entries = Object.entries(events);
   if (!entries.length) return '';
-  return entries.map(([ event, listener ]) => `${event}: ${listener}`).join(';\n');
-}
-
+  return entries
+    .map(([event, listener]) => `${event}: ${listener}`)
+    .join(';\n');
+};
 
 // FILTERS //
 const getFilterFields = (filters: EventRecord) => {
   const entries = Object.entries(filters);
   if (!entries.length) return '';
-  return entries.map(([ filter, listener ]) => `${filter}: ${listener}`).join(';\n');
-}
+  return entries
+    .map(([filter, listener]) => `${filter}: ${listener}`)
+    .join(';\n');
+};
 const getFilterParams = (node: EventDescription) => {
-  return node.inputs.filter(input => input.indexed).map(input => {
-    return `${input.name}?: FilterParam<${getType(input)}>`;
-  }).join(", ");
-}
-
+  return node.inputs
+    .filter((input) => input.indexed)
+    .map((input) => {
+      return `${input.name}?: FilterParam<${getType(input)}>`;
+    })
+    .join(', ');
+};
 
 // CONTRACT //
 
-const getContract = ({ abi, contractName, structs, calls, methods, events, filters }: ContractTemplate) => `
+const getContract = ({
+  abi,
+  contractName,
+  structs,
+  calls,
+  methods,
+  events,
+  filters,
+}: ContractTemplate) => `
 import { TypedContract, FilterParam, TypedFilter } from './common';
 import { BigNumber, Overrides, CallOverrides, Signer, ContractFactory, PayableOverrides } from "ethers";
 import { TransactionResponse } from '@ethersproject/providers';
@@ -321,12 +363,13 @@ export class ${contractName} extends TypedContract<${contractName}Events, ${cont
 }
 `;
 
-
-
 // FACTORY //
 const getDeploy = (contractName: string, inputs: ABIParameter[] = []) => {
-  const params = inputs.map(getParam).concat('overrides?: PayableOverrides').join(', ');
+  const params = inputs
+    .map(getParam)
+    .concat('overrides?: PayableOverrides')
+    .join(', ');
   return `deploy(${params}): Promise<${contractName}> {
     return super.deploy(...arguments);
   }`;
-}
+};

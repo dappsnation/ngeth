@@ -1,34 +1,28 @@
 {
-  "projectType": "library",
   "root": "packages/hardhat",
   "sourceRoot": "packages/hardhat/src",
-  "prefix": "nxeth",
+  "projectType": "library",
   "targets": {
     "build": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "parallel": false,
         "commands": [
-          "nx run hardhat:build-package:production",
+          "nx run hardhat:build-package",
           "nx run hardhat:build-tools"
         ]
       }
     },
     "build-package": {
       "executor": "@nrwl/node:package",
-      "outputs": ["dist/packages/hardhat"],
+      "outputs": ["{options.outputPath}"],
       "options": {
-        "main": "packages/hardhat/src/index.ts"
-      },
-      "configurations": {
-        "production": {
-          "tsConfig": "packages/hardhat/tsconfig.lib.prod.json"
-        },
-        "development": {
-          "tsConfig": "packages/hardhat/tsconfig.lib.json"
-        }
-      },
-      "defaultConfiguration": "production"
+        "outputPath": "dist/packages/hardhat",
+        "tsConfig": "packages/hardhat/tsconfig.lib.json",
+        "packageJson": "packages/hardhat/package.json",
+        "main": "packages/hardhat/src/index.ts",
+        "assets": ["packages/hardhat/*.md"]
+      }
     },
     "build-tools": {
       "executor": "@nrwl/js:tsc",
@@ -52,21 +46,19 @@
         ]
       }
     },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["packages/hardhat/**/*.ts"]
+      }
+    },
     "test": {
       "executor": "@nrwl/jest:jest",
       "outputs": ["coverage/packages/hardhat"],
       "options": {
         "jestConfig": "packages/hardhat/jest.config.js",
         "passWithNoTests": true
-      }
-    },
-    "lint": {
-      "executor": "@nrwl/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "packages/hardhat/src/**/*.ts",
-          "packages/hardhat/src/**/*.html"
-        ]
       }
     }
   },

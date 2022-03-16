@@ -2,131 +2,131 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import { ethers } from "ethers";
+import { ethers } from 'ethers';
 import {
   FactoryOptions,
   HardhatEthersHelpers as HardhatEthersHelpersBase,
-} from "@nomiclabs/hardhat-ethers/types";
+} from '@nomiclabs/hardhat-ethers/types';
 
-import * as Contracts from ".";
+import * as Contracts from '.';
 
-declare module "hardhat/types/runtime" {
+declare module 'hardhat/types/runtime' {
   interface HardhatEthersHelpers extends HardhatEthersHelpersBase {
     getContractFactory(
-      name: "Ownable",
+      name: 'Ownable',
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Ownable__factory>;
     getContractFactory(
-      name: "ERC1155",
+      name: 'ERC1155',
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC1155__factory>;
     getContractFactory(
-      name: "IERC1155MetadataURI",
+      name: 'IERC1155MetadataURI',
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC1155MetadataURI__factory>;
     getContractFactory(
-      name: "IERC1155",
+      name: 'IERC1155',
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC1155__factory>;
     getContractFactory(
-      name: "IERC1155Receiver",
+      name: 'IERC1155Receiver',
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC1155Receiver__factory>;
     getContractFactory(
-      name: "IERC721",
+      name: 'IERC721',
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC721__factory>;
     getContractFactory(
-      name: "IERC777",
+      name: 'IERC777',
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC777__factory>;
     getContractFactory(
-      name: "ERC165",
+      name: 'ERC165',
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC165__factory>;
     getContractFactory(
-      name: "IERC165",
+      name: 'IERC165',
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC165__factory>;
     getContractFactory(
-      name: "BaseERC1155",
+      name: 'BaseERC1155',
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.BaseERC1155__factory>;
     getContractFactory(
-      name: "FullMarket",
+      name: 'FullMarket',
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.FullMarket__factory>;
     getContractFactory(
-      name: "Market",
+      name: 'Market',
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Market__factory>;
     getContractFactory(
-      name: "Playground",
+      name: 'Playground',
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Playground__factory>;
 
     getContractAt(
-      name: "Ownable",
+      name: 'Ownable',
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Ownable>;
     getContractAt(
-      name: "ERC1155",
+      name: 'ERC1155',
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ERC1155>;
     getContractAt(
-      name: "IERC1155MetadataURI",
+      name: 'IERC1155MetadataURI',
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IERC1155MetadataURI>;
     getContractAt(
-      name: "IERC1155",
+      name: 'IERC1155',
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IERC1155>;
     getContractAt(
-      name: "IERC1155Receiver",
+      name: 'IERC1155Receiver',
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IERC1155Receiver>;
     getContractAt(
-      name: "IERC721",
+      name: 'IERC721',
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IERC721>;
     getContractAt(
-      name: "IERC777",
+      name: 'IERC777',
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IERC777>;
     getContractAt(
-      name: "ERC165",
+      name: 'ERC165',
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ERC165>;
     getContractAt(
-      name: "IERC165",
+      name: 'IERC165',
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IERC165>;
     getContractAt(
-      name: "BaseERC1155",
+      name: 'BaseERC1155',
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.BaseERC1155>;
     getContractAt(
-      name: "FullMarket",
+      name: 'FullMarket',
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.FullMarket>;
     getContractAt(
-      name: "Market",
+      name: 'Market',
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Market>;
     getContractAt(
-      name: "Playground",
+      name: 'Playground',
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Playground>;
