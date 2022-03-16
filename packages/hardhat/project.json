@@ -4,7 +4,7 @@
   "projectType": "library",
   "targets": {
     "publish": {
-      "builder": "@nrwl/workspace:run-commands",
+      "executor": "@nrwl/workspace:run-commands",
       "options": {
         "command": "npm publish --tag={tag} --access=public",
         "cwd": "dist/packages/hardhat"

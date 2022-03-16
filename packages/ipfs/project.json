@@ -5,7 +5,7 @@
   "prefix": "nxeth",
   "targets": {
     "publish": {
-      "builder": "@nrwl/workspace:run-commands",
+      "executor": "@nrwl/workspace:run-commands",
       "options": {
         "command": "npm publish --tag={tag} --access=public",
         "cwd": "dist/packages/ipfs"
@@ -13,9 +13,7 @@
     },
     "build": {
       "executor": "@nrwl/angular:package",
-      "outputs": [
-        "dist/packages/ipfs"
-      ],
+      "outputs": ["dist/packages/ipfs"],
       "options": {
         "project": "packages/ipfs/ng-package.json"
       },
@@ -31,9 +29,7 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": [
-        "coverage/packages/ipfs"
-      ],
+      "outputs": ["coverage/packages/ipfs"],
       "options": {
         "jestConfig": "packages/ipfs/jest.config.js",
         "passWithNoTests": true

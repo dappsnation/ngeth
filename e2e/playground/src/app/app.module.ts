@@ -3,7 +3,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 
-import { EthModule } from '@ngeth/ethers';
+import { EthersModule } from '@ngeth/ethers';
 import { AppComponent } from './app.component';
 
 @NgModule({
@@ -12,7 +12,7 @@ import { AppComponent } from './app.component';
     BrowserModule,
     RouterModule.forRoot([]),
     ReactiveFormsModule,
-    EthModule,
+    EthersModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

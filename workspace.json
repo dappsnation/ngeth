@@ -1,7 +1,6 @@
 {
   "version": 2,
   "projects": {
-    "core": "packages/core",
     "devkit": "packages/devkit",
     "ethers": "packages/ethers",
     "generators": "e2e/generators",

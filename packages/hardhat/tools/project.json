@@ -10,18 +10,20 @@
         "outputPath": "dist/packages/hardhat/tools",
         "tsConfig": "packages/hardhat/tools/tsconfig.lib.json",
         "main": "packages/hardhat/tools/src/index.ts",
-        "assets": [{
-          "input": "packages/hardhat/tools/builders",
-          "glob": "**/*.json",
-          "ignore": [],
-          "output": "/builders"
-        },
-        {
-          "input": "packages/hardhat/tools/schematics",
-          "glob": "**/*.json",
-          "ignore": [],
-          "output": "/schematics"
-        }]
+        "assets": [
+          {
+            "input": "packages/hardhat/tools/builders",
+            "glob": "**/*.json",
+            "ignore": [],
+            "output": "/builders"
+          },
+          {
+            "input": "packages/hardhat/tools/schematics",
+            "glob": "**/*.json",
+            "ignore": [],
+            "output": "/schematics"
+          }
+        ]
       }
     },
     "lint": {
