@@ -1,6 +1,10 @@
 {
   "name": "@ngeth/hardhat",
-  "version": "0.0.1",
+  "version": "0.0.5",
+  "schematics": "./tools/schematics/schematics.json",
+  "ng-add": {
+    "save": false
+  },
   "peerDependencies": {
     "@angular/common": "^13.2.0",
     "@angular/core": "^13.2.0"

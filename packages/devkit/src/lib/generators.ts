@@ -1,31 +1,30 @@
-import { getWorkspacePath, joinPathFragments, names, ProjectConfiguration, readJson, readWorkspaceConfiguration, TargetConfiguration, Tree, updateJson, Workspace } from '@nrwl/devkit';
-
-///////////
-// UTILS //
-///////////
-export function getProjectName(tree: Tree, project?: string) {
-  const projectName = project ?? readWorkspaceConfiguration(tree).defaultProject;
-  if (!projectName) throw new Error('No project provided');
-  const name = names(projectName).fileName;
-  return name.replace(new RegExp('/', 'g'), '-');
-}
-
+import { formatFiles, generateFiles, getWorkspacePath, joinPathFragments, names, offsetFromRoot, ProjectConfiguration as NxProjectConfig, readJson, readWorkspaceConfiguration, TargetConfiguration, Tree, updateJson, Workspace } from '@nrwl/devkit';
+import { join } from 'path';
 
 
 /////////////
 // PROJECT //
 /////////////
-
-interface NgProjectConfig extends ProjectConfiguration {
+// Project with angular config
+interface ProjectConfig extends NxProjectConfig {
   architect: Record<string, TargetConfiguration>
 }
-type WorkspaceOrProject = Workspace | ProjectConfiguration;
-function isProjectConfig(workspace: WorkspaceOrProject): workspace is ProjectConfiguration {
+
+
+export interface ProjectOptions {
+  project: string;
+  projectConfig: ProjectConfig;
+  projectConfigLocation: string;
+}
+
+type WorkspaceOrProject = Workspace | ProjectConfig;
+function isProjectConfig(workspace: WorkspaceOrProject): workspace is ProjectConfig {
   return 'projectType' in workspace;
 }
-function isNgProjectConfig(config: ProjectConfiguration | NgProjectConfig): config is NgProjectConfig {
-  return 'architect' in config;
+function isNxProjectConfig(config: ProjectConfig | NxProjectConfig): config is NxProjectConfig {
+  return !('architect' in config);
 }
+
 
 
 export function readRawWorkspaceJson(tree: Tree) {
@@ -35,33 +34,39 @@ export function readRawWorkspaceJson(tree: Tree) {
   return readJson<Workspace>(tree, path);
 }
 
-export function getProjectFileLocation(tree: Tree, project: string): string | null {
-  const rawWorkspace = readRawWorkspaceJson(tree);
-  const projectConfig = rawWorkspace.projects?.[project];
-  if (!projectConfig) return null;
-  return typeof projectConfig === 'string'
-    ? joinPathFragments(projectConfig, 'project.json')
-    : getWorkspacePath(tree);
+export function getProjectOptions(tree: Tree, projectName?: string): ProjectOptions {
+  const workspace = readRawWorkspaceJson(tree);
+  const project = projectName ?? workspace.defaultProject;
+  if (!project) throw new Error('No project provided');
+  const config = workspace.projects[project];
+  if (!config) throw new Error('No config found for project');
+  // project.json
+  if (typeof config === 'string') {
+    return {
+      project,
+      projectConfig: readJson(tree, config),
+      projectConfigLocation: joinPathFragments(config, 'project.json'),
+    }
+  } else {
+    return {
+      project,
+      projectConfig: config as ProjectConfig,
+      projectConfigLocation: getWorkspacePath(tree)!
+    }
+  }
 }
 
-export function projectConfig(workspace: WorkspaceOrProject, project: string): ProjectConfiguration {
+
+
+export function projectConfig(workspace: WorkspaceOrProject, project: string): ProjectConfig {
   if (isProjectConfig(workspace)) return workspace;
-  return workspace.projects[project];
-}
-
-export function getProjectConfig(tree: Tree, project: string) {
-  const projectFile = getProjectFileLocation(tree, project);
-  if (!projectFile) throw new Error(`Could not find config file of project "${project}"`);
-  const workspace = readJson(tree, projectFile);
-  return projectConfig(workspace, project);
+  return workspace.projects[project] as ProjectConfig;
 }
 
 
-export function updateProjectConfig(tree: Tree, project: string, cb: (config: ProjectConfiguration) => void) {
-  const projectFile = getProjectFileLocation(tree, project);
-  if (!projectFile) throw new Error('Could not find project file');
-  return updateJson(tree, projectFile, (file: WorkspaceOrProject) => {
-    const config = projectConfig(file, project);
+export function updateProjectConfig(tree: Tree, options: ProjectOptions, cb: (config: ProjectConfig) => void) {
+  return updateJson(tree, options.projectConfigLocation, (file: WorkspaceOrProject) => {
+    const config = projectConfig(file, options.project);
     if (!config) return file;
     cb(config);
     return file;
@@ -69,23 +74,23 @@ export function updateProjectConfig(tree: Tree, project: string, cb: (config: Pr
 }
 
 
-export function setProjectBuilders(tree: Tree, project: string, targets: Record<string, TargetConfiguration>) {
-  return updateProjectConfig(tree, project, config => {
-    // Angular
-    if (isNgProjectConfig(config)) {
-      for (const [key, value] of Object.entries(targets)) {
-        config['architect'][key] = value;
-      }
-      return;
-    }
+export function setProjectBuilders(tree: Tree, options: ProjectOptions, targets: Record<string, TargetConfiguration>) {
+  return updateProjectConfig(tree, options, config => {
     // Nx
-    if (!config.targets) {
-      config.targets = targets;
-    } else {
-      for (const [key, value] of Object.entries(targets)) {
-        config.targets[key] = value;
+    if (isNxProjectConfig(config)) {
+      if (!config.targets) {
+        config.targets = targets;
+      } else {
+        for (const [key, value] of Object.entries(targets)) {
+          config.targets[key] = value;
+        }
       }
     }
+    // Angular
+    for (const [key, value] of Object.entries(targets)) {
+      config['architect'][key] = value;
+    }
+    return;
   })
 }
 
@@ -95,21 +100,18 @@ export function setProjectBuilders(tree: Tree, project: string, targets: Record<
 //////////////
 // TSCONFIG //
 //////////////
-export function getTsconfigPath(tree: Tree, project: string) {
-  const config = getProjectConfig(tree, project);
-  return `${config.root}/tsconfig.json`;
+// TODO: find a type for that
+interface TsConfig {
+  compilerOptions?: {
+    skipLibCheck?: boolean;
+  },
+  references?: { path: string }[];
 }
 
-export function updateTsConfig(tree: Tree, project: string, updates: Record<string, any>) {
-  const tsConfig = getTsconfigPath(tree, project);
 
-  updateJson(tree, tsConfig, json => {
-    if (!json.compilerOptions) json.compilerOptions = {};
-    for (const [key, value] of Object.entries(updates)) {
-      json.compilerOptions[key] = value;
-    }
-    return json;
-  })
+export function updateTsConfig(tree: Tree, options: ProjectOptions, cb: (tsConfig: TsConfig) => TsConfig) {
+  const tsConfig = `${options.projectConfig.root}/tsconfig.json`;
+  updateJson(tree, tsConfig, cb);
 }
 
 
@@ -124,4 +126,24 @@ export function updateGitIgnore(tree: Tree, text: string) {
   if (!content) return;
   if (content.includes(text)) return;
   tree.write(file, `${content}\n\n${text}`);
+}
+
+
+///////////
+// FILES //
+///////////
+export async function addFiles(tree: Tree, options: ProjectOptions) {
+  const templateOptions = {
+    ...options,
+    ...names(options.project),
+    offset: offsetFromRoot(options.projectConfig.root),
+    tmpl: '',
+  };
+  generateFiles(
+    tree,
+    join(__dirname, 'files'),
+    options.projectConfig.root,
+    templateOptions
+  );
+  await formatFiles(tree);
 }

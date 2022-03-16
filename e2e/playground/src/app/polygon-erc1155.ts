@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { MetaMask } from "@ngeth/core";
+import { MetaMask } from "@ngeth/ethers";
 import { ChildMintableERC1155 } from "@ngeth/polygon";
 
 @Injectable({ providedIn: 'root' })

@@ -308,7 +308,7 @@ export const getContract = (contractName: string, abi: ABIDescription[]) => {
   const structs = getAllStructs(abi);
 
   const code = `
-  import { NgContract, FilterParam, TypedFilter } from '@ngeth/core';
+  import { NgContract, FilterParam, TypedFilter } from '@ngeth/ethers';
   import { BigNumber, Overrides, CallOverrides, PayableOverrides, Signer, ContractTransaction, BytesLike, BigNumberish } from "ethers";
   import { Provider } from '@ethersproject/providers';
   

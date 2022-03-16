@@ -3,7 +3,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 
-import { EthModule } from '@ngeth/core';
+import { EthModule } from '@ngeth/ethers';
 import { AppComponent } from './app.component';
 
 @NgModule({

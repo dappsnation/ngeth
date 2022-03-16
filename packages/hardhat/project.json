@@ -5,12 +5,20 @@
   "prefix": "nxeth",
   "targets": {
     "build": {
-      "executor": "@nrwl/angular:package",
-      "outputs": [
-        "dist/packages/hardhat"
-      ],
+      "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "project": "packages/hardhat/ng-package.json"
+        "parallel": false,
+        "commands": [
+          "nx run hardhat:build-package:production",
+          "nx run hardhat:build-tools"
+        ]
+      }
+    },
+    "build-package": {
+      "executor": "@nrwl/node:package",
+      "outputs": ["dist/packages/hardhat"],
+      "options": {
+        "main": "packages/hardhat/src/index.ts"
       },
       "configurations": {
         "production": {
@@ -22,11 +30,31 @@
       },
       "defaultConfiguration": "production"
     },
+    "build-tools": {
+      "executor": "@nrwl/js:tsc",
+      "options": {
+        "outputPath": "dist/packages/hardhat/tools",
+        "main": "packages/hardhat/src/tools",
+        "tsConfig": "packages/hardhat/tsconfig.tools.json",
+        "assets": [
+          {
+            "input": "packages/hardhat/builders",
+            "glob": "**/*.json",
+            "ignore": [],
+            "output": "/builders"
+          },
+          {
+            "input": "packages/hardhat/schematics",
+            "glob": "**/*.json",
+            "ignore": [],
+            "output": "/schematics"
+          }
+        ]
+      }
+    },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": [
-        "coverage/packages/hardhat"
-      ],
+      "outputs": ["coverage/packages/hardhat"],
       "options": {
         "jestConfig": "packages/hardhat/jest.config.js",
         "passWithNoTests": true

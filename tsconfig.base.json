@@ -19,10 +19,11 @@
       "@contracts/*": ["e2e/playground-contracts/src/contracts/*"],
       "@ngeth/core": ["packages/core/src/index.ts"],
       "@ngeth/devkit": ["packages/devkit/src/index.ts"],
+      "@ngeth/ethers": ["packages/ethers/src/index.ts"],
       "@ngeth/hardhat": ["packages/hardhat/src/index.ts"],
-      "@ngeth/hardhat/*": ["packages/hardhat/src/*"],
       "@ngeth/ipfs": ["packages/ipfs/src/index.ts"],
       "@ngeth/polygon": ["packages/polygon/src/index.ts"],
+      "@ngeth/tools": ["packages/tools/src/index.ts"],
       "nxeth/plugin": ["packages/plugin/src/index.ts"]
     }
   },

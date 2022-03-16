@@ -1,6 +1,6 @@
 import { ensureNxProject, runNxCommandAsync, uniq } from "@nrwl/nx-plugin/testing";
 
-describe('IPFS e2e', () => {
+describe.skip('IPFS e2e', () => {
   let app: string;
   beforeEach(() => {
     app = uniq('ipfs');

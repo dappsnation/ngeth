@@ -1,7 +1,7 @@
 import { task } from 'hardhat/config';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { join } from 'path';
-import { generate, getContractNames } from './node';
+import { generate, getContractNames } from './lib/generate';
 import { promises as fs } from 'fs';
 
 task(

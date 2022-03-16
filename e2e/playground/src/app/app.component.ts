@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { MetaMask } from '@ngeth/core';
+import { MetaMask } from '@ngeth/ethers';
 import { PolygonERC1155 } from './polygon-erc1155';
 
 @Component({

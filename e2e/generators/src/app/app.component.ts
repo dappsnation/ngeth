@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { getContract } from '@ngeth/hardhat/generate';
+import { getContract } from '@ngeth/tools';
 
 @Component({
   selector: 'ngeth-root',

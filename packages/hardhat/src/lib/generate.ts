@@ -2,7 +2,7 @@ import { join, resolve } from 'path';
 import { existsSync, mkdirSync, promises as fs } from 'fs';
 import * as prettier from 'prettier';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
-import { getContract } from './generate';
+import { getContract } from '@ngeth/tools';
 
 
 const common = `import { NgContract } from 'ngeth';

@@ -1,0 +1,42 @@
+{
+  "projectType": "library",
+  "root": "packages/ethers",
+  "sourceRoot": "packages/ethers/src",
+  "prefix": "ngeth",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/angular:package",
+      "outputs": ["dist/packages/ethers"],
+      "options": {
+        "project": "packages/ethers/ng-package.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "packages/ethers/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "packages/ethers/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/packages/ethers"],
+      "options": {
+        "jestConfig": "packages/ethers/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "packages/ethers/src/**/*.ts",
+          "packages/ethers/src/**/*.html"
+        ]
+      }
+    }
+  },
+  "tags": []
+}

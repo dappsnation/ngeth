@@ -1,4 +1,4 @@
-import { NgContract } from '@ngeth/core';
+import { NgContract } from '@ngeth/ethers';
 import type { EventFilter, Signer, Event } from 'ethers';
 import type { Listener, Provider, BlockTag } from '@ethersproject/providers';
 import type { Observable } from 'rxjs';

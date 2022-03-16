@@ -7,23 +7,12 @@
     "build": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "parallel": false
-      },
-      "configurations": {
-        "production": {
-          "commands": [
-            "nx run ipfs:build-package:production",
-            "nx run ipfs:build-tools"
-          ]
-        },
-        "development": {
-          "commands": [
-            "nx run ipfs:build-package:development",
-            "nx run ipfs:build-tools"
-          ]
-        }
-      },
-      "defaultConfiguration": "production"
+        "parallel": false,
+        "commands": [
+          "nx run ipfs:build-package:production",
+          "nx run ipfs:build-tools"
+        ]
+      }
     },
     "build-tools": {
       "executor": "@nrwl/js:tsc",

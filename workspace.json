@@ -3,6 +3,7 @@
   "projects": {
     "core": "packages/core",
     "devkit": "packages/devkit",
+    "ethers": "packages/ethers",
     "generators": "e2e/generators",
     "hardhat": "packages/hardhat",
     "ipfs": "packages/ipfs",
@@ -10,6 +11,7 @@
     "playground-contracts": "e2e/playground-contracts",
     "plugin": "packages/plugin",
     "plugin-e2e": "e2e/plugin-e2e",
-    "polygon": "packages/polygon"
+    "polygon": "packages/polygon",
+    "tools": "packages/tools"
   }
 }
