@@ -3,7 +3,7 @@
   "projectType": "application",
   "sourceRoot": "e2e/plugin-e2e/src",
   "targets": {
-    "e2e": {
+    "plugin": {
       "executor": "@nrwl/nx-plugin:e2e",
       "options": {
         "target": "plugin:build",
@@ -17,7 +17,7 @@
         "jestConfig": "e2e/plugin-e2e/jest.config.js"
       }
     },
-    "hardhat-e2e": {
+    "hardhat": {
       "executor": "@nrwl/nx-plugin:e2e",
       "options": {
         "target": "hardhat-tools:build",

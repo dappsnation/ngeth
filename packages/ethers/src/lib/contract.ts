@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { BaseContract, BytesLike, EventFilter } from 'ethers';
 import { Log } from '@ethersproject/abstract-provider';
-import { Observable, shareReplay, switchMap, map, from, withLatestFrom, scan, tap, startWith, combineLatest, finalize } from 'rxjs';
+import { Observable, shareReplay, map, from, scan, startWith, combineLatest, finalize } from 'rxjs';
 import { fromEthEvent } from './metamask';
 import { inject, NgZone } from '@angular/core';
 
@@ -9,7 +9,8 @@ import type { Signer, Event } from 'ethers';
 import type { Listener, Provider, BlockTag } from "@ethersproject/providers";
 
 export type FilterParam<T> = T | T[] | null;
-export type TypedFilter<T> = EventFilter
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface TypedFilter<T> extends EventFilter {}
 
 export type EventArgs<T extends ContractEvents<any, any>, K extends keyof T['filters']> = Parameters<T['events'][K]> & T['queries'][K];
 export interface TypedEvent<T extends ContractEvents<any, any>, K extends keyof T['filters']> extends Event {

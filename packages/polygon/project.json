@@ -4,13 +4,7 @@
   "sourceRoot": "packages/polygon/src",
   "prefix": "ngeth",
   "targets": {
-    "publish": {
-      "executor": "@nrwl/workspace:run-commands",
-      "options": {
-        "command": "npm publish --tag={tag} --access=public",
-        "cwd": "dist/packages/polygon"
-      }
-    },
+
     "build": {
       "executor": "@nrwl/angular:package",
       "outputs": ["dist/packages/polygon"],
