@@ -39,14 +39,14 @@ export function getProjectOptions(tree: Tree, projectName?: string): ProjectOpti
   const project = projectName ?? workspace.defaultProject;
   if (!project) throw new Error('No project provided');
   const config = workspace.projects[project];
-  console.log({ config });
   if (!config) throw new Error('No config found for project');
   // project.json
   if (typeof config === 'string') {
+    const projectConfigLocation = joinPathFragments(config, 'project.json');
     return {
       project,
-      projectConfig: readJson(tree, config),
-      projectConfigLocation: joinPathFragments(config, 'project.json'),
+      projectConfig: readJson(tree, projectConfigLocation),
+      projectConfigLocation: projectConfigLocation,
     }
   } else {
     return {
@@ -133,7 +133,7 @@ export function updateGitIgnore(tree: Tree, text: string) {
 ///////////
 // FILES //
 ///////////
-export async function addFiles(tree: Tree, options: ProjectOptions) {
+export async function addFiles(tree: Tree, options: ProjectOptions, dirname: string) {
   const templateOptions = {
     ...options,
     ...names(options.project),
@@ -142,7 +142,7 @@ export async function addFiles(tree: Tree, options: ProjectOptions) {
   };
   generateFiles(
     tree,
-    join(__dirname, 'files'),
+    join(dirname, 'files'),
     options.projectConfig.root,
     templateOptions
   );

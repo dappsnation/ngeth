@@ -12,6 +12,11 @@
         "main": "packages/hardhat/tools/src/index.ts",
         "assets": [
           {
+            "input": "packages/hardhat/tools",
+            "glob": "**/files/*",
+            "output": "/"
+          },
+          {
             "input": "packages/hardhat/tools/builders",
             "glob": "**/*.json",
             "ignore": [],

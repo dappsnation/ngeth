@@ -11,6 +11,11 @@
         "tsConfig": "packages/ipfs/tools/tsconfig.lib.json",
         "assets": [
           {
+            "input": "packages/ipfs/tools",
+            "glob": "**/files/*",
+            "output": "/"
+          },
+          {
             "input": "packages/ipfs/tools/builders",
             "glob": "**/*.json",
             "ignore": [],

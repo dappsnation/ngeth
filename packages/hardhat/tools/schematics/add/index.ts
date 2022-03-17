@@ -10,10 +10,8 @@ interface BaseOptions {
 }
 
 export async function nxGenerator(tree: Tree, baseOptions: BaseOptions) {
-  console.log({ baseOptions });
   const options = getProjectOptions(tree, baseOptions.project);
-  console.log({options});
-  await addFiles(tree, options);
+  await addFiles(tree, options, __dirname);
   updateTsConfig(tree, options, (config) => {
     if (!config.references) config.references = [];
     config.references.push({ path: './tsconfig.hardhat.json' });
@@ -22,12 +20,14 @@ export async function nxGenerator(tree: Tree, baseOptions: BaseOptions) {
   const installTask = addDependenciesToPackageJson(
     tree,
     {
-      'ethers': '^5.6.0',
+      "ethers": "^5.6.0",
     },
     {
-      '@nomiclabs/hardhat-ethers': '^2.0.5',
-      'hardhat': '^2.9.0',
-      'ts-node': '^10.7.0',
+      "@ngeth/ethers": "0.0.5",
+      "@ngeth/hardhat": "0.0.5",
+      "@nomiclabs/hardhat-ethers": "^2.0.5",
+      "hardhat": "^2.9.0",
+      "ts-node": "^10.7.0",
     }
   );
 
