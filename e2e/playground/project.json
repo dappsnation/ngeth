@@ -54,8 +54,14 @@
       },
       "defaultConfiguration": "production"
     },
+    "analyze": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "source-map-explorer dist/e2e/playground/*.js"
+      }
+    },
     "ipfs-serve": {
-      "executor": "@ngeth/ipfs:serve",
+      "executor": "@ngeth/ipfs:daemon",
       "options": {
         "path": ".ipfs"
       }

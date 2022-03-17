@@ -8,7 +8,11 @@
     <button type="submit">Contribute</button>
   </form>
 
-  <button (click)="hasRole()">Has role ?</button>
+  <ul>
+    <li *ngFor="let token of tokens$ | async">
+      {{ token | json }}
+    </li>
+  </ul>
 </ng-container>
 
 <ng-template #signin>

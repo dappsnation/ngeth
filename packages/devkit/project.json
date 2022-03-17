@@ -2,6 +2,12 @@
   "root": "packages/devkit",
   "sourceRoot": "packages/devkit/src",
   "targets": {
+    "link": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "npm link dist/packages/devkit"
+      }
+    },
     "publish": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {

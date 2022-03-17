@@ -3,6 +3,12 @@
   "sourceRoot": "packages/hardhat/src",
   "projectType": "library",
   "targets": {
+    "link": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "npm link dist/packages/hardhat"
+      }
+    },
     "publish": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {

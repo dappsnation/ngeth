@@ -4,6 +4,12 @@
   "sourceRoot": "packages/ipfs/src",
   "prefix": "nxeth",
   "targets": {
+    "link": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "npm link dist/packages/ipfs"
+      }
+    },
     "publish": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {

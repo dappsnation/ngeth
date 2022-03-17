@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "title": "Compile contracts with Hardhat",
+  "description": "Compile the contracts with the hardhat runtime.",
+  "type": "object",
+  "properties": {
+    "tsconfig": {
+      "type": "string",
+      "description": "The path to the tsconfig file used to run hardhat."
+    },
+    "hardhatConfig": {
+      "type": "string",
+      "description": "The path to the hardhat configuration file."
+    }
+  },
+  "additionalProperties": false,
+  "required": ["tsconfig", "hardhatConfig"]
+}

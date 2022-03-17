@@ -1,4 +1,4 @@
-import { TypedContract, FilterParam, TypedFilter } from "./common";
+import { NgContract, FilterParam, TypedFilter } from "@ngeth/ethers";
 import {
   BigNumber,
   Overrides,
@@ -10,7 +10,6 @@ import {
   BigNumberish,
 } from "ethers";
 import { Provider } from "@ethersproject/providers";
-import env from "../../environments/environment";
 
 export interface FullMarketEvents {
   events: {
@@ -136,6 +135,77 @@ export interface FullMarketEvents {
     ERC777CancelOffer: { contractAddress: string; from: string };
     ERC777UpsertOffer: { contractAddress: string; from: string; amount: BigNumber; price: BigNumber; data: BytesLike };
   };
+}
+
+export class FullMarket extends NgContract<FullMarketEvents> {
+  // Read
+  erc1155Offers!: (
+    arg: string,
+    arg: string,
+    arg: BigNumberish,
+    overrides?: CallOverrides
+  ) => Promise<[BigNumber, BigNumber, BytesLike]>;
+  erc721Offers!: (arg: string, arg: BigNumberish, overrides?: CallOverrides) => Promise<BigNumber>;
+  erc777Offers!: (arg: string, arg: string, overrides?: CallOverrides) => Promise<[BigNumber, BigNumber, BytesLike]>;
+
+  // Write
+  erc1155AcceptOffer!: (
+    contractAddress: string,
+    from: string,
+    to: string,
+    tokenId: BigNumberish,
+    amount: BigNumberish,
+    overrides?: PayableOverrides
+  ) => Promise<ContractTransaction>;
+  erc1155CancelOffer!: (
+    contractAddress: string,
+    tokenId: BigNumberish,
+    overrides?: Overrides
+  ) => Promise<ContractTransaction>;
+  erc1155UpsertOffer!: (
+    contractAddress: string,
+    tokenId: BigNumberish,
+    amount: BigNumberish,
+    price: BigNumberish,
+    data: BytesLike,
+    overrides?: Overrides
+  ) => Promise<ContractTransaction>;
+  erc721AcceptOffer!: (
+    contractAddress: string,
+    tokenId: BigNumberish,
+    to: string,
+    overrides?: PayableOverrides
+  ) => Promise<ContractTransaction>;
+  erc721CancelOffer!: (
+    contractAddress: string,
+    tokenId: BigNumberish,
+    overrides?: Overrides
+  ) => Promise<ContractTransaction>;
+  erc721CreateOffer!: (
+    contractAddress: string,
+    tokenId: BigNumberish,
+    price: BigNumberish,
+    overrides?: Overrides
+  ) => Promise<ContractTransaction>;
+  erc777AcceptOffer!: (
+    contractAddress: string,
+    from: string,
+    to: string,
+    amount: BigNumberish,
+    overrides?: PayableOverrides
+  ) => Promise<ContractTransaction>;
+  erc777CancelOffer!: (contractAddress: string, overrides?: Overrides) => Promise<ContractTransaction>;
+  erc777UpsertOffer!: (
+    contractAddress: string,
+    amount: BigNumberish,
+    price: BigNumberish,
+    data: BytesLike,
+    overrides?: Overrides
+  ) => Promise<ContractTransaction>;
+
+  constructor(address: string, signer?: Signer | Provider) {
+    super(address, abi, signer);
+  }
 }
 
 export const abi = [
@@ -382,96 +452,3 @@ export const abi = [
     type: "function",
   },
 ];
-
-export class FullMarket extends TypedContract<FullMarketEvents> {
-  constructor(signer?: Signer | Provider) {
-    super(env.addresses.FullMarket, abi, signer);
-  }
-
-  erc1155Offers(
-    arg: string,
-    arg: string,
-    arg: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<[BigNumber, BigNumber, BytesLike]> {
-    return this.functions["erc1155Offers"](...arguments);
-  }
-  erc721Offers(arg: string, arg: BigNumberish, overrides?: CallOverrides): Promise<BigNumber> {
-    return this.functions["erc721Offers"](...arguments);
-  }
-  erc777Offers(arg: string, arg: string, overrides?: CallOverrides): Promise<[BigNumber, BigNumber, BytesLike]> {
-    return this.functions["erc777Offers"](...arguments);
-  }
-
-  erc1155AcceptOffer(
-    contractAddress: string,
-    from: string,
-    to: string,
-    tokenId: BigNumberish,
-    amount: BigNumberish,
-    overrides?: PayableOverrides
-  ): Promise<ContractTransaction> {
-    return this.functions["erc1155AcceptOffer"](...arguments);
-  }
-  erc1155CancelOffer(
-    contractAddress: string,
-    tokenId: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction> {
-    return this.functions["erc1155CancelOffer"](...arguments);
-  }
-  erc1155UpsertOffer(
-    contractAddress: string,
-    tokenId: BigNumberish,
-    amount: BigNumberish,
-    price: BigNumberish,
-    data: BytesLike,
-    overrides?: Overrides
-  ): Promise<ContractTransaction> {
-    return this.functions["erc1155UpsertOffer"](...arguments);
-  }
-  erc721AcceptOffer(
-    contractAddress: string,
-    tokenId: BigNumberish,
-    to: string,
-    overrides?: PayableOverrides
-  ): Promise<ContractTransaction> {
-    return this.functions["erc721AcceptOffer"](...arguments);
-  }
-  erc721CancelOffer(
-    contractAddress: string,
-    tokenId: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction> {
-    return this.functions["erc721CancelOffer"](...arguments);
-  }
-  erc721CreateOffer(
-    contractAddress: string,
-    tokenId: BigNumberish,
-    price: BigNumberish,
-    overrides?: Overrides
-  ): Promise<ContractTransaction> {
-    return this.functions["erc721CreateOffer"](...arguments);
-  }
-  erc777AcceptOffer(
-    contractAddress: string,
-    from: string,
-    to: string,
-    amount: BigNumberish,
-    overrides?: PayableOverrides
-  ): Promise<ContractTransaction> {
-    return this.functions["erc777AcceptOffer"](...arguments);
-  }
-  erc777CancelOffer(contractAddress: string, overrides?: Overrides): Promise<ContractTransaction> {
-    return this.functions["erc777CancelOffer"](...arguments);
-  }
-  erc777UpsertOffer(
-    contractAddress: string,
-    amount: BigNumberish,
-    price: BigNumberish,
-    data: BytesLike,
-    overrides?: Overrides
-  ): Promise<ContractTransaction> {
-    return this.functions["erc777UpsertOffer"](...arguments);
-  }
-}

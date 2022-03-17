@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MetaMask } from '@ngeth/ethers';
-import { PolygonERC1155 } from './polygon-erc1155';
+import { map, switchMap } from 'rxjs';
+import { ERC1155 } from './base-erc1155';
 
 @Component({
   selector: 'nxeth-root',
@@ -17,9 +18,14 @@ export class AppComponent {
   connected$ = this.metamask.connected$;
   account$ = this.metamask.account$;
 
+  tokens$ = this.metamask.account$.pipe(
+    switchMap(address => this.contract.from(this.contract.filters.TransferSingle(null, null, address))),
+    map(events => events.map(e => e.args))
+  );
+
   constructor(
     private metamask: MetaMask,
-    private contract: PolygonERC1155
+    private contract: ERC1155,
   ) {}
 
   connect() {
@@ -31,15 +37,4 @@ export class AppComponent {
     this.contract.mint(address, tokenId, amount, '0x00');
   }
 
-  async hasRole() {
-    const account = this.metamask.account;
-    if (!account) throw new Error('You need to be authenticated');
-    const role = await this.contract.DEFAULT_ADMIN_ROLE();
-    const amount = await this.contract.getRoleMemberCount(role);
-    console.log({ amount: amount.toNumber() });
-    for (let i = 0; i < amount.toNumber(); i++) {
-      const member = await this.contract.getRoleMember(role, i);
-      console.log({ member });
-    }
-  }
 }

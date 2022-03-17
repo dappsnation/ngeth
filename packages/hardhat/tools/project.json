@@ -42,6 +42,6 @@
       }
     }
   },
-  "tags": ["schematics"],
+  "tags": ["tools"],
   "implicitDependencies": ["hardhat"]
 }

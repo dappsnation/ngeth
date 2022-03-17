@@ -4,6 +4,12 @@
   "sourceRoot": "packages/ethers/src",
   "prefix": "ngeth",
   "targets": {
+    "link": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "npm link dist/packages/ethers"
+      }
+    },
     "publish": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {

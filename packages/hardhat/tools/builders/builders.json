@@ -1,0 +1,9 @@
+{
+  "builders": {
+    "build": {
+      "implementation": "./build/index",
+      "schema": "./build/schema.json",
+      "description": "Compile the contracts."
+    }
+  }
+}

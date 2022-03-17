@@ -2,6 +2,12 @@
   "root": "packages/tools",
   "sourceRoot": "packages/tools/src",
   "targets": {
+    "link": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "npm link dist/packages/tools"
+      }
+    },
     "publish": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {

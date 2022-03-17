@@ -1,4 +1,4 @@
-import { TypedContract, FilterParam, TypedFilter } from "./common";
+import { NgContract, FilterParam, TypedFilter } from "@ngeth/ethers";
 import {
   BigNumber,
   Overrides,
@@ -10,7 +10,6 @@ import {
   BigNumberish,
 } from "ethers";
 import { Provider } from "@ethersproject/providers";
-import env from "../../environments/environment";
 
 export interface BaseERC1155Events {
   events: {
@@ -45,6 +44,56 @@ export interface BaseERC1155Events {
     TransferSingle: { operator: string; from: string; to: string; id: BigNumber; value: BigNumber };
     URI: { value: string; id: BigNumber };
   };
+}
+
+export class BaseERC1155 extends NgContract<BaseERC1155Events> {
+  // Read
+  balanceOf!: (account: string, id: BigNumberish, overrides?: CallOverrides) => Promise<BigNumber>;
+  balanceOfBatch!: (accounts: string[], ids: BigNumberish[], overrides?: CallOverrides) => Promise<BigNumber[]>;
+  isApprovedForAll!: (account: string, operator: string, overrides?: CallOverrides) => Promise<boolean>;
+  owner!: (overrides?: CallOverrides) => Promise<string>;
+  supportsInterface!: (interfaceId: BytesLike, overrides?: CallOverrides) => Promise<boolean>;
+  uri!: (arg: BigNumberish, overrides?: CallOverrides) => Promise<string>;
+
+  // Write
+  mint!: (
+    account: string,
+    id: BigNumberish,
+    amount: BigNumberish,
+    data: BytesLike,
+    overrides?: Overrides
+  ) => Promise<ContractTransaction>;
+  mintBatch!: (
+    to: string,
+    ids: BigNumberish[],
+    amounts: BigNumberish[],
+    data: BytesLike,
+    overrides?: Overrides
+  ) => Promise<ContractTransaction>;
+  renounceOwnership!: (overrides?: Overrides) => Promise<ContractTransaction>;
+  safeBatchTransferFrom!: (
+    from: string,
+    to: string,
+    ids: BigNumberish[],
+    amounts: BigNumberish[],
+    data: BytesLike,
+    overrides?: Overrides
+  ) => Promise<ContractTransaction>;
+  safeTransferFrom!: (
+    from: string,
+    to: string,
+    id: BigNumberish,
+    amount: BigNumberish,
+    data: BytesLike,
+    overrides?: Overrides
+  ) => Promise<ContractTransaction>;
+  setApprovalForAll!: (operator: string, approved: boolean, overrides?: Overrides) => Promise<ContractTransaction>;
+  setURI!: (newuri: string, overrides?: Overrides) => Promise<ContractTransaction>;
+  transferOwnership!: (newOwner: string, overrides?: Overrides) => Promise<ContractTransaction>;
+
+  constructor(address: string, signer?: Signer | Provider) {
+    super(address, abi, signer);
+  }
 }
 
 export const abi = [
@@ -232,79 +281,3 @@ export const abi = [
     type: "function",
   },
 ];
-
-export class BaseERC1155 extends TypedContract<BaseERC1155Events> {
-  constructor(signer?: Signer | Provider) {
-    super(env.addresses.BaseERC1155, abi, signer);
-  }
-
-  balanceOf(account: string, id: BigNumberish, overrides?: CallOverrides): Promise<BigNumber> {
-    return this.functions["balanceOf"](...arguments);
-  }
-  balanceOfBatch(accounts: string[], ids: BigNumberish[], overrides?: CallOverrides): Promise<BigNumber[]> {
-    return this.functions["balanceOfBatch"](...arguments);
-  }
-  isApprovedForAll(account: string, operator: string, overrides?: CallOverrides): Promise<boolean> {
-    return this.functions["isApprovedForAll"](...arguments);
-  }
-  owner(overrides?: CallOverrides): Promise<string> {
-    return this.functions["owner"](...arguments);
-  }
-  supportsInterface(interfaceId: BytesLike, overrides?: CallOverrides): Promise<boolean> {
-    return this.functions["supportsInterface"](...arguments);
-  }
-  uri(arg: BigNumberish, overrides?: CallOverrides): Promise<string> {
-    return this.functions["uri"](...arguments);
-  }
-
-  mint(
-    account: string,
-    id: BigNumberish,
-    amount: BigNumberish,
-    data: BytesLike,
-    overrides?: Overrides
-  ): Promise<ContractTransaction> {
-    return this.functions["mint"](...arguments);
-  }
-  mintBatch(
-    to: string,
-    ids: BigNumberish[],
-    amounts: BigNumberish[],
-    data: BytesLike,
-    overrides?: Overrides
-  ): Promise<ContractTransaction> {
-    return this.functions["mintBatch"](...arguments);
-  }
-  renounceOwnership(overrides?: Overrides): Promise<ContractTransaction> {
-    return this.functions["renounceOwnership"](...arguments);
-  }
-  safeBatchTransferFrom(
-    from: string,
-    to: string,
-    ids: BigNumberish[],
-    amounts: BigNumberish[],
-    data: BytesLike,
-    overrides?: Overrides
-  ): Promise<ContractTransaction> {
-    return this.functions["safeBatchTransferFrom"](...arguments);
-  }
-  safeTransferFrom(
-    from: string,
-    to: string,
-    id: BigNumberish,
-    amount: BigNumberish,
-    data: BytesLike,
-    overrides?: Overrides
-  ): Promise<ContractTransaction> {
-    return this.functions["safeTransferFrom"](...arguments);
-  }
-  setApprovalForAll(operator: string, approved: boolean, overrides?: Overrides): Promise<ContractTransaction> {
-    return this.functions["setApprovalForAll"](...arguments);
-  }
-  setURI(newuri: string, overrides?: Overrides): Promise<ContractTransaction> {
-    return this.functions["setURI"](...arguments);
-  }
-  transferOwnership(newOwner: string, overrides?: Overrides): Promise<ContractTransaction> {
-    return this.functions["transferOwnership"](...arguments);
-  }
-}

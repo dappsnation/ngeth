@@ -1,4 +1,4 @@
-import { TypedContract, FilterParam, TypedFilter } from "./common";
+import { NgContract, FilterParam, TypedFilter } from "@ngeth/ethers";
 import {
   BigNumber,
   Overrides,
@@ -10,7 +10,6 @@ import {
   BigNumberish,
 } from "ethers";
 import { Provider } from "@ethersproject/providers";
-import env from "../../environments/environment";
 
 export interface MarketEvents {
   events: {
@@ -70,6 +69,39 @@ export interface MarketEvents {
       data: BytesLike;
     };
   };
+}
+
+export class Market extends NgContract<MarketEvents> {
+  // Read
+  offers!: (
+    arg: string,
+    arg: string,
+    arg: BigNumberish,
+    overrides?: CallOverrides
+  ) => Promise<[BigNumber, BigNumber, BytesLike]>;
+
+  // Write
+  acceptOffer!: (
+    contractAddress: string,
+    from: string,
+    to: string,
+    tokenId: BigNumberish,
+    amount: BigNumberish,
+    overrides?: PayableOverrides
+  ) => Promise<ContractTransaction>;
+  cancelOffer!: (contractAddress: string, tokenId: BigNumberish, overrides?: Overrides) => Promise<ContractTransaction>;
+  upsertOffer!: (
+    contractAddress: string,
+    tokenId: BigNumberish,
+    amount: BigNumberish,
+    price: BigNumberish,
+    data: BytesLike,
+    overrides?: Overrides
+  ) => Promise<ContractTransaction>;
+
+  constructor(address: string, signer?: Signer | Provider) {
+    super(address, abi, signer);
+  }
 }
 
 export const abi = [
@@ -162,42 +194,3 @@ export const abi = [
     type: "function",
   },
 ];
-
-export class Market extends TypedContract<MarketEvents> {
-  constructor(signer?: Signer | Provider) {
-    super(env.addresses.Market, abi, signer);
-  }
-
-  offers(
-    arg: string,
-    arg: string,
-    arg: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<[BigNumber, BigNumber, BytesLike]> {
-    return this.functions["offers"](...arguments);
-  }
-
-  acceptOffer(
-    contractAddress: string,
-    from: string,
-    to: string,
-    tokenId: BigNumberish,
-    amount: BigNumberish,
-    overrides?: PayableOverrides
-  ): Promise<ContractTransaction> {
-    return this.functions["acceptOffer"](...arguments);
-  }
-  cancelOffer(contractAddress: string, tokenId: BigNumberish, overrides?: Overrides): Promise<ContractTransaction> {
-    return this.functions["cancelOffer"](...arguments);
-  }
-  upsertOffer(
-    contractAddress: string,
-    tokenId: BigNumberish,
-    amount: BigNumberish,
-    price: BigNumberish,
-    data: BytesLike,
-    overrides?: Overrides
-  ): Promise<ContractTransaction> {
-    return this.functions["upsertOffer"](...arguments);
-  }
-}

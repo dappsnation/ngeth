@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { BaseContract, EventFilter } from 'ethers';
+import { BaseContract, BytesLike, EventFilter } from 'ethers';
 import { Log } from '@ethersproject/abstract-provider';
-import { Observable, shareReplay, switchMap, map } from 'rxjs';
+import { Observable, shareReplay, switchMap, map, from, withLatestFrom, scan, tap, startWith } from 'rxjs';
 import { fromEthEvent } from './metamask';
 import { inject, NgZone } from '@angular/core';
 
@@ -78,12 +78,27 @@ export class NgContract<
     return { address: this.address, topics: [topic] };
   }
 
+  private wrapEvent(log: Log): TypedEvent<Events, FilterKeys> {
+    const { name, signature, args, eventFragment } = this.interface.parseLog(log);
+    return {
+      ...log,
+      getBlock: () => this.provider.getBlock(log.blockHash),
+      getTransaction: () => this.provider.getTransaction(log.transactionHash),
+      getTransactionReceipt: () => this.provider.getTransactionReceipt(log.transactionHash),
+      decode: (data: BytesLike, topics?: Array<string>) => {
+        return this.interface.decodeEventLog(eventFragment, data, topics);
+      },
+      event: name,
+      eventSignature: signature,
+      args: args
+    } as TypedEvent<Events, FilterKeys>
+  }
 
   /**
    * Listen on the changes of an event, starting with the current state
    * @param event The event filter
    */
-  from<K extends FilterKeys>(event: TypedFilter<K> | K): Observable<EventArgs<Events, K>[]> {
+  from<K extends FilterKeys>(event: TypedFilter<K> | K): Observable<TypedEvent<Events, FilterKeys>[]> {
     if (!this.provider) throw new Error('Provider required for event');
     const eventFilter = typeof event === 'string'
       ? this.getEventFilter(event)
@@ -93,14 +108,22 @@ export class NgContract<
 
     const tag = getEventTag(eventFilter);
     if (!this._events[tag]) {
-      this._events[tag] = fromEthEvent<Log>(
+      const initial = this.queryFilter(eventFilter);
+      const listener = fromEthEvent<Log>(
         this.provider,
         this.ngZone,
         eventFilter
       ).pipe(
-        switchMap(() => this.queryFilter(eventFilter)),
-        map((events) => events.map((event) => event.args)),
-        shareReplay(1)
+        map(log => this.wrapEvent(log)),
+        scan((acc, value) => acc.concat(value), [] as TypedEvent<Events, FilterKeys>[]),
+        startWith()
+      );
+      this._events[tag] = from(initial).pipe(
+        tap(initial => console.log({initial})),
+        withLatestFrom(listener),
+        map(([events, last]) => events.concat(last)),
+        shareReplay({ refCount: true, bufferSize: 1 }),
+        tap(final => console.log({final})),
       );
     }
     return this._events[tag];

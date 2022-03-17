@@ -1,8 +1,12 @@
 import { task } from 'hardhat/config';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { join } from 'path';
-import { generate, getContractNames } from './ng-generate';
+import { generate, getContractNames } from './generate';
 import { promises as fs } from 'fs';
+
+
+
+
 
 task(
   'ngeth:test',
@@ -51,8 +55,8 @@ task(
     // Deploy all contract and update environment
     const names = await getContractNames(hre);
 
-    const addresses = {};
-    const params = {
+    const addresses: Record<string, string> = {};
+    const params: Record<string, string[]> = {
       BaseERC1155: [''],
     };
 
