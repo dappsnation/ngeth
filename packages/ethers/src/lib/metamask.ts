@@ -12,8 +12,8 @@ import {
   Provider,
 } from '@ethersproject/providers';
 import { EventFilter } from '@ethersproject/abstract-provider';
-import { timer, defer, Observable, of, from } from 'rxjs';
-import { map, shareReplay, switchMap } from 'rxjs/operators';
+import { timer, defer, Observable, of } from 'rxjs';
+import { map, shareReplay, switchMap, filter } from 'rxjs/operators';
 import { getAddress } from 'ethers/lib/utils';
 
 interface RequestArguments {
@@ -114,11 +114,10 @@ export class MetaMask extends Web3Provider {
       ? of([this.account])
       : timer(500).pipe(map(() => (this.account ? [this.account] : [])));
     return start.pipe(
-      switchMap((initial) =>
-        this.fromMetaMaskEvent<string[]>('accountsChanged', initial)
-      ),
-      map((accounts) => getAddress(accounts[0])),
-      shareReplay(1)
+      switchMap((initial) => this.fromMetaMaskEvent('accountsChanged', initial)),
+      filter(accounts => !!accounts.length),
+      map(accounts => getAddress(accounts[0])),
+      shareReplay({ refCount: true, bufferSize: 1 })
     );
   });
 

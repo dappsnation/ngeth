@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { BaseContract, BytesLike, EventFilter } from 'ethers';
 import { Log } from '@ethersproject/abstract-provider';
-import { Observable, shareReplay, switchMap, map, from, withLatestFrom, scan, tap, startWith } from 'rxjs';
+import { Observable, shareReplay, switchMap, map, from, withLatestFrom, scan, tap, startWith, combineLatest, finalize } from 'rxjs';
 import { fromEthEvent } from './metamask';
 import { inject, NgZone } from '@angular/core';
 
@@ -33,6 +33,14 @@ function getEventTag(filter: EventFilter): string {
   );
   return `${address}:${topics}`;
 }
+
+function flattenEvents(events: Event[]) {
+  const record: Record<string, Event> = {};
+  for (const event of events) {
+    record[event.transactionHash] = event;
+  }
+  return Object.values(record);
+} 
 
 
 
@@ -116,14 +124,17 @@ export class NgContract<
       ).pipe(
         map(log => this.wrapEvent(log)),
         scan((acc, value) => acc.concat(value), [] as TypedEvent<Events, FilterKeys>[]),
-        startWith()
+        startWith([])
       );
-      this._events[tag] = from(initial).pipe(
-        tap(initial => console.log({initial})),
-        withLatestFrom(listener),
+
+      this._events[tag] = combineLatest([
+        from(initial),
+        listener,
+      ]).pipe(
         map(([events, last]) => events.concat(last)),
+        map(flattenEvents), // remove duplicated (events seems to have a cache of 2 somehow...)
+        finalize(() => delete this._events[tag]), // remove cache when no subscriber remains
         shareReplay({ refCount: true, bufferSize: 1 }),
-        tap(final => console.log({final})),
       );
     }
     return this._events[tag];
