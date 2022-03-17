@@ -39,6 +39,7 @@ export function getProjectOptions(tree: Tree, projectName?: string): ProjectOpti
   const project = projectName ?? workspace.defaultProject;
   if (!project) throw new Error('No project provided');
   const config = workspace.projects[project];
+  console.log({ config });
   if (!config) throw new Error('No config found for project');
   // project.json
   if (typeof config === 'string') {

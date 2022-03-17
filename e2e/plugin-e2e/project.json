@@ -16,10 +16,19 @@
         "target": "ipfs:build",
         "jestConfig": "e2e/plugin-e2e/jest.config.js"
       }
+    },
+    "hardhat-e2e": {
+      "executor": "@nrwl/nx-plugin:e2e",
+      "options": {
+        "target": "hardhat-tools:build",
+        "jestConfig": "e2e/plugin-e2e/jest.config.js"
+      }
     }
   },
   "tags": [],
   "implicitDependencies": [
-    "plugin"
+    "plugin",
+    "hardhat-tools",
+    "ipfs-tools"
   ]
 }

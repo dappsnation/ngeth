@@ -9,6 +9,7 @@ describe('HARDHAT', () => {
   let project: string;
   beforeEach(() => {
     project = uniq('hardhat');
+    ensureNxProject('@ngeth/devkit', 'dist/packages/devkit');
     ensureNxProject('@ngeth/hardhat', 'dist/packages/hardhat');
   })
 

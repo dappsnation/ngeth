@@ -6,6 +6,6 @@
     "types": ["node"]
   },
   "exclude": ["**/*.spec.ts", "**/*.test.ts"],
-  "include": ["scripts"],
+  "include": ["**/*.ts"],
   "files": ["./hardhat.config.ts"]
 }

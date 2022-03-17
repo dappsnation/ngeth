@@ -7,6 +7,12 @@
       "schema": "./add/schema.json",
       "description": "Initialize the @ngeth/ipfs module",
       "hidden": true
+    },
+    "library": {
+      "factory": "./library/index#ngSchematic",
+      "schema": "./library/schema.json",
+      "description": "Create a library to share your smart contracts",
+      "hidden": true
     }
   },
   "generators": {
@@ -14,6 +20,12 @@
       "factory": "./add/index#nxGenerator",
       "schema": "./add/schema.json",
       "description": "Initialize the @ngeth/ipfs module",
+      "hidden": true
+    },
+    "library": {
+      "factory": "./library/index#nxGenerator",
+      "schema": "./library/schema.json",
+      "description": "Create a library to share your smart contracts",
       "hidden": true
     }
   }

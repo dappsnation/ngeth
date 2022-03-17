@@ -1,5 +1,4 @@
 import '@nomiclabs/hardhat-ethers';
-import '@typechain/hardhat';
 import '@ngeth/hardhat';
 
 /**

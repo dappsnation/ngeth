@@ -1,0 +1,43 @@
+import '@nomiclabs/hardhat-ethers';
+import '@typechain/hardhat';
+
+import { task } from 'hardhat/config';
+import { join, resolve } from 'path';
+import { promises as fs } from 'fs';
+
+task('node:server-ready', 'Run once the node is ready', async (taskArguments: any, hre: any, runSuper: any) => {
+  await runSuper();
+
+  // Deploy all contract and update environment
+  const names = await hre.artifacts.getAllFullyQualifiedNames();
+
+  const source = resolve(hre.config.paths.sources);
+  const addresses = {};
+  const deploy = async (name) => {
+    const path = resolve(join(name));
+    if (path.startsWith(source)) {
+      const Contract = await hre.ethers.getContractFactory(name);
+      const contract = await Contract.deploy();
+      await contract.deployed();
+      const [_, contractName] = name.split(':');
+      addresses[contractName] = contract.address;
+    }
+  }
+  await Promise.all(names.map(deploy));
+
+  const envPath = join(__dirname, 'environments/environment.ts');
+  await fs.writeFile(envPath, `export default ${JSON.stringify({addresses})};`);
+});
+
+/**
+ * @type import('hardhat/config').HardhatUserConfig
+ */
+export default {
+  solidity: '0.8.0',
+  paths: {
+    sources: './contracts',
+    tests: './tests',
+    artifacts: './artifacts',
+    typechain: './typechain',
+  },
+};
