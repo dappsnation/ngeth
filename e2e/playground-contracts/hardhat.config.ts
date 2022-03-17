@@ -12,4 +12,10 @@ export default {
     artifacts: './artifacts',
     typechain: './typechain',
   },
+  ngeth: {
+    outDir: '../playground/src/app/contracts',
+    autoDeploy: {
+      BaseERC1155: ['uri']
+    }
+  }
 };

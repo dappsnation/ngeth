@@ -1,8 +1,16 @@
-import { task } from 'hardhat/config';
-import { HardhatRuntimeEnvironment } from 'hardhat/types';
+import './lib/config';
+// import '@nomiclabs/hardhat-ethers';
+import { extendConfig, task } from 'hardhat/config';
 import { join } from 'path';
 import { generate, getContractNames } from './lib/generate';
-import { promises as fs } from 'fs';
+import { existsSync, mkdirSync, promises as fs } from 'fs';
+import { getDefaultConfig } from './lib/config';
+import * as parserTypeScript from "prettier/parser-typescript";
+import * as prettier from "prettier/standalone";
+
+extendConfig((config) => {
+  config.ngeth = getDefaultConfig(config)
+});
 
 task(
   'ngeth:test',
@@ -19,7 +27,7 @@ task(
 task(
   'ngeth:build',
   '',
-  async (taskArguments: any, hre: HardhatRuntimeEnvironment) => {
+  async (taskArguments: any, hre) => {
     return hre.run('compile', taskArguments);
   }
 );
@@ -27,7 +35,7 @@ task(
 task(
   'ngeth:serve',
   '',
-  async (taskArguments: any, hre: HardhatRuntimeEnvironment) => {
+  async (taskArguments: any, hre) => {
     await hre.run('ngeth:build', taskArguments);
     return hre.run('node', taskArguments);
   }
@@ -36,37 +44,51 @@ task(
 task(
   'node:server-ready',
   'Run once the node is ready',
-  async (taskArguments: any, hre: any, runSuper: any) => {
+  async (taskArguments: any, hre, runSuper: any) => {
     await runSuper();
     await generate(hre);
-    const root = hre.config.paths.root;
-    const setEnv = (addresses: Record<string, string>) => {
-      const envPath = join(root, 'environments/environment.ts');
-      return fs.writeFile(
-        envPath,
-        `export default ${JSON.stringify({ addresses })};`
-      );
-    };
 
     // Deploy all contract and update environment
-    const names = await getContractNames(hre);
+    const fullNames = await getContractNames(hre);
+    // structure: filepath:contractName
+    const names = fullNames.map(name => name.split(':')[1] as string);
 
     const addresses: Record<string, string> = {};
-    const params: Record<string, string[]> = {
-      BaseERC1155: [''],
-    };
+    const autoDeploy = hre.config.ngeth.autoDeploy;
+    
+    for (const name in autoDeploy) {
+      if (!names.includes(name)) {
+        const error = `Contract "${name}" provided in ngeth.autoDeploy is not part of the contracts.`;
+        const solution = `The list of available contracts is: [${names.join(', ')}].`;
+        throw new Error(`${error} ${solution}`);
+      }
+    }
 
-    const deploy = async (name: string) => {
-      const [_, contractName] = name.split(':');
-      const Contract = await hre.ethers.getContractFactory(name);
-      const contract =
-        contractName in params
-          ? await Contract.deploy(...params[contractName])
-          : await Contract.deploy();
+    // Deploy
+    const deploy = async ([name, params]: [string, unknown[]]) => {
+      const Contract = await (hre as any).ethers.getContractFactory(name);
+      const contract = await Contract.deploy(...params);
       await contract.deployed();
-      addresses[contractName] = contract.address;
+      addresses[name] = contract.address;
     };
-    await Promise.all(names.map(deploy));
-    await setEnv(addresses);
+    await Promise.all(Object.entries(autoDeploy).map(deploy));
+
+    // Create addresses
+    const root = hre.config.paths.root;
+    const outDir = join(root, hre.config.ngeth.outDir);
+    if (!existsSync(outDir)) mkdirSync(outDir, { recursive: true });
+    const code = prettier.format(`export default ${JSON.stringify(addresses)};`, {
+      parser: 'typescript',
+      plugins: [parserTypeScript],
+      printWidth: 120,
+    });
+    await fs.writeFile(join(outDir, 'addresses.ts'), code);
+
+    // index.ts
+    const exportAll = names
+      .map((name) => `export * from "./contracts/${name}";`)
+      .concat(`export { default as addresses } from './addresses';`)
+      .join('\n');
+    fs.writeFile(join(outDir, 'index.ts'), exportAll);
   }
 );

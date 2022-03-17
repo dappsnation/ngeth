@@ -13,10 +13,11 @@ export async function generate(hre: HardhatRuntimeEnvironment) {
   const names = await getContractNames(hre);
   if (!names.length) return;
 
-  const src = resolve('src');
-  if (!existsSync(src)) mkdirSync(src);
+  const root = hre.config.paths.root;
+  const outDir = resolve(root, hre.config.ngeth.outDir);
+  if (!existsSync(outDir)) mkdirSync(outDir, { recursive: true })
 
-  const folder = join(src, 'contracts');
+  const folder = join(outDir, 'contracts');
   if (!existsSync(folder)) mkdirSync(folder);
 
   const allContracts: string[] = [];
@@ -30,9 +31,4 @@ export async function generate(hre: HardhatRuntimeEnvironment) {
     const path = join(folder, `${contractName}.ts`);
     fs.writeFile(path, contract);
   }
-  // index.ts
-  const exportAll = allContracts
-    .map((name) => `export * from "./contracts/${name}";`)
-    .join('\n');
-  fs.writeFile(join(src, 'index.ts'), exportAll);
 }

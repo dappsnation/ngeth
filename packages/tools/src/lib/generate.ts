@@ -31,10 +31,12 @@ const getOutputs = (outputs: ABIParameter[] = []) => {
   if (outputs.length === 1) return getType(outputs[0], 'output');
   return `[${outputs.map((output) => getType(output, 'output'))}]`;
 };
-const getParams = (params: ABIParameter[] = []) =>
-  params.map(getParam).join(', ');
-const getParam = (param: ABIParameter) =>
-  `${param.name || 'arg'}: ${getType(param, 'input')}`;
+const getParams = (params: ABIParameter[] = []) => params.map(getParam).join(', ');
+const getParam = (param: ABIParameter, index: number) => {
+  if (param.name) return `${param.name}: ${getType(param, 'input')}`;
+  if (!index) return `arg: ${getType(param, 'input')}`;
+  return `arg${index}: ${getType(param, 'input')}`;
+}
 const getType = (param: ABIParameter, kind: 'input' | 'output'): string => {
   const type = param.type;
   if (type.endsWith(']')) return getArray(param, kind);
@@ -241,9 +243,11 @@ const getAllEvents = (nodes: EventDescription[]) => {
     if (!record[node.name]) record[node.name] = [];
     record[node.name].push(getEvent(node));
   }
-  return Object.entries(record)
+  const events = Object.entries(record)
     .map(([name, type]) => `${name}: ${getOverloadType(type)}`)
     .join('\n');
+  if (events) return `{ ${events} }`;
+  return 'never';
 };
 
 const getEvent = (node: EventDescription) => {
@@ -260,9 +264,11 @@ const getAllFilters = (nodes: EventDescription[]) => {
     if (!record[node.name]) record[node.name] = [];
     record[node.name].push(getFilter(node));
   }
-  return Object.entries(record)
+  const filters = Object.entries(record)
     .map(([name, type]) => `${name}: ${getOverloadType(type)}`)
     .join('\n');
+  if (filters) return `{ ${filters} }`;
+  return 'never';
 };
 
 const getFilter = (node: EventDescription) => {
@@ -286,9 +292,11 @@ const getAllQueries = (nodes: EventDescription[]) => {
     if (!record[node.name]) record[node.name] = [];
     record[node.name].push(getQuery(node));
   }
-  return Object.entries(record)
+  const queries = Object.entries(record)
     .map(([name, type]) => `${name}: ${getOverloadType(type)}`)
     .join('\n');
+  if (queries) return `{ ${queries} }`;
+  return 'never';
 };
 
 const getQuery = (node: EventDescription) => {
@@ -313,15 +321,9 @@ export const getContract = (contractName: string, abi: ABIDescription[]) => {
   import { Provider } from '@ethersproject/providers';
   
   export interface ${contractName}Events {
-    events: {
-      ${getAllEvents(events)}
-    },
-    filters: {
-      ${getAllFilters(events)}
-    },
-    queries: {
-      ${getAllQueries(events)}
-    }
+    events: ${getAllEvents(events)},
+    filters: ${getAllFilters(events)},
+    queries: ${getAllQueries(events)}
   }
   
   ${structs}
@@ -334,11 +336,11 @@ export const getContract = (contractName: string, abi: ABIDescription[]) => {
     ${getAllMethods(methods)}
 
     constructor(address: string, signer?: Signer | Provider) {
-      super(address, abi, signer);
+      super(address, ${contractName}_abi, signer);
     }
   }
 
-  export const abi = ${JSON.stringify(abi)};`;
+  export const ${contractName}_abi = ${JSON.stringify(abi)};`;
   return prettier.format(code, {
     parser: 'typescript',
     plugins: [parserTypeScript],
