@@ -1,4 +1,5 @@
 <p>{{ connected$ | async }}</p>
+<p>{{ chain$ | async }}</p>
 <ng-container *ngIf="account$ | async as account; else signin">
   <p>{{ account }}</p>
   <form [formGroup]="form" (ngSubmit)="mint()">

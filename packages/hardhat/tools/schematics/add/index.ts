@@ -13,7 +13,8 @@ export async function nxGenerator(tree: Tree, baseOptions: BaseOptions) {
   const options = getProjectOptions(tree, baseOptions.project);
   await addFiles(tree, options, __dirname);
   updateTsConfig(tree, options, (config) => {
-    if (!config.references) config.references = [];
+    // update references only there is one already ??? (nx project)
+    if (!config.references) return config;
     config.references.push({ path: './tsconfig.hardhat.json' });
     return config;
   });
@@ -23,8 +24,8 @@ export async function nxGenerator(tree: Tree, baseOptions: BaseOptions) {
       "ethers": "^5.6.0",
     },
     {
-      "@ngeth/ethers": "0.0.7",
-      "@ngeth/hardhat": "0.0.7",
+      "@ngeth/ethers": "0.0.8",
+      "@ngeth/hardhat": "0.0.8",
       "@nomiclabs/hardhat-ethers": "^2.0.5",
       "hardhat": "^2.9.0",
       "prettier": "^2.6.0",

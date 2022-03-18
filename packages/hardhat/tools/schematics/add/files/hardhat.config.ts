@@ -17,7 +17,7 @@ export default {
     // - key is the name of the contract
     // - value is the constructor arguments
     autoDeploy: {
-      ['<%= className %>']: ['<%= className %>', '<%= fileName %>']
+      ['<%= className %>']: ['<%= className %>', '<%= constantName %>']
     }
   }
 };

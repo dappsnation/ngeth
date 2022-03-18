@@ -1,6 +1,6 @@
 {
   "name": "nxeth",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "license": "MIT",
   "scripts": {
     "start": "nx serve",
@@ -21,7 +21,6 @@
     "@angular/platform-browser": "~13.2.0",
     "@angular/platform-browser-dynamic": "~13.2.0",
     "@angular/router": "~13.2.0",
-    "@metamask/detect-provider": "^1.2.0",
     "@rx-angular/cdk": "^1.0.0-beta.0",
     "@rx-angular/template": "^1.0.0-beta.30",
     "ethers": "^5.5.4",
@@ -40,8 +39,8 @@
     "@angular/language-service": "~13.2.0",
     "@ngeth/devkit": "file:./dist/packages/devkit",
     "@ngeth/ethers": "file:./dist/packages/ethers",
-    "@ngeth/ipfs": "file:./dist/packages/ipfs",
     "@ngeth/hardhat": "file:./dist/packages/hardhat",
+    "@ngeth/ipfs": "file:./dist/packages/ipfs",
     "@ngeth/tools": "file:./dist/packages/tools",
     "@nomiclabs/hardhat-ethers": "^2.0.4",
     "@nrwl/angular": "^13.7.2",

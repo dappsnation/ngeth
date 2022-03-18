@@ -17,6 +17,7 @@ export class AppComponent {
   });
   connected$ = this.metamask.connected$;
   account$ = this.metamask.account$;
+  chain$ = this.metamask.chain$;
 
   tokens$ = this.metamask.account$.pipe(
     switchMap(address => this.contract.from(this.contract.filters.TransferSingle(null, null, address))),
