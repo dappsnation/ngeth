@@ -26,10 +26,10 @@ export async function nxGenerator(tree: Tree, baseOptions: BaseOptions) {
   updateGitIgnore(tree, '# IPFS Data\n.ipfs');
   
   const installTask = addDependenciesToPackageJson(tree, {
-    '@ngeth/ipfs': '0.0.5',
-    'ipfs': "^0.62.0",
+    "@ngeth/ipfs": "0.0.7",
+    "ipfs": "^0.62.0",
   }, {
-    'ipfsd-ctl': "^10.0.6"
+    "ipfsd-ctl": "^10.0.6"
   });
 
   return () => installTask();

@@ -11,4 +11,13 @@ export default {
     tests: './tests',
     artifacts: './artifacts'
   },
+  ngeth: {
+    outDir: './src/app/contracts',
+    // Put the contracts you want to auto deploy here
+    // - key is the name of the contract
+    // - value is the constructor arguments
+    autoDeploy: {
+      ['<%= className %>']: ['<%= className %>', '<%= fileName %>']
+    }
+  }
 };
