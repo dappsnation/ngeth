@@ -4,6 +4,11 @@
       "implementation": "./build/index",
       "schema": "./build/schema.json",
       "description": "Compile the contracts."
+    },
+    "serve": {
+      "implementation": "./serve/index",
+      "schema": "./serve/schema.json",
+      "description": "Run a local node and deploy contracts."
     }
   }
 }

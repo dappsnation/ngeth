@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/schema",
-  "title": "Compile contracts with Hardhat",
-  "description": "Compile the contracts with the hardhat runtime.",
+  "title": "Serve Node",
+  "description": "Serve an Ethereum node and deploy contracts defined by autoDeploy.",
   "type": "object",
   "properties": {
     "tsconfig": {

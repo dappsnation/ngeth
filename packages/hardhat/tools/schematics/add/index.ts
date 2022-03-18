@@ -2,16 +2,32 @@ import {
   Tree,
   convertNxGenerator,
   addDependenciesToPackageJson,
+  TargetConfiguration,
 } from '@nrwl/devkit';
-import { addFiles, getProjectOptions, updateTsConfig } from '@ngeth/devkit';
+import { addFiles, getProjectOptions, ProjectOptions, setProjectBuilders, updateTsConfig } from '@ngeth/devkit';
 
 interface BaseOptions {
   project?: string;
 }
 
+function hardhatBuilder(tasks: string[], options: ProjectOptions) {
+  const builders: Record<string, TargetConfiguration> = {};
+  for (const task of tasks) {
+    builders[`hardhat-${task}`] = {
+      executor: `@ngeth/hardhat:${task}`,
+      options: {
+        config: `${options.projectConfig.root}/hardhat.config.ts`,
+        tsconfig: `${options.projectConfig.root}/tsconfig.hardhat.json`,
+      }
+    }
+  }
+  return builders;
+}
+
 export async function nxGenerator(tree: Tree, baseOptions: BaseOptions) {
   const options = getProjectOptions(tree, baseOptions.project);
   await addFiles(tree, options, __dirname);
+  setProjectBuilders(tree, options, hardhatBuilder(['build', 'serve'], options));
   updateTsConfig(tree, options, (config) => {
     // update references only there is one already ??? (nx project)
     if (!config.references) return config;

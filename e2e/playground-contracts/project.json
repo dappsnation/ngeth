@@ -3,18 +3,25 @@
   "projectType": "application",
   "sourceRoot": "e2e/playground-contracts/contracts",
   "targets": {
-    "build": {
+    "old_build": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "command": "hardhat compile --tsconfig tsconfig.app.json",
         "cwd": "e2e/playground-contracts"
       }
     },
-    "serve": {
-      "executor": "@nrwl/workspace:run-commands",
+    "build": {
+      "executor": "@ngeth/hardhat:build",
       "options": {
-        "command": "hardhat ngeth:serve --tsconfig tsconfig.app.json",
-        "cwd": "e2e/playground-contracts"
+        "tsconfig": "e2e/playground-contracts/tsconfig.app.json",
+        "config": "e2e/playground-contracts/hardhat.config.ts"
+      }
+    },
+    "serve": {
+      "executor": "@ngeth/hardhat:serve",
+      "options": {
+        "tsconfig": "e2e/playground-contracts/tsconfig.app.json",
+        "config": "e2e/playground-contracts/hardhat.config.ts"
       }
     },
     "test": {
