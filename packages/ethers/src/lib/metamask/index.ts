@@ -6,7 +6,6 @@ import {
   Optional,
 } from '@angular/core';
 import {
-  ExternalProvider,
   Web3Provider,
   Networkish,
   Provider,
@@ -14,59 +13,9 @@ import {
 import { EventFilter } from '@ethersproject/abstract-provider';
 import { timer, defer, Observable, of } from 'rxjs';
 import { map, shareReplay, switchMap, filter } from 'rxjs/operators';
-import { getAddress } from 'ethers/lib/utils';
+import { getAddress } from '@ethersproject/address';
+import { AddChainParameter, MetaMaskEvents, MetaMaskProvider, WatchAssetParams } from './types';
 
-interface RequestArguments {
-  method: string;
-  params?: unknown[] | object;
-}
-interface ConnectInfo {
-  chainId: string;
-}
-interface ProviderRpcError extends Error {
-  message: string;
-  code: number;
-  data?: unknown;
-}
-interface ProviderMessage {
-  type: string;
-  data: unknown;
-}
-
-interface MetaMaskEvents {
-  accountsChanged: (accounts: string[]) => void;
-  chainChanged: (chainId: string) => void;
-  connect: (connectInfo: ConnectInfo) => void;
-  disconnect: (error: ProviderRpcError) => void;
-  message: (message: ProviderMessage) => void;
-}
-
-interface MetaMaskProvider extends ExternalProvider {
-  chainId: string;
-  networkVersion: string;
-  selectedAddress?: string;
-  isConnected(): boolean;
-  enable(): Promise<string>;
-  send(args: RequestArguments | 'eth_requestAccounts'): Promise<unknown>;
-  request(args: RequestArguments | 'eth_requestAccounts'): Promise<unknown>;
-  on<K extends keyof MetaMaskEvents>(
-    event: K,
-    listener: MetaMaskEvents[K]
-  ): this;
-  once<K extends keyof MetaMaskEvents>(
-    event: K,
-    listener: MetaMaskEvents[K]
-  ): this;
-  addListener<K extends keyof MetaMaskEvents>(
-    event: K,
-    listener: MetaMaskEvents[K]
-  ): this;
-  removeListener<K extends keyof MetaMaskEvents>(
-    event: K,
-    listener: MetaMaskEvents[K]
-  ): this;
-  removeAllListeners(event: keyof MetaMaskEvents): this;
-}
 
 const ETH_PROVIDER = new InjectionToken<MetaMaskProvider>('Ethereum ', {
   providedIn: 'root',
@@ -104,22 +53,25 @@ export class MetaMask extends Web3Provider {
     const initial = this.provider.isConnected();
     return this.fromMetaMaskEvent('connect', initial).pipe(
       map((connected) => !!connected),
-      shareReplay(1)
+      shareReplay({ refCount: true, bufferSize: 1 })
     );
   });
 
   account$ = defer(() => {
+    if (this.account) return of([this.account]);
     // Sometime Metamask takes time to find selected Address. Delay in this case
-    const start = this.account
-      ? of([this.account])
-      : timer(500).pipe(map(() => (this.account ? [this.account] : [])));
-    return start.pipe(
-      switchMap((initial) => this.fromMetaMaskEvent('accountsChanged', initial)),
-      filter(accounts => !!accounts.length),
-      map(accounts => getAddress(accounts[0])),
-      shareReplay({ refCount: true, bufferSize: 1 })
-    );
-  });
+    return timer(500).pipe(map(() => (this.account ? [this.account] : [])));
+  }).pipe(
+    switchMap((initial) => this.fromMetaMaskEvent('accountsChanged', initial)),
+    filter(accounts => !!accounts.length),
+    map(accounts => getAddress(accounts[0])),
+    shareReplay({ refCount: true, bufferSize: 1 })
+  );
+
+  chain$ = defer(() => of(this.provider.chainId)).pipe(
+    switchMap(initial => this.fromMetaMaskEvent('chainChanged', initial)),
+    shareReplay({ refCount: true, bufferSize: 1 })
+  );
 
   constructor(
     private ngZone: NgZone,
@@ -135,7 +87,33 @@ export class MetaMask extends Web3Provider {
   }
 
   enable() {
-    return this.provider.send('eth_requestAccounts');
+    return this.provider.request({ method: 'eth_requestAccounts' });
+  }
+
+  /**
+   * Request user to change chain
+   * @note If the error code (error.code) is 4902, then the requested chain has not been added by MetaMask, and you have to request to add it via addChain
+   * @param chainId The 0x prefix id of the chain
+   */
+  switchChain(chainId: string) {
+    return this.provider.request<null>({
+      method: 'wallet_switchEthereumChain',
+      params: { chainId }
+    });
+  }
+
+  addChain(params: AddChainParameter) {
+    return this.provider.request<null>({
+      method: 'wallet_addEthereumChain',
+      params
+    });
+  }
+
+  watchAsset(params: WatchAssetParams) {
+    return this.provider.request<boolean>({
+      method: 'wallet_watchAsset',
+      params
+    })
   }
 
   /** Listen on event from MetaMask Provider */

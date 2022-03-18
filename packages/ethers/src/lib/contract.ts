@@ -1,12 +1,14 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { BaseContract, BytesLike, EventFilter } from 'ethers';
+import { BaseContract, EventFilter } from '@ethersproject/contracts';
 import { Log } from '@ethersproject/abstract-provider';
 import { Observable, shareReplay, map, from, scan, startWith, combineLatest, finalize } from 'rxjs';
 import { fromEthEvent } from './metamask';
 import { inject, NgZone } from '@angular/core';
 
-import type { Signer, Event } from 'ethers';
+import type { Signer } from '@ethersproject/abstract-signer';
+import type { Event } from '@ethersproject/contracts';
 import type { Listener, Provider, BlockTag } from "@ethersproject/providers";
+import type { BytesLike } from '@ethersproject/bytes';
 
 export type FilterParam<T> = T | T[] | null;
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -125,7 +127,7 @@ export class NgContract<
       ).pipe(
         map(log => this.wrapEvent(log)),
         scan((acc, value) => acc.concat(value), [] as TypedEvent<Events, FilterKeys>[]),
-        startWith([])
+        startWith([] as TypedEvent<Events, FilterKeys>[])
       );
 
       this._events[tag] = combineLatest([
