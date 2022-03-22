@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" x="0" y="0" [attr.height]="diameter" [attr.width]="diameter">
+  <ng-container *ngFor="let shape of shapes">
+    <rect x="0" y="0" rx="0" ry="0"
+      [attr.height]="diameter"
+      [attr.width]="diameter"
+      [attr.transform]="shape.transform"
+      [attr.fill]="shape.fill"
+    />
+  </ng-container>
+</svg>

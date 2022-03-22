@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { MetaMask } from '@ngeth/ethers';
+import { MetaMask, ChainService } from '@ngeth/ethers';
 import { map, switchMap } from 'rxjs';
 import { ERC1155 } from './base-erc1155';
 
@@ -17,7 +17,7 @@ export class AppComponent {
   });
   connected$ = this.metamask.connected$;
   account$ = this.metamask.account$;
-  chain$ = this.metamask.chain$;
+  chain$ = this.chain.chain$;
 
   tokens$ = this.metamask.account$.pipe(
     switchMap(address => this.contract.from(this.contract.filters.TransferSingle(null, null, address))),
@@ -25,6 +25,7 @@ export class AppComponent {
   );
 
   constructor(
+    private chain: ChainService,
     private metamask: MetaMask,
     private contract: ERC1155,
   ) {}

@@ -15,6 +15,8 @@ import { timer, defer, Observable, of } from 'rxjs';
 import { map, shareReplay, switchMap, filter } from 'rxjs/operators';
 import { getAddress } from '@ethersproject/address';
 import { AddChainParameter, MetaMaskEvents, MetaMaskProvider, WatchAssetParams } from './types';
+import { getChain } from '../chain/utils';
+import { fromChain } from './utils';
 
 
 const ETH_PROVIDER = new InjectionToken<MetaMaskProvider>('Ethereum ', {
@@ -68,7 +70,11 @@ export class MetaMask extends Web3Provider {
     shareReplay({ refCount: true, bufferSize: 1 })
   );
 
-  chain$ = defer(() => of(this.provider.chainId)).pipe(
+  chain$ = defer(() => {
+    if (this.chainId) return of(this.chainId);
+    return timer(500).pipe(map(() => this.chainId))
+  }).pipe(
+    filter(chainId => !!chainId),
     switchMap(initial => this.fromMetaMaskEvent('chainChanged', initial)),
     shareReplay({ refCount: true, bufferSize: 1 })
   );
@@ -84,6 +90,10 @@ export class MetaMask extends Web3Provider {
   get account() {
     if (!this.provider.selectedAddress) return;
     return getAddress(this.provider.selectedAddress);
+  }
+
+  get chainId() {
+    return this.provider.chainId;
   }
 
   enable() {
@@ -102,7 +112,10 @@ export class MetaMask extends Web3Provider {
     });
   }
 
-  addChain(params: AddChainParameter) {
+  async addChain(chain: AddChainParameter | string) {
+    const params = (typeof chain === "string")
+      ? await getChain(chain).then(fromChain)
+      : chain;
     return this.provider.request<null>({
       method: 'wallet_addEthereumChain',
       params

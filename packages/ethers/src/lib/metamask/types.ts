@@ -61,7 +61,7 @@ export interface AddChainParameter {
     name: string;
     /** 2-6 characters long */
     symbol: string;
-    decimals: 18;
+    decimals: number;
   };
   rpcUrls: string[];
   blockExplorerUrls?: string[];

@@ -1,7 +1,14 @@
 <p>{{ connected$ | async }}</p>
-<p>{{ chain$ | async }}</p>
 <ng-container *ngIf="account$ | async as account; else signin">
-  <p>{{ account }}</p>
+  <article *ngIf="chain$ | async as chain">
+    <h4>
+      <a [href]="chain.explorers[0]?.url">{{ chain.name }}</a>
+    </h4>
+    <p>
+      <eth-jazzicon diameter="24" [address]="account"></eth-jazzicon>
+      <a [href]="account | explore:chain">{{ account }}</a>
+    </p>
+  </article>
   <form [formGroup]="form" (ngSubmit)="mint()">
     <input type="text" formControlName="address" placeholder="Address">
     <input type="number" formControlName="tokenId" placeholder="Token Id">

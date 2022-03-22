@@ -2,6 +2,8 @@ import { NgModule, Pipe, PipeTransform } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BigNumber, BigNumberish, constants } from 'ethers';
 import { formatEther } from 'ethers/lib/utils';
+import { Chain, explore } from './chain';
+import { JazzIconComponent } from './components';
 
 @Pipe({ name: 'bignumber' })
 export class BigNumberPipe implements PipeTransform {
@@ -19,9 +21,19 @@ export class EthPipe implements PipeTransform {
   }
 }
 
+@Pipe({ name: 'explore' })
+export class ExporePipe implements PipeTransform {
+  transform(search: string, chain: Chain) {
+    return explore(chain, search);
+  }
+}
+
+const pipes = [BigNumberPipe, EthPipe, ExporePipe];
+const components = [JazzIconComponent];
+
 @NgModule({
-  declarations: [BigNumberPipe, EthPipe],
-  exports: [BigNumberPipe, EthPipe],
+  declarations: [...pipes, ...components],
+  exports: [...pipes, ...components],
   imports: [CommonModule],
 })
 export class EthersModule {}
