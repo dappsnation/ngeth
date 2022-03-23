@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, Input, ElementRef, Renderer2 } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, ElementRef, Renderer2, HostBinding } from '@angular/core';
 import blockies from 'blockies';
 
 @Component({
@@ -9,9 +9,13 @@ import blockies from 'blockies';
 })
 export class BlockiesComponent {
   private previous?: HTMLCanvasElement;
+
+  @HostBinding('title') title?: string;
+
   @Input()
   set address(address: string) {
     if (!address) return;
+    this.title = address;
     if (this.previous) this.renderer.removeChild(this.el.nativeElement, this.previous);
     const { width, height } = this.el.nativeElement.getBoundingClientRect();
     this.previous = blockies({ seed: address.toLowerCase() });

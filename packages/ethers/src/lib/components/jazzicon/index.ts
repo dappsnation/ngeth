@@ -45,6 +45,7 @@ export class JazzIconComponent {
   shapes: Shape[] = [];
 
   @HostBinding('style.backgroundColor') background?: string;
+  @HostBinding('title') title?: string;
 
   // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input('diameter') set _diameter(d: string | number) {
@@ -55,6 +56,7 @@ export class JazzIconComponent {
   @Input()
   set address(address: string) {
     if (!address) return;
+    this.title = address;
     this.generate(address);
   }
 
