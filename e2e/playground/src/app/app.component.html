@@ -7,7 +7,7 @@
     <p>
       <eth-jazzicon [address]="account"></eth-jazzicon>
       <eth-blockies [address]="account"></eth-blockies>
-      <a [href]="account | explore:chain">{{ account }}</a>
+      <a [href]="account | explore:chain">{{ account | address:'short' }}</a>
     </p>
   </article>
   <form [formGroup]="form" (ngSubmit)="mint()">

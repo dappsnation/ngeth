@@ -1,7 +1,8 @@
 import { NgModule, Pipe, PipeTransform } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BigNumber, BigNumberish, constants } from 'ethers';
-import { formatEther } from 'ethers/lib/utils';
+import { getAddress } from '@ethersproject/address';
+import { formatEther } from '@ethersproject/units';
 import { Chain, explore } from './chain';
 import { BlockiesComponent, JazzIconComponent } from './components';
 
@@ -28,7 +29,16 @@ export class ExporePipe implements PipeTransform {
   }
 }
 
-const pipes = [BigNumberPipe, EthPipe, ExporePipe];
+@Pipe({ name: 'address' })
+export class AddressPipe implements PipeTransform {
+  transform(address: string, format: 'short' | 'full' = 'full') {
+    const account = getAddress(address);
+    if (format === 'short') return `${account.slice(0, 6)}...${account.slice(-4)}`;
+    return account;
+  }
+}
+
+const pipes = [BigNumberPipe, EthPipe, ExporePipe, AddressPipe];
 const components = [JazzIconComponent, BlockiesComponent];
 
 @NgModule({
