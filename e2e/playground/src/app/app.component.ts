@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { MetaMask, ChainService } from '@ngeth/ethers';
+import { MetaMask, ChainManager } from '@ngeth/ethers';
 import { map, switchMap } from 'rxjs';
 import { ERC1155 } from './base-erc1155';
 
@@ -25,7 +25,7 @@ export class AppComponent {
   );
 
   constructor(
-    private chain: ChainService,
+    private chain: ChainManager,
     private metamask: MetaMask,
     private contract: ERC1155,
   ) {}

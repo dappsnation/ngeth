@@ -5,7 +5,7 @@ import { explore, getChain, getChainIcons } from "./utils";
 import { switchMap } from "rxjs";
 
 @Injectable({ providedIn: 'root' })
-export class ChainService {
+export class ChainManager {
   private chains: Record<string, Chain> = {};
   private icons: Record<string, ChainIcon> = {};
 
