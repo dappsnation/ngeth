@@ -16,7 +16,8 @@ export default {
     outDir: '../playground/src/app/contracts',
     autoDeploy: {
       BaseERC1155: ['uri'],
-      BaseERC20: []
+      BaseERC20: [],
+      BaseERC721: [],
     }
   }
 };

@@ -2,7 +2,7 @@ import { NgContract, FilterParam, TypedFilter } from "@ngeth/ethers";
 import { BigNumber, Overrides, CallOverrides, Signer, ContractTransaction, BigNumberish } from "ethers";
 import { Provider } from "@ethersproject/providers";
 import { combineLatest, map, shareReplay } from "rxjs";
-import { erc20Balance } from "../utils";
+import { erc20Balance } from "./utils";
 import { NgZone } from "@angular/core";
 import { ERC20Metadata } from "./types";
 

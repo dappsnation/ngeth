@@ -1,7 +1,7 @@
 import { Inject, LOCALE_ID, Pipe, PipeTransform } from '@angular/core';
 import { BigNumber } from 'ethers';
 import { ERC20Metadata } from './types';
-import { formatERC20 } from '../utils';
+import { formatERC20 } from './utils';
 
 
 @Pipe({ name: 'erc20' })

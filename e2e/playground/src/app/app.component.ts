@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MetaMask, ChainManager } from '@ngeth/ethers';
 import { map, switchMap } from 'rxjs';
@@ -9,9 +9,11 @@ import { addresses } from './contracts';
   selector: 'nxeth-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent {
   erc20 = addresses.BaseERC20;
+  erc721 = addresses.BaseERC721;
   form = new FormGroup({
     address: new FormControl(),
     tokenId: new FormControl(),

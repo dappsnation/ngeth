@@ -13,6 +13,9 @@ import { AppComponent } from './app.component';
     RouterModule.forRoot([{
       path: 'erc20/:address',
       loadChildren: () => import('./erc20/erc20.module').then(m => m.Erc20PageModule)
+    },{
+      path: 'erc721/:address',
+      loadChildren: () => import('./erc721/erc721.module').then(m => m.Erc721PageModule)
     }]),
     ReactiveFormsModule,
     EthersModule,

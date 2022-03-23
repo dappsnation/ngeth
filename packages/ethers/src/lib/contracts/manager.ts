@@ -2,6 +2,7 @@ import { Injectable, NgZone } from '@angular/core';
 import { Contract } from 'ethers';
 import { MetaMask } from '../metamask';
 import { ERC20 } from './erc20';
+import { ERC721 } from './erc721';
 
 @Injectable({ providedIn: 'root' })
 export class ContractsManager {
@@ -14,6 +15,10 @@ export class ContractsManager {
 
   erc20(address: string) {
     return this.get(address, () => new ERC20(address, this.metamask.getSigner(), this.zone));
+  }
+
+  erc721(address: string) {
+    return this.get(address, () => new ERC721(address, this.metamask.getSigner(), this.zone));
   }
 
   private get<T extends Contract>(address: string, create: () => T): T {
