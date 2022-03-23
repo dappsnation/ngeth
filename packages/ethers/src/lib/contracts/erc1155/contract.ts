@@ -1,17 +1,20 @@
-import { NgContract, FilterParam, TypedFilter } from "@ngeth/ethers";
+import { NgContract, FilterParam, TypedFilter } from "../../contract";
 import {
   BigNumber,
   Overrides,
   CallOverrides,
-  PayableOverrides,
   Signer,
   ContractTransaction,
   BytesLike,
   BigNumberish,
 } from "ethers";
 import { Provider } from "@ethersproject/providers";
+import { combineLatest } from "rxjs";
+import { map } from "rxjs/operators";
+import { erc1155Tokens } from "./utils";
+import { NgZone } from "@angular/core";
 
-export interface BaseERC1155Events {
+export interface ERC1155Events {
   events: {
     ApprovalForAll: (account: string, operator: string, approved: boolean) => void;
     OwnershipTransferred: (previousOwner: string, newOwner: string) => void;
@@ -46,7 +49,7 @@ export interface BaseERC1155Events {
   };
 }
 
-export class BaseERC1155 extends NgContract<BaseERC1155Events> {
+export class ERC1155 extends NgContract<ERC1155Events> {
   // Read
   balanceOf!: (account: string, id: BigNumberish, overrides?: CallOverrides) => Promise<BigNumber>;
   balanceOfBatch!: (accounts: string[], ids: BigNumberish[], overrides?: CallOverrides) => Promise<BigNumber[]>;
@@ -77,12 +80,34 @@ export class BaseERC1155 extends NgContract<BaseERC1155Events> {
   setURI!: (newuri: string, overrides?: Overrides) => Promise<ContractTransaction>;
   transferOwnership!: (newOwner: string, overrides?: Overrides) => Promise<ContractTransaction>;
 
-  constructor(address: string, signer?: Signer | Provider) {
-    super(address, BaseERC1155_abi, signer);
+  constructor(address: string, signer: Signer | Provider, zone: NgZone) {
+    super(address, ERC1155_abi, signer, zone);
+  }
+
+  exist() {
+    return this.uri(0)
+      .then(() => true)
+      .catch(() => false);
+  }
+
+  tokensChanges(address: string) {
+    const received = this.filters.TransferSingle(null, null, address);
+    const batchReceived = this.filters.TransferBatch(null, null, address);
+    const sent = this.filters.TransferSingle(null, address);
+    const batchSent = this.filters.TransferBatch(null, address);
+
+    return combineLatest([
+      this.from(received),
+      this.from(batchReceived),
+      this.from(sent),
+      this.from(batchSent),
+    ]).pipe(
+      map(([received, batchReceived, sent, batchSent]) => erc1155Tokens(received, batchReceived, sent, batchSent))
+    );
   }
 }
 
-export const BaseERC1155_abi = [
+export const ERC1155_abi = [
   {
     inputs: [{ internalType: "string", name: "_uri", type: "string" }],
     stateMutability: "nonpayable",

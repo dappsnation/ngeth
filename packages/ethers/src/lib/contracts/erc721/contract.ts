@@ -7,6 +7,7 @@ import {
   ContractTransaction,
   BytesLike,
   BigNumberish,
+  constants,
 } from "ethers";
 import { Provider } from "@ethersproject/providers";
 import { NgZone } from "@angular/core";
@@ -61,6 +62,10 @@ export class ERC721 extends NgContract<BaseERC721Events> {
     overrides?: Overrides
   ) => Promise<ContractTransaction>;
 
+  allTokens$ = this.from(this.filters.Transfer(constants.AddressZero)).pipe(
+    map(events => events.map(event => event.args[2].toString()))
+  );
+
   constructor(address: string, signer: Signer | Provider, zone: NgZone) {
     super(address, ERC721_abi, signer, zone);
   }
@@ -81,6 +86,7 @@ export class ERC721 extends NgContract<BaseERC721Events> {
       map(([received, sent]) => erc721Tokens(received, sent))
     );
   }
+
 
   safeTransferFrom(from: string, to: string, tokenId: BigNumberish, data?:BytesLike | Overrides, overrides?: Overrides) {
     if (data && (data as BytesLike).length) {

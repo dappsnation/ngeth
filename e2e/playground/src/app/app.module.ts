@@ -16,6 +16,9 @@ import { AppComponent } from './app.component';
     },{
       path: 'erc721/:address',
       loadChildren: () => import('./erc721/erc721.module').then(m => m.Erc721PageModule)
+    },{
+      path: 'erc1155/:address',
+      loadChildren: () => import('./erc1155/erc1155.module').then(m => m.Erc1155PageModule)
     }]),
     ReactiveFormsModule,
     EthersModule,

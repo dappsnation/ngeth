@@ -1,5 +1,6 @@
 import { AbstractControl, ValidationErrors, ValidatorFn } from "@angular/forms";
 import { isAddress } from "@ethersproject/address";
+import { BigNumber } from "ethers";
 
 export function address(): ValidatorFn  {
   return (control: AbstractControl): ValidationErrors|null => {
@@ -15,7 +16,22 @@ export function ownToken(tokenIds: string[]): ValidatorFn  {
   };
 }
 
+export function ownTokenAmount(tokens: Record<string, BigNumber>): ValidatorFn  {
+  return (control: AbstractControl): ValidationErrors|null => {
+    const { tokenId, amount } = control.value;
+    const quantity: BigNumber = typeof amount === 'number' ? BigNumber.from(amount) : amount; 
+    if (tokens[tokenId].gt(quantity)) return null;
+    return {
+      ownTokenAmount: {
+        owned: tokens[tokenId] ?? BigNumber.from(0),
+        actual: control.value
+      }
+    };
+  };
+}
+
 export const EthValidators = {
   address,
   ownToken,
+  ownTokenAmount,
 }
