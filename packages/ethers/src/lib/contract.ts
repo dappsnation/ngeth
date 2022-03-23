@@ -109,7 +109,7 @@ export class NgContract<
    * Listen on the changes of an event, starting with the current state
    * @param event The event filter
    */
-  from<K extends FilterKeys>(event: TypedFilter<K> | K): Observable<TypedEvent<Events, FilterKeys>[]> {
+  from<K extends FilterKeys>(event: TypedFilter<K> | K): Observable<TypedEvent<Events, K>[]> {
     if (!this.provider) throw new Error('Provider required for event');
     const eventFilter = typeof event === 'string'
       ? this.getEventFilter(event)

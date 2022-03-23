@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { BigNumber, BigNumberish, constants } from 'ethers';
 import { formatEther } from 'ethers/lib/utils';
 import { Chain, explore } from './chain';
-import { JazzIconComponent } from './components';
+import { BlockiesComponent, JazzIconComponent } from './components';
 
 @Pipe({ name: 'bignumber' })
 export class BigNumberPipe implements PipeTransform {
@@ -29,7 +29,7 @@ export class ExporePipe implements PipeTransform {
 }
 
 const pipes = [BigNumberPipe, EthPipe, ExporePipe];
-const components = [JazzIconComponent];
+const components = [JazzIconComponent, BlockiesComponent];
 
 @NgModule({
   declarations: [...pipes, ...components],

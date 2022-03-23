@@ -5,7 +5,8 @@
       <a [href]="chain.explorers[0]?.url">{{ chain.name }}</a>
     </h4>
     <p>
-      <eth-jazzicon diameter="24" [address]="account"></eth-jazzicon>
+      <eth-jazzicon [address]="account"></eth-jazzicon>
+      <eth-blockies [address]="account"></eth-blockies>
       <a [href]="account | explore:chain">{{ account }}</a>
     </p>
   </article>

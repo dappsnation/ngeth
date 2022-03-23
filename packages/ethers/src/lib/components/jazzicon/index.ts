@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, HostBinding, Input } from "@angular/core";
+import { ChangeDetectionStrategy, Component, ElementRef, HostBinding, Input } from "@angular/core";
 import MersenneTwister from "mersenne-twister";
 import { colorRotate } from "./utils";
 
@@ -41,7 +41,7 @@ interface Shape {
 })
 export class JazzIconComponent {
   private generator!: MersenneTwister;
-  diameter = 24;
+  diameter = 0;
   shapes: Shape[] = [];
 
   @HostBinding('style.backgroundColor') background?: string;
@@ -58,7 +58,12 @@ export class JazzIconComponent {
     this.generate(address);
   }
 
+  constructor(private el: ElementRef<HTMLElement>) {}
+
   private async generate(address: string) {
+    if (!this.diameter) {
+      this.diameter = this.el.nativeElement.getBoundingClientRect().width;
+    }
     const seed = seedFromAddress(address);
     this.generator = new MersenneTwister(seed);
     const remainingColors = this.hueShift(colors.slice(), this.generator);

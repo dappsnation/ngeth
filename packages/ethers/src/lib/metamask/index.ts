@@ -103,12 +103,15 @@ export class MetaMask extends Web3Provider {
   /**
    * Request user to change chain
    * @note If the error code (error.code) is 4902, then the requested chain has not been added by MetaMask, and you have to request to add it via addChain
-   * @param chainId The 0x prefix id of the chain
+   * @param chainId The 0x-non zero chainId or decimal number
    */
-  switchChain(chainId: string) {
+  switchChain(chainId: string | number) {
+    const params = (typeof chainId === 'string')
+      ? { chainId }
+      : { chainId: `0x${chainId.toString(16)}` }
     return this.provider.request<null>({
       method: 'wallet_switchEthereumChain',
-      params: { chainId }
+      params: [params]
     });
   }
 
@@ -118,14 +121,14 @@ export class MetaMask extends Web3Provider {
       : chain;
     return this.provider.request<null>({
       method: 'wallet_addEthereumChain',
-      params
+      params: [params]
     });
   }
 
   watchAsset(params: WatchAssetParams) {
     return this.provider.request<boolean>({
       method: 'wallet_watchAsset',
-      params
+      params: [params]
     })
   }
 
