@@ -78,7 +78,7 @@ export interface WatchAssetParams {
     symbol: string;
     /** The number of token decimals */
     decimals: number;
-    /** A string url of the token logo */
-    image: string;
+    /** A string url of the token logo. If not provided, use blocky */
+    image?: string;
   };
 }

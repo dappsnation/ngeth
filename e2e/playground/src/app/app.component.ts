@@ -3,6 +3,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { MetaMask, ChainManager } from '@ngeth/ethers';
 import { map, switchMap } from 'rxjs';
 import { ERC1155 } from './base-erc1155';
+import { addresses } from './contracts';
 
 @Component({
   selector: 'nxeth-root',
@@ -10,6 +11,7 @@ import { ERC1155 } from './base-erc1155';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
+  erc20 = addresses.BaseERC20;
   form = new FormGroup({
     address: new FormControl(),
     tokenId: new FormControl(),

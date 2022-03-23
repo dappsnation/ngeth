@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { BaseContract, EventFilter } from '@ethersproject/contracts';
+import { BaseContract, EventFilter, ContractInterface } from '@ethersproject/contracts';
 import { Log } from '@ethersproject/abstract-provider';
 import { Observable, shareReplay, map, from, scan, startWith, combineLatest, finalize } from 'rxjs';
 import { fromEthEvent } from './metamask';
@@ -74,8 +74,18 @@ export class NgContract<
   override removeListener!: <K extends EventKeys>(eventName: TypedFilter<K> | K, listener: Events['events'][K]) => this;
   override removeAllListeners!: (eventName?: EventFilter | EventKeys) => this;
 
-  private ngZone = inject(NgZone);
+  private ngZone: NgZone;
   private _events: Record<string, Observable<any>> = {};
+
+  constructor(
+    address: string,
+    abi: ContractInterface,
+    signer?: Provider | Signer,
+    ngZone?: NgZone,
+  ) {
+    super(address, abi, signer);
+    this.ngZone = ngZone ?? inject(NgZone);
+  }
 
   /** Transform event name into an EventFilter */
   private getEventFilter(name: string): EventFilter {

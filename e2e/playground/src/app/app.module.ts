@@ -10,7 +10,10 @@ import { AppComponent } from './app.component';
   declarations: [AppComponent],
   imports: [
     BrowserModule,
-    RouterModule.forRoot([]),
+    RouterModule.forRoot([{
+      path: 'erc20/:address',
+      loadChildren: () => import('./erc20/erc20.module').then(m => m.Erc20PageModule)
+    }]),
     ReactiveFormsModule,
     EthersModule,
   ],

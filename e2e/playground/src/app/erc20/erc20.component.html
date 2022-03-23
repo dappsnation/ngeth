@@ -1,0 +1,21 @@
+<p>{{ address$ | async }}</p>
+<ng-container *ngIf="exist$ | async; else error">
+
+  <button (click)="watch()">Watch this token on Metamask</button>
+
+  <p *ngIf="balance$ | async as balance">
+    Balance: <strong *ngIf="metadata$ | async as metadata">{{ balance | erc20:metadata }}</strong>
+  </p>
+
+  <form [formGroup]="form" (ngSubmit)="transfer()">
+    <label for="to">To</label>
+    <input type="text" formControlName="to" name="to" id="to" required>
+    <label for="amount">amount</label>
+    <input type="number" formControlName="amount" name="amount" id="amount" required>
+    <button type="submit">Transfer</button>
+  </form>
+</ng-container>
+
+<ng-template #error>
+  Wrong network.
+</ng-template>

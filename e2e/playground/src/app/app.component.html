@@ -1,6 +1,6 @@
 <p>{{ connected$ | async }}</p>
 <ng-container *ngIf="account$ | async as account; else signin">
-  <article *ngIf="chain$ | async as chain">
+  <header *ngIf="chain$ | async as chain">
     <h4>
       <a [href]="chain.explorers[0]?.url">{{ chain.name }}</a>
     </h4>
@@ -9,19 +9,12 @@
       <eth-blockies [address]="account"></eth-blockies>
       <a [href]="account | explore:chain">{{ account | address:'short' }}</a>
     </p>
-  </article>
-  <form [formGroup]="form" (ngSubmit)="mint()">
-    <input type="text" formControlName="address" placeholder="Address">
-    <input type="number" formControlName="tokenId" placeholder="Token Id">
-    <input type="number" formControlName="amount" placeholder="Amount">
-    <button type="submit">Contribute</button>
-  </form>
+  </header>
 
-  <ul>
-    <li *ngFor="let token of tokens$ | async">
-      {{ token | json }}
-    </li>
-  </ul>
+  <nav>
+    <a [routerLink]="['erc20', erc20]">ERC20</a>
+  </nav>
+  <router-outlet></router-outlet>
 </ng-container>
 
 <ng-template #signin>

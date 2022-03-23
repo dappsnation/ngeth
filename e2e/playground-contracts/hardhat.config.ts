@@ -15,7 +15,8 @@ export default {
   ngeth: {
     outDir: '../playground/src/app/contracts',
     autoDeploy: {
-      BaseERC1155: ['uri']
+      BaseERC1155: ['uri'],
+      BaseERC20: []
     }
   }
 };

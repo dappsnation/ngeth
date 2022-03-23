@@ -45,8 +45,12 @@ const getType = (param: ABIParameter, kind: 'input' | 'output'): string => {
   if (type === 'address') return 'string';
   if (type === 'bool') return 'boolean';
   if (type.startsWith('bytes')) return 'BytesLike';
-  if (type.startsWith('uint'))
+  if (type.endsWith('int8')) return 'number';
+  if (type.endsWith('int16')) return 'number';
+  if (type.endsWith('int32')) return 'number';
+  if (type.startsWith('uint')) {
     return kind === 'input' ? 'BigNumberish' : 'BigNumber';
+  }
   if (type.startsWith('int'))
     return kind === 'input' ? 'BigNumberish' : 'BigNumber';
   return '';
@@ -251,8 +255,16 @@ const getAllEvents = (nodes: EventDescription[]) => {
 };
 
 const getEvent = (node: EventDescription) => {
-  return `(${getParams(node.inputs)}) => void`;
+  return `(${getEventParams(node.inputs)}) => void`;
 };
+
+const getEventParams = (params: ABIParameter[] = []) => params.map(getEventParam).join(', ');
+const getEventParam = (param: ABIParameter, index: number) => {
+  if (param.name) return `${param.name}: ${getType(param, 'output')}`;
+  if (!index) return `arg: ${getType(param, 'output')}`;
+  return `arg${index}: ${getType(param, 'output')}`;
+}
+
 
 // FILTERS //
 const getAllFilters = (nodes: EventDescription[]) => {

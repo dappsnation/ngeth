@@ -125,11 +125,11 @@ export class MetaMask extends Web3Provider {
     });
   }
 
-  watchAsset(params: WatchAssetParams) {
+  watchAsset(params: WatchAssetParams['options']) {
     return this.provider.request<boolean>({
       method: 'wallet_watchAsset',
-      params: [params]
-    })
+      params: { type: 'ERC20', options: params }
+    });
   }
 
   /** Listen on event from MetaMask Provider */
