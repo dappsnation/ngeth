@@ -19,8 +19,8 @@ export class BlockiesComponent {
     if (this.previous) this.renderer.removeChild(this.el.nativeElement, this.previous);
     const { width, height } = this.el.nativeElement.getBoundingClientRect();
     this.previous = blockies({ seed: address.toLowerCase() });
-    this.previous.style.width = `${width}px`;
-    this.previous.style.height = `${height}px`;
+    this.previous.style.width = `${width || 32}px`;
+    this.previous.style.height = `${height || 32}px`;
     this.renderer.appendChild(this.el.nativeElement, this.previous);
   }
 

@@ -3,7 +3,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 
-import { EthersModule } from '@ngeth/ethers';
+import { EthersModule, HasProviderGuard, HasSignerGuard } from '@ngeth/ethers';
 import { AppComponent } from './app.component';
 
 @NgModule({
@@ -11,16 +11,18 @@ import { AppComponent } from './app.component';
   imports: [
     BrowserModule,
     RouterModule.forRoot([{
-      path: 'erc20/:address',
-      loadChildren: () => import('./erc20/erc20.module').then(m => m.Erc20PageModule)
+      path: 'no-provider',
+      loadChildren: () => import('./no-provider/no-provider.module').then(m => m.NoProviderModule),
+    }, {
+      path: 'no-signer',
+      loadChildren: () => import('./no-signer/no-signer.module').then(m => m.NoSignerModule),
     },{
-      path: 'erc721/:address',
-      loadChildren: () => import('./erc721/erc721.module').then(m => m.Erc721PageModule)
-    },{
-      path: 'erc1155/:address',
-      loadChildren: () => import('./erc1155/erc1155.module').then(m => m.Erc1155PageModule)
+      path: 'search',
+      canActivate: [HasProviderGuard, HasSignerGuard],
+      loadChildren: () => import('./search/search.module').then(m => m.SearchModule),
     }, {
       path: 'admin',
+      canActivate: [HasProviderGuard, HasSignerGuard],
       loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule)
     }]),
     ReactiveFormsModule,

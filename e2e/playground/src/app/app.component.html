@@ -1,21 +1,19 @@
-<ng-container *ngIf="account$ | async as account; else signin">
-  <header *ngIf="chain$ | async as chain">
-    <h4>
-      <a [href]="chain.explorers[0]?.url">{{ chain.name }}</a>
-    </h4>
-    <a class="account" routerLink="admin">
-      <eth-blockies [address]="account"></eth-blockies>
-    </a>
-  </header>
+<header>
+  <h1>Playground</h1>
 
-  <nav>
-    <a [routerLink]="['erc20', erc20]">ERC20</a>
-    <a [routerLink]="['erc721', erc721]">ERC721</a>
-    <a [routerLink]="['erc1155', erc1155]">ERC1155</a>
-  </nav>
-  <router-outlet></router-outlet>
-</ng-container>
+  <ng-container *ngIf="provider else noProvider">
+    <eth-connect>
+      <ng-template ethIdenticon let-account>
+        <a class="identicon" routerLink="admin">
+          <eth-blockies [address]="account"></eth-blockies>
+        </a>
+      </ng-template>
+    </eth-connect>
+  </ng-container>
 
-<ng-template #signin>
-  <button (click)="connect()">connect</button>
-</ng-template>
+  <ng-template #noProvider>
+    <p>No metamask provider</p>
+  </ng-template>
+</header>
+
+<router-outlet></router-outlet>

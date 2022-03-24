@@ -1,0 +1,17 @@
+<ng-container *ngIf="account$ | async as account; else signin">
+  <ng-container *ngIf="identicon">
+    <ng-container *ngTemplateOutlet="identicon.template; context: { $implicit: account }"></ng-container>
+  </ng-container>
+  <ng-container *ngIf="chain$ | async as chain">
+    <a [href]="account | explore:chain" target="_blank">
+      {{ account | address:'short' }}
+    </a>
+    <a [href]="chain.explorers[0]?.url">
+      {{ chain.name }}
+    </a>
+  </ng-container>
+</ng-container>
+
+<ng-template #signin>
+  <button (click)="connect()">connect</button>
+</ng-template>

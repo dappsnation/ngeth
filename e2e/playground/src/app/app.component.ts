@@ -1,6 +1,5 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { MetaMask, ChainManager } from '@ngeth/ethers';
-import { addresses } from './contracts';
+import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
+import { ETH_PROVIDER, MetaMaskProvider } from '@ngeth/ethers';
 
 @Component({
   selector: 'nxeth-root',
@@ -9,21 +8,8 @@ import { addresses } from './contracts';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent {
-  erc20 = addresses.BaseERC20;
-  erc721 = addresses.BaseERC721;
-  erc1155 = addresses.BaseERC1155;
-
-  connected$ = this.metamask.connected$;
-  account$ = this.metamask.account$;
-  chain$ = this.chain.chain$;
-
   constructor(
-    private chain: ChainManager,
-    private metamask: MetaMask,
+    @Inject(ETH_PROVIDER) public provider?: MetaMaskProvider
   ) {}
-
-  connect() {
-    this.metamask.enable();
-  }
 
 }

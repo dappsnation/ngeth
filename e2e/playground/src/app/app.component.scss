@@ -1,11 +1,11 @@
 header {
   display: flex;
   
-  .account {
+  eth-connect {
     margin-left: auto;
   }
-}
 
-eth-blockies {
-  height: 40px;
+  eth-blockies {
+    height: 32px;
+  }
 }

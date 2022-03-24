@@ -120,6 +120,12 @@
         "config": "e2e/playground/hardhat.config.ts",
         "tsconfig": "e2e/playground/tsconfig.hardhat.json"
       }
+    },
+    "ipfs-daemon": {
+      "executor": "@ngeth/ipfs:daemon",
+      "options": {
+        "path": ".ipfs"
+      }
     }
   },
   "tags": []

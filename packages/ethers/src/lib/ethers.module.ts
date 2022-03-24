@@ -4,7 +4,7 @@ import { BigNumber, BigNumberish, constants } from 'ethers';
 import { getAddress } from '@ethersproject/address';
 import { formatEther } from '@ethersproject/units';
 import { Chain, explore } from './chain';
-import { BlockiesComponent, JazzIconComponent } from './components';
+import { BlockiesComponent, JazzIconComponent, EthConnectComponent, EthIdenticonDirective } from './components';
 
 @Pipe({ name: 'bignumber' })
 export class BigNumberPipe implements PipeTransform {
@@ -39,7 +39,7 @@ export class AddressPipe implements PipeTransform {
 }
 
 const pipes = [BigNumberPipe, EthPipe, ExporePipe, AddressPipe];
-const components = [JazzIconComponent, BlockiesComponent];
+const components = [JazzIconComponent, BlockiesComponent, EthConnectComponent, EthIdenticonDirective];
 
 @NgModule({
   declarations: [...pipes, ...components],

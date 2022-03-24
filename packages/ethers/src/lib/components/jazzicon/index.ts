@@ -64,7 +64,7 @@ export class JazzIconComponent {
 
   private async generate(address: string) {
     if (!this.diameter) {
-      this.diameter = this.el.nativeElement.getBoundingClientRect().width;
+      this.diameter = this.el.nativeElement.getBoundingClientRect().width || 32;
     }
     const seed = seedFromAddress(address);
     this.generator = new MersenneTwister(seed);
