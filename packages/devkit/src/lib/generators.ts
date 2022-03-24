@@ -21,8 +21,8 @@ type WorkspaceOrProject = Workspace | ProjectConfig;
 function isProjectConfig(workspace: WorkspaceOrProject): workspace is ProjectConfig {
   return 'projectType' in workspace;
 }
-function isNxProjectConfig(config: ProjectConfig | NxProjectConfig): config is NxProjectConfig {
-  return !('architect' in config);
+function isNgProjectConfig(config: ProjectConfig | NxProjectConfig): config is ProjectConfig {
+  return 'architect' in config;
 }
 
 
@@ -76,22 +76,22 @@ export function updateProjectConfig(tree: Tree, options: ProjectOptions, cb: (co
 
 
 export function setProjectBuilders(tree: Tree, options: ProjectOptions, targets: Record<string, TargetConfiguration>) {
-  return updateProjectConfig(tree, options, config => {
+  return updateProjectConfig(tree, options, (config: ProjectConfig | NxProjectConfig) => {
+    // Angular
+    if (isNgProjectConfig(config)) {
+      for (const [key, value] of Object.entries(targets)) {
+        config['architect'][key] = value;
+      }
+      return;
+    }
     // Nx
-    if (isNxProjectConfig(config)) {
-      if (!config.targets) {
-        config.targets = targets;
-      } else {
-        for (const [key, value] of Object.entries(targets)) {
-          config.targets[key] = value;
-        }
+    if (!config.targets) {
+      config.targets = targets;
+    } else {
+      for (const [key, value] of Object.entries(targets)) {
+        config.targets[key] = value;
       }
     }
-    // Angular
-    for (const [key, value] of Object.entries(targets)) {
-      config['architect'][key] = value;
-    }
-    return;
   })
 }
 

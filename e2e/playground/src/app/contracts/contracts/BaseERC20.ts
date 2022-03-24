@@ -13,8 +13,8 @@ import { Provider } from "@ethersproject/providers";
 
 export interface BaseERC20Events {
   events: {
-    Approval: (owner: string, spender: string, value: BigNumberish) => void;
-    Transfer: (from: string, to: string, value: BigNumberish) => void;
+    Approval: (owner: string, spender: string, value: BigNumber) => void;
+    Transfer: (from: string, to: string, value: BigNumber) => void;
   };
   filters: {
     Approval: (owner?: FilterParam<string>, spender?: FilterParam<string>) => TypedFilter<"Approval">;
@@ -30,7 +30,7 @@ export class BaseERC20 extends NgContract<BaseERC20Events> {
   // Read
   allowance!: (owner: string, spender: string, overrides?: CallOverrides) => Promise<BigNumber>;
   balanceOf!: (account: string, overrides?: CallOverrides) => Promise<BigNumber>;
-  decimals!: (overrides?: CallOverrides) => Promise<BigNumber>;
+  decimals!: (overrides?: CallOverrides) => Promise<number>;
   name!: (overrides?: CallOverrides) => Promise<string>;
   symbol!: (overrides?: CallOverrides) => Promise<string>;
   totalSupply!: (overrides?: CallOverrides) => Promise<BigNumber>;

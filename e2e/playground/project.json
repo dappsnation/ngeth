@@ -6,7 +6,9 @@
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:browser",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
         "outputPath": "dist/e2e/playground",
         "index": "e2e/playground/src/index.html",
@@ -18,7 +20,9 @@
           "e2e/playground/src/favicon.ico",
           "e2e/playground/src/assets"
         ],
-        "styles": ["e2e/playground/src/styles.scss"],
+        "styles": [
+          "e2e/playground/src/styles.scss"
+        ],
         "scripts": []
       },
       "configurations": {
@@ -95,10 +99,26 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/e2e/playground"],
+      "outputs": [
+        "coverage/e2e/playground"
+      ],
       "options": {
         "jestConfig": "e2e/playground/jest.config.js",
         "passWithNoTests": true
+      }
+    },
+    "hardhat-build": {
+      "executor": "@ngeth/hardhat:build",
+      "options": {
+        "config": "e2e/playground/hardhat.config.ts",
+        "tsconfig": "e2e/playground/tsconfig.hardhat.json"
+      }
+    },
+    "hardhat-serve": {
+      "executor": "@ngeth/hardhat:serve",
+      "options": {
+        "config": "e2e/playground/hardhat.config.ts",
+        "tsconfig": "e2e/playground/tsconfig.hardhat.json"
       }
     }
   },

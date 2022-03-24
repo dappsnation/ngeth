@@ -1,4 +1,4 @@
-import { NgContract, FilterParam, TypedFilter } from "@ngeth/ethers";
+import { NgContract, FilterParam, TypedFilter } from "../../contract";
 import { BigNumber, Overrides, CallOverrides, Signer, ContractTransaction, BigNumberish } from "ethers";
 import { Provider } from "@ethersproject/providers";
 import { combineLatest, map, shareReplay } from "rxjs";

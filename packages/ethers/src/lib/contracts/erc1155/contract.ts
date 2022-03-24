@@ -1,3 +1,4 @@
+import { NgZone } from "@angular/core";
 import { NgContract, FilterParam, TypedFilter } from "../../contract";
 import {
   BigNumber,
@@ -12,7 +13,6 @@ import { Provider } from "@ethersproject/providers";
 import { combineLatest } from "rxjs";
 import { map } from "rxjs/operators";
 import { erc1155Tokens } from "./utils";
-import { NgZone } from "@angular/core";
 
 export interface ERC1155Events {
   events: {
@@ -56,7 +56,7 @@ export class ERC1155 extends NgContract<ERC1155Events> {
   isApprovedForAll!: (account: string, operator: string, overrides?: CallOverrides) => Promise<boolean>;
   owner!: (overrides?: CallOverrides) => Promise<string>;
   supportsInterface!: (interfaceId: BytesLike, overrides?: CallOverrides) => Promise<boolean>;
-  uri!: (arg: BigNumberish, overrides?: CallOverrides) => Promise<string>;
+  uri!: (tokenId: BigNumberish, overrides?: CallOverrides) => Promise<string>;
 
   // Write
   renounceOwnership!: (overrides?: Overrides) => Promise<ContractTransaction>;

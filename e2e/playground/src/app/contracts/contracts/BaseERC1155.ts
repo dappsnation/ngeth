@@ -15,9 +15,9 @@ export interface BaseERC1155Events {
   events: {
     ApprovalForAll: (account: string, operator: string, approved: boolean) => void;
     OwnershipTransferred: (previousOwner: string, newOwner: string) => void;
-    TransferBatch: (operator: string, from: string, to: string, ids: BigNumberish[], values: BigNumberish[]) => void;
-    TransferSingle: (operator: string, from: string, to: string, id: BigNumberish, value: BigNumberish) => void;
-    URI: (value: string, id: BigNumberish) => void;
+    TransferBatch: (operator: string, from: string, to: string, ids: BigNumber[], values: BigNumber[]) => void;
+    TransferSingle: (operator: string, from: string, to: string, id: BigNumber, value: BigNumber) => void;
+    URI: (value: string, id: BigNumber) => void;
   };
   filters: {
     ApprovalForAll: (account?: FilterParam<string>, operator?: FilterParam<string>) => TypedFilter<"ApprovalForAll">;

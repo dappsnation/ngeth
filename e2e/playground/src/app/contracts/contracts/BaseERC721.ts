@@ -13,9 +13,9 @@ import { Provider } from "@ethersproject/providers";
 
 export interface BaseERC721Events {
   events: {
-    Approval: (owner: string, approved: string, tokenId: BigNumberish) => void;
+    Approval: (owner: string, approved: string, tokenId: BigNumber) => void;
     ApprovalForAll: (owner: string, operator: string, approved: boolean) => void;
-    Transfer: (from: string, to: string, tokenId: BigNumberish) => void;
+    Transfer: (from: string, to: string, tokenId: BigNumber) => void;
   };
   filters: {
     Approval: (
