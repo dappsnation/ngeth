@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { ABIDescription, ABIParameter, EventDescription, FunctionDescription } from './types';
+import { ABIDescription, ABIParameter, ABITypeParameter, EventDescription, FunctionDescription } from './types';
 import * as parserTypeScript from "prettier/parser-typescript";
 import * as prettier from "prettier/standalone";
 
@@ -66,7 +66,7 @@ const getSuperCall = (name: string) =>
   `return this.functions['${name}'](...arguments);`;
 
 const getArray = (param: ABIParameter, kind: 'input' | 'output') => {
-  const [type, end] = param.type.split('[');
+  const [type, end] = param.type.split('[') as [ABITypeParameter, string];
   const amountString = end.substring(0, end.length - 1); // Remove last "]"
   const amount = parseInt(amountString);
   const itemType = getType({ ...param, type }, kind);
@@ -321,7 +321,6 @@ const getQuery = (node: EventDescription) => {
 // CONTRACT //
 
 export const getContract = (contractName: string, abi: ABIDescription[]) => {
-  const deploy = abi.find(isConstrutor);
   const calls: FunctionDescription[] = abi.filter(isCall);
   const methods: FunctionDescription[] = abi.filter(isMethod);
   const events: EventDescription[] = abi.filter(isEvent);
@@ -331,6 +330,7 @@ export const getContract = (contractName: string, abi: ABIDescription[]) => {
   import { NgContract, FilterParam, TypedFilter } from '@ngeth/ethers';
   import { BigNumber, Overrides, CallOverrides, PayableOverrides, Signer, ContractTransaction, BytesLike, BigNumberish } from "ethers";
   import { Provider } from '@ethersproject/providers';
+  import abi from './abi';
   
   export interface ${contractName}Events {
     events: ${getAllEvents(events)},
@@ -348,7 +348,7 @@ export const getContract = (contractName: string, abi: ABIDescription[]) => {
     ${getAllMethods(methods)}
 
     constructor(address: string, signer?: Signer | Provider) {
-      super(address, ${contractName}_abi, signer);
+      super(address, abi, signer);
     }
   }
 
@@ -366,7 +366,29 @@ const getDeploy = (contractName: string, inputs: ABIParameter[] = []) => {
     .map(getParam)
     .concat('overrides?: PayableOverrides')
     .join(', ');
-  return `deploy(${params}): Promise<${contractName}> {
-    return super.deploy(...arguments);
-  }`;
+  return `deploy!: (${params}) => Promise<${contractName}>;`;
 };
+
+
+export const getFactory = (contractName: string, abi: ABIDescription[]) => {
+  const deploy = getDeploy(contractName, abi.find(isConstrutor)?.inputs);
+  const code = `
+  import { ContractFactory, PayableOverrides } from '@ethersproject/contracts';
+  import type { Signer } from '@ethersproject/abstract-signer';
+  import type { ${contractName} } from './contract';
+  import abi from './abi';
+  import bytecode from './bytecode';
+
+  export class ${contractName}Factory extends ContractFactory {
+    override ${deploy};
+
+    constructor(signer?: Signer) {
+      super(abi, bytecode, signer);
+    }
+  }`;
+  return prettier.format(code, {
+    parser: 'typescript',
+    plugins: [parserTypeScript],
+    printWidth: 120,
+  });
+}

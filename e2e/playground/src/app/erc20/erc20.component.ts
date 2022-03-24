@@ -1,8 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ContractsManager, ERC20FormTransfer, MetaMask, parseERC20 } from '@ngeth/ethers';
-import { combineLatest, firstValueFrom, map, pluck, switchMap } from 'rxjs';
+import { combineLatest, map, pluck, switchMap } from 'rxjs';
 
 @Component({
   selector: 'nxeth-erc20',

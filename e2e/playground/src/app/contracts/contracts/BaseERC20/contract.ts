@@ -10,6 +10,7 @@ import {
   BigNumberish,
 } from "ethers";
 import { Provider } from "@ethersproject/providers";
+import abi from "./abi";
 
 export interface BaseERC20Events {
   events: {
@@ -56,7 +57,7 @@ export class BaseERC20 extends NgContract<BaseERC20Events> {
   ) => Promise<ContractTransaction>;
 
   constructor(address: string, signer?: Signer | Provider) {
-    super(address, BaseERC20_abi, signer);
+    super(address, abi, signer);
   }
 }
 

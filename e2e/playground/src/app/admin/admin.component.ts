@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { MetaMask } from '@ngeth/ethers';
+import { ERC1155Factory } from './erc1155/factory';
 
 @Component({
   selector: 'nxeth-admin',
@@ -9,9 +9,11 @@ import { MetaMask } from '@ngeth/ethers';
 })
 export class AdminComponent {
 
-  constructor(private metamask: MetaMask) {}
+  constructor(private erc1155Factory: ERC1155Factory) {}
 
-  create() {
-    // 
+  async create() {
+    const contract = await this.erc1155Factory.deploy('uri');
+    await contract.deployTransaction?.wait();
+    localStorage.setItem('contracts', JSON.stringify([contract.address]));
   }
 }

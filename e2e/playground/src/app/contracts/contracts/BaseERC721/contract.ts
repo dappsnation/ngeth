@@ -10,6 +10,7 @@ import {
   BigNumberish,
 } from "ethers";
 import { Provider } from "@ethersproject/providers";
+import abi from "./abi";
 
 export interface BaseERC721Events {
   events: {
@@ -72,7 +73,7 @@ export class BaseERC721 extends NgContract<BaseERC721Events> {
   ) => Promise<ContractTransaction>;
 
   constructor(address: string, signer?: Signer | Provider) {
-    super(address, BaseERC721_abi, signer);
+    super(address, abi, signer);
   }
 }
 
