@@ -1,25 +1,31 @@
-<p>{{ address$ | async }}</p>
-<ng-container *ngIf="exist$ | async; else error">
-
-  <ul>
-    <li *ngFor="let token of tokens$ | async | keyvalue">
-      {{ token.key }}: <strong>{{ token.value | bignumber }}</strong>
-    </li>
-  </ul>
-
-  <form [formGroup]="form" (ngSubmit)="transfer()">
-    <label for="to">To</label>
-    <input type="text" formControlName="to" name="to" id="to" required>
-    <label for="tokenId">tokenId</label>
-    <select formControlName="tokenId" name="tokenId" id="tokenId">
-      <option *ngFor="let tokenId of tokens$ | async | keyvalue" [value]="tokenId.key">
-        {{ tokenId.key }}
-      </option>
-    </select>
-    <label for="uri">To</label>
-    <input type="text" formControlName="uri" name="uri" id="uri" required>
-    <button type="submit">Transfer</button>
-  </form>
+<ng-container *ngIf="address$ | async as address">
+  <ng-container *ngIf="exist$ | async; else error">
+    <header>
+      <a *ngIf="isOwner$ | async" [routerLink]="['/admin/erc1155', address]">
+        Edit
+      </a>
+    </header>
+  
+    <ul>
+      <li *ngFor="let token of tokens$ | async | keyvalue">
+        {{ token.key }}: <strong>{{ token.value | bignumber }}</strong>
+      </li>
+    </ul>
+  
+    <form [formGroup]="form" (ngSubmit)="transfer()">
+      <label for="to">To</label>
+      <input type="text" formControlName="to" name="to" id="to" required>
+      <label for="tokenId">tokenId</label>
+      <select formControlName="tokenId" name="tokenId" id="tokenId">
+        <option *ngFor="let tokenId of tokens$ | async | keyvalue" [value]="tokenId.key">
+          {{ tokenId.key }}
+        </option>
+      </select>
+      <label for="amount">Amount</label>
+      <input type="number" formControlName="amount" name="amount" id="amount" required>
+      <button type="submit">Transfer</button>
+    </form>
+  </ng-container>
 </ng-container>
 
 <ng-template #error>

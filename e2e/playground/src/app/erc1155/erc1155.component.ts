@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ContractsManager, ERC1155FormTransfer, MetaMask } from '@ngeth/ethers';
-import { combineLatest, map, pluck, switchMap } from 'rxjs';
+import { combineLatest, map, pluck, switchMap, withLatestFrom } from 'rxjs';
 
 @Component({
   selector: 'nxeth-erc1155',
@@ -11,6 +11,7 @@ import { combineLatest, map, pluck, switchMap } from 'rxjs';
 })
 export class Erc1155Component {
   form = new ERC1155FormTransfer();
+
 
   address$ = this.route.params.pipe(pluck('address'));
   contract$ = combineLatest([ this.address$, this.metamask.chain$ ]).pipe(
@@ -23,7 +24,14 @@ export class Erc1155Component {
   tokens$ = combineLatest([ this.contract$, this.metamask.account$ ]).pipe(
     switchMap(([contract, address]) => contract.tokensChanges(address))
   );
-
+  isOwner$ = this.contract$.pipe(
+    switchMap(contract => contract.owner()),
+    withLatestFrom(this.metamask.account$),
+    map(([owner, account]) => {
+      console.log({owner, account})
+      return owner.toLocaleLowerCase() === account.toLocaleLowerCase()
+    })
+  );
 
   constructor(
     private contracts: ContractsManager,

@@ -1,14 +1,11 @@
-<p>{{ connected$ | async }}</p>
 <ng-container *ngIf="account$ | async as account; else signin">
   <header *ngIf="chain$ | async as chain">
     <h4>
       <a [href]="chain.explorers[0]?.url">{{ chain.name }}</a>
     </h4>
-    <p>
-      <eth-jazzicon [address]="account"></eth-jazzicon>
+    <a class="account" routerLink="admin">
       <eth-blockies [address]="account"></eth-blockies>
-      <a [href]="account | explore:chain">{{ account | address:'short' }}</a>
-    </p>
+    </a>
   </header>
 
   <nav>

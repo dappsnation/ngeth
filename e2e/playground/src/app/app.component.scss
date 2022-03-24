@@ -1,3 +1,11 @@
-eth-jazzicon, eth-blockies {
+header {
+  display: flex;
+  
+  .account {
+    margin-left: auto;
+  }
+}
+
+eth-blockies {
   height: 40px;
 }
