@@ -20,7 +20,7 @@ export class Erc20Component {
   exist$ = this.contract$.pipe(
     switchMap(contract => contract.exist())
   );
-  balance$ = combineLatest([ this.contract$, this.metamask.account$ ]).pipe(
+  balance$ = combineLatest([ this.contract$, this.metamask.currentAccount$ ]).pipe(
     switchMap(([contract, address]) => contract.balanceChanges(address))
   );
   metadata$ = this.contract$.pipe(

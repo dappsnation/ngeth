@@ -20,7 +20,7 @@ export class Erc721Component {
   exist$ = this.contract$.pipe(
     switchMap(contract => contract.exist())
   );
-  tokens$ = combineLatest([ this.contract$, this.metamask.account$ ]).pipe(
+  tokens$ = combineLatest([ this.contract$, this.metamask.currentAccount$ ]).pipe(
     switchMap(([contract, address]) => contract.tokensChanges(address))
   );
 

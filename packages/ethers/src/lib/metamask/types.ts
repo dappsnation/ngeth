@@ -52,7 +52,6 @@ export interface MetaMaskProvider extends ExternalProvider {
   removeAllListeners(event: keyof MetaMaskEvents): this;
 }
 
-
 export interface AddChainParameter {
   /** 0x-prefixed hexadecimal string */
   chainId: string;

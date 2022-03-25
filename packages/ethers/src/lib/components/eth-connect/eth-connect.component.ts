@@ -1,9 +1,9 @@
-import { Component, ChangeDetectionStrategy, Directive, TemplateRef, ContentChild } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Directive, TemplateRef, ContentChild, Output, EventEmitter } from '@angular/core';
 import { ChainManager } from '../../chain';
 import { MetaMask } from '../../metamask';
 
 @Directive({ selector: '[ethIdenticon]' })
-export class EthIdenticonDirective {
+export class IdenticonDirective {
   constructor(public template: TemplateRef<unknown>) {}
 }
 
@@ -15,9 +15,10 @@ export class EthIdenticonDirective {
 })
 export class EthConnectComponent {
 
-  @ContentChild(EthIdenticonDirective) identicon?: EthIdenticonDirective;
+  @ContentChild(IdenticonDirective) identicon?: IdenticonDirective;
 
-  connected$ = this.metamask.connected$;
+  @Output() connect = new EventEmitter();
+
   account$ = this.metamask.account$;
   chain$ = this.chain.chain$;
 
@@ -26,7 +27,8 @@ export class EthConnectComponent {
     private metamask: MetaMask,
   ) {}
 
-  connect() {
-    this.metamask.enable();
+  async enable() {
+    const accounts = await this.metamask.enable();
+    if (accounts.length) this.connect.emit(accounts[0]);
   }
 }

@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { ETH_PROVIDER, MetaMaskProvider } from '@ngeth/ethers';
 
 @Component({
@@ -9,7 +10,11 @@ import { ETH_PROVIDER, MetaMaskProvider } from '@ngeth/ethers';
 })
 export class AppComponent {
   constructor(
-    @Inject(ETH_PROVIDER) public provider?: MetaMaskProvider
+    private router: Router,
+    @Inject(ETH_PROVIDER) public provider?: MetaMaskProvider,
   ) {}
 
+  redirect(path: string) {
+    this.router.navigate([path]);
+  }
 }

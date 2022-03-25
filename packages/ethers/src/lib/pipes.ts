@@ -1,10 +1,8 @@
-import { NgModule, Pipe, PipeTransform } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Pipe, PipeTransform } from '@angular/core';
 import { BigNumber, BigNumberish, constants } from 'ethers';
 import { getAddress } from '@ethersproject/address';
 import { formatEther } from '@ethersproject/units';
 import { Chain, explore } from './chain';
-import { BlockiesComponent, JazzIconComponent, EthConnectComponent, EthIdenticonDirective } from './components';
 
 @Pipe({ name: 'bignumber' })
 export class BigNumberPipe implements PipeTransform {
@@ -38,12 +36,4 @@ export class AddressPipe implements PipeTransform {
   }
 }
 
-const pipes = [BigNumberPipe, EthPipe, ExporePipe, AddressPipe];
-const components = [JazzIconComponent, BlockiesComponent, EthConnectComponent, EthIdenticonDirective];
-
-@NgModule({
-  declarations: [...pipes, ...components],
-  exports: [...pipes, ...components],
-  imports: [CommonModule],
-})
-export class EthersModule {}
+export const ethersPipes = [BigNumberPipe, EthPipe, ExporePipe, AddressPipe];

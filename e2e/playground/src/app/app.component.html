@@ -1,8 +1,10 @@
 <header>
-  <h1>Playground</h1>
+  <h1>
+    <a routerLink="search">Playground</a>
+  </h1>
 
   <ng-container *ngIf="provider else noProvider">
-    <eth-connect>
+    <eth-connect (connect)="redirect('/search')">
       <ng-template ethIdenticon let-account>
         <a class="identicon" routerLink="admin">
           <eth-blockies [address]="account"></eth-blockies>

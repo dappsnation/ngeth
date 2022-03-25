@@ -21,16 +21,13 @@ export class Erc1155Component {
   exist$ = this.contract$.pipe(
     switchMap(contract => contract.exist())
   );
-  tokens$ = combineLatest([ this.contract$, this.metamask.account$ ]).pipe(
+  tokens$ = combineLatest([ this.contract$, this.metamask.currentAccount$ ]).pipe(
     switchMap(([contract, address]) => contract.tokensChanges(address))
   );
   isOwner$ = this.contract$.pipe(
     switchMap(contract => contract.owner()),
-    withLatestFrom(this.metamask.account$),
-    map(([owner, account]) => {
-      console.log({owner, account})
-      return owner.toLocaleLowerCase() === account.toLocaleLowerCase()
-    })
+    withLatestFrom(this.metamask.currentAccount$),
+    map(([owner, account]) => owner.toLocaleLowerCase() === account.toLocaleLowerCase())
   );
 
   constructor(

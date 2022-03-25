@@ -11,13 +11,16 @@ import {
   Provider,
 } from '@ethersproject/providers';
 import { EventFilter } from '@ethersproject/abstract-provider';
-import { timer, defer, Observable, of } from 'rxjs';
-import { map, shareReplay, switchMap, filter } from 'rxjs/operators';
+import { timer, defer, Observable, of, combineLatest } from 'rxjs';
+import { map, shareReplay, switchMap, filter, startWith, tap } from 'rxjs/operators';
 import { getAddress } from '@ethersproject/address';
 import { AddChainParameter, MetaMaskEvents, MetaMaskProvider, WatchAssetParams } from './types';
 import { getChain } from '../chain/utils';
 import { fromChain } from './utils';
 
+function exist<T>(value?: T | null): value is T {
+  return value !== undefined && value !== null;
+}
 
 export const ETH_PROVIDER = new InjectionToken<MetaMaskProvider | undefined>('Ethereum ', {
   providedIn: 'root',
@@ -44,26 +47,42 @@ export function fromEthEvent<T>(
 
 @Injectable({ providedIn: 'root' })
 export class MetaMask extends Web3Provider {
+  private events: Record<string, Observable<unknown>> = {};
   override provider!: MetaMaskProvider;
 
-  connected$ = defer(() => {
-    const initial = this.provider.isConnected();
-    return this.fromMetaMaskEvent('connect', initial).pipe(
-      map((connected) => !!connected),
-      shareReplay({ refCount: true, bufferSize: 1 })
-    );
-  });
-
+  /** Observe if current account is connected */
+  connected$ = combineLatest([
+    this.fromMetaMaskEvent('connect'),
+    this.fromMetaMaskEvent('disconnect'),
+  ]).pipe(
+    startWith([]),
+    switchMap(() => {
+      const isConnected = this.provider.isConnected();
+      if (isConnected) return of(true);
+      return timer(500).pipe(map(() => this.provider.isConnected()))
+    }),
+    shareReplay({ refCount: true, bufferSize: 1 })
+  );
+    
+  /**
+   * First account connected to the dapp, if any
+   * @note This might not be the selected account in Metamask
+   */
   account$ = defer(() => {
     if (this.account) return of([this.account]);
     // Sometime Metamask takes time to find selected Address. Delay in this case
     return timer(500).pipe(map(() => (this.account ? [this.account] : [])));
   }).pipe(
     switchMap((initial) => this.fromMetaMaskEvent('accountsChanged', initial)),
-    filter(accounts => !!accounts.length),
-    map(accounts => getAddress(accounts[0])),
+    map(accounts => accounts.length ? getAddress(accounts[0]) : undefined),
     shareReplay({ refCount: true, bufferSize: 1 })
   );
+
+  /** 
+   * Current account. Doesn't emit until therer is a connected account
+   * @note ⚠️ Only use if you're sure there is an account (inside a guard for example)
+   */
+  currentAccount$ = this.account$.pipe(filter(exist));
 
   chain$ = defer(() => {
     if (this.chainId) return of(this.chainId);
@@ -96,7 +115,7 @@ export class MetaMask extends Web3Provider {
     return this.provider.chainId;
   }
 
-  enable() {
+  enable(): Promise<string[]> {
     return this.provider.request({ method: 'eth_requestAccounts' });
   }
 
@@ -133,7 +152,13 @@ export class MetaMask extends Web3Provider {
   }
 
   /** Listen on event from MetaMask Provider */
-  protected fromMetaMaskEvent<T>(event: keyof MetaMaskEvents, initial?: T) {
-    return fromEthEvent<T>(this.provider, this.ngZone, event, initial);
+  protected fromMetaMaskEvent<T>(event: keyof MetaMaskEvents, initial?: T): Observable<T> {
+    if (!this.events[event]) {
+      this.events[event] = fromEthEvent<T>(this.provider, this.ngZone, event);
+    }
+    const listener = this.events[event] as Observable<T>;
+    return (initial !== undefined)
+      ? listener.pipe(startWith(initial))
+      : listener;
   }
 }

@@ -5,6 +5,24 @@ import { MetaMaskProvider } from "./types";
 import { map } from "rxjs/operators";
 
 @Injectable({ providedIn: 'root' })
+export class IsConnectedGuard {
+  public previous?: string;
+
+  constructor(
+    private router: Router,
+    private metamask: MetaMask
+  ) {}
+  
+  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+    this.previous = state.url;
+    const redirect = route.data['isConnectedRedirect'] ?? '/not-connected';
+    return this.metamask.connected$.pipe(
+      map(isConnected => isConnected || this.router.parseUrl(redirect))
+    );
+  }
+}
+
+@Injectable({ providedIn: 'root' })
 export class HasSignerGuard {
   public previous?: string;
 
@@ -16,8 +34,8 @@ export class HasSignerGuard {
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     this.previous = state.url;
     const redirect = route.data['hasSignerRedirect'] ?? '/no-signer';
-    return this.metamask.connected$.pipe(
-      map(isConnected => isConnected || this.router.parseUrl(redirect))
+    return this.metamask.account$.pipe(
+      map(account => account || this.router.parseUrl(redirect))
     );
   }
 }
