@@ -1,0 +1,11 @@
+<h1>Your current chain is not supported</h1>
+<p>Current: {{ (current$ | async)?.name }}</p>
+<ng-container *ngIf="expected$ | async as expected">
+  <p>
+    Supported: <span *ngFor="let chain of expected">{{ chain.name }} </span>
+  </p>
+  <article>
+    <h3>Chain to chain</h3>
+    <button *ngFor="let chain of expected" (click)="switch(chain.chainId)">{{ chain.name }}</button>
+  </article>
+</ng-container>

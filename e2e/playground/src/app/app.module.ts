@@ -3,7 +3,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 
-import { EthersModule, HasProviderGuard, HasSignerGuard } from '@ngeth/ethers';
+import { EthersModule, HasProviderGuard, HasSignerGuard, IsSupportedChainGuard, SUPPORTED_CHAINS } from '@ngeth/ethers';
 import { AppComponent } from './app.component';
 
 @NgModule({
@@ -16,19 +16,22 @@ import { AppComponent } from './app.component';
     }, {
       path: 'no-signer',
       loadChildren: () => import('./no-signer/no-signer.module').then(m => m.NoSignerModule),
+    }, {
+      path: 'unsupported-chain',
+      loadChildren: () => import('./unsupported-chain/unsupported-chain.module').then(m => m.UnsupportedChainModule),
     },{
       path: 'search',
-      canActivate: [HasProviderGuard, HasSignerGuard],
+      canActivate: [HasProviderGuard, HasSignerGuard, IsSupportedChainGuard],
       loadChildren: () => import('./search/search.module').then(m => m.SearchModule),
     }, {
       path: 'admin',
-      canActivate: [HasProviderGuard, HasSignerGuard],
+      canActivate: [HasProviderGuard, HasSignerGuard, IsSupportedChainGuard],
       loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule)
     }]),
     ReactiveFormsModule,
     EthersModule,
   ],
-  providers: [],
+  providers: [{ provide: SUPPORTED_CHAINS, useValue: [3, 42] }],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

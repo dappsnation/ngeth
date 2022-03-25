@@ -1,8 +1,8 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import { Inject, Pipe, PipeTransform } from '@angular/core';
 import { BigNumber, BigNumberish, constants } from 'ethers';
 import { getAddress } from '@ethersproject/address';
 import { formatEther } from '@ethersproject/units';
-import { Chain, explore } from './chain';
+import { Chain, explore, isSupportedChain, SupportedChains, SUPPORTED_CHAINS, toChainIndex } from './chain';
 
 @Pipe({ name: 'bignumber' })
 export class BigNumberPipe implements PipeTransform {
@@ -27,6 +27,14 @@ export class ExporePipe implements PipeTransform {
   }
 }
 
+@Pipe({ name: 'supportedChain' })
+export class SupportedChainPipe implements PipeTransform {
+  constructor(@Inject(SUPPORTED_CHAINS) private supportedChains: SupportedChains) {}
+  transform(chainId: string | number) {
+    return isSupportedChain(chainId, this.supportedChains);
+  }
+}
+
 @Pipe({ name: 'address' })
 export class AddressPipe implements PipeTransform {
   transform(address: string, format: 'short' | 'full' = 'full') {
@@ -36,4 +44,4 @@ export class AddressPipe implements PipeTransform {
   }
 }
 
-export const ethersPipes = [BigNumberPipe, EthPipe, ExporePipe, AddressPipe];
+export const ethersPipes = [BigNumberPipe, EthPipe, ExporePipe, AddressPipe, SupportedChainPipe];

@@ -6,9 +6,14 @@
     <a [href]="account | explore:chain" target="_blank">
       {{ account | address:'short' }}
     </a>
-    <a [href]="chain.explorers[0]?.url">
-      {{ chain.name }}
-    </a>
+    <ng-container *ngIf="chain.chainId | supportedChain else unsupported">
+      <a [href]="chain.explorers[0]?.url">
+        {{ chain.name }}
+      </a>
+    </ng-container>
+    <ng-template #unsupported>
+      Unsupported chain
+    </ng-template>
   </ng-container>
 </ng-container>
 
