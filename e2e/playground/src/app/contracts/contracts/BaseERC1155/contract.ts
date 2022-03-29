@@ -57,6 +57,20 @@ export class BaseERC1155 extends NgContract<BaseERC1155Events> {
   uri!: (arg: BigNumberish, overrides?: CallOverrides) => Promise<string>;
 
   // Write
+  mint!: (
+    account: string,
+    id: BigNumberish,
+    amount: BigNumberish,
+    data: BytesLike,
+    overrides?: Overrides
+  ) => Promise<ContractTransaction>;
+  mintBatch!: (
+    to: string,
+    ids: BigNumberish[],
+    amounts: BigNumberish[],
+    data: BytesLike,
+    overrides?: Overrides
+  ) => Promise<ContractTransaction>;
   renounceOwnership!: (overrides?: Overrides) => Promise<ContractTransaction>;
   safeBatchTransferFrom!: (
     from: string,
@@ -169,6 +183,30 @@ export const BaseERC1155_abi = [
     name: "isApprovedForAll",
     outputs: [{ internalType: "bool", name: "", type: "bool" }],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "address", name: "account", type: "address" },
+      { internalType: "uint256", name: "id", type: "uint256" },
+      { internalType: "uint256", name: "amount", type: "uint256" },
+      { internalType: "bytes", name: "data", type: "bytes" },
+    ],
+    name: "mint",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "address", name: "to", type: "address" },
+      { internalType: "uint256[]", name: "ids", type: "uint256[]" },
+      { internalType: "uint256[]", name: "amounts", type: "uint256[]" },
+      { internalType: "bytes", name: "data", type: "bytes" },
+    ],
+    name: "mintBatch",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {

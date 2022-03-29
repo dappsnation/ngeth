@@ -31,7 +31,7 @@ import { AppComponent } from './app.component';
     ReactiveFormsModule,
     EthersModule,
   ],
-  providers: [{ provide: SUPPORTED_CHAINS, useValue: [3, 42] }],
+  providers: [{ provide: SUPPORTED_CHAINS, useValue: '*' }],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

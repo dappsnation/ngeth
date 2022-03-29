@@ -13,7 +13,9 @@ interface ERC1155TransferControls {
 interface ERC1155MintControls {
   to: string;
   tokenId: number;
-  uri: string;
+  amount: number;
+  data?: string;
+  uri?: string;
 }
 
 
@@ -45,7 +47,9 @@ export class ERC1155FormMint extends FormGroup {
     super({
       to: new FormControl(value.to, [Validators.required, EthValidators.address]),
       tokenId: new FormControl(value.tokenId, [Validators.required]),
-      uri: new FormControl(value.uri, [Validators.required]),
+      amount: new FormControl(value.amount, [Validators.required]),
+      uri: new FormControl(value.uri),
+      data: new FormControl(value.data)
     })
   }
 }

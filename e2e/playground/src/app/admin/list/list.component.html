@@ -1,0 +1,11 @@
+<ul *ngIf="contract$ | async as contracts; else empty">
+  <li *ngFor="let contract of contracts">
+    <a [routerLink]="[contract.type, contract.address]">
+      [{{ contract.type }}] {{ contract.address }}
+    </a>
+  </li>
+</ul>
+
+<ng-template #empty>
+  There is no contract yet
+</ng-template>

@@ -13,7 +13,14 @@ import { RouterModule } from '@angular/router';
     CommonModule,
     RouterModule.forChild([{
       path: '',
-      component: AdminComponent
+      component: AdminComponent,
+      children: [{
+        path: '',
+        loadChildren: () => import('./list/list.module').then(m => m.ListModule)
+      },{
+        path: 'erc1155/:address',
+        loadChildren: () => import('./erc1155/erc1155.module').then(m => m.Erc1155Module)
+      }]
     }])
   ]
 })
