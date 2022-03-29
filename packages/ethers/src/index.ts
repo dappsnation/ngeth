@@ -5,3 +5,4 @@ export * from './lib/chain';
 export * from './lib/components';
 export * from './lib/contracts';
 export * from './lib/form';
+export * from './lib/pipes';

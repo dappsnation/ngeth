@@ -1,4 +1,5 @@
 
+export type ExportTypes = 'class' | 'interface';
 type bytes = '8' | '16' | '32' | '64' | '128' | '256';
 
 export type ABITypeParameter =

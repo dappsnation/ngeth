@@ -11,6 +11,11 @@
     "config": {
       "type": "string",
       "description": "The path to the hardhat configuration file."
+    },
+    "showStackTraces": {
+      "type": "boolean",
+      "default": false,
+      "description": "Show the stack traces."
     }
   },
   "additionalProperties": false,

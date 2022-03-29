@@ -2,7 +2,7 @@ import { Inject, Pipe, PipeTransform } from '@angular/core';
 import { BigNumber, BigNumberish, constants } from 'ethers';
 import { getAddress } from '@ethersproject/address';
 import { formatEther } from '@ethersproject/units';
-import { Chain, explore, isSupportedChain, SupportedChains, SUPPORTED_CHAINS, toChainIndex } from './chain';
+import { Chain, explore, isSupportedChain, SupportedChains, SUPPORTED_CHAINS } from './chain';
 
 @Pipe({ name: 'bignumber' })
 export class BigNumberPipe implements PipeTransform {
