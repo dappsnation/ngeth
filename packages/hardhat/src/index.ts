@@ -56,13 +56,7 @@ task(
 
     await deploy(hre, artifacts);
     // Generate contracts & index.ts
-    const contractArtifacts = generate(hre, artifacts);
-
-    const exportAll = contractArtifacts
-      .map(artifact => `export * from "./contracts/${artifact.contractName}";`)
-      .concat(`export { default as addresses } from './addresses';`)
-      .join('\n');
-    fs.writeFile(join(outDir, 'index.ts'), exportAll);
+    generate(hre, artifacts);
 
 
     // Generate imports
@@ -70,10 +64,10 @@ task(
       // Generate imports
       // TODO: check if bytecode === "0x" -> interface / abstract
       const src = resolve(hre.config.paths.sources);
-      const imports = artifacts.filter(a => !resolve(a.sourceName).startsWith(src));
+      const importArtifacts = artifacts.filter(a => !resolve(a.sourceName).startsWith(src));
       const importFolder = join(outDir, 'imports');
       
-      for (const artifact of imports) {
+      for (const artifact of importArtifacts) {
         if (!artifact.abi.length) continue; // No public API
         const contractName = artifact.contractName;
         const contract = getContractImport(contractName, artifact.abi);
@@ -81,6 +75,11 @@ task(
         if (!existsSync(output)) mkdirSync(output, { recursive: true });
         fs.writeFile(join(output, `${contractName}.ts`), contract);
       }
+      const exportImports = importArtifacts
+        .filter(artifact => artifact.abi.length)
+        .map(artifact => `export * from "./${dirname(artifact.sourceName)}/${artifact.contractName}";`)
+        .join('\n');
+      fs.writeFile(join(importFolder, 'index.ts'), exportImports);
     }
   }
 );

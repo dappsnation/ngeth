@@ -15,7 +15,7 @@ export function generate(hre: HardhatRuntimeEnvironment, allArtifacts: Artifact[
   const root = hre.config.paths.root;
   const src = resolve(hre.config.paths.sources);
   const artifacts = allArtifacts.filter(a => resolve(a.sourceName).startsWith(src));
-  if (!artifacts.length) return [];
+  if (!artifacts.length) return;
 
   const outDir = resolve(root, hre.config.ngeth.outDir);
   const folder = join(outDir, 'contracts');
@@ -38,5 +38,9 @@ export function generate(hre: HardhatRuntimeEnvironment, allArtifacts: Artifact[
     fs.writeFile(join(contractFolder, 'index.ts'), index);
   }
 
-  return artifacts;
+  const exportContracts = artifacts
+    .map(artifact => `export * from "./contracts/${artifact.contractName}";`)
+    .concat(`export { default as addresses } from './addresses';`)
+    .join('\n');
+  fs.writeFile(join(outDir, 'index.ts'), exportContracts);
 }

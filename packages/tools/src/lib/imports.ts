@@ -28,7 +28,9 @@ export const getContractImport = (contractName: string, abi: ABIDescription[]) =
   }
 
   export function is${contractName}(contract: Contract): contract is ${contractName} {
-    return ${contractName}Abi.filter(def => def.type === 'function').every(def => def.name in contract.functions);
+    return ${contractName}Abi
+      .filter(def => def.type === 'function')
+      .every(def => def.name && def.name in contract.functions);
   }
 
   export const ${contractName}Abi = ${JSON.stringify(abi)};`;
