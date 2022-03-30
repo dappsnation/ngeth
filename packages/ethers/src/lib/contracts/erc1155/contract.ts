@@ -52,6 +52,7 @@ export class ERC1155 extends NgContract<ERC1155Events> {
   isApprovedForAll!: (account: string, operator: string, overrides?: CallOverrides) => Promise<boolean>;
   supportsInterface!: (interfaceId: BytesLike, overrides?: CallOverrides) => Promise<boolean>;
   uri!: (arg: BigNumberish, overrides?: CallOverrides) => Promise<string>;
+  owner!: (overrides?: CallOverrides) => Promise<string>;
 
   // Write
   mint!: (
@@ -88,7 +89,7 @@ export class ERC1155 extends NgContract<ERC1155Events> {
   setApprovalForAll!: (operator: string, approved: boolean, overrides?: Overrides) => Promise<ContractTransaction>;
   setURI!: (newuri: string, overrides?: Overrides) => Promise<ContractTransaction>;
   transferOwnership!: (newOwner: string, overrides?: Overrides) => Promise<ContractTransaction>;
-
+  
 
   constructor(address: string, signer: Signer | Provider, zone: NgZone) {
     super(address, ERC1155_abi, signer, zone);

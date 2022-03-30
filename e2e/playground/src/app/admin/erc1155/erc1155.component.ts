@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ContractsManager, ERC1155FormMint, MetaMask } from '@ngeth/ethers';
+import { ContractsManager, ERC1155FormMint } from '@ngeth/ethers';
 import { map, pluck } from 'rxjs/operators';
 
 @Component({
@@ -17,7 +17,6 @@ export class Erc1155Component {
   );
 
   constructor(
-    private metamask: MetaMask,
     private contracts: ContractsManager,
     private route: ActivatedRoute,
   ) {}
@@ -31,8 +30,7 @@ export class Erc1155Component {
   mint() {
     if (this.form.invalid) return this.form.markAllAsTouched();
     const { to, tokenId, amount, data } = this.form.value;
-    // TODO: hexify this
-    const byteData = `0x${data}`;
-    this.contract.mint(to, tokenId, amount, '0x00');
+    const byteData = data ? `0x${data}` : '0x00';
+    this.contract.mint(to, tokenId, amount, byteData);
   }
 }
