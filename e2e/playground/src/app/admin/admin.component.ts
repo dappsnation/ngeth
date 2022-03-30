@@ -1,7 +1,7 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { getAddress } from '@ethersproject/address';
 import { MetaMask } from '@ngeth/ethers';
-import { EthStorage } from '../storage';
-import { ERC1155Factory } from './erc1155/factory';
 
 @Component({
   selector: 'nxeth-admin',
@@ -10,24 +10,16 @@ import { ERC1155Factory } from './erc1155/factory';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AdminComponent {
-
   constructor(
-    private metamask: MetaMask,
-    private erc1155Factory: ERC1155Factory,
-    private storage: EthStorage
+    private router: Router,
+    private route: ActivatedRoute,
+    private metamask: MetaMask
   ) {}
 
-  async create() {
-    const contract = await this.erc1155Factory.deploy('uri');
-    await contract.deployTransaction?.wait();
-    this.storage.update((state) => {
-      if (!state.contracts) state.contracts = [];
-      state.contracts.push({
-        address: contract.address,
-        chainId: this.metamask.chainId,
-        type: 'erc1155'
-      });
-      return state;
-    });
+  search(event: Event, input: HTMLInputElement) {
+    event.preventDefault();
+    const address = getAddress(input.value);
+    this.router.navigate(['erc1155', address], { relativeTo: this.route });
+    input.value = '';
   }
 }

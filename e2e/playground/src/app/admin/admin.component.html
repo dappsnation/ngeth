@@ -1,5 +1,9 @@
 <header>
-  <h1>Admin</h1>
+  <h2>Admin</h2>
+  <form (submit)="search($event, input)">
+    <input #input type="text">
+    <button type="submit">Search</button>
+  </form>
   <a routerLink="create">Add ERC1155</a>
 </header>
 <router-outlet></router-outlet>
