@@ -13,7 +13,7 @@ export class OpenseaCollectionForm extends FormGroup {
       image: new FormControl(initial.image),
       external_link: new FormControl(initial.external_link),
       seller_fee_basis_points: new FormControl(initial.seller_fee_basis_points, [Validators.max(1000)]),
-      fee_recipient: new FormControl(initial.name, [Validators.required]),
+      fee_recipient: new FormControl(initial.name),
     })
   }
 }

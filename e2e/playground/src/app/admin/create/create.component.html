@@ -1,13 +1,10 @@
 <form [formGroup]="form" (ngSubmit)="create()">
   
-  <!-- Opensea -->
-  <ng-container *ngIf="type === 'opensea'">
-    <label for="contractURI">Contract URI</label>
-    <input type="url" formControlName="contractURI" name="contractURI" id="contractURI">
-  </ng-container>
+  <label for="name">Name</label>
+  <input type="text" formControlName="name" name="name" id="name" />
 
-  <label for="uri">Token URI</label>
-  <input type="url" formControlName="uri" name="uri" id="uri">
+  <label for="image">Image</label>
+  <input ipfsInput type="file" formControlName="image" name="name" id="name" />
 
   <button type="reset" (click)="reset()">Cancel</button>
   <button type="submit">Create</button>

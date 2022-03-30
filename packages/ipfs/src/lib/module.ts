@@ -1,9 +1,9 @@
 import { NgModule } from '@angular/core';
-import { IpfsImgDirective } from './directives';
+import { IpfsImgDirective, IpfsInputDirective } from './directives';
 import { IpfsPipe } from './pipes';
 
 @NgModule({
-  declarations: [IpfsImgDirective, IpfsPipe],
-  exports: [IpfsImgDirective, IpfsPipe],
+  declarations: [IpfsImgDirective, IpfsInputDirective, IpfsPipe],
+  exports: [IpfsImgDirective, IpfsInputDirective, IpfsPipe],
 })
 export class IpfsModule {}

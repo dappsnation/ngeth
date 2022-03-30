@@ -14,6 +14,7 @@ function formatArgs(options: BuildExecutorSchema) {
   const format = (_key: string, value: any) => {
     const key = names(_key).fileName;
     if (value === true) return `--${key}`;
+    if (value === false) return '';
     // We need to run hardhat in the project path
     // Remove the project path from the args if it exists
     if (typeof value === 'string') return `--${key} ${relative(projectPath, value)}`;
