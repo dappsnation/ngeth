@@ -1,0 +1,14 @@
+<form [formGroup]="form" (ngSubmit)="create()">
+  
+  <!-- Opensea -->
+  <ng-container *ngIf="type === 'opensea'">
+    <label for="contractURI">Contract URI</label>
+    <input type="url" formControlName="contractURI" name="contractURI" id="contractURI">
+  </ng-container>
+
+  <label for="uri">Token URI</label>
+  <input type="url" formControlName="uri" name="uri" id="uri">
+
+  <button type="reset" (click)="reset()">Cancel</button>
+  <button type="submit">Create</button>
+</form>

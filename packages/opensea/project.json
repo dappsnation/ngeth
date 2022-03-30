@@ -1,0 +1,42 @@
+{
+  "projectType": "library",
+  "root": "packages/opensea",
+  "sourceRoot": "packages/opensea/src",
+  "prefix": "ngeth",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/angular:package",
+      "outputs": ["dist/packages/opensea"],
+      "options": {
+        "project": "packages/opensea/ng-package.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "packages/opensea/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "packages/opensea/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/packages/opensea"],
+      "options": {
+        "jestConfig": "packages/opensea/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "packages/opensea/src/**/*.ts",
+          "packages/opensea/src/**/*.html"
+        ]
+      }
+    }
+  },
+  "tags": []
+}

@@ -12,7 +12,7 @@ export class AppComponent {
   constructor(
     private router: Router,
     @Inject(ETH_PROVIDER) public provider?: MetaMaskProvider,
-  ) {}
+    ) {}
 
   redirect(path: string) {
     this.router.navigate([path]);

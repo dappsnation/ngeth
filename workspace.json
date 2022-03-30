@@ -8,6 +8,7 @@
     "hardhat-tools": "packages/hardhat/tools",
     "ipfs": "packages/ipfs",
     "ipfs-tools": "packages/ipfs/tools",
+    "opensea": "packages/opensea",
     "openzeppelin": "packages/openzeppelin",
     "playground": "e2e/playground",
     "playground-contracts": "e2e/playground-contracts",

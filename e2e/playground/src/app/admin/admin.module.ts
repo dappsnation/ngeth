@@ -18,6 +18,9 @@ import { RouterModule } from '@angular/router';
         path: '',
         loadChildren: () => import('./list/list.module').then(m => m.ListModule)
       },{
+        path: 'create',
+        loadChildren: () => import('./create/create.module').then(m => m.CreateModule),
+      },{
         path: 'erc1155/:address',
         loadChildren: () => import('./erc1155/erc1155.module').then(m => m.Erc1155Module)
       }]
