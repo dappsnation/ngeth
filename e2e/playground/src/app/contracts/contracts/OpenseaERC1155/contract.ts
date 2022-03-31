@@ -11,6 +11,7 @@ import type {
 } from "ethers";
 import type { Provider } from "@ethersproject/providers";
 import abi from "./abi";
+import { NgZone } from "@angular/core";
 
 export interface OpenseaERC1155Events {
   events: {
@@ -94,7 +95,7 @@ export class OpenseaERC1155 extends NgContract<OpenseaERC1155Events> {
   setURI!: (newuri: string, overrides?: Overrides) => Promise<ContractTransaction>;
   transferOwnership!: (newOwner: string, overrides?: Overrides) => Promise<ContractTransaction>;
 
-  constructor(address: string, signer?: Signer | Provider) {
-    super(address, abi, signer);
+  constructor(address: string, signer?: Signer | Provider, zone?: NgZone) {
+    super(address, abi, signer, zone);
   }
 }

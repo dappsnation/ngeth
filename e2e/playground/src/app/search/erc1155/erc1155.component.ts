@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ContractsManager, ERC1155FormTransfer, MetaMask } from '@ngeth/ethers';
 import { combineLatest, map, pluck, switchMap, withLatestFrom } from 'rxjs';
+import { BaseContract } from '../../services/manager';
 
 @Component({
   selector: 'nxeth-erc1155',
@@ -14,8 +15,8 @@ export class Erc1155Component {
 
 
   address$ = this.route.params.pipe(pluck('address'));
-  contract$ = combineLatest([ this.address$, this.metamask.chain$ ]).pipe(
-    map(([address]) => this.contracts.erc1155(address))
+  contract$ = combineLatest([ this.address$, this.metamask.chainId$ ]).pipe(
+    map(([address, chainId]) => this.contracts.get(address, chainId))
   );
 
   exist$ = this.contract$.pipe(
@@ -31,14 +32,14 @@ export class Erc1155Component {
   );
 
   constructor(
-    private contracts: ContractsManager,
+    private contracts: ContractsManager<BaseContract>,
     private metamask: MetaMask,
     private route: ActivatedRoute,
   ) {}
 
   get contract() {
     const {address} = this.route.snapshot.params;
-    return this.contracts.erc1155(address);
+    return this.contracts.get(address, this.metamask.chainId);
   }
 
   async transfer() {

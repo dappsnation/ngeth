@@ -47,5 +47,5 @@ e2e/*/artifacts
 # IPFS
 .ipfs
 
-# IPFS Data
-.ipfs
+# Firebase logs
+*.log

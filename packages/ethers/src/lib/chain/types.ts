@@ -1,5 +1,8 @@
 // See https://github.com/ethereum-lists/chains
 
+
+export type ChainId = number | `0x${string}`;
+
 export type SupportedChains = '*' | number[];
 
 export interface Chain {

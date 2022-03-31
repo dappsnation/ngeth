@@ -2,14 +2,17 @@ import { Inject, Pipe, PipeTransform } from '@angular/core';
 import { BigNumber, BigNumberish, constants } from 'ethers';
 import { getAddress } from '@ethersproject/address';
 import { formatEther } from '@ethersproject/units';
+import { isBytes } from '@ethersproject/bytes';
 import { Chain, explore, isSupportedChain, SupportedChains, SUPPORTED_CHAINS } from './chain';
 
 @Pipe({ name: 'bignumber' })
 export class BigNumberPipe implements PipeTransform {
   transform(value: BigNumberish) {
-    return value instanceof BigNumber
-      ? value.toNumber()
-      : value;
+    if (value instanceof BigNumber) return value.toString();
+    if (typeof value === 'bigint') return value.toString(10);
+    if (typeof value === 'string') return value.startsWith('0x') ? parseInt(value) : value;
+    if (isBytes(value)) return new Uint8Array(value).toString(); // todo
+    return value;
   }
 }
 

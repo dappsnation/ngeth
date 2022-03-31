@@ -1,0 +1,12 @@
+<h2>Mint</h2>
+<form [formGroup]="form" (ngSubmit)="mint()">
+  <label for="to">To</label>
+  <input formControlName="to" type="text" name="to" id="to"/>
+  <label for="tokenId">TokenId</label>
+  <input formControlName="tokenId" type="text" name="tokenId" id="tokenId" />
+  <label for="amount">Amount</label>
+  <input formControlName="amount" name="amount" id="amount" />
+
+  <button type="reset">Cancel</button>
+  <button type="submit">Mint</button>
+</form>

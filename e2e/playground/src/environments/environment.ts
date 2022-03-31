@@ -1,9 +1,34 @@
 // This file can be replaced during build by using the `fileReplacements` array.
 // `ng build` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
+import { Firestore, connectFirestoreEmulator } from "firebase/firestore";
+import { Auth, connectAuthEmulator } from "firebase/auth";
+import { FirebaseStorage, connectStorageEmulator } from "firebase/storage";
+import { Functions, connectFunctionsEmulator } from "firebase/functions";
+
 
 export const environment = {
   production: false,
+  firebase: {
+    options: {
+      projectId: 'demo-project',
+      apiKey: 'abcd',
+      authDomain: 'demo-project.firebaseapp.com',
+      storageBucket: 'default-bucket',
+    },
+    firestore: (firestore: Firestore) => {
+      connectFirestoreEmulator(firestore, 'localhost', 8000);
+    },
+    auth: (auth: Auth) => {
+      connectAuthEmulator(auth, 'http://localhost:9099', { disableWarnings: true });
+    },
+    storage: (storage: FirebaseStorage) => {
+      connectStorageEmulator(storage, "localhost", 9199);
+    },
+    functions: (functions: Functions) => {
+      connectFunctionsEmulator(functions, "localhost", 5001);
+    }
+  },
 };
 
 /*

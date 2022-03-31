@@ -1,21 +1,17 @@
-import { Injectable } from '@angular/core';
-import { ContractFactory } from '@ethersproject/contracts';
-
-function isContractMetadata(data: any) {
-  return true;
-}
-
-const abi: any[] = [];
-const bytecode = '';
+import { Inject, Injectable } from '@angular/core';
+import { IPFS, IPFSClient, ipfsToJson } from '@ngeth/ipfs';
+import { OpenseaCollectionMetadata } from './types';
 
 @Injectable({ providedIn: 'root' })
-export class OpenseaCollection {
+export class Opensea {
+  constructor(@Inject(IPFS) private ipfs: IPFSClient) {}
 
-  async create(contractURI: string) {
-    const metadata = await fetch(contractURI);
-    if (!isContractMetadata(metadata)) throw new Error('Metadata do not match Opensea contract metadata');
-    const factory = new ContractFactory(abi, bytecode);
-    return factory.deploy(contractURI);
+  getCollection(contractUri: string): Promise<OpenseaCollectionMetadata> {
+    const [protocol, location] = contractUri.split('//');
+    if (protocol === 'ipfs:') {
+      return ipfsToJson<OpenseaCollectionMetadata>(this.ipfs.cat(location));
+    } else {
+      return fetch(contractUri).then(res => res.json());
+    }
   }
-
 }

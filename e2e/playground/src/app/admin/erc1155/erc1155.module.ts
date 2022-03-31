@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Erc1155Component } from './erc1155.component';
 import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
+import { EthersModule } from '@ngeth/ethers';
 
 
 
@@ -13,6 +14,7 @@ import { ReactiveFormsModule } from '@angular/forms';
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    EthersModule,
     RouterModule.forChild([{ path: '', component: Erc1155Component }])
   ]
 })

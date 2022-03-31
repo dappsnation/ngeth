@@ -26,7 +26,7 @@ export class EthStorage {
   }
 
   state$ = combineLatest([
-    this.metamask.chain$,
+    this.metamask.chainId$,
     this.metamask.account$,
     this.states$
   ]).pipe(

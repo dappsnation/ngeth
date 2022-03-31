@@ -21,8 +21,11 @@ import { RouterModule } from '@angular/router';
         path: 'create',
         loadChildren: () => import('./create/create.module').then(m => m.CreateModule),
       },{
-        path: 'erc1155/:address',
+        path: ':address',
         loadChildren: () => import('./erc1155/erc1155.module').then(m => m.Erc1155Module)
+      },{
+        path: ':address/mint',
+        loadChildren: () => import('./mint/mint.module').then(m => m.MintModule)
       }]
     }])
   ]

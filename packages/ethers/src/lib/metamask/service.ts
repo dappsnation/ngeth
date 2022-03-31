@@ -5,7 +5,7 @@ import { timer, Observable, of, combineLatest } from 'rxjs';
 import { map, shareReplay, switchMap, filter, startWith } from 'rxjs/operators';
 import { getAddress } from '@ethersproject/address';
 import { AddChainParameter, MetaMaskEvents, MetaMaskProvider, WatchAssetParams } from './types';
-import { getChain, toChainId } from '../chain/utils';
+import { getChain, toChainId, toChainIndex } from '../chain/utils';
 import { fromChain } from './utils';
 
 function exist<T>(value?: T | null): value is T {
@@ -72,13 +72,14 @@ export class MetaMask extends Web3Provider {
    */
   currentAccount$ = this.account$.pipe(filter(exist));
 
-  chain$ = this.fromMetaMaskEvent('chainChanged').pipe(
+  chainId$ = this.fromMetaMaskEvent('chainChanged').pipe(
     startWith(null),
     switchMap(() => {
       if (this.chainId) return of(this.chainId);
       return timer(500).pipe(map(() => this.chainId))
     }),
     filter(chainId => !!chainId),
+    map(chainId => toChainIndex(chainId)),
     shareReplay({ refCount: true, bufferSize: 1 })
   );
 
@@ -100,7 +101,7 @@ export class MetaMask extends Web3Provider {
   }
 
   get chainId() {
-    return this.provider.chainId;
+    return toChainIndex(this.provider.chainId);
   }
 
   enable(): Promise<string[]> {

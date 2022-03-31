@@ -1,6 +1,10 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { map } from 'rxjs/operators';
-import { EthStorage } from '../../storage';
+import { MetaMask, ContractsManager } from '@ngeth/ethers';
+;
+import { combineLatest, map, switchMap } from 'rxjs';
+import { ContractCollection } from '../../services/contract.collection';
+import { BaseContract } from '../../services/manager';
+
 
 @Component({
   selector: 'nxeth-list',
@@ -10,11 +14,18 @@ import { EthStorage } from '../../storage';
 })
 export class ListComponent {
 
-  contract$ = this.storage.state$.pipe(
-    map(state => state.contracts)
+  contracts$ = combineLatest([
+    this.metamask.currentAccount$,
+    this.metamask.chainId$,
+  ]).pipe(
+    switchMap(([account, chainId]) => this.contractCollection.fromAccount(account, chainId)),
+    map(contracts => contracts.map(c => this.manager.get(c.address, c.transaction.chainId))),
+    switchMap(contracts => Promise.all(contracts.map(c => c.toJSON())))
   );
-
+  
   constructor(
-    private storage: EthStorage
+    private contractCollection: ContractCollection,
+    private manager: ContractsManager<BaseContract>,
+    private metamask: MetaMask
   ) {}
 }

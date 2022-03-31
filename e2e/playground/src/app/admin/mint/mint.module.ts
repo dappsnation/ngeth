@@ -1,21 +1,19 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { MintComponent } from './mint.component';
 import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
-import { Erc20Component } from './erc20.component';
-import { ERC20Module } from '@ngeth/ethers';
 
 
 
 @NgModule({
   declarations: [
-    Erc20Component
+    MintComponent
   ],
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    ERC20Module,
-    RouterModule.forChild([{ path: '', component: Erc20Component }])
+    RouterModule.forChild([{path: '', component: MintComponent}])
   ]
 })
-export class Erc20PageModule { }
+export class MintModule { }

@@ -19,7 +19,7 @@ export class ChainManager {
   private chains: Record<string, Chain> = {};
   private icons: Record<string, ChainIcon> = {};
 
-  chain$ = this.metamask.chain$.pipe(
+  chain$ = this.metamask.chainId$.pipe(
     switchMap(chainId => this.getChain(chainId)),
   );
 

@@ -1,14 +1,14 @@
-<section>
-  <h2>Mint</h2>
-  <form [formGroup]="form" (ngSubmit)="mint()">
-    <label for="to">To</label>
-    <input formControlName="to" type="text" name="to" id="to"/>
-    <label for="tokenId">TokenId</label>
-    <input formControlName="tokenId" type="text" name="tokenId" id="tokenId" />
-    <label for="amount">Amount</label>
-    <input formControlName="amount" type="number" name="amount" id="amount" />
+<header *ngIf="isOwner$ | async">
+  <a routerLink="mint">Mint</a>
+</header>
 
-    <button type="reset">Cancel</button>
-    <button type="submit">Mint</button>
-  </form>
-</section>
+<ng-container *ngIf="ownTokens$ | async | keyvalue as tokens">
+  <section *ngIf="tokens.length">
+    <h2>My tokens</h2>
+    <ul>
+      <li *ngFor="let token of tokens">
+        {{ token.key }}: {{ token.value | bignumber | number }}
+      </li>
+    </ul>
+  </section>
+</ng-container>
