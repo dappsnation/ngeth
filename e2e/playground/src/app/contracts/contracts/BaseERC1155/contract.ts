@@ -1,3 +1,4 @@
+import { NgZone } from "@angular/core";
 import { NgContract, FilterParam, TypedFilter } from "@ngeth/ethers";
 import type {
   BigNumber,
@@ -92,7 +93,7 @@ export class BaseERC1155 extends NgContract<BaseERC1155Events> {
   setURI!: (newuri: string, overrides?: Overrides) => Promise<ContractTransaction>;
   transferOwnership!: (newOwner: string, overrides?: Overrides) => Promise<ContractTransaction>;
 
-  constructor(address: string, signer?: Signer | Provider) {
-    super(address, abi, signer);
+  constructor(address: string, signer?: Signer | Provider, zone?: NgZone) {
+    super(address, abi, signer, zone);
   }
 }

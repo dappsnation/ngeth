@@ -1,12 +1,63 @@
 <h2>Mint</h2>
 <form [formGroup]="form" (ngSubmit)="mint()">
-  <label for="to">To</label>
-  <input formControlName="to" type="text" name="to" id="to"/>
-  <label for="tokenId">TokenId</label>
-  <input formControlName="tokenId" type="text" name="tokenId" id="tokenId" />
-  <label for="amount">Amount</label>
-  <input formControlName="amount" name="amount" id="amount" />
+  <fieldset formGroupName="metadata">
+    <legend>Metadata</legend>
+    <label for="name">Name</label>
+    <input formControlName="name" type="text" name="name" id="name"/>
+    <label for="description">Description</label>
+    <textarea formControlName="description" name="description" id="description" cols="30" rows="10"></textarea>
+    <label for="external_url">Name</label>
+    <input formControlName="external_url" type="url" name="external_url" id="external_url"/>
+    <label for="image">Image</label>
+    <input formControlName="image" type="file" name="image" id="image" ipfsInput/>
 
-  <button type="reset">Cancel</button>
+    <ul>
+      <ng-container *ngFor="let control of metadata.attributes.controls; let i = index">
+        <li [formGroup]="$any(control)">
+          <label for="trait_type">Attribute Name</label>
+          <input formControlName="trait_type" type="text" name="trait_type" required>
+          <ng-container *ngIf="control.value.display_type === 'number'">
+            <label for="value">Value</label>
+            <input formControlName="value" type="number" name="value" id="value" required>
+            <label for="max_value">Max value</label>
+            <input formControlName="max_value" type="number" name="max_value" id="max_value">
+          </ng-container>
+          <ng-container *ngIf="control.value.display_type === 'date'">
+            <label for="value">Value</label>
+            <input formControlName="value" type="date" name="value" id="value" required>
+          </ng-container>
+          <ng-container  *ngIf="control.value.display_type === ''">
+            <label for="value">Value</label>
+            <input formControlName="value" type="text" name="value" id="value" required>
+          </ng-container>
+          <button (click)="metadata.attributes.removeAt(i)">Remove</button>
+        </li>
+      </ng-container>
+    </ul>
+    
+    <form (submit)="addAttribute($event)">
+      <label for="display_type"></label>
+      <select [formControl]="attributeType" name="display_type" id="display_type">
+        <option value="">Text</option>
+        <option value="number">Number</option>
+        <option value="boost_number">Bonus Number</option>
+        <option value="boost_percentage">Bonus Percentage</option>
+        <option value="date">Date</option>
+      </select>
+      <button type="submit">Add attribute</button>
+    </form>
+  </fieldset>
+
+  <fieldset formGroupName="mint">
+    <legend>Mint</legend>
+    <label for="to">To</label>
+    <input formControlName="to" type="text" name="to" id="to"/>
+    <label for="tokenId">TokenId</label>
+    <input formControlName="tokenId" type="text" name="tokenId" id="tokenId" />
+    <label for="amount">Amount</label>
+    <input formControlName="amount" name="amount" id="amount" />
+  </fieldset>
+
+  <button type="reset" (click)="reset($event)">Cancel</button>
   <button type="submit">Mint</button>
 </form>

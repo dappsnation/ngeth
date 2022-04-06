@@ -1,6 +1,9 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, Inject } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ERC1155FormMint, MetaMask, ContractsManager } from '@ngeth/ethers';
+import { IPFS, IPFSClient } from '@ngeth/ipfs';
+import { OpenseaTokenForm } from '@ngeth/opensea';
 import { BaseContract } from '../../services/manager';
 
 @Component({
@@ -10,14 +13,23 @@ import { BaseContract } from '../../services/manager';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MintComponent {
-  form = new ERC1155FormMint();
+  attributeType = new FormControl();
+  form = new FormGroup({
+    metadata: new OpenseaTokenForm(),
+    mint: new ERC1155FormMint()
+  })
 
   constructor(
+    @Inject(IPFS) private ipfs: IPFSClient,
     private metamask: MetaMask,
     private manager: ContractsManager<BaseContract>,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
   ) {}
+
+  get metadata() {
+    return this.form.get('metadata') as OpenseaTokenForm;
+  }
 
   get contract() {
     const address = this.route.snapshot.paramMap.get('address');
@@ -25,12 +37,26 @@ export class MintComponent {
     return this.manager.get(address, this.metamask.chainId);
   }
 
+  addAttribute(event: Event) {
+    event.preventDefault();
+    const display_type = this.attributeType.value;
+    this.metadata.addAttribute({ display_type });
+    this.attributeType.reset();
+  }
+
+  reset(event: Event) {
+    event.preventDefault();
+    this.form.reset();
+  }
   
   async mint() {
     if (this.form.invalid) return this.form.markAllAsTouched();
-    const { to, tokenId, amount, data } = this.form.value;
+    const { metadata, mint } = this.form.value;
+    const { to, tokenId, amount, data } = mint;
     this.form.disable();
     try {
+      const content = JSON.stringify(metadata);
+      const { cid } = await this.ipfs.add({ content });
       const byteData = data ? `0x${data}` : '0x00';
       await this.contract.mint(to, tokenId, amount, byteData);
       this.router.navigate(['..'], { relativeTo: this.route });

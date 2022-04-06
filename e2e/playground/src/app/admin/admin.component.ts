@@ -7,6 +7,9 @@ import { MetaMask } from '@ngeth/ethers';
   selector: 'nxeth-admin',
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.scss'],
+  host: {
+    class: 'page'
+  },
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AdminComponent {

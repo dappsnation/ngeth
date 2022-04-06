@@ -23,7 +23,8 @@ export class CreateComponent {
     @Inject(IPFS) private ipfs: IPFSClient
   ) {}
 
-  reset() {
+  reset(event: Event) {
+    event.preventDefault();
     this.form.reset();
   }
 

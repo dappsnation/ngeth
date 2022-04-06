@@ -1,3 +1,4 @@
+import { NgZone } from "@angular/core";
 import { NgContract, FilterParam, TypedFilter } from "@ngeth/ethers";
 import type {
   BigNumber,
@@ -11,7 +12,6 @@ import type {
 } from "ethers";
 import type { Provider } from "@ethersproject/providers";
 import abi from "./abi";
-import { NgZone } from "@angular/core";
 
 export interface OpenseaERC1155Events {
   events: {

@@ -1,11 +1,156 @@
 /* You can add global styles to this file, and also import other style files */
-@media (prefers-scheme-colors: dark) {
-  body {
+:root {
+  --background-hsl: 250, 13%, 9%;
+  --text-hsl: 240, 60%, 99%;
+  --accent-hsl: 271, 92%, 69%;
+
+  --background-0: hsl(250, 13%, 9%);
+  --background-1: hsl(247, 12%, 15%);
+  --background-2: hsl(247, 10%, 18%);
+
+  --text-0: hsl(240, 60%, 99%);
+  --text-1: hsl(240, 10%, 83%);
+
+  --border-0: hsl(240, 7%, 35%);
+  --border-1: hsl(245, 9%, 25%);
+
+  --accent-0: hsl(271, 93%, 77%);
+  --accent-1: hsl(271, 92%, 69%);
+  --accent-2: hsl(271, 59%, 37%);
+
+  // Alpha
+  --alpha-0: 0.14;
+  --alpha-1: 0.24;
+
+  // spacing
+  --size-0: 0.25rem;
+  --size-1: 0.5rem;
+  --size-2: 1rem;
+  --size-3: 1.5rem;
+  --size-4: 2rem;
+  --size-5: 3rem;
+
+  // Typography
+  --font-sans: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif;
+}
+
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background-hsl: 250, 13%, 9%;
+    --text-hsl: 240, 60%, 99%;
+    --background-0: hsl(250, 13%, 9%);
+    --background-1: hsl(247, 12%, 15%);
+    --background-2: hsl(247, 10%, 18%);
+    --text-0: hsl(240, 60%, 99%);
+    --text-1: hsl(240, 10%, 83%);
+    --border-0: hsl(240, 7%, 35%);
+    --border-1: hsl(245, 9%, 25%);
+    --accent-0: hsl(271, 93%, 77%);
+    --accent-1: hsl(271, 92%, 69%);
+    --accent-2: hsl(271, 59%, 37%);
     color-scheme: dark;
+    accent-color: var(--accent-1);
   }
 }
-@media (prefers-scheme-colors: light) {
-  body {
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --background-hsl: 0, 0%, 100%;
+    --text-hsl: 250, 13%, 9%;
+    --accent-hsl: 271, 93%, 61%;
+    
+    --background-0: hsl(0, 0%, 100%);
+    --background-1: hsl(240, 20%, 98%);
+    --background-2: hsl(240, 60%, 99%);
+    --text-0: hsl(250, 13%, 9%);
+    --text-1: hsl(240, 6%, 38%);
+    --border-primary: hsl(240, 10%, 83%);
+    --border-secondary: hsl(240, 11%, 89%);
+    --accent-0: hsl(271, 59%, 49%);
+    --accent-1: hsl(271, 93%, 61%);
+    --accent-2: hsl(271, 95%, 92%);
     color-scheme: light;
+    accent-color: var(--accent-1);
+  }
+}
+
+body {
+  margin: 0;
+  background-color: var(--background-1);
+  color: var(--text-0);
+  font-family: var(--font-sans);
+}
+
+h1 {
+  // TODO:
+  // --type-heading-h1: 300 2.25rem/1.138 var(--font-heading);
+  // --type-heading-h2: 400 1.75rem/1.2857 var(--font-heading);
+  // --type-heading-h3: 500 1.5rem/1.2916 var(--font-heading);
+  // --type-heading-h4: 500 1.125rem/1.222 var(--font-heading);
+  // --type-heading-h5: var(--type-heading-l);
+  // --type-heading-h6: 500 0.75rem/1.0833 var(--font-heading);
+}
+
+.toolbar {
+  background-color: var(--background-0);
+}
+
+.surface {
+  background-color: var(--background-2);
+}
+
+.page {
+  display: block;
+  padding: var(--size-2);
+}
+
+a:not(p a, span a), button {
+  cursor: pointer;
+  border: none;
+  padding: var(--size-1) var(--size-2);
+  background-color: transparent;
+  color: var(--text-1);
+  border-radius: var(--size-0);
+  text-decoration: none;
+  &:hover {
+    background-color: hsla(var(--text-hsl), var(--alpha-0));
+    &.accent {
+      background-color: hsla(var(--accent-hsl), var(--alpha-0));
+    }
+  }
+  .stroked {
+    border: solid 1px var(--border-0);
+    &.accent {
+      border: solid 1px var(--accent-1);
+      color: var(--accent-1);
+    }
+  }
+
+  &[type="submit"] {
+    color: var(--text);
+    background-color: var(--accent-1);
+    &:hover {
+      background-color: var(--accent-2);
+    }
+  }
+}
+
+p a, span a {
+  color: var(--accent-1);
+}
+
+input, textarea, select {
+  box-sizing: border-box;
+  padding: var(--size-1);
+  border: solid 1px transparent;
+  border-top-left-radius: var(--size-0);
+  border-top-right-radius: var(--size-0);
+  border-bottom-color: var(--border-0);
+  background-color: var(--background-0);
+  &:focus {
+    border-color: var(--border-1);
+    border-bottom-color: var(--accent-0);
+    outline: none;
   }
 }
