@@ -1,6 +1,6 @@
 {
   "name": "@ngeth/openzeppelin",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "peerDependencies": {
     "@angular/common": "^13.2.0",
     "@angular/core": "^13.2.0"
