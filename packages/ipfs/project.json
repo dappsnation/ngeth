@@ -13,7 +13,7 @@
     "publish": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "command": "npm publish --tag={tag} --access=public",
+        "command": "npm publish --tag={args.tag} --access=public",
         "cwd": "dist/packages/ipfs"
       }
     },
