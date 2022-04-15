@@ -1,9 +1,16 @@
 import { Inject, Pipe, PipeTransform } from '@angular/core';
-import { BigNumber, BigNumberish, constants } from 'ethers';
+import { BigNumber, BigNumberish } from 'ethers';
 import { getAddress } from '@ethersproject/address';
-import { formatEther } from '@ethersproject/units';
+import { formatUnits } from '@ethersproject/units';
 import { isBytes } from '@ethersproject/bytes';
-import { Chain, explore, isSupportedChain, SupportedChains, SUPPORTED_CHAINS } from './chain';
+import { Chain, ChainCurrency, ChainId, ChainManager, explore, isSupportedChain, SupportedChains, SUPPORTED_CHAINS } from './chain';
+import { map } from 'rxjs/operators';
+
+function formatNativeCurrency(value: BigNumberish, currency: ChainCurrency) {
+  const amount = formatUnits(value, currency.decimals);
+  const symbol = currency.symbol ?? currency.name;
+  return `${amount} ${symbol}`;
+}
 
 @Pipe({ name: 'bignumber' })
 export class BigNumberPipe implements PipeTransform {
@@ -18,8 +25,15 @@ export class BigNumberPipe implements PipeTransform {
 
 @Pipe({ name: 'eth' })
 export class EthPipe implements PipeTransform {
-  transform(value: BigNumberish) {
-    return `${formatEther(value)} ${constants.EtherSymbol}`;
+  constructor(private chain: ChainManager) {}
+  transform(value: BigNumberish, chainId?: ChainId) {
+    if (chainId) {
+      return this.chain.getChain(chainId)
+        .then(chain => formatNativeCurrency(value, chain.nativeCurrency));
+    }
+    return this.chain.chain$.pipe(
+      map(chain => formatNativeCurrency(value, chain.nativeCurrency))
+    );
   }
 }
 

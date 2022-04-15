@@ -144,7 +144,7 @@ export class NgContract<
         from(initial),
         listener,
       ]).pipe(
-        map(([events, last]) => events.concat(...last)),
+        map(([events, last]) => [...events, ...last]),
         map(flattenEvents), // remove duplicated (events seems to have a cache of 2 somehow...)
         finalize(() => delete this._events[tag]), // remove cache when no subscriber remains
         shareReplay({ refCount: true, bufferSize: 1 }),

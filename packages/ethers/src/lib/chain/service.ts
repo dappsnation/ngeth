@@ -28,7 +28,7 @@ export class ChainManager {
     @Inject(CUSTOM_CHAINS) private customChains: Record<string, Chain>
   ) {}
 
-  async getChain(chainId: string | number): Promise<Chain> {
+  async getChain(chainId: string | number = this.metamask.chainId): Promise<Chain> {
     const id = toChainId(chainId);
     if (id in this.customChains) return this.customChains[id];
     if (!this.chains[id]) {

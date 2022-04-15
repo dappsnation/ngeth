@@ -4,6 +4,7 @@ import { CreateComponent } from './create.component';
 import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
 import { IpfsModule } from '@ngeth/ipfs';
+import { EthersModule } from '@ngeth/ethers';
 
 
 
@@ -15,6 +16,7 @@ import { IpfsModule } from '@ngeth/ipfs';
     CommonModule,
     ReactiveFormsModule,
     IpfsModule,
+    EthersModule,
     RouterModule.forChild([{ path: '', component: CreateComponent }])
   ]
 })
