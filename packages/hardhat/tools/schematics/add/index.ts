@@ -16,8 +16,8 @@ function hardhatBuilder(tasks: string[], options: ProjectOptions) {
     builders[`hardhat-${task}`] = {
       executor: `@ngeth/hardhat:${task}`,
       options: {
-        config: `${options.projectConfig.root}/hardhat.config.ts`,
-        tsconfig: `${options.projectConfig.root}/tsconfig.hardhat.json`,
+        config: `${options.projectRoot}/hardhat.config.ts`,
+        tsconfig: `${options.projectRoot}/tsconfig.hardhat.json`,
       }
     }
   }
@@ -27,7 +27,7 @@ function hardhatBuilder(tasks: string[], options: ProjectOptions) {
 export async function nxGenerator(tree: Tree, baseOptions: BaseOptions) {
   const options = getProjectOptions(tree, baseOptions.project);
   await addFiles(tree, options, __dirname);
-  setProjectBuilders(tree, options, hardhatBuilder(['build', 'serve'], options));
+  setProjectBuilders(tree, options, hardhatBuilder(['build', 'serve', 'test'], options));
   updateTsConfig(tree, options, (config) => {
     // update references only there is one already ??? (nx project)
     if (!config.references) return config;

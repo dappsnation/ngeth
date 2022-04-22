@@ -55,7 +55,6 @@ export class EtherInputDirective implements ControlValueAccessor {
 
   registerOnChange(fn: (value: BigNumberish) => null): void {
     this.onChange = (value: string) => {
-      console.log(parseUnits(value, this.decimals));
       fn(parseUnits(value, this.decimals));
     }
   }

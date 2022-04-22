@@ -56,7 +56,6 @@ export class EthStorage {
   getState() {
     if (!this.states[this.key]) {
       const content = localStorage.getItem(this.key);
-      console.log(content);
       this.states[this.key] = JSON.parse(content ?? '{}');
     }
     return this.states[this.key];

@@ -37,6 +37,14 @@ export class EthPipe implements PipeTransform {
   }
 }
 
+@Pipe({ name: 'chain' })
+export class ChainPipe implements PipeTransform {
+  constructor(private chain: ChainManager) {}
+  transform(chainId: ChainId) {
+    return this.chain.getChain(chainId);
+  }
+}
+
 @Pipe({ name: 'explore' })
 export class ExporePipe implements PipeTransform {
   transform(search: string, chain: Chain) {
@@ -61,4 +69,4 @@ export class AddressPipe implements PipeTransform {
   }
 }
 
-export const ethersPipes = [BigNumberPipe, EthPipe, ExporePipe, AddressPipe, SupportedChainPipe];
+export const ethersPipes = [BigNumberPipe, EthPipe, ExporePipe, AddressPipe, SupportedChainPipe, ChainPipe];

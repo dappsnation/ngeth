@@ -1,10 +1,14 @@
-import { formatFiles, generateFiles, getWorkspacePath, joinPathFragments, names, offsetFromRoot, ProjectConfiguration as NxProjectConfig, readJson, readWorkspaceConfiguration, TargetConfiguration, Tree, updateJson, Workspace } from '@nrwl/devkit';
+import { formatFiles, generateFiles, getWorkspacePath, joinPathFragments, names, offsetFromRoot, ProjectConfiguration as NxProjectConfig, readJson, getWorkspaceLayout, TargetConfiguration, Tree, updateJson, Workspace } from '@nrwl/devkit';
 import { join } from 'path';
 
 
 /////////////
 // PROJECT //
 /////////////
+export interface BaseOptions {
+  project?: string;
+}
+
 // Project with angular config
 interface ProjectConfig extends NxProjectConfig {
   architect: Record<string, TargetConfiguration>
@@ -13,8 +17,10 @@ interface ProjectConfig extends NxProjectConfig {
 
 export interface ProjectOptions {
   project: string;
-  projectConfig: ProjectConfig;
-  projectConfigLocation: string;
+  projectRoot: string;
+  // Only if project exist
+  projectConfig?: ProjectConfig;
+  projectConfigLocation?: string;
 }
 
 type WorkspaceOrProject = Workspace | ProjectConfig;
@@ -36,21 +42,30 @@ export function readRawWorkspaceJson(tree: Tree) {
 
 export function getProjectOptions(tree: Tree, projectName?: string): ProjectOptions {
   const workspace = readRawWorkspaceJson(tree);
-  const project = projectName ?? workspace.defaultProject;
+  const project = projectName ? names(projectName).fileName : workspace.defaultProject;
   if (!project) throw new Error('No project provided');
   const config = workspace.projects[project];
-  if (!config) throw new Error('No config found for project');
+  if (!config) {
+    const projectRoot = `${getWorkspaceLayout(tree).libsDir}/${project}`;
+    return {
+      project,
+      projectRoot,
+    }
+  }
   // project.json
   if (typeof config === 'string') {
     const projectConfigLocation = joinPathFragments(config, 'project.json');
+    const projectConfig = readJson(tree, projectConfigLocation);
     return {
       project,
-      projectConfig: readJson(tree, projectConfigLocation),
+      projectRoot: projectConfig.root,
+      projectConfig,
       projectConfigLocation: projectConfigLocation,
     }
   } else {
     return {
       project,
+      projectRoot: config.root,
       projectConfig: config as ProjectConfig,
       projectConfigLocation: getWorkspacePath(tree)!
     }
@@ -66,6 +81,9 @@ export function projectConfig(workspace: WorkspaceOrProject, project: string): P
 
 
 export function updateProjectConfig(tree: Tree, options: ProjectOptions, cb: (config: ProjectConfig) => void) {
+  if (!options.projectConfigLocation) {
+    throw new Error('Location not found for project: ' + options.project);
+  }
   return updateJson(tree, options.projectConfigLocation, (file: WorkspaceOrProject) => {
     const config = projectConfig(file, options.project);
     if (!config) return file;
@@ -111,7 +129,7 @@ interface TsConfig {
 
 
 export function updateTsConfig(tree: Tree, options: ProjectOptions, cb: (tsConfig: TsConfig) => TsConfig) {
-  const tsConfig = `${options.projectConfig.root}/tsconfig.json`;
+  const tsConfig = `${options.projectRoot}/tsconfig.json`;
   updateJson(tree, tsConfig, cb);
 }
 
@@ -137,13 +155,13 @@ export async function addFiles(tree: Tree, options: ProjectOptions, dirname: str
   const templateOptions = {
     ...options,
     ...names(options.project),
-    offset: offsetFromRoot(options.projectConfig.root),
+    offset: offsetFromRoot(options.projectRoot),
     tmpl: '',
   };
   generateFiles(
     tree,
     join(dirname, 'files'),
-    options.projectConfig.root,
+    options.projectRoot,
     templateOptions
   );
   await formatFiles(tree);

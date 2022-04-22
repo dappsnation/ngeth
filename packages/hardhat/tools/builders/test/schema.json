@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "title": "Test contract with JEST",
+  "description": "Run the Hardhat test with jest.",
+  "type": "object",
+  "properties": {
+    "tsconfig": {
+      "type": "string",
+      "description": "The path to the tsconfig file used to run hardhat."
+    },
+    "config": {
+      "type": "string",
+      "description": "The path to the hardhat configuration file."
+    },
+    "showStackTraces": {
+      "type": "boolean",
+      "default": false,
+      "description": "Show the stack traces."
+    }
+  },
+  "additionalProperties": false,
+  "required": ["tsconfig", "config"]
+}

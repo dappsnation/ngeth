@@ -9,6 +9,11 @@
       "implementation": "./serve/index",
       "schema": "./serve/schema.json",
       "description": "Run a local node and deploy contracts."
+    },
+    "test": {
+      "implementation": "./test/index",
+      "schema": "./test/schema.json",
+      "description": "Test the contracts with JEST."
     }
   }
 }

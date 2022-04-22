@@ -1,107 +1,50 @@
+import { getProjectOptions } from '@ngeth/devkit';
 import {
   addProjectConfiguration,
   addDependenciesToPackageJson,
   formatFiles,
-  generateFiles,
-  getWorkspaceLayout,
-  names,
-  offsetFromRoot,
   Tree,
 } from '@nrwl/devkit';
-import * as path from 'path';
-
-export interface PluginGeneratorSchema {
-  name: string;
-  tags?: string;
-  directory?: string;
-}
+import { BaseOptions, addFiles } from '@ngeth/devkit';
 
 
-interface NormalizedSchema extends PluginGeneratorSchema {
-  projectName: string;
-  projectRoot: string;
-  projectDirectory: string;
-  parsedTags: string[];
-}
-
-function normalizeOptions(
-  tree: Tree,
-  options: PluginGeneratorSchema
-): NormalizedSchema {
-  const name = names(options.name).fileName;
-  const projectDirectory = options.directory
-    ? `${names(options.directory).fileName}/${name}`
-    : name;
-  const projectName = projectDirectory.replace(new RegExp('/', 'g'), '-');
-  const projectRoot = `${getWorkspaceLayout(tree).libsDir}/${projectDirectory}`;
-  const parsedTags = options.tags
-    ? options.tags.split(',').map((s) => s.trim())
-    : [];
-
+function hardhatTarget(root: string, task: 'build' | 'serve' | 'test') {
+  const tsconfig = task === 'test'
+    ? `${root}/tsconfig.spec.json`
+    : `${root}/tsconfig.lib.json`;
   return {
-    ...options,
-    projectName,
-    projectRoot,
-    projectDirectory,
-    parsedTags,
-  };
+    executor: `@ngeth/hardhat:${task}`,
+    options: {
+      config: `${root}/hardhat.config.ts`,
+      tsconfig,
+    }
+  }
 }
 
-function addFiles(tree: Tree, options: NormalizedSchema) {
-  const templateOptions = {
-    ...options,
-    ...names(options.name),
-    offset: offsetFromRoot(options.projectRoot),
-    tmpl: '',
-  };
-  generateFiles(
-    tree,
-    path.join(__dirname, 'files'),
-    options.projectRoot,
-    templateOptions
-  );
-}
-
-export default async function (tree: Tree, options: PluginGeneratorSchema) {
-  const normalizedOptions = normalizeOptions(tree, options);
-  addProjectConfiguration(tree, normalizedOptions.projectName, {
-    root: normalizedOptions.projectRoot,
+export default async function (tree: Tree, baseOptions: BaseOptions) {
+  const options = getProjectOptions(tree, baseOptions.project);
+  addProjectConfiguration(tree, options.project, {
+    root: options.projectRoot,
     projectType: 'library',
-    sourceRoot: `${normalizedOptions.projectRoot}/contracts`,
+    sourceRoot: `${options.projectRoot}/src`,
     targets: {
-      build: {
-        executor: '@nrwl/workspace:run-commands',
-        options: {
-          command: 'npx hardhat compile --tsconfig tsconfig.lib.json',
-          cwd: normalizedOptions.projectRoot
-        }
-      },
-      serve: {
-        executor: '@nrwl/workspace:run-commands',
-        options: {
-          command: 'npx hardhat node --tsconfig tsconfig.lib.json',
-          cwd: normalizedOptions.projectRoot
-        }
-      },
-      test: {
-        executor: '@nxeth/plugin:test',
-      },
+      build: hardhatTarget(options.projectRoot, 'build'),
+      serve: hardhatTarget(options.projectRoot, 'serve'),
+      test: hardhatTarget(options.projectRoot, 'test'),
     },
-    tags: normalizedOptions.parsedTags,
+    tags: [],
   });
-  addFiles(tree, normalizedOptions);
+  addFiles(tree, options, __dirname);
   await formatFiles(tree);
   const installTask = addDependenciesToPackageJson(tree, {
-    "ethers": "^5.5.3"
-  }, {
-    "@nomiclabs/hardhat-ethers": "^2.0.4",
-    "@nrwl/workspace": "13.4.6",
-    "@openzeppelin/contracts": "^4.4.2",
-    "@typechain/ethers-v5": "^7.2.0",
-    "@typechain/hardhat": "^2.3.1",
-    "hardhat": "^2.8.3",
-    "typechain": "^5.2.0",
-    "ts-node": "^10.4.0",
+    "ethers": "^5.6.0"
+  },     {
+    "@ngeth/ethers": "0.0.11",
+    "@ngeth/hardhat": "0.0.11",
+    "@nomiclabs/hardhat-ethers": "^2.0.5",
+    "hardhat": "^2.9.0",
+    "prettier": "^2.6.0",
+    "ts-node": "^10.7.0",
   });
   return () => installTask();
 }
