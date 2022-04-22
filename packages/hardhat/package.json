@@ -1,13 +1,13 @@
 {
   "name": "@ngeth/hardhat",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "builders": "./tools/builders/builders.json",
   "schematics": "./tools/schematics/schematics.json",
   "ng-add": {
     "save": false
   },
   "peerDependencies": {
-    "@ngeth/ethers": "0.0.11",
+    "@ngeth/ethers": "0.0.12",
     "@nomiclabs/hardhat-ethers": "^2.0.0",
     "ethers": "^5.6.0",
     "hardhat": "^2.9.0",
@@ -15,6 +15,6 @@
     "prettier": "^2.6.0"
   },
   "dependencies": {
-    "@ngeth/devkit": "0.0.11"
+    "@ngeth/devkit": "0.0.12"
   }
 }

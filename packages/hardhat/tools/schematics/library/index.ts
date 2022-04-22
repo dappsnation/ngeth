@@ -39,8 +39,8 @@ export default async function (tree: Tree, baseOptions: BaseOptions) {
   const installTask = addDependenciesToPackageJson(tree, {
     "ethers": "^5.6.0"
   },     {
-    "@ngeth/ethers": "0.0.11",
-    "@ngeth/hardhat": "0.0.11",
+    "@ngeth/ethers": "0.0.12",
+    "@ngeth/hardhat": "0.0.12",
     "@nomiclabs/hardhat-ethers": "^2.0.5",
     "hardhat": "^2.9.0",
     "prettier": "^2.6.0",
