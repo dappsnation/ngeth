@@ -13,7 +13,7 @@ export default {
   },
   ngeth: {
     outDir: './src/app/contracts',
-    withImports: true,
+    withImports: false,
     autoDeploy: {
       BaseERC1155: ['uri'],
       BaseERC20: [],

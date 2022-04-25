@@ -28,7 +28,15 @@ task(
   'ngeth:build',
   '',
   async (taskArguments: any, hre) => {
-    return hre.run('compile', taskArguments);
+    await hre.run('compile', taskArguments);
+    // Generate contracts & index.ts
+    const root = hre.config.paths.root;
+    const outDir = join(root, hre.config.ngeth.outDir);
+    if (!existsSync(outDir)) mkdirSync(outDir, { recursive: true });
+
+    const paths = await hre.artifacts.getAllFullyQualifiedNames();
+    const artifacts = await Promise.all(paths.map(path => hre.artifacts.readArtifact(path)));
+    await generate(hre, artifacts);
   }
 );
 

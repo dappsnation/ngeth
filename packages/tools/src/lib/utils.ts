@@ -51,19 +51,23 @@ const getType = (param: ABIParameter, kind: 'input' | 'output'): string => {
   return '';
 };
 
-const getOverrides = (description: FunctionDescription) => {
-  if (description.stateMutability === 'payable') return 'PayableOverrides';
-  if (description.stateMutability === 'nonpayable') return 'Overrides';
-  return 'CallOverrides';
-};
+// example: "uint[8][][32]" -> ["uint[8]", "[32]"]
+function splitArray(type: string) {
+  const arrayStart = type.lastIndexOf('[');
+  const end = type.substring(arrayStart);
+  const radix = type.slice(0, -1 * (type.length - arrayStart));
+  return [radix, end] as [ABITypeParameter, string];
+}
 
-const getSuperCall = (name: string) =>
-  `return this.functions['${name}'](...arguments);`;
+// Extract amount "[32]" -> 32 / "[]" -> NaN
+function getArrayAmount(suffix: string): number {
+  const amount = suffix.match(/\[(.*)\]/)?.[1];
+  return parseInt(amount ?? '');
+}
 
-  const getArray = (param: ABIParameter, kind: 'input' | 'output') => {
-  const [type, end] = param.type.split('[') as [ABITypeParameter, string];
-  const amountString = end.substring(0, end.length - 1); // Remove last "]"
-  const amount = parseInt(amountString);
+const getArray = (param: ABIParameter, kind: 'input' | 'output') => {
+  const [type, end] = splitArray(param.type);
+  const amount = getArrayAmount(end);
   const itemType = getType({ ...param, type }, kind);
   if (!isNaN(amount)) {
     return `[${new Array(amount).fill(itemType).join(', ')}]`;
@@ -173,8 +177,7 @@ const getCall = (call: FunctionDescription, exports: ExportTypes) => {
 const getSignatureMethod = (method: FunctionDescription, exports: ExportTypes) => {
   const inputs = method.inputs || [];
   const name = `${method.name}(${inputs.map((i) => i.type).join()})`;
-  const override =
-    method.stateMutability === 'payable' ? 'PayableOverrides' : 'Overrides';
+  const override = method.stateMutability === 'payable' ? 'PayableOverrides' : 'Overrides';
   const params = inputs
     .map(getParam)
     .concat(`overrides?: ${override}`)
@@ -186,8 +189,7 @@ const getSignatureMethod = (method: FunctionDescription, exports: ExportTypes) =
 const getMethod = (method: FunctionDescription, exports: ExportTypes) => {
   const name = method.name!;
   const inputs = method.inputs || [];
-  const override =
-    method.stateMutability === 'payable' ? 'PayableOverrides' : 'Overrides';
+  const override = method.stateMutability === 'payable' ? 'PayableOverrides' : 'Overrides';
   const params = inputs
     .map(getParam)
     .concat(`overrides?: ${override}`)
