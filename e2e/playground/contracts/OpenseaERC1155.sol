@@ -1,16 +1,18 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.11;
 
-import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
-contract OpenseaERC1155 is ERC1155, Ownable {
+contract OpenseaERC1155 is ERC1155Upgradeable, OwnableUpgradeable {
   string public contractURI;
-  
-  constructor(
+
+  function initialize(
     string memory _contractURI,
     string memory _tokenURI
-  ) ERC1155(_tokenURI) {
+  ) public initializer {
+    __Ownable_init();
+    __ERC1155_init(_tokenURI);
     contractURI = _contractURI;
   }
 

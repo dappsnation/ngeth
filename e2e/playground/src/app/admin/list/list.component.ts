@@ -1,9 +1,6 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { MetaMask, ContractsManager } from '@ngeth/ethers';
-;
-import { combineLatest, map, switchMap } from 'rxjs';
-import { ContractCollection } from '../../services/contract.collection';
-import { BaseContract } from '../../services/manager';
+import { switchMap } from 'rxjs';
+import { Factory } from '../../services/factory';
 
 
 @Component({
@@ -14,18 +11,11 @@ import { BaseContract } from '../../services/manager';
 })
 export class ListComponent {
 
-  contracts$ = combineLatest([
-    this.metamask.currentAccount$,
-    this.metamask.chainId$,
-  ]).pipe(
-    switchMap(([account, chainId]) => this.contractCollection.fromAccount(account, chainId)),
-    map(contracts => contracts.map(c => this.manager.get(c.address, c.transaction.chainId))),
+  contracts$ = this.factory.clones$.pipe(
     switchMap(contracts => Promise.all(contracts.map(c => c.toJSON())))
   );
   
   constructor(
-    private contractCollection: ContractCollection,
-    private manager: ContractsManager<BaseContract>,
-    private metamask: MetaMask
+    private factory: Factory
   ) {}
 }

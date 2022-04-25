@@ -15,6 +15,7 @@ export default {
     outDir: './src/app/contracts',
     withImports: false,
     autoDeploy: {
+      ERC1155Factory: [],
       BaseERC1155: ['uri'],
       BaseERC20: [],
       BaseERC721: [],

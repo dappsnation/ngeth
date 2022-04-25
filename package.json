@@ -21,6 +21,7 @@
     "@angular/platform-browser": "~13.2.0",
     "@angular/platform-browser-dynamic": "~13.2.0",
     "@angular/router": "~13.2.0",
+    "@openzeppelin/contracts-upgradeable": "^4.5.2",
     "@rx-angular/cdk": "^1.0.0-beta.0",
     "@rx-angular/template": "^1.0.0-beta.30",
     "blockies": "^0.0.2",

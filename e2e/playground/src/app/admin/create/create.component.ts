@@ -1,10 +1,8 @@
 import { Component, ChangeDetectionStrategy, Inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MetaMask } from '@ngeth/ethers';
 import { IPFS, IPFSClient } from '@ngeth/ipfs';
 import { OpenseaCollectionForm } from '@ngeth/opensea';
-import { OpenseaERC1155Factory, OpenseaERC1155Abi } from '../../contracts/contracts/OpenseaERC1155';
-import { ContractCollection, toContract } from '../../services/contract.collection';
+import { Factory } from '../../services/factory';
 
 @Component({
   selector: 'ngeth-create',
@@ -16,10 +14,9 @@ export class CreateComponent {
   form = new OpenseaCollectionForm();
 
   constructor(
-    private metamask: MetaMask,
+    private factory: Factory,
     private route: ActivatedRoute,
     private router: Router,
-    private contractCollection: ContractCollection,
     @Inject(IPFS) private ipfs: IPFSClient
   ) {}
 
@@ -35,22 +32,7 @@ export class CreateComponent {
     try {
       const content = JSON.stringify({ name, image });
       const res = await this.ipfs.add({ content });
-  
-      const factory = new OpenseaERC1155Factory(this.metamask.getSigner());
-      const { deployTransaction, address } = await factory.deploy(`ipfs://${res.path}`, '');
-      const contract = toContract({
-        address,
-        transaction: deployTransaction,
-        standard: 'erc1155',
-        abi: OpenseaERC1155Abi
-      });
-      await this.contractCollection.add(contract);
-      
-      // Todo: add snackbar message
-      deployTransaction.wait()
-        .then(() => this.metamask.getTransaction(deployTransaction.hash)
-        .then((transaction) => this.contractCollection.update(address, toContract({ transaction }))));
-      
+      await this.factory.create(`ipfs://${res.path}`, '');
       this.router.navigate(['..'], { relativeTo: this.route });
     } catch(err) {
       console.error(err);

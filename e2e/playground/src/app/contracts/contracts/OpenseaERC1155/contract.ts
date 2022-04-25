@@ -59,6 +59,7 @@ export class OpenseaERC1155 extends NgContract<OpenseaERC1155Events> {
   uri!: (arg: BigNumberish, overrides?: CallOverrides) => Promise<string>;
 
   // Write
+  initialize!: (_contractURI: string, _tokenURI: string, overrides?: Overrides) => Promise<ContractTransaction>;
   mint!: (
     account: string,
     id: BigNumberish,
