@@ -6,7 +6,7 @@ import { map, pluck, switchMap } from 'rxjs/operators';
 import { BaseContract } from '../../services/manager';
 
 @Component({
-  selector: 'nxeth-erc1155',
+  selector: 'ngeth-erc1155',
   templateUrl: './erc1155.component.html',
   styleUrls: ['./erc1155.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush

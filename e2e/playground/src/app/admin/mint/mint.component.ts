@@ -7,7 +7,7 @@ import { OpenseaTokenForm } from '@ngeth/opensea';
 import { BaseContract } from '../../services/manager';
 
 @Component({
-  selector: 'nxeth-mint',
+  selector: 'ngeth-mint',
   templateUrl: './mint.component.html',
   styleUrls: ['./mint.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush

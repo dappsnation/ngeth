@@ -10,13 +10,13 @@ describe.skip('plugin e2e', () => {
   let plugin: string;
   beforeEach(() => {
     plugin = uniq('plugin');
-    ensureNxProject('@nxeth/plugin', 'dist/packages/plugin');
+    ensureNxProject('@ngeth/plugin', 'dist/packages/plugin');
   })
 
   describe('--contracts', () => {
     it('should create contract in the specified directory', async () => {
       await runNxCommandAsync(
-        `generate @nxeth/plugin:library ${plugin} --directory subdir`
+        `generate @ngeth/plugin:library ${plugin} --directory subdir`
       );
       const checkFile = (path: string) => {
         expect(() => checkFilesExist(path)).not.toThrow();
@@ -29,7 +29,7 @@ describe.skip('plugin e2e', () => {
   describe('--build-contracts', () => {
     it('should compile contract', async () => {
       try {
-        await runNxCommandAsync(`generate @nxeth/plugin:library ${plugin}`);
+        await runNxCommandAsync(`generate @ngeth/plugin:library ${plugin}`);
         expect(async () => await runNxCommandAsync(`build ${plugin}`)).not.toThrow()
       } catch(err) {
         expect(false);

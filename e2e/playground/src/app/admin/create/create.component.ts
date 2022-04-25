@@ -7,7 +7,7 @@ import { OpenseaERC1155Factory, OpenseaERC1155Abi } from '../../contracts/contra
 import { ContractCollection, toContract } from '../../services/contract.collection';
 
 @Component({
-  selector: 'nxeth-create',
+  selector: 'ngeth-create',
   templateUrl: './create.component.html',
   styleUrls: ['./create.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush

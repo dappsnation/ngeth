@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { ETH_PROVIDER, MetaMaskProvider } from '@ngeth/ethers';
 
 @Component({
-  selector: 'nxeth-root',
+  selector: 'ngeth-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush

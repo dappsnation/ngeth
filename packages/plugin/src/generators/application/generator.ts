@@ -78,7 +78,7 @@ export default async function (tree: Tree, options: PluginGeneratorSchema) {
         }
       },
       test: {
-        executor: '@nxeth/plugin:test',
+        executor: '@ngeth/plugin:test',
       },
     },
     tags: normalizedOptions.parsedTags,

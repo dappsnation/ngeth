@@ -7,7 +7,7 @@ import { BaseContract } from '../../services/manager';
 
 
 @Component({
-  selector: 'nxeth-list',
+  selector: 'ngeth-list',
   templateUrl: './list.component.html',
   styleUrls: ['./list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush

@@ -2,7 +2,7 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { HasProviderGuard } from '@ngeth/ethers';
 
 @Component({
-  selector: 'nxeth-no-provider',
+  selector: 'ngeth-no-provider',
   templateUrl: './no-provider.component.html',
   styleUrls: ['./no-provider.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush

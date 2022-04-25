@@ -2,7 +2,7 @@
   "projectType": "library",
   "root": "packages/ipfs",
   "sourceRoot": "packages/ipfs/src",
-  "prefix": "nxeth",
+  "prefix": "ngeth",
   "targets": {
     "link": {
       "executor": "@nrwl/workspace:run-commands",

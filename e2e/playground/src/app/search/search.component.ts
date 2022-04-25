@@ -2,7 +2,7 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { addresses } from '../contracts';
 
 @Component({
-  selector: 'nxeth-search',
+  selector: 'ngeth-search',
   templateUrl: './search.component.html',
   styleUrls: ['./search.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush

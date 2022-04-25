@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { HasSignerGuard, MetaMask } from '@ngeth/ethers';
 
 @Component({
-  selector: 'nxeth-no-signer',
+  selector: 'ngeth-no-signer',
   templateUrl: './no-signer.component.html',
   styleUrls: ['./no-signer.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush

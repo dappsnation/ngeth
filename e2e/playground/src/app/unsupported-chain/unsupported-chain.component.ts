@@ -14,7 +14,7 @@ function retry(amount: number, delay: number, condition: () => boolean) {
 }
 
 @Component({
-  selector: 'nxeth-unsupported-chain',
+  selector: 'ngeth-unsupported-chain',
   templateUrl: './unsupported-chain.component.html',
   styleUrls: ['./unsupported-chain.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush

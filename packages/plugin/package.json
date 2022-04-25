@@ -1,5 +1,5 @@
 {
-  "name": "@nxeth/plugin",
+  "name": "@ngeth/plugin",
   "version": "0.0.13",
   "main": "src/index.js",
   "generators": "./generators.json",

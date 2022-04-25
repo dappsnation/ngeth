@@ -4,7 +4,7 @@ import { getAddress } from '@ethersproject/address';
 import { MetaMask } from '@ngeth/ethers';
 
 @Component({
-  selector: 'nxeth-admin',
+  selector: 'ngeth-admin',
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.scss'],
   host: {

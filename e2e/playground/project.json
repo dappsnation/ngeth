@@ -2,7 +2,7 @@
   "projectType": "application",
   "root": "e2e/playground",
   "sourceRoot": "e2e/playground/src",
-  "prefix": "nxeth",
+  "prefix": "ngeth",
   "targets": {
     "build": {
       "executor": "@nrwl/workspace:run-commands",
