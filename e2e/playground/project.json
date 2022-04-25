@@ -130,6 +130,13 @@
         "tsconfig": "e2e/playground/tsconfig.hardhat.json"
       }
     },
+    "hardhat-test": {
+      "executor": "@ngeth/hardhat:test",
+      "options": {
+        "config": "e2e/playground/hardhat.config.ts",
+        "tsconfig": "e2e/playground/tsconfig.hardhat.json"
+      }
+    },
     "ipfs-daemon": {
       "executor": "@ngeth/ipfs:daemon",
       "options": {
