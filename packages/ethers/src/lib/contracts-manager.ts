@@ -1,5 +1,5 @@
 import { Injectable, NgZone, Type } from '@angular/core';
-import { MetaMask } from '../metamask';
+import { MetaMask } from './metamask';
 
 @Injectable()
 export abstract class ContractsManager<T> {

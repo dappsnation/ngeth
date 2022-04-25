@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { ETH_PROVIDER, MetaMaskProvider } from '@ngeth/ethers';
+import { ChainManager, ETH_PROVIDER, MetaMaskProvider } from '@ngeth/ethers';
 
 @Component({
   selector: 'ngeth-root',
@@ -11,8 +11,15 @@ import { ETH_PROVIDER, MetaMaskProvider } from '@ngeth/ethers';
 export class AppComponent {
   constructor(
     private router: Router,
+    private chain: ChainManager,
     @Inject(ETH_PROVIDER) public provider?: MetaMaskProvider,
-    ) {}
+  ) {
+  }
+  
+  async ngOnInit() {
+    const chain = await this.chain.getChain();
+    console.log(chain);
+  }
 
   redirect(path: string) {
     this.router.navigate([path]);
