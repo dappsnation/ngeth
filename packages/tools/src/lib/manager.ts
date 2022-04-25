@@ -6,7 +6,7 @@ export const getContractManager = (contractName: string) => {
   import { ContractsManager } from "@ngeth/ethers";
   import { ${contractName} } from "./contract";
 
-  @Injectable()
+  @Injectable({ providedIn: 'root' })
   export class ${contractName}Manager extends ContractsManager<${contractName}> {
     protected contractType = ${contractName};
   }`;
