@@ -5,9 +5,10 @@ type bytes = '8' | '16' | '32' | '64' | '128' | '256';
 export type ABITypeParameter =
 | 'string'
 | 'uint'
-| 'uint[]' // TODO : add <M>
+| `int${bytes}[]`
 | 'int'
-| 'int[]' // TODO : add <M>
+| `int${bytes}[]`
+| 'int[]'
 | 'address'
 | 'address[]'
 | 'bool'
@@ -15,11 +16,11 @@ export type ABITypeParameter =
 | 'fixed'
 | `fixed${bytes}`
 | `fixed${bytes}[]`
-| 'fixed[]' // TODO : add <M>
+| 'fixed[]'
 | 'ufixed'
 | `ufixed${bytes}`
 | `ufixed${bytes}[]`
-| 'ufixed[]' // TODO : add <M>
+| 'ufixed[]'
 | 'bytes'
 | `bytes${bytes}`
 | `bytes${bytes}[]`

@@ -27,7 +27,6 @@ const getOutputs = (outputs: ABIParameter[] = []) => {
   if (outputs.length === 1) return getType(outputs[0], 'output');
   return `[${outputs.map((output) => getType(output, 'output'))}]`;
 };
-const getParams = (params: ABIParameter[] = []) => params.map(getParam).join(', ');
 const getParam = (param: ABIParameter, index: number) => {
   if (param.name) return `${param.name}: ${getType(param, 'input')}`;
   if (!index) return `arg: ${getType(param, 'input')}`;

@@ -8,7 +8,7 @@ import { getDeploy, isConstrutor } from "./utils";
 export const getFactory = (contractName: string, abi: ABIDescription[]) => {
   const deploy = getDeploy(contractName, abi.find(isConstrutor)?.inputs);
   const code = `
-  import { ContractFactory, PayableOverrides } from '@ethersproject/contracts';
+  import { ContractFactory } from '@ethersproject/contracts';
   import type { ${contractName} } from './contract';
   import type { BigNumber, Overrides, CallOverrides, PayableOverrides, Signer, BytesLike, BigNumberish } from "ethers";
   import abi from './abi';
