@@ -1,6 +1,6 @@
 {
   "name": "@ngeth/devkit",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "type": "commonjs",
   "dependencies": {
     "@nrwl/devkit": "^13.8.5",
