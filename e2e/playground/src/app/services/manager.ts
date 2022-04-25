@@ -1,6 +1,6 @@
 import type { Signer } from 'ethers';
 import { Injectable, NgZone } from '@angular/core';
-import { erc1155Tokens, MetaMask } from '@ngeth/ethers';
+import { ContractsManager, erc1155Tokens } from '@ngeth/ethers';
 import { Opensea, OpenseaCollectionMetadata } from '@ngeth/opensea';
 import { OpenseaERC1155 } from '../contracts';
 import { combineLatest, map, switchMap } from 'rxjs';
@@ -61,21 +61,12 @@ export class BaseContract extends OpenseaERC1155 {
 
 
 @Injectable()
-export class BaseContractsManager {
-  private contracts: Record<string, Record<string, BaseContract>> = {};
+export class BaseContractsManager extends ContractsManager<BaseContract> {
+  constructor(private opensea: Opensea) {
+    super();
+  }
 
-  constructor(
-    private opensea: Opensea,
-    private metamask: MetaMask,
-    private zone: NgZone
-  ) {}
-
-  get(address: string, chainId: number): BaseContract {
-    if (!this.contracts[chainId]) this.contracts[chainId] = {};
-    if (!this.contracts[chainId][address]) {
-      const contract = new BaseContract(address, this.metamask.getSigner(), this.zone, this.opensea);
-      this.contracts[chainId][address] = contract;
-    }
-    return this.contracts[chainId][address] as BaseContract;
+  protected create(address: string): BaseContract {
+    return new BaseContract(address, this.metamask.getSigner(), this.zone, this.opensea);
   }
 }

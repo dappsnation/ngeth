@@ -8,7 +8,10 @@ export const getContractManager = (contractName: string) => {
 
   @Injectable({ providedIn: 'root' })
   export class ${contractName}Manager extends ContractsManager<${contractName}> {
-    protected contractType = ${contractName};
+    
+    create(address: string) {
+      return new ${contractName}(address, this.metamask.getSigner(), this.zone);
+    }
   }`;
   return formatTs(code);
 }

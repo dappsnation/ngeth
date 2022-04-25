@@ -1,6 +1,8 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { switchMap } from 'rxjs';
-import { Factory } from '../../services/factory';
+import { MetaMask } from '@ngeth/ethers';
+import { map, switchMap } from 'rxjs';
+import { addresses } from '../../contracts';
+import { FactoryManager } from '../../services/factory';
 
 
 @Component({
@@ -11,11 +13,14 @@ import { Factory } from '../../services/factory';
 })
 export class ListComponent {
 
-  contracts$ = this.factory.clones$.pipe(
+  contracts$ = this.metamask.chainId$.pipe(
+    map(chainId => this.factoryManager.get(addresses.ERC1155Factory, chainId)),
+    switchMap(factory => factory.clones$),
     switchMap(contracts => Promise.all(contracts.map(c => c.toJSON())))
   );
   
   constructor(
-    private factory: Factory
+    private factoryManager: FactoryManager,
+    private metamask: MetaMask
   ) {}
 }

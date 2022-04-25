@@ -2,7 +2,8 @@ import { Component, ChangeDetectionStrategy, Inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IPFS, IPFSClient } from '@ngeth/ipfs';
 import { OpenseaCollectionForm } from '@ngeth/opensea';
-import { Factory } from '../../services/factory';
+import { addresses } from '../../contracts';
+import { FactoryManager } from '../../services/factory';
 
 @Component({
   selector: 'ngeth-create',
@@ -14,7 +15,7 @@ export class CreateComponent {
   form = new OpenseaCollectionForm();
 
   constructor(
-    private factory: Factory,
+    private factoryManager: FactoryManager,
     private route: ActivatedRoute,
     private router: Router,
     @Inject(IPFS) private ipfs: IPFSClient
@@ -32,7 +33,8 @@ export class CreateComponent {
     try {
       const content = JSON.stringify({ name, image });
       const res = await this.ipfs.add({ content });
-      await this.factory.create(`ipfs://${res.path}`, '');
+      const factory = this.factoryManager.get(addresses.ERC1155Factory)
+      await factory.create(`ipfs://${res.path}`, '');
       this.router.navigate(['..'], { relativeTo: this.route });
     } catch(err) {
       console.error(err);
