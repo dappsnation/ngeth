@@ -11,7 +11,6 @@
     "opensea": "packages/opensea",
     "openzeppelin": "packages/openzeppelin",
     "playground": "e2e/playground",
-    "playground-contracts": "e2e/playground-contracts",
     "plugin": "packages/plugin",
     "plugin-e2e": "e2e/plugin-e2e",
     "polygon": "packages/polygon",
