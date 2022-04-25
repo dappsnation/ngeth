@@ -1,4 +1,4 @@
-import { BigNumber, Event } from "ethers";
+import type { BigNumber, Event } from "ethers";
 
 export function erc721Tokens(received: Event[], sent: Event[]) {
   const record: Record<string, number> = {};
