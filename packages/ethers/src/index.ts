@@ -7,3 +7,4 @@ export * from './lib/contracts-manager';
 export * from './lib/contracts';
 export * from './lib/form';
 export * from './lib/pipes';
+export * from './lib/provider';

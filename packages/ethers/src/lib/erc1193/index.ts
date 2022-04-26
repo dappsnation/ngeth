@@ -1,5 +1,5 @@
-import { Inject, Injectable, InjectionToken, NgZone } from '@angular/core';
-import { Web3Provider, Provider, } from '@ethersproject/providers';
+import { inject, InjectionToken, NgZone } from '@angular/core';
+import { Provider, } from '@ethersproject/providers';
 import { EventFilter } from '@ethersproject/abstract-provider';
 import { timer, Observable, of, combineLatest } from 'rxjs';
 import { map, shareReplay, switchMap, filter, startWith } from 'rxjs/operators';
@@ -8,13 +8,62 @@ import { AddChainParameter, MetaMaskEvents, MetaMaskProvider, WatchAssetParams }
 import { getChain, toChainId, toChainIndex } from '../chain/utils';
 import { fromChain } from './utils';
 
+interface RequestArguments {
+  readonly method: string;
+  readonly params?: readonly unknown[] | object;
+}
+
+interface ProviderRpcError extends Error {
+  code: number;
+  data?: unknown;
+}
+
+interface ProviderMessage {
+  readonly type: string;
+  readonly data: unknown;
+}
+
+interface EthSubscription extends ProviderMessage {
+  readonly type: 'eth_subscription';
+  readonly data: {
+    readonly subscription: string;
+    readonly result: unknown;
+  };
+}
+
+interface ProviderConnectInfo {
+  readonly chainId: string;
+}
+
+const errorCode = {
+  4001:	'[User Rejected Request] The user rejected the request.',
+  4100:	'[Unauthorized] 	The requested method and/or account has not been authorized by the user.',
+  4200:	'[Unsupported Method]	The Provider does not support the requested method.',
+  4900:	'[Disconnected] The Provider is disconnected from all chains.',
+  4901:	'[Chain Disconnected] The Provider is not connected to the requested chain.',
+}
+
+export interface ERC1193Events {
+  accountsChanged: (accounts: string[]) => void;
+  chainChanged: (chainId: string) => void;
+  connect: (connectInfo: ConnectInfo) => void;
+  disconnect: (error: ProviderRpcError) => void;
+  message: (message: ProviderMessage) => void;
+}
+
 function exist<T>(value?: T | null): value is T {
   return value !== undefined && value !== null;
 }
 
-export const ETH_PROVIDER = new InjectionToken<MetaMaskProvider | undefined>('Ethereum ', {
+export const GET_ETH_PROVIDER = new InjectionToken<() => MetaMaskProvider>('Ethereum ', {
   providedIn: 'root',
-  factory: () => (window as any).ethereum
+  factory: () => () => {
+    const provider = (window as any).ethereum;
+    if (!provider) {
+      throw new Error('No provider found in the window object. Is MetaMask enabled ?');
+    }
+    return provider;
+  }
 });
 
 
@@ -34,20 +83,24 @@ export function fromEthEvent<T>(
   });
 }
 
-@Injectable({ providedIn: 'root' })
-export class MetaMask extends Web3Provider {
+export abstract class ERC1193 {
+  abstract isConnected: () => boolean;
+  abstract request(args: RequestArguments): Promise<unknown>;
+
+  private zone = inject(NgZone);
+  private getProvider = inject(GET_ETH_PROVIDER);
+
   private events: Record<string, Observable<unknown>> = {};
-  override provider!: MetaMaskProvider;
 
   /** Observe if current account is connected */
   connected$ = combineLatest([
-    this.fromMetaMaskEvent('connect'),
-    this.fromMetaMaskEvent('disconnect'),
+    this.fromEvent('connect'),
+    this.fromEvent('disconnect'),
   ]).pipe(
     startWith([]),
     switchMap(() => {
-      if (this.provider.isConnected()) return of(true);
-      return timer(500).pipe(map(() => this.provider.isConnected()))
+      if (this.isConnected()) return of(true);
+      return timer(500).pipe(map(() => this.isConnected()))
     }),
     shareReplay({ refCount: true, bufferSize: 1 })
   );
@@ -56,7 +109,7 @@ export class MetaMask extends Web3Provider {
    * First account connected to the dapp, if any
    * @note This might not be the selected account in Metamask
    */
-  account$ = this.fromMetaMaskEvent('accountsChanged').pipe(
+  account$ = this.fromEvent('accountsChanged').pipe(
     startWith([]),
     switchMap(() => {
       if (this.account) return of([this.account]);
@@ -72,7 +125,7 @@ export class MetaMask extends Web3Provider {
    */
   currentAccount$ = this.account$.pipe(filter(exist));
 
-  chainId$ = this.fromMetaMaskEvent('chainChanged').pipe(
+  chainId$ = this.fromEvent('chainChanged').pipe(
     startWith(null),
     switchMap(() => {
       if (this.chainId) return of(this.chainId);
@@ -83,18 +136,11 @@ export class MetaMask extends Web3Provider {
     shareReplay({ refCount: true, bufferSize: 1 })
   );
 
-  message$ = this.fromMetaMaskEvent('message');
+  message$ = this.fromEvent('message');
 
-  constructor(
-    private ngZone: NgZone,
-    @Inject(ETH_PROVIDER) provider?: MetaMaskProvider,
-  ) {
-    // TODO: fix with typescript 4.7
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    super(provider!);
-    if (!provider) {
-      throw new Error('No provider found in the window object. Is MetaMask enabled ?');
-    }
+
+  get provider() {
+    return this.getProvider();
   }
 
   get account() {
@@ -141,9 +187,9 @@ export class MetaMask extends Web3Provider {
   }
 
   /** Listen on event from MetaMask Provider */
-  protected fromMetaMaskEvent<T>(event: keyof MetaMaskEvents, initial?: T): Observable<T> {
+  protected fromEvent<T>(event: keyof MetaMaskEvents, initial?: T): Observable<T> {
     if (!this.events[event]) {
-      this.events[event] = fromEthEvent<T>(this.provider, this.ngZone, event);
+      this.events[event] = fromEthEvent<T>(this.provider, this.zone, event);
     }
     const listener = this.events[event] as Observable<T>;
     return (initial !== undefined)

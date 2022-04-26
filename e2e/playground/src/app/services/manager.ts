@@ -15,7 +15,12 @@ interface OpenseaERC1155Interface {
 export class BaseContract extends OpenseaERC1155 {
   private json?: OpenseaERC1155Interface;
 
-  constructor(address: string, signer: Signer, zone: NgZone, private opensea: Opensea) {
+  constructor(
+    address: string,
+    signer: Signer,
+    zone: NgZone,
+    private opensea: Opensea,
+  ) {
     super(address, signer, zone);
   }
 
@@ -66,7 +71,7 @@ export class BaseContractsManager extends ContractsManager<BaseContract> {
     super();
   }
 
-  protected create(address: string): BaseContract {
-    return new BaseContract(address, this.metamask.getSigner(), this.zone, this.opensea);
+  protected createInstance(address: string): BaseContract {
+    return new BaseContract(address, this.signer, this.zone, this.opensea);
   }
 }

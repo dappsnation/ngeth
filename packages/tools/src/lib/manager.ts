@@ -9,8 +9,8 @@ export const getContractManager = (contractName: string) => {
   @Injectable({ providedIn: 'root' })
   export class ${contractName}Manager extends ContractsManager<${contractName}> {
     
-    create(address: string) {
-      return new ${contractName}(address, this.metamask.getSigner(), this.zone);
+    createInstance(address: string) {
+      return new ${contractName}(address, this.signer(), this.zone);
     }
   }`;
   return formatTs(code);

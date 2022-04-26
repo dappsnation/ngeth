@@ -1,5 +1,5 @@
 import { Injectable, NgZone } from '@angular/core';
-import { ContractsManager, MetaMask } from '@ngeth/ethers';
+import { ContractsManager, MetaMask, WebSigner } from '@ngeth/ethers';
 import { BaseContract } from './manager';
 import { switchMap, map } from 'rxjs';
 import { ERC1155Factory } from "../contracts";
@@ -12,11 +12,12 @@ export class Factory extends ERC1155Factory {
 
   constructor(
     address: string,
+    signer: WebSigner,
+    zone: NgZone,
     private metamask: MetaMask,
     private manager: ContractsManager<BaseContract>,
-    zone: NgZone
   ) {
-    super(address, metamask.getSigner(), zone);
+    super(address, signer, zone);
   }
 
   private clonesFromAccount(account: string) {
@@ -34,7 +35,7 @@ export class FactoryManager extends ContractsManager<Factory> {
     super();
   }
 
-  protected create(address: string): Factory {
-    return new Factory(address, this.metamask, this.contractManager, this.zone)
+  protected createInstance(address: string): Factory {
+    return new Factory(address, this.signer, this.zone, this.metamask, this.contractManager)
   }
 }
