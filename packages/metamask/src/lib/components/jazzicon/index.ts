@@ -27,6 +27,7 @@ type Color = typeof colors[number];
 const shapeCount = 4;
 const total = shapeCount - 1;
 const wobble = 30;
+const diameter = 100;
 
 interface Shape {
   transform: string;
@@ -34,7 +35,7 @@ interface Shape {
 }
 
 @Component({
-  selector: 'eth-jazzicon',
+  selector: 'metamask-jazzicon',
   templateUrl: './template.html',
   styleUrls: ['./style.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -46,12 +47,6 @@ export class JazzIconComponent {
 
   @HostBinding('style.backgroundColor') background?: string;
   @HostBinding('title') title?: string;
-
-  // eslint-disable-next-line @angular-eslint/no-input-rename
-  @Input('diameter') set _diameter(d: string | number) {
-    if (typeof d === 'string') this.diameter = parseInt(d);
-    if (typeof d === 'number') this.diameter = d;
-  }
   
   @Input()
   set address(address: string) {
@@ -60,16 +55,10 @@ export class JazzIconComponent {
     this.generate(address);
   }
 
-  constructor(private el: ElementRef<HTMLElement>) {}
-
   private async generate(address: string) {
-    if (!this.diameter) {
-      this.diameter = this.el.nativeElement.getBoundingClientRect().width || 32;
-    }
     const seed = seedFromAddress(address);
     this.generator = new MersenneTwister(seed);
     const remainingColors = this.hueShift(colors.slice(), this.generator);
-
     this.background = this.genColor(remainingColors);
     this.shapes = Array(total).fill(undefined).map((_, i) => this.getShape(remainingColors, i))
   }
@@ -87,11 +76,10 @@ export class JazzIconComponent {
   }
 
   private getShape(remainingColors: Color[], i: number) {
-    const center = this.diameter / 2;
+    const center = diameter / 2;
     const firstRot = this.generator.random();
     const angle = Math.PI * 2 * firstRot;
-    const velocity =
-      (this.diameter / total) * this.generator.random() + (i * this.diameter) / total;
+    const velocity = (diameter / total) * this.generator.random() + (i * diameter) / total;
     const tx = Math.cos(angle) * velocity;
     const ty = Math.sin(angle) * velocity;
     const translate = `translate(${tx}, ${ty})`;

@@ -1,0 +1,10 @@
+:host {
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-template-rows: auto auto;
+  gap: var(--size-1, 0.5rem) var(--size-2, 1rem);
+
+  metamask-jazzicon {
+    grid-row: 1 / span 2;
+  }
+}

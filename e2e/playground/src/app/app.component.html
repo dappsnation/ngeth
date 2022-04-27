@@ -3,13 +3,7 @@
     <a routerLink="search">Playground</a>
   </h1>
   <ng-container *ngIf="hasProvider else noProvider">
-    <eth-connect (connect)="redirect('/search')">
-      <ng-template ethIdenticon let-account>
-        <a class="identicon" routerLink="admin">
-          <eth-blockies [address]="account"></eth-blockies>
-        </a>
-      </ng-template>
-    </eth-connect>
+    <metamask-connect (connect)="redirect('/search')"></metamask-connect>
   </ng-container>
 
   <ng-template #noProvider>

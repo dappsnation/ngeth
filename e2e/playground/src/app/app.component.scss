@@ -1,11 +1,10 @@
 header {
   display: flex;
+  align-items: center;
   
-  eth-connect {
-    margin-left: auto;
+  padding: var(--size-1) var(--size-2);
+  h1 {
+    margin-right: auto;
   }
 
-  eth-blockies {
-    height: 32px;
-  }
 }

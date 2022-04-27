@@ -2,7 +2,7 @@
 import { BaseContract, EventFilter, ContractInterface } from '@ethersproject/contracts';
 import { Log } from '@ethersproject/abstract-provider';
 import { Observable, shareReplay, map, from, scan, startWith, combineLatest, finalize } from 'rxjs';
-import { fromEthEvent } from './metamask';
+import { fromEthEvent } from './erc1193';
 import { inject, NgZone } from '@angular/core';
 
 import type { Signer } from '@ethersproject/abstract-signer';

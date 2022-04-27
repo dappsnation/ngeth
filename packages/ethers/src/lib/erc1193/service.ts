@@ -1,7 +1,7 @@
 import { inject, NgZone } from '@angular/core';
 import { Provider, } from '@ethersproject/providers';
 import { EventFilter } from '@ethersproject/abstract-provider';
-import { timer, Observable, of, combineLatest } from 'rxjs';
+import { timer, Observable, of, combineLatest, defer } from 'rxjs';
 import { map, shareReplay, switchMap, filter, startWith } from 'rxjs/operators';
 import { getAddress } from '@ethersproject/address';
 import { ERC1193Events, ERC1193Provider } from './types';
@@ -97,7 +97,7 @@ export abstract class ERC1193 {
   /** Listen on event from MetaMask Provider */
   protected fromEvent<T>(event: keyof ERC1193Events, initial?: T): Observable<T> {
     if (!this.events[event]) {
-      this.events[event] = fromEthEvent<T>(this.provider, this.zone, event);
+      this.events[event] = defer(() => fromEthEvent<T>(this.provider, this.zone, event));
     }
     const listener = this.events[event] as Observable<T>;
     return (initial !== undefined)

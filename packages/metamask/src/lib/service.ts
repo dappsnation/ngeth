@@ -9,7 +9,8 @@ export class MetaMask extends ERC1193 {
   get provider(): MetaMaskProvider {
     const provider = (window as any).ethereum;
     if (!provider) throw new Error('No Provider injected in the window object');
-    if (!provider.isMetamask) throw new Error('Provider is not Metamask');
+    console.log(provider);
+    if (!provider.isMetaMask) throw new Error('Provider is not Metamask');
     return provider;
   }
 

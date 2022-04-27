@@ -4,7 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 
 import { ContractsManager, EthersModule,  SUPPORTED_CHAINS, HasProviderGuard, IsSupportedChainGuard, ERC1193 } from '@ngeth/ethers';
-import { HasSignerGuard, MetaMask } from '@ngeth/metamask';
+import { HasSignerGuard, MetaMask, MetaMaskModule } from '@ngeth/metamask';
 import { FIREBASE_CONFIG } from 'ngfire';
 import { environment } from '../environments/environment';
 
@@ -34,7 +34,7 @@ import { BaseContractsManager } from './services/manager';
       loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule)
     }]),
     ReactiveFormsModule,
-    EthersModule,
+    MetaMaskModule,
   ],
   providers: [
     { provide: FIREBASE_CONFIG, useValue: environment.firebase },

@@ -1,7 +1,5 @@
 <ng-container *ngIf="account$ | async as account; else signin">
-  <ng-container *ngIf="identicon">
-    <ng-container *ngTemplateOutlet="identicon.template; context: { $implicit: account }"></ng-container>
-  </ng-container>
+  <metamask-jazzicon [address]="account"></metamask-jazzicon>
   <ng-container *ngIf="chain$ | async as chain">
     <a [href]="account | explore:chain" target="_blank">
       {{ account | address:'short' }}
