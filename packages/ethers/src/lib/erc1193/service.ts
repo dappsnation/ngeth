@@ -6,7 +6,6 @@ import { map, shareReplay, switchMap, filter } from 'rxjs/operators';
 import { getAddress } from '@ethersproject/address';
 import { ERC1193Events, ERC1193Provider } from './types';
 import { toChainIndex } from '../chain/utils';
-import { ArgumentType } from 'hardhat/types';
 
 
 const errorCode = {
