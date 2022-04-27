@@ -1,5 +1,6 @@
 import { Component, ChangeDetectionStrategy, Inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ERC1193 } from '@ngeth/ethers';
 import { IPFS, IPFSClient } from '@ngeth/ipfs';
 import { OpenseaCollectionForm } from '@ngeth/opensea';
 import { addresses } from '../../contracts';
@@ -18,6 +19,7 @@ export class CreateComponent {
     private factoryManager: FactoryManager,
     private route: ActivatedRoute,
     private router: Router,
+    private erc1193: ERC1193,
     @Inject(IPFS) private ipfs: IPFSClient
   ) {}
 
@@ -33,7 +35,7 @@ export class CreateComponent {
     try {
       const content = JSON.stringify({ name, image });
       const res = await this.ipfs.add({ content });
-      const factory = this.factoryManager.get(addresses.ERC1155Factory)
+      const factory = this.factoryManager.get(addresses.ERC1155Factory, this.erc1193.chainId);
       await factory.create(`ipfs://${res.path}`, '');
       this.router.navigate(['..'], { relativeTo: this.route });
     } catch(err) {

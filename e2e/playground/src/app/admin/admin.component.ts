@@ -1,7 +1,6 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { getAddress } from '@ethersproject/address';
-import { MetaMask } from '@ngeth/ethers';
 
 @Component({
   selector: 'ngeth-admin',
@@ -15,8 +14,7 @@ import { MetaMask } from '@ngeth/ethers';
 export class AdminComponent {
   constructor(
     private router: Router,
-    private route: ActivatedRoute,
-    private metamask: MetaMask
+    private route: ActivatedRoute
   ) {}
 
   search(event: Event, input: HTMLInputElement) {

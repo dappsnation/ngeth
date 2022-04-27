@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { MetaMask } from '@ngeth/ethers';
+import { MetaMask } from '@ngeth/metamask';
 import { map, switchMap } from 'rxjs';
 import { addresses } from '../../contracts';
 import { FactoryManager } from '../../services/factory';

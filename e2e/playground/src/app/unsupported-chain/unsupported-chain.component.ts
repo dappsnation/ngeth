@@ -1,6 +1,8 @@
 import { Component, ChangeDetectionStrategy, Inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { ChainManager, IsSupportedChainGuard, MetaMask, SUPPORTED_CHAINS } from '@ngeth/ethers';
+import { ChainManager, IsSupportedChainGuard, SUPPORTED_CHAINS } from '@ngeth/ethers';
+import { MetaMask } from '@ngeth/metamask';
+
 
 function retry(amount: number, delay: number, condition: () => boolean) {
   return new Promise<void>((res) => {

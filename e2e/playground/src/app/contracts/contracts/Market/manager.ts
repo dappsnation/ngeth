@@ -5,6 +5,6 @@ import { Market } from "./contract";
 @Injectable({ providedIn: "root" })
 export class MarketManager extends ContractsManager<Market> {
   createInstance(address: string) {
-    return new Market(address, this.metamask.getSigner(), this.zone);
+    return new Market(address, this.signer, this.zone);
   }
 }

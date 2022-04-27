@@ -1,0 +1,42 @@
+{
+  "projectType": "library",
+  "root": "packages/metamask",
+  "sourceRoot": "packages/metamask/src",
+  "prefix": "metamask",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/angular:package",
+      "outputs": ["dist/packages/metamask"],
+      "options": {
+        "project": "packages/metamask/ng-package.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "packages/metamask/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "packages/metamask/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/packages/metamask"],
+      "options": {
+        "jestConfig": "packages/metamask/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "packages/metamask/src/**/*.ts",
+          "packages/metamask/src/**/*.html"
+        ]
+      }
+    }
+  },
+  "tags": []
+}

@@ -1,6 +1,5 @@
-import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { ETH_PROVIDER, MetaMaskProvider } from '@ngeth/ethers';
 
 @Component({
   selector: 'ngeth-root',
@@ -9,10 +8,8 @@ import { ETH_PROVIDER, MetaMaskProvider } from '@ngeth/ethers';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent {
-  constructor(
-    private router: Router,
-    @Inject(ETH_PROVIDER) public provider?: MetaMaskProvider,
-  ) {}
+  public hasProvider = !!window && ('ethereum' in window);
+  constructor(private router: Router) {}
 
 
   redirect(path: string) {

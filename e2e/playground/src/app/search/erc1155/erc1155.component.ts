@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ContractsManager, ERC1155FormTransfer, MetaMask } from '@ngeth/ethers';
+import { ContractsManager, ERC1155FormTransfer } from '@ngeth/ethers';
+import { MetaMask } from '@ngeth/metamask';
 import { combineLatest, map, pluck, switchMap, withLatestFrom } from 'rxjs';
 import { BaseContract } from '../../services/manager';
 

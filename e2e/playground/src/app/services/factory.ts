@@ -1,5 +1,6 @@
 import { Injectable, NgZone } from '@angular/core';
-import { ContractsManager, MetaMask, WebSigner } from '@ngeth/ethers';
+import { ContractsManager, WebSigner } from '@ngeth/ethers';
+import { MetaMask } from '@ngeth/metamask';
 import { BaseContract } from './manager';
 import { switchMap, map } from 'rxjs';
 import { ERC1155Factory } from "../contracts";
@@ -31,7 +32,10 @@ export class Factory extends ERC1155Factory {
 @Injectable({ providedIn: 'root' })
 export class FactoryManager extends ContractsManager<Factory> {
 
-  constructor(private contractManager: ContractsManager<BaseContract>) {
+  constructor(
+    private contractManager: ContractsManager<BaseContract>,
+    private metamask: MetaMask,
+  ) {
     super();
   }
 

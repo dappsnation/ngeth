@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
-import { HasSignerGuard, MetaMask } from '@ngeth/ethers';
+import { HasSignerGuard, MetaMask } from '@ngeth/metamask';
 
 @Component({
   selector: 'ngeth-no-signer',

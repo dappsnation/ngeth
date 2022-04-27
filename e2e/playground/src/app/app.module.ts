@@ -3,7 +3,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 
-import { ContractsManager, EthersModule, HasProviderGuard, HasSignerGuard, IsSupportedChainGuard, SUPPORTED_CHAINS } from '@ngeth/ethers';
+import { ContractsManager, EthersModule,  SUPPORTED_CHAINS, HasProviderGuard, IsSupportedChainGuard, ERC1193 } from '@ngeth/ethers';
+import { HasSignerGuard, MetaMask } from '@ngeth/metamask';
 import { FIREBASE_CONFIG } from 'ngfire';
 import { environment } from '../environments/environment';
 
@@ -36,8 +37,9 @@ import { BaseContractsManager } from './services/manager';
     EthersModule,
   ],
   providers: [
-    { provide: SUPPORTED_CHAINS, useValue: '*' },
     { provide: FIREBASE_CONFIG, useValue: environment.firebase },
+    { provide: SUPPORTED_CHAINS, useValue: '*' },
+    { provide: ERC1193, useClass: MetaMask },
     { provide: ContractsManager, useClass: BaseContractsManager },
   ],
   bootstrap: [AppComponent],

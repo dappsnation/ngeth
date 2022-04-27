@@ -19,16 +19,16 @@ export class ChainManager {
   private chains: Record<string, Chain> = {};
   private icons: Record<string, ChainIcon> = {};
 
-  chain$ = defer(() => this.metamask.chainId$.pipe(
+  chain$ = defer(() => this.erc1193.chainId$.pipe(
     switchMap(chainId => this.getChain(chainId)),
   ));
 
   constructor(
-    private metamask: MetaMask,
+    private erc1193: MetaMask,
     @Inject(CUSTOM_CHAINS) private customChains: Record<string, Chain>
   ) {}
 
-  async getChain(chainId: ChainId = this.metamask.chainId): Promise<Chain> {
+  async getChain(chainId: ChainId = this.erc1193.chainId): Promise<Chain> {
     const id = toChainId(chainId);
     if (id in this.customChains) return this.customChains[id];
     if (!this.chains[id]) {
@@ -45,7 +45,7 @@ export class ChainManager {
     return this.icons[key];
   }
 
-  async explore(search: string, chainId: ChainId = this.metamask.chainId) {
+  async explore(search: string, chainId: ChainId = this.erc1193.chainId) {
     const chain = await this.getChain(chainId);
     return explore(chain, search);
   }

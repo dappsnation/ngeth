@@ -22,6 +22,7 @@
       "@ngeth/ethers": ["packages/ethers/src/index.ts"],
       "@ngeth/hardhat": ["packages/hardhat/src/index.ts"],
       "@ngeth/ipfs": ["packages/ipfs/src/index.ts"],
+      "@ngeth/metamask": ["packages/metamask/src/index.ts"],
       "@ngeth/opensea": ["packages/opensea/src/index.ts"],
       "@ngeth/openzeppelin": ["packages/openzeppelin/src/index.ts"],
       "@ngeth/polygon": ["packages/polygon/src/index.ts"],

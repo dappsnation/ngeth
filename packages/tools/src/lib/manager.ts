@@ -10,7 +10,7 @@ export const getContractManager = (contractName: string) => {
   export class ${contractName}Manager extends ContractsManager<${contractName}> {
     
     createInstance(address: string) {
-      return new ${contractName}(address, this.signer(), this.zone);
+      return new ${contractName}(address, this.signer, this.zone);
     }
   }`;
   return formatTs(code);
