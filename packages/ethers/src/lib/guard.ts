@@ -13,7 +13,8 @@ export class HasProviderGuard implements CanActivate {
     if ('ethereum' in window) return true;
     this.previous = state.url;
     const redirect = route.data['hasProviderRedirect'] ?? '/no-provider';
-    return this.router.parseUrl(redirect);
+    // Navigate to avoid next guard to run
+    return this.router.navigate([redirect]);
   }
 }
 
@@ -32,7 +33,7 @@ export class IsSupportedChainGuard {
     const chainIndex = toChainIndex(this.metamask.chainId);
     if (this.supportedChains.includes(chainIndex)) return true;
     const redirect = route.data['isSupportedChainRedirect'] ?? '/unsupported-chain';
-    return this.router.parseUrl(redirect);
+    return this.router.navigate([redirect]);
   }
 }
 

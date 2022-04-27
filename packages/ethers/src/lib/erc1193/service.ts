@@ -2,10 +2,11 @@ import { inject, NgZone } from '@angular/core';
 import { Provider, } from '@ethersproject/providers';
 import { EventFilter } from '@ethersproject/abstract-provider';
 import { timer, Observable, of, combineLatest, defer } from 'rxjs';
-import { map, shareReplay, switchMap, filter, startWith } from 'rxjs/operators';
+import { map, shareReplay, switchMap, filter } from 'rxjs/operators';
 import { getAddress } from '@ethersproject/address';
 import { ERC1193Events, ERC1193Provider } from './types';
 import { toChainIndex } from '../chain/utils';
+import { ArgumentType } from 'hardhat/types';
 
 
 const errorCode = {
@@ -15,6 +16,10 @@ const errorCode = {
   4900:	'[Disconnected] The Provider is disconnected from all chains.',
   4901:	'[Chain Disconnected] The Provider is not connected to the requested chain.',
 }
+
+type ERC1193Param<K extends keyof ERC1193Events> = Parameters<ERC1193Events[K]> extends [infer I]
+  ? I
+  : Parameters<ERC1193Events[K]>;
 
 
 function exist<T>(value?: T | null): value is T {
@@ -50,8 +55,7 @@ export abstract class ERC1193 {
   connected$ = combineLatest([
     this.fromEvent('connect'),
     this.fromEvent('disconnect'),
-  ]).pipe(
-    startWith([]),
+  ], []).pipe(
     switchMap(() => {
       if (this.provider.isConnected()) return of(true);
       return timer(500).pipe(map(() => this.provider.isConnected()))
@@ -63,8 +67,7 @@ export abstract class ERC1193 {
    * First account connected to the dapp, if any
    * @note This might not be the selected account in Metamask
    */
-  account$ = this.fromEvent('accountsChanged').pipe(
-    startWith([]),
+  account$ = this.fromEvent('accountsChanged', []).pipe(
     switchMap(() => {
       if (this.account) return of([this.account]);
       return timer(500).pipe(map(() => (this.account ? [this.account] : [])));
@@ -79,8 +82,7 @@ export abstract class ERC1193 {
    */
   currentAccount$ = this.account$.pipe(filter(exist));
 
-  chainId$ = this.fromEvent('chainChanged').pipe(
-    startWith(null),
+  chainId$ = this.fromEvent('chainChanged', undefined).pipe(
     switchMap(() => {
       if (this.chainId) return of(this.chainId);
       return timer(500).pipe(map(() => this.chainId))
@@ -95,13 +97,15 @@ export abstract class ERC1193 {
 
 
   /** Listen on event from MetaMask Provider */
-  protected fromEvent<T>(event: keyof ERC1193Events, initial?: T): Observable<T> {
+  protected fromEvent<K extends keyof ERC1193Events>(
+    event: K,
+    initial?: ERC1193Param<K>
+  ): Observable<ERC1193Param<K>> {
     if (!this.events[event]) {
-      this.events[event] = defer(() => fromEthEvent<T>(this.provider, this.zone, event));
+      this.events[event] = defer(() => {
+        return fromEthEvent<ERC1193Param<K>>(this.provider, this.zone, event, initial);
+      });
     }
-    const listener = this.events[event] as Observable<T>;
-    return (initial !== undefined)
-      ? listener.pipe(startWith(initial))
-      : listener;
+    return this.events[event] as Observable<ERC1193Param<K>>;
   }
 }
