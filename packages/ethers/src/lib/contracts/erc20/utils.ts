@@ -1,5 +1,6 @@
 import { formatNumber } from "@angular/common";
-import { BigNumber, Event } from "ethers";
+import { BigNumber } from '@ethersproject/bignumber';
+import { Event } from "ethers";
 import { sum } from "../utils";
 import { ERC20Metadata } from "./types";
 

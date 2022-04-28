@@ -1,11 +1,12 @@
 import { inject, NgZone } from '@angular/core';
-import { Provider, } from '@ethersproject/providers';
+import { Provider } from '@ethersproject/providers';
 import { EventFilter } from '@ethersproject/abstract-provider';
-import { timer, Observable, of, combineLatest, defer } from 'rxjs';
-import { map, shareReplay, switchMap, filter } from 'rxjs/operators';
 import { getAddress } from '@ethersproject/address';
+import { Signer } from '@ethersproject/abstract-signer';
 import { ERC1193Events, ERC1193Provider } from './types';
 import { toChainIndex } from '../chain/utils';
+import { timer, Observable, of, combineLatest, defer } from 'rxjs';
+import { map, shareReplay, switchMap, filter } from 'rxjs/operators';
 
 
 const errorCode = {
@@ -93,6 +94,8 @@ export abstract class ERC1193 {
 
   message$ = this.fromEvent('message');
 
+
+  abstract getSigner(): Signer;
 
 
   /** Listen on event from MetaMask Provider */

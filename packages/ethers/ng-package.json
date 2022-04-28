@@ -1,7 +1,7 @@
 {
   "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
   "dest": "../../dist/packages/ethers",
-  "allowedNonPeerDependencies": ["blockies", "mersenne-twister"],
+  "allowedNonPeerDependencies": ["blockies"],
   "lib": {
     "entryFile": "src/index.ts"
   }

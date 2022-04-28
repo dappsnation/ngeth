@@ -1,8 +1,9 @@
 import { Injectable } from "@angular/core";
 import { ActivatedRouteSnapshot, CanActivate, Router } from "@angular/router";
-import { ContractsManager, MetaMask } from "@ngeth/ethers";
-import { Contract } from "ethers";
-import { getAddress } from "ethers/lib/utils";
+import { ContractsManager } from "@ngeth/ethers";
+import { MetaMask } from '@ngeth/metamask';
+import { Contract } from '@ethersproject/contracts';
+import { getAddress } from '@ethersproject/address';
 import { isOwnable } from "../contracts";
 
 @Injectable({ providedIn: 'root' })

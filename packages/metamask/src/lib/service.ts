@@ -2,14 +2,16 @@ import { Injectable } from '@angular/core';
 import { AddChainParameter, MetaMaskProvider, WatchAssetParams } from './types';
 import { getChain, toChainId, ERC1193, toChainIndex } from '@ngeth/ethers';
 import { fromChain } from './utils';
-import { getAddress } from 'ethers/lib/utils';
+import { getAddress } from '@ethersproject/address';
+import { Web3Provider } from '@ethersproject/providers';
+import { Signer } from 'ethers';
 
 @Injectable({ providedIn: 'root' })
 export class MetaMask extends ERC1193 {
+  private ethersProvider?: Web3Provider;
   get provider(): MetaMaskProvider {
     const provider = (window as any).ethereum;
     if (!provider) throw new Error('No Provider injected in the window object');
-    console.log(provider);
     if (!provider.isMetaMask) throw new Error('Provider is not Metamask');
     return provider;
   }
@@ -21,6 +23,13 @@ export class MetaMask extends ERC1193 {
 
   get chainId() {
     return toChainIndex(this.provider.chainId);
+  }
+
+  getSigner() {
+    if (!this.ethersProvider) {
+      this.ethersProvider = new Web3Provider(this.provider);
+    }
+    return this.ethersProvider.getSigner();
   }
 
   enable(): Promise<string[]> {

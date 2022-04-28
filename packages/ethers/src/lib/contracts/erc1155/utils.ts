@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { BigNumber, Event } from "ethers";
+import { Event } from "ethers";
+import { BigNumber } from '@ethersproject/bignumber';
 
 export function erc1155Tokens(
   received: Event[],

@@ -1,4 +1,4 @@
-import type { BigNumber } from "ethers";
+import type { BigNumber } from '@ethersproject/bignumber';
 
 export interface ERC20Metadata {
   symbol: string;

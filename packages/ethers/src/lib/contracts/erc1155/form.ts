@@ -1,5 +1,5 @@
 import { FormControl, FormGroup, Validators } from "@angular/forms";
-import { BigNumber } from "ethers";
+import type { BigNumber } from '@ethersproject/bignumber';
 import type { Observable } from "rxjs";
 import { EthValidators } from "../../form";
 

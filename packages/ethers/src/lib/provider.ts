@@ -1,13 +1,10 @@
-import { Inject, Injectable, InjectionToken } from '@angular/core';
-import { ExternalProvider, Web3Provider, Provider, JsonRpcSigner, BlockTag, FeeData, JsonRpcProvider, TransactionRequest, TransactionResponse } from '@ethersproject/providers';
-import { Signer, TypedDataDomain, TypedDataField } from '@ethersproject/abstract-signer';
-import { Bytes, BigNumber } from 'ethers';
-import { Deferrable } from 'ethers/lib/utils';
-
-// export const ETH_PROVIDER = new InjectionToken<ExternalProvider | undefined>('Injected Ethereum Provider', {
-//   providedIn: 'root',
-//   factory: () => (window as any).ethereum
-// });
+import { Injectable } from '@angular/core';
+import { Web3Provider } from '@ethersproject/providers';
+import type { Provider, JsonRpcSigner, BlockTag, FeeData, JsonRpcProvider, TransactionRequest, TransactionResponse } from '@ethersproject/providers';
+import type { Deferrable } from '@ethersproject/properties';
+import type { Bytes } from '@ethersproject/bytes';
+import type { BigNumber } from '@ethersproject/bignumber';
+import type { TypedDataDomain, TypedDataField } from '@ethersproject/abstract-signer';
 
 
 @Injectable({ providedIn: 'root' })

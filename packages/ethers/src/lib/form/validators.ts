@@ -1,6 +1,6 @@
 import { AbstractControl, ValidationErrors, ValidatorFn } from "@angular/forms";
 import { isAddress } from "@ethersproject/address";
-import { BigNumber } from "ethers";
+import { BigNumber } from "@ethersproject/bignumber";
 
 export function address(): ValidatorFn  {
   return (control: AbstractControl): ValidationErrors|null => {
