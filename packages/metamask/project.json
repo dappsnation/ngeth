@@ -4,6 +4,19 @@
   "sourceRoot": "packages/metamask/src",
   "prefix": "metamask",
   "targets": {
+    "link": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "npm link dist/packages/metamask"
+      }
+    },
+    "publish": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "npm publish --tag={args.tag} --access=public",
+        "cwd": "dist/packages/metamask"
+      }
+    },
     "build": {
       "executor": "@nrwl/angular:package",
       "outputs": ["dist/packages/metamask"],
