@@ -3,13 +3,18 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 
-import { ContractsManager, SUPPORTED_CHAINS, IsSupportedChainGuard, ERC1193 } from '@ngeth/ethers';
-import { HasMetamaskGuard, HasSignerGuard, MetaMask, MetaMaskModule } from '@ngeth/metamask';
+import { ContractsManager, SUPPORTED_CHAINS, IsSupportedChainGuard, ERC1193, WebSigner } from '@ngeth/ethers';
+import { HasMetamaskGuard, HasSignerGuard, MetaMask, MetaMaskModule, METAMASK_RELOAD } from '@ngeth/metamask';
 import { FIREBASE_CONFIG } from 'ngfire';
 import { environment } from '../environments/environment';
 
 import { AppComponent } from './app.component';
 import { BaseContractsManager } from './services/manager';
+
+const metamaskReload = () => {
+  const shouldReload = window.confirm('Network issue with Metamask. We need to reload.');
+  if (shouldReload) location.reload();
+}
 
 @NgModule({
   declarations: [AppComponent],
@@ -40,6 +45,8 @@ import { BaseContractsManager } from './services/manager';
     { provide: FIREBASE_CONFIG, useValue: environment.firebase },
     { provide: SUPPORTED_CHAINS, useValue: '*' },
     { provide: ERC1193, useClass: MetaMask },
+    { provide: METAMASK_RELOAD, useValue: metamaskReload },
+    { provide: WebSigner, useFactory: (metamask: MetaMask) => metamask.getSigner(), deps: [MetaMask] },
     { provide: ContractsManager, useClass: BaseContractsManager },
   ],
   bootstrap: [AppComponent],

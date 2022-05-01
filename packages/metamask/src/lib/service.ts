@@ -6,7 +6,7 @@ import { getAddress } from '@ethersproject/address';
 import { Web3Provider } from '@ethersproject/providers';
 
 // Reload message when "Could not establish connection." happens
-const METAMASK_RELOAD = new InjectionToken<() => void>('Callback to ask user to reload the page because of Metamask network issue.');
+export const METAMASK_RELOAD = new InjectionToken<() => void>('Callback to ask user to reload the page because of Metamask network issue.');
 function getNotInitializedError() {
   const error = 'Metamask is not initialized. You need to reload the page.';
   const why = 'This usually happens when Metamask was not initialized when you loaded the page.';
