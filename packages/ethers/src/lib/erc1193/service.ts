@@ -3,7 +3,7 @@ import { Provider } from '@ethersproject/providers';
 import { EventFilter } from '@ethersproject/abstract-provider';
 import { getAddress } from '@ethersproject/address';
 import { Signer } from '@ethersproject/abstract-signer';
-import { ERC1193Events, ERC1193Provider } from './types';
+import { ERC1193Events, ERC1193Param, ERC1193Provider } from './types';
 import { toChainIndex } from '../chain/utils';
 import { timer, Observable, of, combineLatest, defer } from 'rxjs';
 import { map, shareReplay, switchMap, filter } from 'rxjs/operators';
@@ -17,9 +17,6 @@ const errorCode = {
   4901:	'[Chain Disconnected] The Provider is not connected to the requested chain.',
 }
 
-type ERC1193Param<K extends keyof ERC1193Events> = Parameters<ERC1193Events[K]> extends [infer I]
-  ? I
-  : Parameters<ERC1193Events[K]>;
 
 
 function exist<T>(value?: T | null): value is T {
@@ -44,7 +41,7 @@ export function fromEthEvent<T>(
 }
 
 export abstract class ERC1193 {
-  abstract provider: any;
+  abstract provider: ERC1193Provider;
   abstract account?: string;
   abstract chainId: number;
   private zone = inject(NgZone);
@@ -53,9 +50,9 @@ export abstract class ERC1193 {
 
   /** Observe if current account is connected */
   connected$ = combineLatest([
-    this.fromEvent('connect'),
-    this.fromEvent('disconnect'),
-  ], []).pipe(
+    this.fromEvent('connect', undefined),
+    this.fromEvent('disconnect', undefined),
+  ]).pipe(
     switchMap(() => {
       if (this.provider.isConnected()) return of(true);
       return timer(500).pipe(map(() => this.provider.isConnected()))

@@ -1,19 +1,35 @@
-import { Injectable } from '@angular/core';
-import { AddChainParameter, MetaMaskProvider, WatchAssetParams } from './types';
+import { inject, Injectable, InjectionToken, Injector } from '@angular/core';
+import { AddChainParameter, MetaMaskProvider, RequestedPermissions, WatchAssetParams, Web3WalletPermission } from './types';
 import { getChain, toChainId, ERC1193, toChainIndex } from '@ngeth/ethers';
 import { fromChain } from './utils';
 import { getAddress } from '@ethersproject/address';
 import { Web3Provider } from '@ethersproject/providers';
-import { Signer } from 'ethers';
+
+// Reload message when "Could not establish connection." happens
+const METAMASK_RELOAD = new InjectionToken<() => void>('Callback to ask user to reload the page because of Metamask network issue.');
+function getNotInitializedError() {
+  const error = 'Metamask is not initialized. You need to reload the page.';
+  const why = 'This usually happens when Metamask was not initialized when you loaded the page.';
+  const solution = 'Use "METAMASK_RELOAD" injector to display a network message to your user.';
+  const example = 'Ex: { provide: METAMASK_RELOAD, useValue: () => window.alert("Could not connect to Metamask. Please reload the page.") }.';
+  return [error, why, solution, example].join('\n');
+}
+
 
 @Injectable({ providedIn: 'root' })
 export class MetaMask extends ERC1193 {
+  private _provider?: MetaMaskProvider;
+  private injector = inject(Injector);
   private ethersProvider?: Web3Provider;
+
   get provider(): MetaMaskProvider {
+    if (this._provider) return this._provider;
     const provider = (window as any).ethereum;
     if (!provider) throw new Error('No Provider injected in the window object');
     if (!provider.isMetaMask) throw new Error('Provider is not Metamask');
-    return provider;
+    if (!provider._state.initialized) this.notInitializedError();
+    this._provider = provider;
+    return this._provider as MetaMaskProvider;
   }
 
   get account() {
@@ -23,6 +39,17 @@ export class MetaMask extends ERC1193 {
 
   get chainId() {
     return toChainIndex(this.provider.chainId);
+  }
+
+  // Handle "Could not establish connection."
+  // https://github.com/MetaMask/metamask-extension/issues/13465
+  private notInitializedError() {
+    const reload = this.injector.get(METAMASK_RELOAD, null);
+    if (reload) {
+      reload();
+    } else {
+      console.error(getNotInitializedError());
+    }
   }
 
   getSigner() {
@@ -63,6 +90,21 @@ export class MetaMask extends ERC1193 {
     return this.provider.request<boolean>({
       method: 'wallet_watchAsset',
       params: { type: 'ERC20', options: params }
+    });
+  }
+
+  /** Gets the caller's current permissions */
+  getPermissions() {
+    return this.provider.request<Web3WalletPermission[]>({
+      method: 'wallet_getPermissions'
+    });
+  }
+
+  /** Requests the given permissions from the user.  */
+  requestPermissions(permissions: RequestedPermissions) {
+    return this.provider.request<Web3WalletPermission[]>({
+      method: 'wallet_requestPermissions',
+      params: [permissions],
     });
   }
 }

@@ -49,8 +49,11 @@ export class EtherInputDirective implements ControlValueAccessor {
   }
   
   async writeValue(value: BigNumberish) {
-    if (!value) return;
-    this.setProperty('value', formatUnits(value, ));
+    if (value) {
+      this.setProperty('value', formatUnits(value, this.chain?.nativeCurrency.decimals));
+    } else {
+      this.setProperty('value', '');
+    }
   }
 
   registerOnChange(fn: (value: BigNumberish) => null): void {

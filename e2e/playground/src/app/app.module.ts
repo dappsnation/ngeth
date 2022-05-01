@@ -3,8 +3,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 
-import { ContractsManager, EthersModule,  SUPPORTED_CHAINS, HasProviderGuard, IsSupportedChainGuard, ERC1193 } from '@ngeth/ethers';
-import { HasSignerGuard, MetaMask, MetaMaskModule } from '@ngeth/metamask';
+import { ContractsManager, SUPPORTED_CHAINS, IsSupportedChainGuard, ERC1193 } from '@ngeth/ethers';
+import { HasMetamaskGuard, HasSignerGuard, MetaMask, MetaMaskModule } from '@ngeth/metamask';
 import { FIREBASE_CONFIG } from 'ngfire';
 import { environment } from '../environments/environment';
 
@@ -16,7 +16,7 @@ import { BaseContractsManager } from './services/manager';
   imports: [
     BrowserModule,
     RouterModule.forRoot([{
-      path: 'no-provider',
+      path: 'no-metamask',
       loadChildren: () => import('./no-provider/no-provider.module').then(m => m.NoProviderModule),
     }, {
       path: 'no-signer',
@@ -26,11 +26,11 @@ import { BaseContractsManager } from './services/manager';
       loadChildren: () => import('./unsupported-chain/unsupported-chain.module').then(m => m.UnsupportedChainModule),
     },{
       path: 'search',
-      canActivate: [HasProviderGuard, HasSignerGuard, IsSupportedChainGuard],
+      canActivate: [HasMetamaskGuard, HasSignerGuard, IsSupportedChainGuard],
       loadChildren: () => import('./search/search.module').then(m => m.SearchModule),
     }, {
       path: 'admin',
-      canActivate: [HasProviderGuard, HasSignerGuard, IsSupportedChainGuard],
+      canActivate: [HasMetamaskGuard, HasSignerGuard, IsSupportedChainGuard],
       loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule)
     }]),
     ReactiveFormsModule,

@@ -1,2 +1,7 @@
 <h1>You don't have any provider. Is Metamask installed ?</h1>
-<a [routerLink]="previous">Update</a>
+<ng-container *ngIf="hasMetamask else install">
+  <a [routerLink]="previous">Update</a>
+</ng-container>
+<ng-template #install>
+  <button (click)="onboard()">Install Metamask</button>
+</ng-template>

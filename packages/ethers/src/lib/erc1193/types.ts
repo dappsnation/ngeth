@@ -35,6 +35,10 @@ export interface ERC1193Events {
 }
 
 
+export type ERC1193Param<K extends keyof ERC1193Events> = Parameters<ERC1193Events[K]> extends [infer I]
+  ? I
+  : Parameters<ERC1193Events[K]>;
+
 export interface ERC1193Provider {
   chainId?: string;
   networkVersion?: string;

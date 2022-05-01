@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { getContract } from '@ngeth/tools';
 
 @Component({
   selector: 'ngeth-root',
@@ -14,7 +13,5 @@ export class AppComponent {
   });
   generate() {
     const { name, abi } = this.form.value;
-    const contract = getContract(name, JSON.parse(abi));
-    console.log(contract);
   }
 }

@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { HasProviderGuard } from '@ngeth/ethers';
+import { HasMetamaskGuard, MetaMaskOnboarding } from '@ngeth/metamask';
 
 @Component({
   selector: 'ngeth-no-provider',
@@ -8,7 +8,14 @@ import { HasProviderGuard } from '@ngeth/ethers';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NoProviderComponent {
-  previous = this.guard.previous;
-  constructor(private guard: HasProviderGuard) { }
+  previous = this.guard.previous ?? this.onboarding.redirect;
+  hasMetamask = this.onboarding.hasMetamask();
+  constructor(
+    private guard: HasMetamaskGuard,
+    private onboarding: MetaMaskOnboarding,
+  ) {}
 
+  async onboard() {
+    this.onboarding.install();
+  }
 }

@@ -4,6 +4,20 @@ import { MetaMask } from "./service";
 import { map } from "rxjs/operators";
 
 @Injectable({ providedIn: 'root' })
+export class HasMetamaskGuard implements CanActivate {
+  public previous?: string;
+
+  constructor(private router: Router) {}
+  
+  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+    if ((window as any).ethereum?.isMetaMask) return true;
+    this.previous = state.url;
+    const redirect = route.data['hasMetamaskRedirect'] ?? '/no-metamask';
+    return this.router.navigateByUrl(redirect);
+  }
+}
+
+@Injectable({ providedIn: 'root' })
 export class IsConnectedGuard implements CanActivate {
   public previous?: string;
 
