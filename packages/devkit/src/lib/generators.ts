@@ -11,16 +11,22 @@ export interface BaseOptions {
 
 // Project with angular config
 interface ProjectConfig extends NxProjectConfig {
-  architect: Record<string, TargetConfiguration>
+  architect: Record<string, BuilderConfiguration>
 }
 
 
 export interface ProjectOptions {
+  isAngular: boolean;
   project: string;
   projectRoot: string;
   // Only if project exist
   projectConfig?: ProjectConfig;
   projectConfigLocation?: string;
+}
+
+export interface BuilderConfiguration extends Omit<TargetConfiguration, 'executor'> {
+  executor?: string;
+  builder?: string;
 }
 
 type WorkspaceOrProject = Workspace | ProjectConfig;
@@ -41,6 +47,8 @@ export function readRawWorkspaceJson(tree: Tree) {
 }
 
 export function getProjectOptions(tree: Tree, projectName?: string): ProjectOptions {
+  const workspacePath = getWorkspacePath(tree);
+  const isAngular = workspacePath === '/angular.json';
   const workspace = readRawWorkspaceJson(tree);
   const project = projectName ? names(projectName).fileName : workspace.defaultProject;
   if (!project) throw new Error('No project provided');
@@ -48,6 +56,7 @@ export function getProjectOptions(tree: Tree, projectName?: string): ProjectOpti
   if (!config) {
     const projectRoot = `${getWorkspaceLayout(tree).libsDir}/${project}`;
     return {
+      isAngular,
       project,
       projectRoot,
     }
@@ -57,6 +66,7 @@ export function getProjectOptions(tree: Tree, projectName?: string): ProjectOpti
     const projectConfigLocation = joinPathFragments(config, 'project.json');
     const projectConfig = readJson(tree, projectConfigLocation);
     return {
+      isAngular,
       project,
       projectRoot: projectConfig.root,
       projectConfig,
@@ -64,6 +74,7 @@ export function getProjectOptions(tree: Tree, projectName?: string): ProjectOpti
     }
   } else {
     return {
+      isAngular,
       project,
       projectRoot: config.root,
       projectConfig: config as ProjectConfig,
@@ -93,16 +104,17 @@ export function updateProjectConfig(tree: Tree, options: ProjectOptions, cb: (co
 }
 
 
-export function setProjectBuilders(tree: Tree, options: ProjectOptions, targets: Record<string, TargetConfiguration>) {
+export function setProjectBuilders(tree: Tree, options: ProjectOptions, builders: Record<string, BuilderConfiguration>) {
   return updateProjectConfig(tree, options, (config: ProjectConfig | NxProjectConfig) => {
     // Angular
     if (isNgProjectConfig(config)) {
-      for (const [key, value] of Object.entries(targets)) {
+      for (const [key, value] of Object.entries(builders)) {
         config['architect'][key] = value;
       }
       return;
     }
     // Nx
+    const targets = builders as Record<string, TargetConfiguration>;
     if (!config.targets) {
       config.targets = targets;
     } else {

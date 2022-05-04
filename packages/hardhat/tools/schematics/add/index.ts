@@ -2,23 +2,28 @@ import {
   Tree,
   convertNxGenerator,
   addDependenciesToPackageJson,
-  TargetConfiguration,
 } from '@nrwl/devkit';
-import { addFiles, getProjectOptions, ProjectOptions, setProjectBuilders, updateTsConfig } from '@ngeth/devkit';
+import { addFiles, BuilderConfiguration, getProjectOptions, ProjectOptions, setProjectBuilders, updateTsConfig } from '@ngeth/devkit';
 
 interface BaseOptions {
   project?: string;
 }
 
+
+
 function hardhatBuilder(tasks: string[], options: ProjectOptions) {
-  const builders: Record<string, TargetConfiguration> = {};
+  const builders: Record<string, BuilderConfiguration> = {};
   for (const task of tasks) {
     builders[`hardhat-${task}`] = {
-      executor: `@ngeth/hardhat:${task}`,
       options: {
         config: `${options.projectRoot}/hardhat.config.ts`,
         tsconfig: `${options.projectRoot}/tsconfig.hardhat.json`,
       }
+    }
+    if (options.isAngular) {
+      builders[`hardhat-${task}`].builder = `@ngeth/hardhat:${task}`;
+    } else {
+      builders[`hardhat-${task}`].executor = `@ngeth/hardhat:${task}`;
     }
   }
   return builders;
