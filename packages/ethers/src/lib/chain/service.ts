@@ -33,7 +33,9 @@ export class ChainManager {
     @Inject(CUSTOM_CHAINS) private customChains: Record<string, Chain>
   ) {}
 
-  async getChain(chainId: ChainId = this.erc1193.chainId): Promise<Chain> {
+  async getChain(chainId?: ChainId): Promise<Chain> {
+    chainId = chainId ?? this.erc1193.chainId;
+    if (!chainId) throw new Error('No chainId provided');
     const id = toChainId(chainId);
     if (id in this.customChains) return this.customChains[id];
     if (!this.chains[id]) {
@@ -50,7 +52,9 @@ export class ChainManager {
     return this.icons[key];
   }
 
-  async explore(search: string, chainId: ChainId = this.erc1193.chainId) {
+  async explore(search: string, chainId?: ChainId) {
+    chainId = chainId ?? this.erc1193.chainId;
+    if (!chainId) throw new Error('No chainId provided');
     const chain = await this.getChain(chainId);
     return explore(chain, search);
   }

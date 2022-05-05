@@ -30,6 +30,7 @@ export class CreateComponent {
 
   async create() {
     if (this.form.invalid) return this.form.markAllAsTouched();
+    if (!this.erc1193.chainId) throw new Error('No chainId found');
     const { name, image } = this.form.value;
     this.form.disable();
     try {

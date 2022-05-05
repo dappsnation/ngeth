@@ -1,11 +1,11 @@
 import { Directive, ElementRef, forwardRef, HostListener, Input, Renderer2 } from "@angular/core";
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
-import { BigNumberish } from "ethers";
+import type { BigNumberish } from "ethers";
 import { formatUnits, parseUnits } from "@ethersproject/units";
-import { Chain, ChainId, ChainManager } from "../chain";
+import { Chain, ChainId, ChainManager } from "../../chain";
 
 @Directive({
-  selector: 'input[type="eth"]',
+  selector: 'input[type="ether"]',
   providers:[{
     provide: NG_VALUE_ACCESSOR,
     useExisting: forwardRef(() => EtherInputDirective),

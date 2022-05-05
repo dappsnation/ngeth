@@ -40,6 +40,7 @@ export class Erc1155Component {
 
   get contract() {
     const {address} = this.route.snapshot.params;
+    if (!this.metamask.chainId) throw new Error('No chainId found');
     return this.contracts.get(address, this.metamask.chainId);
   }
 

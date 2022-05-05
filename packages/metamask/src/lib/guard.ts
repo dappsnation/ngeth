@@ -7,10 +7,13 @@ import { map } from "rxjs/operators";
 export class HasMetamaskGuard implements CanActivate {
   public previous?: string;
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private metamask: MetaMask,
+  ) {}
   
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    if ((window as any).ethereum?.isMetaMask) return true;
+    if (this.metamask.hasMetamask()) return true;
     this.previous = state.url;
     const redirect = route.data['hasMetamaskRedirect'] ?? '/no-metamask';
     return this.router.navigateByUrl(redirect);

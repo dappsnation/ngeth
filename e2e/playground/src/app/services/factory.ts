@@ -1,6 +1,7 @@
 import { Injectable, NgZone } from '@angular/core';
-import { ContractsManager, WebSigner } from '@ngeth/ethers';
+import { ContractsManager } from '@ngeth/ethers';
 import { MetaMask } from '@ngeth/metamask';
+import { Signer } from '@ethersproject/abstract-signer';
 import { BaseContract } from './manager';
 import { switchMap, map } from 'rxjs';
 import { ERC1155Factory } from "../contracts";
@@ -8,12 +9,13 @@ import { ERC1155Factory } from "../contracts";
 export class Factory extends ERC1155Factory {
   clones$ = this.metamask.currentAccount$.pipe(
     switchMap(account => this.clonesFromAccount(account)),
-    map(addresses => addresses.map(address => this.manager.get(address, this.metamask.chainId)))
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    map(addresses => addresses.map(address => this.manager.get(address, this.metamask.chainId!)))
   );
 
   constructor(
     address: string,
-    signer: WebSigner,
+    signer: Signer,
     zone: NgZone,
     private metamask: MetaMask,
     private manager: ContractsManager<BaseContract>,

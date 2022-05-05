@@ -35,6 +35,7 @@ export class MintComponent {
   get contract() {
     const address = this.route.snapshot.paramMap.get('address');
     if (!address) throw new Error('No address found in params');
+    if (!this.metamask.chainId) throw new Error('No chainId found');
     return this.manager.get(address, this.metamask.chainId);
   }
 

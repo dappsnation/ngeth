@@ -10,3 +10,4 @@ import { ethersPipes } from './pipes';
   imports: [CommonModule],
 })
 export class EthersModule {}
+

@@ -23,14 +23,15 @@ export class IsSupportedChainGuard {
   public previous?: string;
   constructor(
     private router: Router,
-    private metamask: ERC1193,
+    private erc1193: ERC1193,
     @Inject(SUPPORTED_CHAINS) private supportedChains: '*' | number[],
   ) {}
   
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     this.previous = state.url;
     if (this.supportedChains === '*') return true;
-    const chainIndex = toChainIndex(this.metamask.chainId);
+    if (!this.erc1193.chainId) return false;
+    const chainIndex = toChainIndex(this.erc1193.chainId);
     if (this.supportedChains.includes(chainIndex)) return true;
     const redirect = route.data['isSupportedChainRedirect'] ?? '/unsupported-chain';
     return this.router.navigate([redirect]);

@@ -3,7 +3,6 @@ import { AddChainParameter, MetaMaskProvider, RequestedPermissions, WatchAssetPa
 import { getChain, toChainId, ERC1193, toChainIndex } from '@ngeth/ethers';
 import { fromChain } from './utils';
 import { getAddress } from '@ethersproject/address';
-import { Web3Provider } from '@ethersproject/providers';
 
 // Reload message when "Could not establish connection." happens
 export const METAMASK_RELOAD = new InjectionToken<() => void>('Callback to ask user to reload the page because of Metamask network issue.');
@@ -16,29 +15,44 @@ function getNotInitializedError() {
 }
 
 
-@Injectable({ providedIn: 'root' })
-export class MetaMask extends ERC1193 {
-  private _provider?: MetaMaskProvider;
-  private injector = inject(Injector);
-  private ethersProvider?: Web3Provider;
+function getMetamask() {
+  const ethereum = (window as any).ethereum;
+  if (!ethereum) throw new Error('No Provider injected in the window object');
+  if (Array.isArray(ethereum.providers)) {
+    const provider = ethereum.providers.find((p: any) => p.isMetaMask);
+    if (!provider)  throw new Error('No Metamask provider found');
+    return provider;
+  }
+  if (!ethereum.isMetaMask) throw new Error('Provider is not Metamask');
+  return ethereum;
+}
 
-  get provider(): MetaMaskProvider {
-    if (this._provider) return this._provider;
-    const provider = (window as any).ethereum;
-    if (!provider) throw new Error('No Provider injected in the window object');
-    if (!provider.isMetaMask) throw new Error('Provider is not Metamask');
-    if (!provider._state.initialized) this.notInitializedError();
-    this._provider = provider;
-    return this._provider as MetaMaskProvider;
+@Injectable({ providedIn: 'root' })
+export class MetaMask extends ERC1193<MetaMaskProvider> {
+  private injector = inject(Injector);
+
+  constructor() {
+    super();
+    if (this.hasMetamask()) this.ethereum = getMetamask();
+  }
+
+  hasMetamask() {
+    try {
+      return !!getMetamask();
+    } catch(err) {
+      console.error(err);
+      return false;
+    }
   }
 
   get account() {
-    if (!this.provider.selectedAddress) return;
-    return getAddress(this.provider.selectedAddress);
+    if (!this.ethereum?.selectedAddress) return;
+    return getAddress(this.ethereum.selectedAddress);
   }
 
   get chainId() {
-    return toChainIndex(this.provider.chainId);
+    if (!this.ethereum?.chainId) return;
+    return toChainIndex(this.ethereum?.chainId);
   }
 
   // Handle "Could not establish connection."
@@ -52,15 +66,11 @@ export class MetaMask extends ERC1193 {
     }
   }
 
-  getSigner() {
-    if (!this.ethersProvider) {
-      this.ethersProvider = new Web3Provider(this.provider);
-    }
-    return this.ethersProvider.getSigner();
-  }
-
-  enable(): Promise<string[]> {
-    return this.provider.request({ method: 'eth_requestAccounts' });
+  async enable(): Promise<string[]> {
+    if (!this.ethereum) this.ethereum = getMetamask();
+    if (!(this.ethereum as any)._state.initialized) this.notInitializedError();
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    return this.ethereum!.request({ method: 'eth_requestAccounts' });
   }
 
   /**
@@ -70,7 +80,7 @@ export class MetaMask extends ERC1193 {
    */
   switchChain(id: string | number) {
     const chainId = toChainId(id);
-    return this.provider.request<null>({
+    return this.ethereum?.request<null>({
       method: 'wallet_switchEthereumChain',
       params: [{ chainId }]
     });
@@ -80,14 +90,14 @@ export class MetaMask extends ERC1193 {
     const params = (typeof chain === "string")
       ? await getChain(chain).then(fromChain)
       : chain;
-    return this.provider.request<null>({
+    return this.ethereum?.request<null>({
       method: 'wallet_addEthereumChain',
       params: [params]
     });
   }
 
   watchAsset(params: WatchAssetParams['options']) {
-    return this.provider.request<boolean>({
+    return this.ethereum?.request<boolean>({
       method: 'wallet_watchAsset',
       params: { type: 'ERC20', options: params }
     });
@@ -95,14 +105,14 @@ export class MetaMask extends ERC1193 {
 
   /** Gets the caller's current permissions */
   getPermissions() {
-    return this.provider.request<Web3WalletPermission[]>({
+    return this.ethereum?.request<Web3WalletPermission[]>({
       method: 'wallet_getPermissions'
     });
   }
 
   /** Requests the given permissions from the user.  */
   requestPermissions(permissions: RequestedPermissions) {
-    return this.provider.request<Web3WalletPermission[]>({
+    return this.ethereum?.request<Web3WalletPermission[]>({
       method: 'wallet_requestPermissions',
       params: [permissions],
     });

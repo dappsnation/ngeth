@@ -1,5 +1,6 @@
 import { inject, Injectable, Injector, NgZone } from '@angular/core';
-import { WebSigner } from './provider';
+// import { WebSigner } from './provider';
+import { Signer } from '@ethersproject/abstract-signer';
 
 @Injectable()
 export abstract class ContractsManager<T> {
@@ -7,7 +8,7 @@ export abstract class ContractsManager<T> {
   private injector = inject(Injector);
   protected zone = inject(NgZone);
   protected get signer() {
-    return this.injector.get(WebSigner);
+    return this.injector.get(Signer);
   }
 
   protected abstract createInstance(address: string): T;
