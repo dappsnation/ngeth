@@ -12,10 +12,19 @@
       "type": "string",
       "description": "The path to the hardhat configuration file."
     },
+    "jestConfig": {
+      "type": "string",
+      "description": "The path to the jest configuration file."
+    },
     "showStackTraces": {
       "type": "boolean",
       "default": false,
       "description": "Show the stack traces."
+    },
+    "watch": {
+      "type": "boolean",
+      "default": false,
+      "description": "Watch changes."
     }
   },
   "additionalProperties": false,

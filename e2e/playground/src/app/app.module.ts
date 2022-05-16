@@ -3,8 +3,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 
-import { ContractsManager, SUPPORTED_CHAINS, IsSupportedChainGuard, EthersProviderModule } from '@ngeth/ethers';
-import { HasMetamaskGuard, HasSignerGuard, MetaMask, MetaMaskModule, METAMASK_RELOAD } from '@ngeth/metamask';
+import { ContractsManager, SUPPORTED_CHAINS, IsSupportedChainGuard, HasSignerGuard, ethersProviders, InjectedProviders, EthersModule, HasWalletGuard } from '@ngeth/ethers';
+import { MetaMaskModule, METAMASK_RELOAD } from '@ngeth/metamask';
 import { FIREBASE_CONFIG } from 'ngfire';
 import { environment } from '../environments/environment';
 
@@ -22,7 +22,7 @@ const metamaskReload = () => {
     BrowserModule,
     RouterModule.forRoot([{
       path: 'no-metamask',
-      loadChildren: () => import('./no-provider/no-provider.module').then(m => m.NoProviderModule),
+      loadChildren: () => import('./no-wallet/no-wallet.module').then(m => m.NoWalletModule),
     }, {
       path: 'no-signer',
       loadChildren: () => import('./no-signer/no-signer.module').then(m => m.NoSignerModule),
@@ -31,18 +31,19 @@ const metamaskReload = () => {
       loadChildren: () => import('./unsupported-chain/unsupported-chain.module').then(m => m.UnsupportedChainModule),
     },{
       path: 'search',
-      canActivate: [HasMetamaskGuard, HasSignerGuard, IsSupportedChainGuard],
+      canActivate: [HasWalletGuard, HasSignerGuard, IsSupportedChainGuard],
       loadChildren: () => import('./search/search.module').then(m => m.SearchModule),
     }, {
       path: 'admin',
-      canActivate: [HasMetamaskGuard, HasSignerGuard, IsSupportedChainGuard],
+      canActivate: [HasWalletGuard, HasSignerGuard, IsSupportedChainGuard],
       loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule)
     }]),
     ReactiveFormsModule,
     MetaMaskModule,
-    EthersProviderModule.forRoot(MetaMask)
+    EthersModule
   ],
   providers: [
+    ...ethersProviders(InjectedProviders),
     { provide: FIREBASE_CONFIG, useValue: environment.firebase },
     { provide: SUPPORTED_CHAINS, useValue: '*' },
     { provide: METAMASK_RELOAD, useValue: metamaskReload },

@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { MetaMask } from '@ngeth/metamask';
+import { ERC1193 } from '@ngeth/ethers';
 import { map, switchMap } from 'rxjs';
 import { addresses } from '../../contracts';
 import { FactoryManager } from '../../services/factory';
@@ -21,6 +21,6 @@ export class ListComponent {
   
   constructor(
     private factoryManager: FactoryManager,
-    private metamask: MetaMask
+    private metamask: ERC1193
   ) {}
 }

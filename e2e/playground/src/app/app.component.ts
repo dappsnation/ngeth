@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { ERC1193 } from '@ngeth/ethers';
 
 @Component({
   selector: 'ngeth-root',
@@ -8,9 +9,10 @@ import { Router } from '@angular/router';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent {
-  public hasProvider = !!window && ('ethereum' in window);
-  constructor(private router: Router) {}
-
+  constructor(
+    private router: Router,
+    private erc1193: ERC1193
+  ) {}
 
   redirect(path: string) {
     this.router.navigate([path]);

@@ -1,0 +1,29 @@
+dialog {
+  padding: 0;
+  border-radius: var(--size-1);
+  background-color: var(--background-1);
+  border: 1px solid var(--foreground-4);
+  header {
+    display: flex;
+    align-items: center;
+    padding: var(--size-2);
+    background-color: var(--background-0);
+  }
+  ul {
+    margin: 0;
+    padding: var(--size-2);
+    list-style: none;
+    display: grid;
+    gap: var(--size-2);
+    li {
+      margin: 0;
+    }
+  }
+  footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: var(--size-2);
+  }
+
+}

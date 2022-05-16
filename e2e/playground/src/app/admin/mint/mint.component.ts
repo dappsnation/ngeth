@@ -1,8 +1,7 @@
 import { Component, ChangeDetectionStrategy, Inject } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ERC1155FormMint, ContractsManager } from '@ngeth/ethers';
-import { MetaMask } from '@ngeth/metamask';
+import { ERC1155FormMint, ContractsManager, ERC1193 } from '@ngeth/ethers';
 import { IPFS, IPFSClient } from '@ngeth/ipfs';
 import { OpenseaTokenForm } from '@ngeth/opensea';
 import { BaseContract } from '../../services/manager';
@@ -22,7 +21,7 @@ export class MintComponent {
 
   constructor(
     @Inject(IPFS) private ipfs: IPFSClient,
-    private metamask: MetaMask,
+    private erc1193: ERC1193,
     private manager: ContractsManager<BaseContract>,
     private route: ActivatedRoute,
     private router: Router,
@@ -35,8 +34,8 @@ export class MintComponent {
   get contract() {
     const address = this.route.snapshot.paramMap.get('address');
     if (!address) throw new Error('No address found in params');
-    if (!this.metamask.chainId) throw new Error('No chainId found');
-    return this.manager.get(address, this.metamask.chainId);
+    if (!this.erc1193.chainId) throw new Error('No chainId found');
+    return this.manager.get(address, this.erc1193.chainId);
   }
 
   addAttribute(event: Event) {

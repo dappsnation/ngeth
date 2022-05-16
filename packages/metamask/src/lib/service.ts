@@ -1,6 +1,6 @@
 import { inject, Injectable, InjectionToken, Injector } from '@angular/core';
 import { AddChainParameter, MetaMaskProvider, RequestedPermissions, WatchAssetParams, Web3WalletPermission } from './types';
-import { getChain, toChainId, ERC1193, toChainIndex } from '@ngeth/ethers';
+import { getChain, toChainId, ERC1193, toChainIndex, WalletProfile } from '@ngeth/ethers';
 import { fromChain } from './utils';
 import { getAddress } from '@ethersproject/address';
 
@@ -15,44 +15,40 @@ function getNotInitializedError() {
 }
 
 
-function getMetamask() {
+function getMetamask(): MetaMaskProvider | undefined {
   const ethereum = (window as any).ethereum;
-  if (!ethereum) throw new Error('No Provider injected in the window object');
-  if (Array.isArray(ethereum.providers)) {
-    const provider = ethereum.providers.find((p: any) => p.isMetaMask);
-    if (!provider)  throw new Error('No Metamask provider found');
-    return provider;
-  }
-  if (!ethereum.isMetaMask) throw new Error('Provider is not Metamask');
+  if (!ethereum) return;
+  if (Array.isArray(ethereum.providers)) return ethereum.providers.find((p: any) => p.isMetaMask);
+  if (!ethereum.isMetaMask) return;
   return ethereum;
 }
 
+function metamaskWallet() {
+  const provider = getMetamask();
+  if (!provider) return;
+  return { label: 'MetaMask', provider };
+}
+
+
 @Injectable({ providedIn: 'root' })
-export class MetaMask extends ERC1193<MetaMaskProvider> {
+export class MetaMask extends ERC1193 {
+  wallets: WalletProfile[] = [];
   private injector = inject(Injector);
 
   constructor() {
     super();
-    if (this.hasMetamask()) this.ethereum = getMetamask();
-  }
-
-  hasMetamask() {
-    try {
-      return !!getMetamask();
-    } catch(err) {
-      console.error(err);
-      return false;
-    }
+    const metamask = metamaskWallet();
+    if (metamask) this.wallets.push(metamask);
   }
 
   get account() {
-    if (!this.ethereum?.selectedAddress) return;
-    return getAddress(this.ethereum.selectedAddress);
+    if (!this.provider?.selectedAddress) return;
+    return getAddress(this.provider.selectedAddress);
   }
 
   get chainId() {
-    if (!this.ethereum?.chainId) return;
-    return toChainIndex(this.ethereum?.chainId);
+    if (!this.provider?.chainId) return;
+    return toChainIndex(this.provider.chainId);
   }
 
   // Handle "Could not establish connection."
@@ -66,11 +62,10 @@ export class MetaMask extends ERC1193<MetaMaskProvider> {
     }
   }
 
-  async enable(): Promise<string[]> {
-    if (!this.ethereum) this.ethereum = getMetamask();
-    if (!(this.ethereum as any)._state.initialized) this.notInitializedError();
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    return this.ethereum!.request({ method: 'eth_requestAccounts' });
+  override selectWallet() {
+    if (!this.wallets.length) throw new Error('No metamask injected');
+    if (!(this.wallets[0] as any)._state.initialized) this.notInitializedError();
+    return super.selectWallet();
   }
 
   /**
@@ -80,7 +75,7 @@ export class MetaMask extends ERC1193<MetaMaskProvider> {
    */
   switchChain(id: string | number) {
     const chainId = toChainId(id);
-    return this.ethereum?.request<null>({
+    return this.provider?.request<null>({
       method: 'wallet_switchEthereumChain',
       params: [{ chainId }]
     });
@@ -90,14 +85,14 @@ export class MetaMask extends ERC1193<MetaMaskProvider> {
     const params = (typeof chain === "string")
       ? await getChain(chain).then(fromChain)
       : chain;
-    return this.ethereum?.request<null>({
+    return this.provider?.request<null>({
       method: 'wallet_addEthereumChain',
       params: [params]
     });
   }
 
   watchAsset(params: WatchAssetParams['options']) {
-    return this.ethereum?.request<boolean>({
+    return this.provider?.request<boolean>({
       method: 'wallet_watchAsset',
       params: { type: 'ERC20', options: params }
     });
@@ -105,14 +100,14 @@ export class MetaMask extends ERC1193<MetaMaskProvider> {
 
   /** Gets the caller's current permissions */
   getPermissions() {
-    return this.ethereum?.request<Web3WalletPermission[]>({
+    return this.provider?.request<Web3WalletPermission[]>({
       method: 'wallet_getPermissions'
     });
   }
 
   /** Requests the given permissions from the user.  */
   requestPermissions(permissions: RequestedPermissions) {
-    return this.ethereum?.request<Web3WalletPermission[]>({
+    return this.provider?.request<Web3WalletPermission[]>({
       method: 'wallet_requestPermissions',
       params: [permissions],
     });

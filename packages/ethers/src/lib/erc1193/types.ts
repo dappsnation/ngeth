@@ -26,6 +26,11 @@ export interface ProviderConnectInfo {
 }
 
 
+export interface WalletProfile {
+  label: string;
+  provider: ERC1193Provider;
+}
+
 export interface ERC1193Events {
   accountsChanged: (accounts: string[]) => void;
   chainChanged: (chainId: string) => void;
@@ -44,7 +49,6 @@ export interface ERC1193Provider {
   networkVersion?: string;
   selectedAddress?: string;
   isConnected(): boolean;
-  enable(): Promise<string>;
   send<T>(args: RequestArguments): Promise<T>;
   request<T>(args: RequestArguments): Promise<T>;
   on<K extends keyof ERC1193Events>(

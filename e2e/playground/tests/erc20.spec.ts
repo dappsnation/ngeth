@@ -1,7 +1,6 @@
-// Use comment below to avoid "setImmediate is not defined"
-/**
- * @jest-environment node
- */
+/** @jest-environment node */
+// Use above comment to avoid "setImmediate is not defined"
+// It must be the first line
 import { ethers } from "hardhat";
 
 describe('erc20', () => {

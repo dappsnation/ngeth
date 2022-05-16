@@ -2,9 +2,8 @@
   <h1>
     <a routerLink="search">Playground</a>
   </h1>
-  <ng-container *ngIf="hasProvider else noProvider">
-    <metamask-connect (connect)="redirect('/search')"></metamask-connect>
-  </ng-container>
+  <!-- <metamask-connect (connect)="redirect('/search')"></metamask-connect> -->
+  <eth-connect></eth-connect>
 
   <ng-template #noProvider>
     <p>No metamask provider</p>

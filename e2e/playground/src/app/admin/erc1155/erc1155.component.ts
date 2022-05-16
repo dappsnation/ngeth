@@ -1,7 +1,6 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ContractsManager } from '@ngeth/ethers';
-import { MetaMask } from '@ngeth/metamask';
+import { ContractsManager, ERC1193 } from '@ngeth/ethers';
 import { combineLatest, Observable } from 'rxjs';
 import { map, pluck, switchMap } from 'rxjs/operators';
 import { BaseContract } from '../../services/manager';
@@ -40,7 +39,7 @@ export class Erc1155Component {
   );
 
   constructor(
-    private metamask: MetaMask,
+    private metamask: ERC1193,
     private manager: ContractsManager<BaseContract>,
     private route: ActivatedRoute,
   ) {}

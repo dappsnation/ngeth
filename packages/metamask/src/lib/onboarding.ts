@@ -1,6 +1,6 @@
 import { Inject, Injectable, InjectionToken, Optional } from "@angular/core";
 import { Router } from "@angular/router";
-import { HasMetamaskGuard } from "./guard";
+import { HasWalletGuard } from "@ngeth/ethers";
 
 const downloadUrls = {
   chrome: 'https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn',
@@ -36,7 +36,7 @@ export class MetaMaskOnboarding {
 
   constructor(
     private router: Router,
-    @Optional() private guard?: HasMetamaskGuard,
+    @Optional() private guard?: HasWalletGuard,
     @Optional() @Inject(METAMASK_REGISTER_PAGE) private registerPage?: string
   ) {
     if (this.state === 'reloading') this.onboard();

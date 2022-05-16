@@ -87,5 +87,9 @@
     "tslib": "^2.0.0",
     "typechain": "^5.2.0",
     "typescript": "~4.4.3"
+  },
+  "browser": {
+    "assert": false,
+    "stream": false
   }
 }

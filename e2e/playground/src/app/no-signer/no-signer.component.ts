@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
-import { HasSignerGuard, MetaMask } from '@ngeth/metamask';
+import { ERC1193, HasSignerGuard } from '@ngeth/ethers';
 
 @Component({
   selector: 'ngeth-no-signer',
@@ -13,7 +13,7 @@ export class NoSignerComponent {
   constructor(
     private guard: HasSignerGuard,
     private router: Router,
-    private metamask: MetaMask
+    private metamask: ERC1193
   ) { }
 
   async enable() {

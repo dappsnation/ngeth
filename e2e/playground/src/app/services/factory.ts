@@ -1,23 +1,22 @@
 import { Injectable, NgZone } from '@angular/core';
-import { ContractsManager } from '@ngeth/ethers';
-import { MetaMask } from '@ngeth/metamask';
+import { ContractsManager, ERC1193 } from '@ngeth/ethers';
 import { Signer } from '@ethersproject/abstract-signer';
 import { BaseContract } from './manager';
 import { switchMap, map } from 'rxjs';
 import { ERC1155Factory } from "../contracts";
 
 export class Factory extends ERC1155Factory {
-  clones$ = this.metamask.currentAccount$.pipe(
+  clones$ = this.erc1193.currentAccount$.pipe(
     switchMap(account => this.clonesFromAccount(account)),
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    map(addresses => addresses.map(address => this.manager.get(address, this.metamask.chainId!)))
+    map(addresses => addresses.map(address => this.manager.get(address, this.erc1193.chainId!)))
   );
 
   constructor(
     address: string,
     signer: Signer,
     zone: NgZone,
-    private metamask: MetaMask,
+    private erc1193: ERC1193,
     private manager: ContractsManager<BaseContract>,
   ) {
     super(address, signer, zone);
@@ -36,12 +35,12 @@ export class FactoryManager extends ContractsManager<Factory> {
 
   constructor(
     private contractManager: ContractsManager<BaseContract>,
-    private metamask: MetaMask,
+    private erc1193: ERC1193,
   ) {
     super();
   }
 
   protected createInstance(address: string): Factory {
-    return new Factory(address, this.signer, this.zone, this.metamask, this.contractManager)
+    return new Factory(address, this.signer, this.zone, this.erc1193, this.contractManager)
   }
 }

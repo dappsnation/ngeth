@@ -12,21 +12,20 @@ extendConfig((config) => {
   config.ngeth = getDefaultConfig(config)
 });
 
-task(
-  'ngeth:test',
-  'run test with jest',
-  async (taskArguments: any, hre: any) => {
+task('ngeth:test', 'Run test with jest')
+  .addOptionalParam('jestconfig', 'Jest configuration path', 'jest.config.js')
+  .setAction(async (taskArguments: any, hre: any) => {
     const { runCLI } = await import('jest');
     const root = hre.config.paths.root;
+    const configPath = taskArguments.jestconfig;
     const jestConfig: any = { watch: taskArguments.watch ?? false };
-    const failures = await runCLI(jestConfig, [join(root, '/jest.config.js')]);
+    const failures = await runCLI(jestConfig, [join(root, configPath)]);
     process.exitCode = failures.results.success ? 0 : 1;
-  }
-);
+  });
 
 task(
   'ngeth:build',
-  '',
+  'Build the contracts and generate outputs',
   async (taskArguments: any, hre) => {
     await hre.run('compile', taskArguments);
     // Generate contracts & index.ts

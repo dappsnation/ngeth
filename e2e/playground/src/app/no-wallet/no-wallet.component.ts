@@ -1,17 +1,18 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { HasMetamaskGuard, MetaMaskOnboarding } from '@ngeth/metamask';
+import { HasWalletGuard } from '@ngeth/ethers';
+import { MetaMaskOnboarding } from '@ngeth/metamask';
 
 @Component({
-  selector: 'ngeth-no-provider',
-  templateUrl: './no-provider.component.html',
-  styleUrls: ['./no-provider.component.scss'],
+  selector: 'ngeth-no-wallet',
+  templateUrl: './no-wallet.component.html',
+  styleUrls: ['./no-wallet.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class NoProviderComponent {
+export class NoWalletComponent {
   previous = this.guard.previous ?? this.onboarding.redirect;
   hasMetamask = this.onboarding.hasMetamask();
   constructor(
-    private guard: HasMetamaskGuard,
+    private guard: HasWalletGuard,
     private onboarding: MetaMaskOnboarding,
   ) {}
 

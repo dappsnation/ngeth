@@ -1,7 +1,7 @@
 import { inject, NgZone } from '@angular/core';
 import { EventFilter, Provider } from '@ethersproject/abstract-provider';
 import { getAddress } from '@ethersproject/address';
-import { ERC1193Events, ERC1193Param, ERC1193Provider } from './types';
+import { ERC1193Events, ERC1193Param, ERC1193Provider, WalletProfile } from './types';
 import { toChainIndex } from '../chain/utils';
 import { timer, Observable, of, combineLatest, defer, BehaviorSubject } from 'rxjs';
 import { map, shareReplay, switchMap, filter } from 'rxjs/operators';
@@ -39,27 +39,22 @@ export function fromEthEvent<T>(
   });
 }
 
-export abstract class ERC1193<P extends ERC1193Provider = ERC1193Provider> {
-  private _provider?: Web3Provider;
-  private _signer?: JsonRpcSigner;
-  private _ethereum = new BehaviorSubject<P | null>(null);
-  private events: Record<string, Observable<unknown>> = {};
+export abstract class ERC1193<Wallet extends WalletProfile = WalletProfile> {
   private zone = inject(NgZone);
-  ethereum$ = this._ethereum.asObservable();
+  #ethersProvider?: Web3Provider;
+  #ethersSigner?: JsonRpcSigner;
+  #wallet = new BehaviorSubject<Wallet | null>(null);
+  #events: Record<string, Observable<unknown>> = {};
+
+  walletChanges = this.#wallet.asObservable();
   
-  // abstract provider: ERC1193Provider;
   abstract account?: string;
   abstract chainId?: number;
-
-  /** Used to select the provider to use */
-  abstract enable(): unknown;
-
-  hasProvider$ = this.ethereum$.pipe(
-    map(ethereum => !!ethereum)
-  );
+  abstract wallets: Wallet[];
+  protected provider?: ERC1193Provider;
 
   /** Observe if current account is connected */
-  connected$ = this.ethereum$.pipe(
+  connected$ = this.walletChanges.pipe(
     filter(exist),
     switchMap(ethereum => {
       return combineLatest([
@@ -68,8 +63,8 @@ export abstract class ERC1193<P extends ERC1193Provider = ERC1193Provider> {
       ])
     }),
     switchMap(() => {
-      if (this.ethereum?.isConnected()) return of(true);
-      return timer(500).pipe(map(() => this.ethereum?.isConnected()))
+      if (this.provider?.isConnected()) return of(true);
+      return timer(500).pipe(map(() => this.provider?.isConnected()))
     }),
     shareReplay({ refCount: true, bufferSize: 1 })
   );
@@ -78,9 +73,9 @@ export abstract class ERC1193<P extends ERC1193Provider = ERC1193Provider> {
    * First account connected to the dapp, if any
    * @note This might not be the selected account in Metamask
    */
-  account$ = this.ethereum$.pipe(
+  account$ = this.walletChanges.pipe(
     filter(exist),
-    switchMap(ethereum => this.fromEvent(ethereum, 'accountsChanged', [])),
+    switchMap(wallet => this.fromEvent(wallet, 'accountsChanged', [])),
     switchMap(() => {
       if (this.account) return of([this.account]);
       return timer(500).pipe(map(() => (this.account ? [this.account] : [])));
@@ -95,9 +90,9 @@ export abstract class ERC1193<P extends ERC1193Provider = ERC1193Provider> {
    */
   currentAccount$ = this.account$.pipe(filter(exist));
 
-  chainId$ = this.ethereum$.pipe(
+  chainId$ = this.walletChanges.pipe(
     filter(exist),
-    switchMap(ethereum => this.fromEvent(ethereum, 'chainChanged', undefined)),
+    switchMap(wallet => this.fromEvent(wallet, 'chainChanged', undefined)),
     switchMap(() => {
       if (this.chainId) return of(this.chainId);
       return timer(500).pipe(map(() => this.chainId))
@@ -107,46 +102,50 @@ export abstract class ERC1193<P extends ERC1193Provider = ERC1193Provider> {
     shareReplay({ refCount: true, bufferSize: 1 })
   );
 
-  message$ = this.ethereum$.pipe(
+  message$ = this.walletChanges.pipe(
     filter(exist),
-    switchMap(ethereum => this.fromEvent(ethereum, 'message')),
+    switchMap(wallet => this.fromEvent(wallet, 'message')),
   );
 
-  getSigner(): JsonRpcSigner {
-    if (!this._signer) {
-      this._signer = this.getProvider().getSigner();
-    }
-    return this._signer;
-  }
-  
-  getProvider(): Web3Provider {
-    if (!this._provider) {
-      const ethereum = this.ethereum;
-      if (!ethereum) throw new Error('No Ethereum Provider selected yet.')
-      this._provider = new Web3Provider(ethereum);
-    }
-    return this._provider;
+  get ethersProvider() {
+    return this.#ethersProvider;
   }
 
-  protected get ethereum() {
-    return this._ethereum.getValue();
-  }
-
-  protected set ethereum(ethereum: P | null) {
-    this._ethereum.next(ethereum);
+  get ethersSigner() {
+    return this.#ethersSigner;
   }
 
   /** Listen on event from MetaMask Provider */
   protected fromEvent<K extends keyof ERC1193Events>(
-    provider: P,
+    wallet: Wallet,
     event: K,
     initial?: ERC1193Param<K>
   ): Observable<ERC1193Param<K>> {
-    if (!this.events[event]) {
-      this.events[event] = defer(() => {
-        return fromEthEvent<ERC1193Param<K>>(provider, this.zone, event, initial);
+    if (!this.#events[event]) {
+      this.#events[event] = defer(() => {
+        return fromEthEvent<ERC1193Param<K>>(wallet.provider, this.zone, event, initial);
       });
     }
-    return this.events[event] as Observable<ERC1193Param<K>>;
+    return this.#events[event] as Observable<ERC1193Param<K>>;
   }
+
+  selectWallet(wallet?: Wallet) {
+    if (!wallet) {
+      if (!this.wallets.length) throw new Error('No wallet provided or found');
+      wallet = this.wallets[0];
+    }
+    if (wallet.provider !== this.provider) {
+      this.#ethersProvider = new Web3Provider(wallet.provider);
+      this.#ethersSigner = this.#ethersProvider.getSigner();
+      this.#wallet.next(wallet);
+      this.provider = wallet.provider;
+    }
+  }
+
+  enable(wallet?: Wallet): Promise<string[]> {
+    this.selectWallet(wallet);
+    if (!this.provider) throw new Error('No provider connected to ERC1193 service');
+    return this.provider.request({ method: 'eth_requestAccounts' });
+  }
+
 }

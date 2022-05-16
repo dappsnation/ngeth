@@ -1,6 +1,5 @@
 import { BuilderContext, BuilderOutput, createBuilder } from '@angular-devkit/architect';
 import { execute } from '@ngeth/devkit';
-import { names } from '@nrwl/devkit';
 import { dirname, join, relative } from 'path';
 
 export interface BuildExecutorSchema {
@@ -12,7 +11,9 @@ export interface BuildExecutorSchema {
 function formatArgs(options: BuildExecutorSchema) {
   const projectPath = dirname(options.config);
   const format = (_key: string, value: any) => {
-    const key = names(_key).fileName;
+    if (value === undefined || value === null) return '';
+    // Arguments should be lowercase, except show-stack-traces
+    const key = _key === 'showStackTraces' ? 'show-stack-traces' : _key.toLowerCase();
     if (value === true) return `--${key}`;
     if (value === false) return '';
     // We need to run hardhat in the project path
