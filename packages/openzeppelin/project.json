@@ -6,7 +6,9 @@
   "targets": {
     "build": {
       "executor": "@nrwl/angular:package",
-      "outputs": ["dist/packages/openzeppelin"],
+      "outputs": [
+        "dist/packages/openzeppelin"
+      ],
       "options": {
         "project": "packages/openzeppelin/ng-package.json"
       },
@@ -22,7 +24,9 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/packages/openzeppelin"],
+      "outputs": [
+        "coverage/packages/openzeppelin"
+      ],
       "options": {
         "jestConfig": "packages/openzeppelin/jest.config.js",
         "passWithNoTests": true

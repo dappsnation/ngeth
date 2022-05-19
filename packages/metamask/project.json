@@ -19,7 +19,9 @@
     },
     "build": {
       "executor": "@nrwl/angular:package",
-      "outputs": ["dist/packages/metamask"],
+      "outputs": [
+        "dist/packages/metamask"
+      ],
       "options": {
         "project": "packages/metamask/ng-package.json"
       },
@@ -35,7 +37,9 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/packages/metamask"],
+      "outputs": [
+        "coverage/packages/metamask"
+      ],
       "options": {
         "jestConfig": "packages/metamask/jest.config.js",
         "passWithNoTests": true

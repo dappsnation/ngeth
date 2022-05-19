@@ -6,7 +6,9 @@
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:browser",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
         "outputPath": "dist/e2e/generators",
         "index": "e2e/generators/src/index.html",
@@ -18,7 +20,9 @@
           "e2e/generators/src/favicon.ico",
           "e2e/generators/src/assets"
         ],
-        "styles": ["e2e/generators/src/styles.scss"],
+        "styles": [
+          "e2e/generators/src/styles.scss"
+        ],
         "scripts": []
       },
       "configurations": {
@@ -83,7 +87,9 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/e2e/generators"],
+      "outputs": [
+        "coverage/e2e/generators"
+      ],
       "options": {
         "jestConfig": "e2e/generators/jest.config.js",
         "passWithNoTests": true

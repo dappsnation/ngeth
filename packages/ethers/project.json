@@ -19,7 +19,9 @@
     },
     "build": {
       "executor": "@nrwl/angular:package",
-      "outputs": ["dist/packages/ethers"],
+      "outputs": [
+        "dist/packages/ethers"
+      ],
       "options": {
         "project": "packages/ethers/ng-package.json"
       },
@@ -35,7 +37,9 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/packages/ethers"],
+      "outputs": [
+        "coverage/packages/ethers"
+      ],
       "options": {
         "jestConfig": "packages/ethers/jest.config.js",
         "passWithNoTests": true

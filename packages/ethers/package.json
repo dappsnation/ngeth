@@ -2,8 +2,8 @@
   "name": "@ngeth/ethers",
   "version": "0.0.17",
   "peerDependencies": {
-    "@angular/common": "^13.2.0",
-    "@angular/core": "^13.2.0",
+    "@angular/common": ">13.0.0",
+    "@angular/core": ">13.0.0",
     "ethers": "^5.6.0"
   },
   "dependencies": {

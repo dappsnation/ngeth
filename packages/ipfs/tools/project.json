@@ -4,7 +4,9 @@
   "targets": {
     "build": {
       "executor": "@nrwl/js:tsc",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
         "outputPath": "dist/packages/ipfs/tools",
         "main": "packages/ipfs/tools/src/index.ts",
@@ -32,20 +34,30 @@
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",
-      "outputs": ["{options.outputFile}"],
+      "outputs": [
+        "{options.outputFile}"
+      ],
       "options": {
-        "lintFilePatterns": ["packages/ipfs/tools/**/*.ts"]
+        "lintFilePatterns": [
+          "packages/ipfs/tools/**/*.ts"
+        ]
       }
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/packages/ipfs/tools"],
+      "outputs": [
+        "coverage/packages/ipfs/tools"
+      ],
       "options": {
         "jestConfig": "packages/ipfs/tools/jest.config.js",
         "passWithNoTests": true
       }
     }
   },
-  "tags": ["tools"],
-  "implicitDependencies": ["ipfs"]
+  "tags": [
+    "tools"
+  ],
+  "implicitDependencies": [
+    "ipfs"
+  ]
 }
