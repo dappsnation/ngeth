@@ -153,6 +153,27 @@
         }
       },
       "defaultConfiguration": "production"
+    },
+    "hardhat-build": {
+      "options": {
+        "config": "e2e/hardhat-gui/hardhat.config.ts",
+        "tsconfig": "e2e/hardhat-gui/tsconfig.hardhat.json"
+      },
+      "executor": "@ngeth/hardhat:build"
+    },
+    "hardhat-serve": {
+      "options": {
+        "config": "e2e/hardhat-gui/hardhat.config.ts",
+        "tsconfig": "e2e/hardhat-gui/tsconfig.hardhat.json"
+      },
+      "executor": "@ngeth/hardhat:serve"
+    },
+    "hardhat-test": {
+      "options": {
+        "config": "e2e/hardhat-gui/hardhat.config.ts",
+        "tsconfig": "e2e/hardhat-gui/tsconfig.hardhat.json"
+      },
+      "executor": "@ngeth/hardhat:test"
     }
   },
   "tags": []

@@ -1,0 +1,13 @@
+<h1>Transaction</h1>
+<ng-container *ngIf="tx$ | async as tx">
+  <table>
+    <tr>
+      <td>Transaction hash</td>
+      <td>{{ tx.hash }}</td>
+    </tr>
+    <tr>
+      <td>Transaction Status</td>
+      <td></td>
+    </tr>
+  </table>
+</ng-container>

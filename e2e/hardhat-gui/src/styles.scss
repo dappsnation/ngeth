@@ -1,1 +1,39 @@
 /* You can add global styles to this file, and also import other style files */
+:root {
+  --background-hsl: 250, 13%, 9%;
+  --text-hsl: 240, 60%, 99%;
+  --accent-hsl: 271, 92%, 69%;
+
+  --background-0: hsl(250, 13%, 9%);
+  --background-1: hsl(247, 12%, 15%);
+  --background-2: hsl(247, 10%, 18%);
+
+  --text-0: hsl(240, 60%, 99%);
+  --text-1: hsl(240, 10%, 83%);
+
+  --border-0: hsl(240, 7%, 35%);
+  --border-1: hsl(245, 9%, 25%);
+
+  --accent-0: hsl(271, 93%, 77%);
+  --accent-1: hsl(271, 92%, 69%);
+  --accent-2: hsl(271, 59%, 37%);
+
+  // Alpha
+  --alpha-0: 0.14;
+  --alpha-1: 0.24;
+
+  // spacing
+  --size-0: 0.25rem;
+  --size-1: 0.5rem;
+  --size-2: 1rem;
+  --size-3: 1.5rem;
+  --size-4: 2rem;
+  --size-5: 3rem;
+
+  // Typography
+  --font-sans: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif;
+}
+
+html, body {
+  margin: 0;
+}

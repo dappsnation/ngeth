@@ -1,11 +1,11 @@
 import { inject, NgZone } from '@angular/core';
-import { EventFilter, Provider } from '@ethersproject/abstract-provider';
 import { getAddress } from '@ethersproject/address';
 import { ERC1193Events, ERC1193Param, ERC1193Provider, WalletProfile } from './types';
 import { toChainIndex } from '../chain/utils';
 import { timer, Observable, of, combineLatest, defer, BehaviorSubject } from 'rxjs';
 import { map, shareReplay, switchMap, filter } from 'rxjs/operators';
 import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers';
+import { fromEthEvent } from '../events';
 
 
 const errorCode = {
@@ -23,21 +23,7 @@ function exist<T>(value?: T | null): value is T {
 }
 
 
-export function fromEthEvent<T>(
-  provider: Provider | ERC1193Provider,
-  zone: NgZone,
-  event: string | EventFilter,
-  initial?: any
-) {
-  return new Observable<T>((subscriber) => {
-    if (arguments.length === 4) zone.run(() => subscriber.next(initial as any));
-    const handler = (...args: any[]) => {
-      zone.run(() => subscriber.next(1 < args.length ? args : args[0]));
-    };
-    provider.addListener(event as any, handler);
-    return () => provider.removeListener(event as any, handler);
-  });
-}
+
 
 export abstract class ERC1193<Wallet extends WalletProfile = WalletProfile> {
   private zone = inject(NgZone);

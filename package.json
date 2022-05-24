@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "start": "nx serve",
-    "build": "nx run-many --target build --all",
+    "build": "nx run-many --target build --exclude=[generators,hardhat-gui,playground] --all",
     "link": "nx run-many --target link --all",
     "publish": "nx run-many --target publish --all --tag=latest",
     "test": "nx test",

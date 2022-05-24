@@ -7,5 +7,6 @@ export * from './lib/contracts';
 export * from './lib/form';
 export * from './lib/guard';
 export * from './lib/pipes';
-export * from './lib/provider';
 export * from './lib/erc1193';
+export * from './lib/provider';
+export * from './lib/events';

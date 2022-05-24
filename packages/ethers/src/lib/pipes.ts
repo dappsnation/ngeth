@@ -1,7 +1,7 @@
-import { Inject, Pipe, PipeTransform } from '@angular/core';
+import { Inject, Optional, Pipe, PipeTransform } from '@angular/core';
 import { BigNumber, BigNumberish } from 'ethers';
 import { getAddress } from '@ethersproject/address';
-import { formatUnits } from '@ethersproject/units';
+import { formatUnits, formatEther } from '@ethersproject/units';
 import { isBytes } from '@ethersproject/bytes';
 import { Chain, ChainCurrency, ChainId, ChainManager, explore, isSupportedChain, SupportedChains, SUPPORTED_CHAINS } from './chain';
 import { map } from 'rxjs/operators';
@@ -25,8 +25,10 @@ export class BigNumberPipe implements PipeTransform {
 
 @Pipe({ name: 'eth' })
 export class EthPipe implements PipeTransform {
-  constructor(private chain: ChainManager) {}
-  transform(value: BigNumberish, chainId?: ChainId) {
+  constructor(@Optional() private chain?: ChainManager) {}
+  transform(value?: BigNumberish | null, chainId?: ChainId) {
+    if (value === null || value === undefined) return;
+    if (!this.chain) return formatEther(value);
     if (chainId) {
       return this.chain.getChain(chainId)
         .then(chain => formatNativeCurrency(value, chain.nativeCurrency));
