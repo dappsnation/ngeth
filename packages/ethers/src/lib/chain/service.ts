@@ -1,8 +1,10 @@
-import { Inject, Injectable, InjectionToken } from "@angular/core";
+import { Inject, Injectable, InjectionToken, Optional } from "@angular/core";
+import { Provider } from '@ethersproject/providers';
 import { ERC1193 } from "../erc1193";
 import { ChainIcon, Chain, SupportedChains, ChainId } from "./types";
 import { explore, getChain, getChainIcons, defaultCustomChains, toChainId } from "./utils";
-import { defer, filter, switchMap } from "rxjs";
+import { defer,  from } from "rxjs";
+import { filter, switchMap } from 'rxjs/operators';
 
 export const CUSTOM_CHAINS = new InjectionToken<Record<string, Chain>>('Custom Chains to use instead of https://github.com/ethereum-lists/chains', {
   providedIn: 'root',
@@ -23,18 +25,27 @@ export class ChainManager {
   private chains: Record<string, Chain> = {};
   private icons: Record<string, ChainIcon> = {};
 
-  chain$ = defer(() => this.erc1193.chainId$.pipe(
+  chain$ = defer(() => {
+    const source = this.erc1193 ? this.erc1193.chainId$ : from(this.currentChain());
+    return source;
+  }).pipe(
     filter(exist),
     switchMap(chainId => this.getChain(chainId)),
-  ));
+  )
 
   constructor(
-    private erc1193: ERC1193,
-    @Inject(CUSTOM_CHAINS) private customChains: Record<string, Chain>
+    private provider: Provider,
+    @Inject(CUSTOM_CHAINS) private customChains: Record<string, Chain>,
+    @Optional() private erc1193?: ERC1193,
   ) {}
 
+  private async currentChain() {
+    if (this.erc1193) return this.erc1193.chainId;
+    return this.provider.getNetwork().then(network => network.chainId);
+  }
+
   async getChain(chainId?: ChainId): Promise<Chain> {
-    chainId = chainId ?? this.erc1193.chainId;
+    chainId = chainId ?? await this.currentChain();
     if (!chainId) throw new Error('No chainId provided');
     const id = toChainId(chainId);
     if (id in this.customChains) return this.customChains[id];
@@ -53,7 +64,7 @@ export class ChainManager {
   }
 
   async explore(search: string, chainId?: ChainId) {
-    chainId = chainId ?? this.erc1193.chainId;
+    chainId = chainId ?? await this.currentChain();
     if (!chainId) throw new Error('No chainId provided');
     const chain = await this.getChain(chainId);
     return explore(chain, search);

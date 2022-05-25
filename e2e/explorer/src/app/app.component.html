@@ -1,0 +1,10 @@
+<header>
+  <a routerLink="/">Home</a>
+  <form (submit)="search($event, input)">
+    <input #input type="text" />
+    <button>Search</button>
+  </form>
+</header>
+<main>
+  <router-outlet></router-outlet>
+</main>

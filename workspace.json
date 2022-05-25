@@ -3,9 +3,9 @@
   "projects": {
     "devkit": "packages/devkit",
     "ethers": "packages/ethers",
+    "explorer": "e2e/explorer",
     "generators": "e2e/generators",
     "hardhat": "packages/hardhat",
-    "hardhat-gui": "e2e/hardhat-gui",
     "hardhat-tools": "packages/hardhat/tools",
     "ipfs": "packages/ipfs",
     "ipfs-tools": "packages/ipfs/tools",

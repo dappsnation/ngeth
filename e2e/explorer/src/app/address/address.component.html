@@ -1,0 +1,12 @@
+<ng-container *ngIf="address$ | async as address">
+  <header>
+    <eth-blockies [address]="address"></eth-blockies>
+    <h1>
+      Address: <small>{{ address }}</small>
+    </h1>
+    <span>{{ balance$ | async | eth }}</span>
+  </header>
+  <article>
+    <h2>Tokens</h2>
+  </article>
+</ng-container>

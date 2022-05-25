@@ -1,5 +1,0 @@
-<ul>
-  <li *ngFor="let block of blocks$ | async | slice:-10">
-    <a [routerLink]="['block', block.number]">{{ block.number }}</a>
-  </li>
-</ul>
