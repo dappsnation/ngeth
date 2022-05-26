@@ -1,8 +1,8 @@
-export type EtherscanParams = AccountsParams | ContractParams;
+export type EtherscanParams = AccountsParams | ContractParams | TransactionParams;
 
 export type Tag = number | 'latest' | 'pending' | 'earliest';
 export type Sort = 'asc' | 'desc';
-type Module = 'account' | 'contract';
+type Module = 'account' | 'contract' | 'transaction';
 
 interface BaseParams<M extends Module, Action> {
   module: M;
@@ -16,7 +16,7 @@ export type GetParams<T> = Omit<T, 'module' | 'action' | 'apiKey'>
 /////////////
 // ACCOUNT //
 /////////////
-
+// Params
 export type AccountsParams = Balance | BalanceMulti | TxList | TxListInternal;
 export interface Balance extends BaseParams<'account', 'balance'> {
   /** the string representing the address to check for balance   */
@@ -62,10 +62,37 @@ export interface TxListInternal extends BaseParams<'account', 'txlistinternal'> 
 //////////////
 // CONTRACT //
 //////////////
-
-export interface ContractParams {
+// Params
+export type ContractParams = GetABI;
+export interface GetABI {
   module: 'contract';
   action: 'getabi';
   address: string;
   apiKey: string;
+}
+
+
+/////////////////
+// TRANSACTION //
+/////////////////
+// Params
+export type TransactionParams = GetStatus | GetTxReceiptStatus;
+export interface GetStatus extends BaseParams<'transaction', 'getstatus'> {
+  /** the string representing the transaction hash to check the execution status */
+  txhash: string;
+}
+export interface GetTxReceiptStatus extends BaseParams<'transaction', 'gettxreceiptstatus'> {
+  /** the string representing the transaction hash to check the execution status */
+  txhash: string;
+}
+
+// Result
+export interface ExecutionStatusResult {
+  /** 0: Succeed, 1: Failed */
+  isError: 0 | 1;
+  errDescription?: string;
+}
+export interface StatusResult {
+  /** 0: Succeed, 1: Failed */
+  status: 0 | 1;
 }

@@ -12,7 +12,7 @@ export function balance({ address, tag }: GetParams<Balance>): string {
   return balance.toString().replace('0x', '');
 }
 
-export function balancemulti({ address, tag }: GetParams<BalanceMulti>): {account: string, balance: string}[] {
+export function balanceMulti({ address, tag }: GetParams<BalanceMulti>): {account: string, balance: string}[] {
   const addresses = address.split(',');
   return addresses.map(account => ({
     account,
