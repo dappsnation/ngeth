@@ -90,7 +90,7 @@
       "executor": "@angular-devkit/build-angular:server",
       "options": {
         "outputPath": "dist/e2e/explorer/server",
-        "main": "e2e/explorer/server.ts",
+        "main": "e2e/explorer/server/main.ts",
         "tsConfig": "e2e/explorer/tsconfig.server.json",
         "inlineStyleLanguage": "scss"
       },

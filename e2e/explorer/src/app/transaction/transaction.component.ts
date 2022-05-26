@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, Inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Provider } from '@ethersproject/providers';
 import { switchMap, map, filter } from 'rxjs/operators';

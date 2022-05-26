@@ -2,16 +2,19 @@ import 'zone.js/dist/zone-node';
 
 import { ngExpressEngine } from '@nguniversal/express-engine';
 import * as express from 'express';
+import { Request } from 'express';
 import { join } from 'path';
 
-import { AppServerModule } from './src/main.server';
+import { AppServerModule } from '../src/main.server';
 import { APP_BASE_HREF } from '@angular/common';
 import { existsSync } from 'fs';
+import { blockListener } from './block';
+import { etherscanApi, EtherscanParams } from './etherscan';
 
 // The Express app is exported so that it can be used by serverless Functions.
 export function app(): express.Express {
   const server = express();
-  const distFolder = join(process.cwd(), 'dist/hardhat-gui/browser');
+  const distFolder = join(process.cwd(), 'dist/explorer/browser');
   const indexHtml = existsSync(join(distFolder, 'index.original.html'))
     ? 'index.original.html'
     : 'index';
@@ -28,7 +31,15 @@ export function app(): express.Express {
   server.set('views', distFolder);
 
   // Example Express Rest API endpoints
-  // server.get('/api/**', (req, res) => { });
+  server.get('/etherscan/**', async (req: Request<EtherscanParams>, res) => {
+    try {
+      const result = await etherscanApi(req.params);
+      res.send({ status: '1', message: 'OK', result});
+    } catch(err) {
+      res.sendStatus(400);
+    }
+  });
+  
   // Serve static files from /browser
   server.get(
     '*.*',
@@ -55,6 +66,7 @@ function run(): void {
   const server = app();
   server.listen(port, () => {
     console.log(`Node Express server listening on http://localhost:${port}`);
+    blockListener();
   });
 }
 
@@ -68,4 +80,4 @@ if (moduleFilename === __filename || moduleFilename.includes('iisnode')) {
   run();
 }
 
-export * from './src/main.server';
+export * from '../src/main.server';
