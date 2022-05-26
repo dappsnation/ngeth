@@ -7,7 +7,7 @@
       <tr>
         <td>Block Height</td>
         <td>
-          <a [routerLink]="['..', block.number - 1]">Previous</a>
+          <a [routerLink]="['..', block.number - 1]" *ngIf="block.number">Previous</a>
           <span>{{ block.number }}</span>
           <a [routerLink]="['..', block.number + 1]" *ngIf="hasNext$ | async"
             >Next</a

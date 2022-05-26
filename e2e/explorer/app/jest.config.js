@@ -1,6 +1,6 @@
 module.exports = {
-  displayName: 'explorer',
-  preset: '../../jest.preset.js',
+  displayName: 'explorer-app',
+  preset: '../../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   globals: {
     'ts-jest': {
@@ -8,7 +8,7 @@ module.exports = {
       stringifyContentPathRegex: '\\.(html|svg)$',
     },
   },
-  coverageDirectory: '../../coverage/e2e/explorer',
+  coverageDirectory: '../../../coverage/e2e/explorer/app',
   transform: {
     '^.+\\.(ts|mjs|js|html)$': 'jest-preset-angular',
   },

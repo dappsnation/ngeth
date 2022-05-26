@@ -1,0 +1,52 @@
+{
+  "root": "e2e/explorer/api",
+  "sourceRoot": "e2e/explorer/api/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/node:build",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/e2e/explorer/api",
+        "main": "e2e/explorer/api/src/main.ts",
+        "tsConfig": "e2e/explorer/api/tsconfig.app.json",
+        "assets": ["e2e/explorer/api/src/assets"]
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false,
+          "fileReplacements": [
+            {
+              "replace": "e2e/explorer/api/src/environments/environment.ts",
+              "with": "e2e/explorer/api/src/environments/environment.prod.ts"
+            }
+          ]
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/node:execute",
+      "options": {
+        "buildTarget": "explorer-api:build"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["e2e/explorer/api/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/e2e/explorer/api"],
+      "options": {
+        "jestConfig": "e2e/explorer/api/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

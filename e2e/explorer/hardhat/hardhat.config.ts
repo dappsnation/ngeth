@@ -7,12 +7,12 @@ import '@ngeth/hardhat';
 export default {
   solidity: '0.8.0',
   paths: {
-    sources: './contracts',
+    sources: './src',
     tests: './tests',
     artifacts: './artifacts',
   },
   ngeth: {
-    outDir: './src/contracts',
+    outDir: './contracts',
     autoDeploy: {},
   },
 };
