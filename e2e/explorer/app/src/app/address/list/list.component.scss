@@ -1,0 +1,32 @@
+:host {
+  display: block;
+}
+
+.item {
+  display: block;
+  padding: var(--size-2);
+  overflow: hidden;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  header {
+    display: flex;
+    gap: var(--size-1);
+    margin-block-end: var(--size-1);
+    color: var(--text-1);
+    eth-blockies {
+      height: 24px;
+    }
+    h3 {
+      flex: 1;
+    }
+  }
+  h3, p {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-block-end: 0;
+  }
+}

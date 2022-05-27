@@ -1,0 +1,50 @@
+<ng-container *ngIf="account$ | async as account">
+  <header>
+    <eth-blockies [address]="account.address"></eth-blockies>
+    <h1>
+      Address: <small>{{ account.address }}</small>
+    </h1>
+  </header>
+  <article class="surface">
+    <h2>Tokens</h2>
+    <span>Balance: {{ account.balance | ether }}</span>
+  </article>
+  <article class="surface">
+    <h2>Transactions</h2>
+    <table class="list" *ngIf="account.transactions.length; else empty">
+      <thead>
+        <tr>
+          <th>Txn Hash</th>
+          <th>Method</th>
+          <th>Block</th>
+          <th>From</th>
+          <th></th>
+          <th>To</th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container  *ngFor="let getTx$ of account.transactions">
+          <tr *ngIf="getTx$ | async as tx">
+            <td>
+              <a [routerLink]="['/tx', tx.transactionHash]">{{ tx.transactionHash }}</a>
+            </td>
+            <td>Method</td>
+            <td>
+              <a [routerLink]="['/block', tx.blockNumber]">{{ tx.blockNumber }}</a>
+            </td>
+            <td>
+              <a [routerLink]="['/address', tx.from]">{{ tx.from }}</a>
+            </td>
+            <td>{{ tx.from === account.address ? 'OUT' : 'IN' }}</td>
+            <td>
+              <a [routerLink]="['/address', tx.to]">{{ tx.to }}</a>
+            </td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+    <ng-template #empty>
+      <p class="empty">There is no transaction for this address yet</p>
+    </ng-template>
+  </article>
+</ng-container>

@@ -1,8 +1,10 @@
 <header>
-  <a routerLink="/">Home</a>
+  <a routerLink="/blocks" routerLinkActive="active">Blocks</a>
+  <a routerLink="/txs" routerLinkActive="active">Transactions</a>
+  <a routerLink="/addresses" routerLinkActive="active">Addresses</a>
   <form (submit)="search($event, input)">
     <input #input type="text" />
-    <button>Search</button>
+    <button type="submit">Search</button>
   </form>
 </header>
 <main>

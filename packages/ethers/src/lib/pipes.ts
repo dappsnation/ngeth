@@ -28,7 +28,7 @@ export class BigNumberPipe implements PipeTransform {
 export class EtherPipe implements PipeTransform {
   transform(value?: BigNumberish | null) {
     if (value === null || value === undefined) return;
-    return `${formatEther(value)}${EtherSymbol}`;
+    return `${formatEther(value)} ${EtherSymbol}`;
   }
 }
 

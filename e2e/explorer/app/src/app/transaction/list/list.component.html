@@ -1,0 +1,5 @@
+<ul class="list">
+  <li *ngFor="let tx of txs$ | async | keyvalue">
+    <a class="item" [routerLink]="['/tx', tx.key]">{{ tx.key }}</a>
+  </li>
+</ul>

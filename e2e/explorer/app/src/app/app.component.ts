@@ -32,16 +32,18 @@ export class AppComponent {
 
   async search(event: Event, input: HTMLInputElement) {
     event.preventDefault();
-    if (isAddress(input.value)) {
-      const code = await this.provider.getCode(input.value);
+    const value = input.value.trim();
+    if (isAddress(value)) {
+      const code = await this.provider.getCode(value);
       const isContract = code.length > 2;
       const base = isContract ? '/contract' : '/address';
-      this.router.navigate([base, input.value]);
-    } else if (input.value.startsWith('0x')) {
-      this.router.navigate(['/tx', input.value]);
-    } else if (!isNaN(parseInt(input.value))) {
-      this.router.navigate(['/block', input.value]);
+      this.router.navigate([base, value]);
+    } else if (value.startsWith('0x')) {
+      this.router.navigate(['/tx', value]);
+    } else if (!isNaN(parseInt(value))) {
+      this.router.navigate(['/block', value]);
     }
+    input.value = '';
   }
 
   select(address: string) {

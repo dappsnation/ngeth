@@ -1,8 +1,9 @@
 import { Balance, BalanceMulti, GetParams } from "./types";
-import { states, State } from '../block';
+import { states } from '../block';
+import { EthState } from "@explorer";
 
 export function balance({ address, tag }: GetParams<Balance>): string {
-  let state: State | undefined;
+  let state: EthState | undefined;
   if (tag === 'latest') state = states[states.length - 1]; // .balances[address];
   if (tag === 'earliest') state = states.find(state => address in state.balances); // ?.balances[address];
   if (tag === 'pending') state; // TODO: What is "pending" for ?

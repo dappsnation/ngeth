@@ -1,17 +1,17 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { BlockExplorer } from '../explorer';
-import { exist } from '../utils';
+import { BlockExplorer } from '../../explorer';
+import { exist } from '../../utils';
 import { map, filter, shareReplay } from 'rxjs/operators';
 import { combineLatest } from 'rxjs';
 
 @Component({
-  selector: 'eth-block',
-  templateUrl: './block.component.html',
-  styleUrls: ['./block.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'eth-block-view',
+  templateUrl: './view.component.html',
+  styleUrls: ['./view.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class BlockComponent {
+export class ViewComponent {
   blockNumber$ = this.route.paramMap.pipe(
     map((paramMap) => paramMap.get('blockNumber')),
     filter(exist),

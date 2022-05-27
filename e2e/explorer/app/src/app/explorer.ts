@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { firstValueFrom, fromEvent, ReplaySubject, Subject } from 'rxjs';
-import { map, filter, shareReplay, tap } from 'rxjs/operators';
+import { firstValueFrom, ReplaySubject } from 'rxjs';
+import { map, filter } from 'rxjs/operators';
 import { BlockchainState } from '@explorer';
 
 import { io } from "socket.io-client";
@@ -15,18 +15,10 @@ export class BlockExplorer {
     addresses: {},
     states: [],
   };
-  blocks$ = this.#sourceChanges.pipe(
-    map(() => this.source.blocks),
-  );
-  txs$ = this.#sourceChanges.pipe(
-    map(() => this.source.transactions),
-  );
-  addresses$ = this.#sourceChanges.pipe(
-    map(() => this.source.addresses),
-  );
-  states$ = this.#sourceChanges.pipe(
-    map(() => this.source.states),
-  );
+  blocks$ = this.#sourceChanges.pipe(map(() => this.source.blocks));
+  txs$ = this.#sourceChanges.pipe(map(() => this.source.transactions));
+  addresses$ = this.#sourceChanges.pipe(map(() => this.source.addresses));
+  states$ = this.#sourceChanges.pipe(map(() => this.source.states));
 
   constructor() {
     const socket = io('http://localhost:3333');

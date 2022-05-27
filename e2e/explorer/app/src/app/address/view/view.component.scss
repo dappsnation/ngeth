@@ -1,0 +1,24 @@
+:host {
+  display: block;
+}
+header {
+  display: flex;
+  align-items: center;
+  gap: var(--size-2);
+  margin-bottom: var(--size-3);
+  h1 {
+    margin-block-end: 0;
+  }
+}
+article {
+  margin-bottom: var(--size-3);
+  padding: var(--size-2);
+  overflow: auto;
+}
+
+.empty {
+  margin: auto;
+  text-align: center;
+  margin: var(--accent-3);
+  color: var(--text-1);
+}

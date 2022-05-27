@@ -1,1 +1,166 @@
 /* You can add global styles to this file, and also import other style files */
+/* You can add global styles to this file, and also import other style files */
+:root {
+  --background-hsl: 250, 13%, 9%;
+  --text-hsl: 240, 60%, 99%;
+  --accent-hsl: 271, 92%, 69%;
+
+  --background-0: hsl(250, 13%, 9%);
+  --background-1: hsl(247, 12%, 15%);
+  --background-2: hsl(247, 10%, 18%);
+
+  --text-0: hsl(240, 60%, 99%);
+  --text-1: hsl(240, 10%, 83%);
+
+  --border-0: hsl(240, 7%, 35%);
+  --border-1: hsl(245, 9%, 25%);
+
+  --accent-0: hsl(271, 93%, 77%);
+  --accent-1: hsl(271, 92%, 69%);
+  --accent-2: hsl(271, 59%, 37%);
+
+  // Alpha
+  --alpha-0: 0.14;
+  --alpha-1: 0.24;
+
+  // spacing
+  --size-0: 0.25rem;
+  --size-1: 0.5rem;
+  --size-2: 1rem;
+  --size-3: 1.5rem;
+  --size-4: 2rem;
+  --size-5: 3rem;
+
+  // Typography
+  --font-sans: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif;
+}
+
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background-hsl: 250, 13%, 9%;
+    --text-hsl: 240, 60%, 99%;
+    --background-0: hsl(250, 13%, 9%);
+    --background-1: hsl(247, 12%, 15%);
+    --background-2: hsl(247, 10%, 18%);
+    --text-0: hsl(240, 60%, 99%);
+    --text-1: hsl(240, 10%, 83%);
+    --border-0: hsl(240, 7%, 35%);
+    --border-1: hsl(245, 9%, 25%);
+    --accent-0: hsl(271, 93%, 77%);
+    --accent-1: hsl(271, 92%, 69%);
+    --accent-2: hsl(271, 59%, 37%);
+    color-scheme: dark;
+    accent-color: var(--accent-1);
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --background-hsl: 0, 0%, 100%;
+    --text-hsl: 250, 13%, 9%;
+    --accent-hsl: 271, 93%, 61%;
+    
+    --background-0: hsl(0, 0%, 100%);
+    --background-1: hsl(240, 20%, 98%);
+    --background-2: hsl(240, 60%, 99%);
+    --text-0: hsl(250, 13%, 9%);
+    --text-1: hsl(240, 6%, 38%);
+    --border-0: hsl(240, 10%, 83%);
+    --border-1: hsl(240, 11%, 89%);
+    --accent-0: hsl(271, 59%, 49%);
+    --accent-1: hsl(271, 93%, 61%);
+    --accent-2: hsl(271, 95%, 92%);
+    color-scheme: light;
+    accent-color: var(--accent-1);
+  }
+}
+
+body {
+  margin: 0;
+  background-color: var(--background-1);
+  color: var(--text-0);
+  font-family: var(--font-sans);
+}
+
+h1, h2, h3, h4, h5, h6, p {
+  margin-block-start: 0;
+}
+
+.surface {
+  border-radius: var(--size-0);
+  background-color: var(--background-2);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: var(--size-0);
+  outline: 1px solid var(--border-0); // Use outline instead of border to get the radius
+  td, th {
+    padding: var(--size-1) var(--size-2);
+  }
+  th {
+    background-color: var(--background-0);
+    color: var(--text-1);
+    font-weight: 300;
+  }
+  tr:not(:last-of-type) {
+    border-bottom: 1px solid var(--border-0);
+  }
+  &.record {
+    th {
+      border-right: 1px solid var(--border-0);
+      text-align: left;
+    }
+  }
+  &.list {
+    thead tr {
+      border-bottom: 1px solid var(--border-1);
+    }
+    td a, td span {
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      word-break: break-all;
+    }
+  }
+}
+
+ul.list {
+  list-style: none;
+  margin: 0;
+  padding-left: 0;
+  .item {
+    display: block;
+    padding: var(--size-2) var(--size-2);
+  }
+  a.item:hover {
+    background-color: var(--background-2);
+  }
+  li:not(:last-of-type) {
+    border-bottom: 1px solid var(--border-0);
+  }
+}
+
+ul.grid {
+  list-style: none;
+  margin: 0;
+  padding-left: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: var(--size-3);
+}
+
+
+form {
+  input {
+    padding: var(--size-1);
+    background-color: var(--background-2);
+  }
+  button {
+    padding: var(--size-1) var(--size-2);
+    background-color: var(--background-0);
+  }
+}

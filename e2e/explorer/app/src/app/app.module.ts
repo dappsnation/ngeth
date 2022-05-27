@@ -12,30 +12,43 @@ import { AppComponent } from './app.component';
     RouterModule.forRoot([
       {
         path: '',
+        redirectTo: 'blocks',
+        pathMatch: 'full'
+      },
+      {
+        path: 'blocks',
         loadChildren: () =>
-          import('./home/home.module').then((m) => m.HomeModule),
+          import('./block/list/list.module').then((m) => m.ListModule),
       },
       {
         path: 'block/:blockNumber',
         loadChildren: () =>
-          import('./block/block.module').then((m) => m.BlockModule),
+          import('./block/view/view.module').then((m) => m.ViewModule),
+      },
+      {
+        path: 'txs',
+        loadChildren: () =>
+          import('./transaction/list/list.module').then((m) => m.ListModule),
+      },
+      {
+        path: 'tx/:hash',
+        loadChildren: () =>
+          import('./transaction/view/view.module').then((m) => m.ViewModule),
+      },
+      {
+        path: 'addresses',
+        loadChildren: () =>
+          import('./address/list/list.module').then((m) => m.ListModule),
       },
       {
         path: 'address/:address',
         loadChildren: () =>
-          import('./address/address.module').then((m) => m.AddressModule),
+          import('./address/view/view.module').then((m) => m.ViewModule),
       },
       {
         path: 'contract/:address',
         loadChildren: () =>
           import('./contract/contract.module').then((m) => m.ContractModule),
-      },
-      {
-        path: 'tx/:hash',
-        loadChildren: () =>
-          import('./transaction/transaction.module').then(
-            (m) => m.TransactionModule
-          ),
       },
     ]),
   ],

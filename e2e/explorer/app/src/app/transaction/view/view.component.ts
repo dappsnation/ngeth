@@ -1,17 +1,17 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { BlockExplorer } from '../../explorer';
+import { exist } from '../../utils';
 import { combineLatest } from 'rxjs';
 import { map, filter } from 'rxjs/operators';
-import { BlockExplorer } from '../explorer';
-import { exist } from '../utils';
 
 @Component({
-  selector: 'eth-transaction',
-  templateUrl: './transaction.component.html',
-  styleUrls: ['./transaction.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'eth-transaction-view',
+  templateUrl: './view.component.html',
+  styleUrls: ['./view.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TransactionComponent {
+export class ViewComponent {
   private hash$ = this.route.paramMap.pipe(
     map((paramMap) => paramMap.get('hash')),
     filter(exist),

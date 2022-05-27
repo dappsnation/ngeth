@@ -1,17 +1,17 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { BlockExplorer } from '../../explorer';
+import { exist } from '../../utils';
 import { combineLatest } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { BlockExplorer } from '../explorer';
-import { exist } from '../utils';
 
 @Component({
-  selector: 'eth-address',
-  templateUrl: './address.component.html',
-  styleUrls: ['./address.component.scss'],
+  selector: 'eth-address-view',
+  templateUrl: './view.component.html',
+  styleUrls: ['./view.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AddressComponent {
+export class ViewComponent {
   address$ = this.route.paramMap.pipe(
     map((paramMap) => paramMap.get('address')),
     filter(exist)

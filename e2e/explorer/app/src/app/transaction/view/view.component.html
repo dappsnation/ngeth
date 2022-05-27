@@ -1,20 +1,20 @@
 <h1>Transaction</h1>
 <ng-container *ngIf="tx$ | async as tx">
-  <table>
+  <table class="surface record">
     <tr>
-      <td>Transaction hash</td>
+      <th>Transaction hash</th>
       <td>{{ tx.transactionHash }}</td>
     </tr>
     <tr>
-      <td>Transaction Status</td>
+      <th>Transaction Status</th>
       <td></td>
     </tr>
     <tr>
-      <td>From</td>
+      <th>From</th>
       <td><a [routerLink]="['/address', tx.from]">{{ tx.from }}</a></td>
     </tr>
     <tr>
-      <td>To</td>
+      <th>To</th>
       <td><a [routerLink]="['/address', tx.to]">{{ tx.to }}</a></td>
     </tr>
   </table>

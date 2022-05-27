@@ -1,0 +1,15 @@
+:host {
+  display: block;
+}
+
+article {
+  padding: var(--size-2);
+  margin-bottom: var(--size-3);
+  overflow: auto;
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: solid 1px var(--border-1);
+  }
+}

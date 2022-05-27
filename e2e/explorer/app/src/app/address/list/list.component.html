@@ -1,0 +1,12 @@
+<ul class="grid">
+  <li *ngFor="let account of accounts$ | async">
+    <a class="surface item" [routerLink]="['/address', account.address]">
+      <header>
+        <eth-blockies [address]="account.address"></eth-blockies>
+        <h3>{{ account.address | address:'short' }}</h3>
+      </header>
+      <p>Balance: {{ account.balance | ether }}</p>
+      <p>Tx count: {{ account.transactions.length }}</p>
+    </a>
+  </li>
+</ul>
