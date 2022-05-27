@@ -3,11 +3,19 @@
   <table>
     <tr>
       <td>Transaction hash</td>
-      <td>{{ tx.hash }}</td>
+      <td>{{ tx.transactionHash }}</td>
     </tr>
     <tr>
       <td>Transaction Status</td>
       <td></td>
+    </tr>
+    <tr>
+      <td>From</td>
+      <td><a [routerLink]="['/address', tx.from]">{{ tx.from }}</a></td>
+    </tr>
+    <tr>
+      <td>To</td>
+      <td><a [routerLink]="['/address', tx.to]">{{ tx.to }}</a></td>
     </tr>
   </table>
 </ng-container>

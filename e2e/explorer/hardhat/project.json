@@ -7,21 +7,21 @@
     "build": {
       "options": {
         "config": "e2e/explorer/hardhat/hardhat.config.ts",
-        "tsconfig": "e2e/explorer/hardhat/tsconfig.hardhat.json"
+        "tsconfig": "e2e/explorer/hardhat/tsconfig.app.json"
       },
       "executor": "@ngeth/hardhat:build"
     },
     "serve": {
       "options": {
         "config": "e2e/explorer/hardhat/hardhat.config.ts",
-        "tsconfig": "e2e/explorer/hardhat/tsconfig.hardhat.json"
+        "tsconfig": "e2e/explorer/hardhat/tsconfig.app.json"
       },
       "executor": "@ngeth/hardhat:serve"
     },
     "test": {
       "options": {
         "config": "e2e/explorer/hardhat/hardhat.config.ts",
-        "tsconfig": "e2e/explorer/hardhat/tsconfig.hardhat.json"
+        "tsconfig": "e2e/explorer/hardhat/tsconfig.app.json"
       },
       "executor": "@ngeth/hardhat:test"
     }

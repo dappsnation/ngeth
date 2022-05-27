@@ -1,7 +1,8 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Provider } from '@ethersproject/providers';
-import { switchMap, map, filter } from 'rxjs/operators';
+import { combineLatest } from 'rxjs';
+import { map, filter } from 'rxjs/operators';
+import { BlockExplorer } from '../explorer';
 import { exist } from '../utils';
 
 @Component({
@@ -11,11 +12,19 @@ import { exist } from '../utils';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TransactionComponent {
-  tx$ = this.route.paramMap.pipe(
+  private hash$ = this.route.paramMap.pipe(
     map((paramMap) => paramMap.get('hash')),
     filter(exist),
-    switchMap((hash) => this.provider.getTransaction(hash))
   );
+  tx$ = combineLatest([
+    this.explorer.txs$,
+    this.hash$,
+  ]).pipe(
+    map(([txs, hash]) => txs[hash])
+  )
 
-  constructor(private provider: Provider, private route: ActivatedRoute) {}
+  constructor(
+    private explorer: BlockExplorer,
+    private route: ActivatedRoute,
+  ) {}
 }

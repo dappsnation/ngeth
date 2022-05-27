@@ -2,6 +2,7 @@ import { Inject, Optional, Pipe, PipeTransform } from '@angular/core';
 import { BigNumber, BigNumberish } from 'ethers';
 import { getAddress } from '@ethersproject/address';
 import { formatUnits, formatEther } from '@ethersproject/units';
+import { EtherSymbol } from '@ethersproject/constants';
 import { isBytes } from '@ethersproject/bytes';
 import { Chain, ChainCurrency, ChainId, ChainManager, explore, isSupportedChain, SupportedChains, SUPPORTED_CHAINS } from './chain';
 import { map } from 'rxjs/operators';
@@ -23,15 +24,23 @@ export class BigNumberPipe implements PipeTransform {
   }
 }
 
-@Pipe({ name: 'eth' })
-export class EthPipe implements PipeTransform {
-  constructor(@Optional() private chain?: ChainManager) {}
-  transform(value?: BigNumberish | null, chainId?: ChainId) {
+@Pipe({ name: 'ether' })
+export class EtherPipe implements PipeTransform {
+  transform(value?: BigNumberish | null) {
     if (value === null || value === undefined) return;
-    if (!this.chain) return formatEther(value);
+    return `${formatEther(value)}${EtherSymbol}`;
+  }
+}
+
+@Pipe({ name: 'ethCurrency' })
+export class EthCurrencyPipe implements PipeTransform {
+  constructor(@Optional() private chain?: ChainManager) {}
+  async transform(value?: BigNumberish | null, chainId?: ChainId) {
+    if (value === null || value === undefined) return;
+    if (!this.chain) return `${formatEther(value)}${EtherSymbol}`;
     if (chainId) {
-      return this.chain.getChain(chainId)
-        .then(chain => formatNativeCurrency(value, chain.nativeCurrency));
+      const chain = await this.chain.getChain(chainId)
+      return formatNativeCurrency(value, chain.nativeCurrency);
     }
     return this.chain.chain$.pipe(
       map(chain => formatNativeCurrency(value, chain.nativeCurrency))
@@ -48,7 +57,7 @@ export class ChainPipe implements PipeTransform {
 }
 
 @Pipe({ name: 'explore' })
-export class ExporePipe implements PipeTransform {
+export class ExplorePipe implements PipeTransform {
   transform(search: string, chain: Chain) {
     return explore(chain, search);
   }
@@ -71,4 +80,12 @@ export class AddressPipe implements PipeTransform {
   }
 }
 
-export const ethersPipes = [BigNumberPipe, EthPipe, ExporePipe, AddressPipe, SupportedChainPipe, ChainPipe];
+export const ethersPipes = [
+  BigNumberPipe,
+  EtherPipe, 
+  EthCurrencyPipe,
+  ExplorePipe,
+  AddressPipe,
+  SupportedChainPipe,
+  ChainPipe,
+];

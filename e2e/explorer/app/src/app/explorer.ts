@@ -1,42 +1,46 @@
-import { Injectable, OnDestroy } from '@angular/core';
-import { Provider, Block } from '@ethersproject/providers';
-import { firstValueFrom, ReplaySubject } from 'rxjs';
-import { map, filter, shareReplay } from 'rxjs/operators';
+import { Injectable } from '@angular/core';
+import { firstValueFrom, fromEvent, ReplaySubject, Subject } from 'rxjs';
+import { map, filter, shareReplay, tap } from 'rxjs/operators';
+import { BlockchainState } from '@explorer';
+
+import { io } from "socket.io-client";
+
 
 @Injectable({ providedIn: 'root' })
-export class BlockExplorer implements OnDestroy {
-  #blockChanges = new ReplaySubject<number>();
-  #blocks: Block[] = [];
-  blockNumber$ = this.#blockChanges.asObservable();
-  blocks$ = this.#blockChanges.asObservable().pipe(
-    map(() => this.#blocks),
-    shareReplay({ refCount: true, bufferSize: 1 })
+export class BlockExplorer {
+  #sourceChanges = new ReplaySubject<void>();
+  source: BlockchainState = {
+    blocks: [],
+    transactions: {},
+    addresses: {},
+    states: [],
+  };
+  blocks$ = this.#sourceChanges.pipe(
+    map(() => this.source.blocks),
+  );
+  txs$ = this.#sourceChanges.pipe(
+    map(() => this.source.transactions),
+  );
+  addresses$ = this.#sourceChanges.pipe(
+    map(() => this.source.addresses),
+  );
+  states$ = this.#sourceChanges.pipe(
+    map(() => this.source.states),
   );
 
-  constructor(private provider: Provider) {
-    this.init();
+  constructor() {
+    const socket = io('http://localhost:3333');
+    socket.on('block', source => {
+      this.source = source;
+      this.#sourceChanges.next();
+    })
   }
 
-  async init() {
-    this.provider.on('block', async (blockNumber: number) => {
-      this.#blocks[blockNumber] = await this.provider.getBlock(blockNumber);
-      this.#blockChanges.next(blockNumber);
-    });
-    const current = await this.provider.getBlockNumber();
-    for (let i = 0; i < current; i++) {
-      this.provider.getBlock(i).then((block) => (this.#blocks[i] = block));
-    }
-  }
-
-  ngOnDestroy() {
-    this.provider.off('block');
-  }
-
-  async get(blockNumber: number) {
-    if (blockNumber in this.#blocks) return this.#blocks[blockNumber];
-    const obs = this.blocks$.pipe(
-      filter((blocks) => blockNumber in blocks),
-      map((blocks) => blocks[blockNumber])
+  async get<K extends keyof BlockchainState>(key: K, value: keyof BlockchainState[K]) {
+    if (value in this.source[key]) return this.source[key][value];
+    const obs = this.#sourceChanges.pipe(
+      filter(() => value in this.source[key]),
+      map(() => this.source[key][value])
     );
     return firstValueFrom(obs);
   }

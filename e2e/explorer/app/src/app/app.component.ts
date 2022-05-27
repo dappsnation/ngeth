@@ -3,6 +3,7 @@ import { WalletManager } from './wallet';
 import { isAddress } from '@ethersproject/address';
 import { Router } from '@angular/router';
 import { Provider } from '@ethersproject/providers';
+import { parseEther } from 'ethers/lib/utils';
 
 const privateKeys = [
   '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80',
@@ -26,6 +27,7 @@ export class AppComponent {
   ) {
     this.walletManager.add(privateKeys);
     this.select(this.walletManager.accounts[0]);
+    this.walletManager.signer?.sendTransaction({ value: parseEther('1'), to: this.walletManager.accounts[1] })
   }
 
   async search(event: Event, input: HTMLInputElement) {

@@ -1,8 +1,7 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Provider } from '@ethersproject/providers';
 import { combineLatest } from 'rxjs';
-import { filter, map, switchMap } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { BlockExplorer } from '../explorer';
 import { exist } from '../utils';
 
@@ -17,11 +16,16 @@ export class AddressComponent {
     map((paramMap) => paramMap.get('address')),
     filter(exist)
   );
-  balance$ = combineLatest([this.address$, this.explorer.blockNumber$]).pipe(
-    switchMap(([address]) => this.provider.getBalance(address))
+
+  account$ = combineLatest([this.explorer.addresses$, this.address$]).pipe(
+    map(([addresses, address]) => addresses[address]),
+    map(account => ({
+      ...account,
+      transactions: account.transactions.map(hash => this.explorer.get('transactions', hash))
+    }))
   );
+
   constructor(
-    private provider: Provider,
     private explorer: BlockExplorer,
     private route: ActivatedRoute
   ) {}

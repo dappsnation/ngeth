@@ -1,14 +1,12 @@
 import { Balance, BalanceMulti, GetParams } from "./types";
 import { states, State } from '../block';
-import { BigNumber } from "ethers";
-
 
 export function balance({ address, tag }: GetParams<Balance>): string {
   let state: State | undefined;
   if (tag === 'latest') state = states[states.length - 1]; // .balances[address];
   if (tag === 'earliest') state = states.find(state => address in state.balances); // ?.balances[address];
   if (tag === 'pending') state; // TODO: What is "pending" for ?
-  const balance = state?.balances[address] ?? BigNumber.from(0);
+  const balance = state?.balances[address] ?? '0x00';
   return balance.toString().replace('0x', '');
 }
 
