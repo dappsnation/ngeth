@@ -37,7 +37,12 @@
             </td>
             <td>{{ tx.from === account.address ? 'OUT' : 'IN' }}</td>
             <td>
-              <a [routerLink]="['/address', tx.to]">{{ tx.to }}</a>
+              <ng-container *ngIf="tx.to; else contractAddress">
+                <a [routerLink]="['/address', tx.to]">{{ tx.to }}</a>
+              </ng-container>
+              <ng-template #contractAddress>
+                <a [routerLink]="['/address', tx.contractAddress]">{{ tx.contractAddress }}</a>
+              </ng-template>
             </td>
           </tr>
         </ng-container>

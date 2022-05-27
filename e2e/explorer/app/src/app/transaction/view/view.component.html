@@ -6,8 +6,12 @@
       <td>{{ tx.transactionHash }}</td>
     </tr>
     <tr>
+      <th>Transaction Index</th>
+      <td>{{ tx.transactionIndex }}</td>
+    </tr>
+    <tr>
       <th>Transaction Status</th>
-      <td></td>
+      <td>{{ tx.status === 1 ? 'Succeed' : 'Failed' }}</td>
     </tr>
     <tr>
       <th>From</th>
@@ -16,6 +20,14 @@
     <tr>
       <th>To</th>
       <td><a [routerLink]="['/address', tx.to]">{{ tx.to }}</a></td>
+    </tr>
+    <tr>
+      <th>Contract Address</th>
+      <td><a [routerLink]="['/address', tx.contractAddress]">{{ tx.contractAddress }}</a></td>
+    </tr>
+    <tr>
+      <th>Gas Used</th>
+      <td>{{ tx.gasUsed | bignumber }}</td>
     </tr>
   </table>
 </ng-container>

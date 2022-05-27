@@ -13,6 +13,7 @@ a {
   color: inherit;
   header {
     display: flex;
+    align-items: center;
     gap: var(--size-1);
     margin-block-end: var(--size-1);
     color: var(--text-1);

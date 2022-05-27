@@ -1,6 +1,7 @@
 import { Block, TransactionReceipt } from "@ethersproject/abstract-provider";
 import { Networkish } from "@ethersproject/networks";
 import { BaseProvider, getDefaultProvider } from "@ethersproject/providers";
+import { getAddress } from "@ethersproject/address";
 import { EthState, EthAccount } from '@explorer';
 import { Socket } from 'socket.io';
 
@@ -30,9 +31,14 @@ const hardhatAccounts = [
   '0x14dc79964da2c08b23698b3d3cc7ca32193d9955',
   '0x23618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f',
   '0xa0ee7a142d267c1f36714e4a8f75612f20a79720',
-];
+].map(getAddress);
 
-const initAccount = (address: string): EthAccount => ({ address, transactions: [], balance: '0x00' });
+const initAccount = (address: string, isContract = false): EthAccount => ({
+  address,
+  transactions: [],
+  balance: '0x00',
+  isContract
+});
 
 
 async function init() {
@@ -62,6 +68,10 @@ export function blockListener(network: Networkish = 'http://localhost:8545') {
   // Start Listening on the node
   console.log('Start listening on Ethereum Network', network);
   provider = getDefaultProvider(network);
+
+  // TODO: Listen on pending transaction
+
+  // Listen on block changes
   provider.on('block', async (blockNumber: number) => {
     const block = await provider.getBlock(blockNumber);
     await registerBlock(block);
@@ -91,26 +101,46 @@ async function registerBlock(block: Block) {
 function registerTransactions(txs: TransactionReceipt[]) {
   for (const tx of txs) {
     transactions[tx.transactionHash] = tx;
-    if (!addresses[tx.from]) addresses[tx.from] = initAccount(tx.from);
-    addresses[tx.from].transactions.unshift(tx.transactionHash);
-    if (!addresses[tx.to]) addresses[tx.to] = initAccount(tx.to);
-    addresses[tx.to].transactions.unshift(tx.transactionHash);
+    // Add to addresses (from, to, contractAddress)
+    addressesFromTx(tx).map(address => addTx(address, tx));
+
+    // Get logs
+
   }
+}
+
+function addressesFromTx(tx: TransactionReceipt) {
+  const addresses = [tx.from];
+  if (tx.to) addresses.push(tx.to);
+  if (tx.contractAddress) addresses.push(tx.contractAddress);
+  return addresses.map(getAddress);
 }
 
 function registerState(block: Block, txs: TransactionReceipt[]) {
   states[block.number] = states[block.number - 1] ?? { balances: {} };
-  const addressesSet = new Set([...txs.map(tx => tx.from), ...txs.map(tx => tx.to)]);
+  const addressesSet = new Set(txs.map(addressesFromTx).flat());
   addressesSet.forEach(async address => {
-    const balance = await provider.getBalance(address);
+    const balance = await provider.getBalance(address, block.number);
     states[block.number].balances[address] = balance.toHexString();
-    // Overwrite last balance
-    if (!addresses[address]) addresses[address] = initAccount(address);
-    addresses[address].balance = balance.toHexString();
-  })
+  });
+  addressesSet.forEach(setBalance)
+  // Overwrite last balance
 }
 
 
+/////////////
+// ACCOUNT //
+/////////////
+async function addTx(address: string, tx: TransactionReceipt) {
+  if (!addresses[address]) addresses[address] = initAccount(address, !!tx.contractAddress);
+  addresses[address].transactions.unshift(tx.transactionHash);
+}
+
+async function setBalance(address: string) {
+  const balance = await provider.getBalance(address);
+  if (!addresses[address]) addresses[address] = initAccount(address);
+  addresses[address].balance = balance.toHexString();
+}
 
 //////////////
 // CONTRACT //

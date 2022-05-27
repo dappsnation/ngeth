@@ -5,7 +5,7 @@ import '@ngeth/hardhat';
  * @type import('hardhat/config').HardhatUserConfig
  */
 export default {
-  solidity: '0.8.0',
+  solidity: '0.8.11',
   paths: {
     sources: './src',
     tests: './tests',
@@ -13,6 +13,8 @@ export default {
   },
   ngeth: {
     outDir: './contracts',
-    autoDeploy: {},
+    autoDeploy: {
+      BaseERC20: [],
+    },
   },
 };

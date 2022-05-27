@@ -23,6 +23,7 @@ export class BlockExplorer {
   constructor() {
     const socket = io('http://localhost:3333');
     socket.on('block', source => {
+      console.log(source);
       this.source = source;
       this.#sourceChanges.next();
     })

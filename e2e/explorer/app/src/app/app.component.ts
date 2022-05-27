@@ -3,7 +3,7 @@ import { WalletManager } from './wallet';
 import { isAddress } from '@ethersproject/address';
 import { Router } from '@angular/router';
 import { Provider } from '@ethersproject/providers';
-import { parseEther } from 'ethers/lib/utils';
+import { parseEther } from '@ethersproject/units';
 
 const privateKeys = [
   '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80',

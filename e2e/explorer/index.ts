@@ -1,6 +1,7 @@
 import { TransactionReceipt, Block } from '@ethersproject/abstract-provider';
 
 export interface EthAccount {
+  isContract: boolean;
   address: string;
   balance: string;
   transactions: string[];

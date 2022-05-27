@@ -20,7 +20,7 @@ export class BigNumberPipe implements PipeTransform {
     if (typeof value === 'bigint') return value.toString(10);
     if (typeof value === 'string') return value.startsWith('0x') ? parseInt(value) : value;
     if (isBytes(value)) return new Uint8Array(value).toString(); // todo
-    return value;
+    return BigNumber.from(value).toString();
   }
 }
 

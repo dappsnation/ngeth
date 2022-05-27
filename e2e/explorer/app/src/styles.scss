@@ -92,6 +92,13 @@ h1, h2, h3, h4, h5, h6, p {
   background-color: var(--background-2);
 }
 
+.tag {
+  color: var(--text-1);
+  border: 1px solid var(--border-1);
+  border-radius: var(--size-0);
+  padding: var(--size-0) var(--size-1);
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
@@ -132,6 +139,9 @@ ul.list {
   list-style: none;
   margin: 0;
   padding-left: 0;
+  li:not(.item) {
+    display: contents;
+  }
   .item {
     display: block;
     padding: var(--size-2) var(--size-2);
@@ -151,6 +161,9 @@ ul.grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: var(--size-3);
+  li:not(.item) {
+    display: contents;
+  }
 }
 
 
