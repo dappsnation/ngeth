@@ -5,10 +5,10 @@ import { EthState } from "@explorer";
 export function balance({ address, tag }: GetParams<Balance>): string {
   let state: EthState | undefined;
   if (tag === 'latest') {
-    state = states[states.length - 1]; // .balances[address];
+    state = states[states.length - 1];
   }
   else if (tag === 'earliest') {
-    state = states[0]; // ?.balances[address];
+    state = states[0];
   }
   else if (tag === 'pending') {
     state = states[states.length - 1]; // same as "lastest" because Hardhat doesn't support pending transaction
