@@ -4,9 +4,15 @@ import { EthState } from "@explorer";
 
 export function balance({ address, tag }: GetParams<Balance>): string {
   let state: EthState | undefined;
-  if (tag === 'latest') state = states[states.length - 1]; // .balances[address];
-  else if (tag === 'earliest') state = states[0]; // ?.balances[address];
-  else if (tag === 'pending') state; // TODO: What is "pending" for ?
+  if (tag === 'latest') {
+    state = states[states.length - 1]; // .balances[address];
+  }
+  else if (tag === 'earliest') {
+    state = states[0]; // ?.balances[address];
+  }
+  else if (tag === 'pending') {
+    state = states[states.length - 1]; // same as "lastest" because Hardhat doesn't support pending transaction
+  }
   else if (typeof tag === 'string') {
     tag = parseInt(tag, 10); // transform to decimal
     if (isNaN(tag)) throw new Error('Unvalid Value');
