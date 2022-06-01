@@ -5,8 +5,18 @@ import { EthState } from "@explorer";
 export function balance({ address, tag }: GetParams<Balance>): string {
   let state: EthState | undefined;
   if (tag === 'latest') state = states[states.length - 1]; // .balances[address];
-  if (tag === 'earliest') state = states.find(state => address in state.balances); // ?.balances[address];
-  if (tag === 'pending') state; // TODO: What is "pending" for ?
+  else if (tag === 'earliest') state = states[0]; // ?.balances[address];
+  else if (tag === 'pending') state; // TODO: What is "pending" for ?
+  else if (typeof tag === 'string') {
+    tag = parseInt(tag, 10); // transform to decimal
+    if (isNaN(tag)) throw new Error('Unvalid Value');
+  }
+  if (typeof tag === 'number') {
+    tag = parseInt(tag as any, 10); // make sure this is a decimal
+    const index = tag < 0 ? states.length + tag : tag;
+    state = states[index];
+  }
+
   const balance = state?.balances[address] ?? '0x00';
   return balance.toString().replace('0x', '');
 }
