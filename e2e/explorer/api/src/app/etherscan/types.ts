@@ -38,9 +38,9 @@ export interface TxList extends BaseParams<'account', 'txlist'> {
   /** the integer block number to stop searching for transactions */
   endblock: number;
   /** the integer page number, if pagination is enabled */
-  page: number;
+  page?: number;
   /** the number of transactions displayed per page */
-  offset: number;
+  offset?: number;
   /** the sorting preference, use asc to sort by ascending and desc to sort by descendin Tip: Specify a smaller startblock and endblock range for faster search results. */
   sort: Sort;
 }

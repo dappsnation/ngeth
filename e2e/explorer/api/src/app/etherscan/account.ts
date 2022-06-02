@@ -1,5 +1,5 @@
-import { Balance, BalanceMulti, GetParams } from "./types";
-import { states } from '../block';
+import { Balance, BalanceMulti, GetParams, TxList } from "./types";
+import { states, addresses, transactions } from '../block';
 import { EthState } from "@explorer";
 
 export function balance({ address, tag }: GetParams<Balance>): string {
@@ -33,4 +33,20 @@ export function balanceMulti({ address, tag }: GetParams<BalanceMulti>): {accoun
     account,
     balance: balance({ address: account, tag })
   }));
+}
+
+export function txList(params: GetParams<TxList>) {
+  const {address, startblock, endblock, page, offset, sort} = params;
+  const transaction = addresses[address].transactions
+    .map(tx => transactions[tx])
+    .filter(tx => tx.from === address)
+    .filter(tx => tx.blockNumber >= startblock && tx.blockNumber <= endblock )
+    .slice((page*offset), page*(offset + 1));
+
+  if (sort === "asc") {
+    return transaction.sort();    
+  }
+  if (sort === "desc") {
+    return transaction.sort().reverse();   
+  }
 }
