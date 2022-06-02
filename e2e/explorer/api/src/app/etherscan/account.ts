@@ -37,16 +37,9 @@ export function balanceMulti({ address, tag }: GetParams<BalanceMulti>): {accoun
 
 export function txList(params: GetParams<TxList>) {
   const {address, startblock, endblock, page, offset, sort} = params;
-  const transaction = addresses[address].transactions
+  return addresses[address].transactions
     .map(tx => transactions[tx])
     .filter(tx => tx.from === address)
-    .filter(tx => tx.blockNumber >= startblock && tx.blockNumber <= endblock )
+    .filter(tx => tx.blockNumber >= startblock && tx.blockNumber <= endblock)
     .slice((page*offset), page*(offset + 1));
-
-  if (sort === "asc") {
-    return transaction.sort();    
-  }
-  if (sort === "desc") {
-    return transaction.sort().reverse();   
-  }
 }
