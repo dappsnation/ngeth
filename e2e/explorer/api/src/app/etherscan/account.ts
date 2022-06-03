@@ -36,10 +36,11 @@ export function balanceMulti({ address, tag }: GetParams<BalanceMulti>): {accoun
   }));
 }
 
-export function txList(params: GetParams<TxList>) {  
-  const {address, startblock = 0, endblock, page = 1, offset = 10000, sort = 'asc'} = params;
+export function txList(params: GetParams<TxList>): TransactionReceipt[] {  
+  const {address, startblock = 0, endblock, page = 1, sort = 'asc'} = params;
+  const offset = Math.min(params.offset ?? 10000, 10000);
   if (!params.address) throw new Error('Error! Missing or invalid Action name');
-  if (offset > 10000) return Math.min(offset, 10000);
+
   const txs = addresses[address].transactions
     .map(tx => transactions[tx])
     .filter(tx => {
