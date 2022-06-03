@@ -1,12 +1,12 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { BlockExplorer } from '../../explorer';
-import { exist } from '../../utils';
+import { BlockExplorer } from '../../../explorer';
+import { exist } from '../../../utils';
 import { combineLatest } from 'rxjs';
 import { map, filter } from 'rxjs/operators';
 
 @Component({
-  selector: 'eth-transaction-view',
+  selector: 'explorer-transaction-view',
   templateUrl: './view.component.html',
   styleUrls: ['./view.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush

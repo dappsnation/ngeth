@@ -18,37 +18,37 @@ import { AppComponent } from './app.component';
       {
         path: 'blocks',
         loadChildren: () =>
-          import('./block/list/list.module').then((m) => m.ListModule),
+          import('./pages/block/list/list.module').then((m) => m.ListModule),
       },
       {
         path: 'block/:blockNumber',
         loadChildren: () =>
-          import('./block/view/view.module').then((m) => m.ViewModule),
+          import('./pages/block/view/view.module').then((m) => m.ViewModule),
       },
       {
         path: 'txs',
         loadChildren: () =>
-          import('./transaction/list/list.module').then((m) => m.ListModule),
+          import('./pages/transaction/list/list.module').then((m) => m.ListModule),
       },
       {
         path: 'tx/:hash',
         loadChildren: () =>
-          import('./transaction/view/view.module').then((m) => m.ViewModule),
+          import('./pages/transaction/view/view.module').then((m) => m.ViewModule),
       },
       {
         path: 'addresses',
         loadChildren: () =>
-          import('./address/list/list.module').then((m) => m.ListModule),
+          import('./pages/address/list/list.module').then((m) => m.ListModule),
       },
       {
         path: 'address/:address',
         loadChildren: () =>
-          import('./address/view/view.module').then((m) => m.ViewModule),
+          import('./pages/address/view/view.module').then((m) => m.ViewModule),
       },
       {
         path: 'contract/:address',
         loadChildren: () =>
-          import('./contract/contract.module').then((m) => m.ContractModule),
+          import('./pages/contract/contract.module').then((m) => m.ContractModule),
       },
     ]),
   ],

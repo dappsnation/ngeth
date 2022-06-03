@@ -1,16 +1,13 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { BlockExplorer } from '../../explorer';
-import { map } from 'rxjs/operators';
+import { BlockExplorer } from '../../../explorer';
 
 @Component({
-  selector: 'eth-block-list',
+  selector: 'explorer-transaction-list',
   templateUrl: './list.component.html',
   styleUrls: ['./list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ListComponent {
-  blocks$ = this.explorer.blocks$.pipe(
-    map(blocks => blocks.reverse())
-  );
+  txs$ = this.explorer.txs$;
   constructor(private explorer: BlockExplorer) {}
 }

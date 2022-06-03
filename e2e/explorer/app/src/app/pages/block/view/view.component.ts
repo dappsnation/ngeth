@@ -1,12 +1,12 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { BlockExplorer } from '../../explorer';
-import { exist } from '../../utils';
+import { BlockExplorer } from '../../../explorer';
+import { exist } from '../../../utils';
 import { map, filter, shareReplay } from 'rxjs/operators';
 import { combineLatest } from 'rxjs';
 
 @Component({
-  selector: 'eth-block-view',
+  selector: 'explorer-block-view',
   templateUrl: './view.component.html',
   styleUrls: ['./view.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush

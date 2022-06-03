@@ -1,9 +1,9 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { BlockExplorer } from '../../explorer';
+import { BlockExplorer } from '../../../explorer';
 import { map } from 'rxjs/operators';
 
 @Component({
-  selector: 'eth-address-list',
+  selector: 'explorer-address-list',
   templateUrl: './list.component.html',
   styleUrls: ['./list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
