@@ -14,6 +14,7 @@ export class BlockExplorer {
     transactions: {},
     addresses: {},
     states: [],
+    abis: {}
   };
   blocks$ = this.#sourceChanges.pipe(map(() => this.source.blocks));
   txs$ = this.#sourceChanges.pipe(map(() => this.source.transactions));
@@ -23,7 +24,6 @@ export class BlockExplorer {
   constructor() {
     const socket = io('http://localhost:3333');
     socket.on('block', source => {
-      console.log(source);
       this.source = source;
       this.#sourceChanges.next();
     })

@@ -4,12 +4,16 @@ import { BaseProvider, getDefaultProvider } from "@ethersproject/providers";
 import { getAddress } from "@ethersproject/address";
 import { EthState, EthAccount } from '@explorer';
 import { Socket } from 'socket.io';
+import { findABI, setArtifact } from "./artifacts";
+import { setABI, abis } from "./abi";
+import { promises as fs } from "fs";
+import { join } from "path";
 
 
-let provider: BaseProvider;
+export let provider: BaseProvider;
 /** All the blocks */
 export const blocks: Block[] = [];
-/** All transactions recorded by their hash */
+/** All transactions response recorded by their hash */
 export const transactions: Record<string, TransactionReceipt> = {};
 /** History of transaction per addresses */
 export const addresses: Record<string, EthAccount> = {};
@@ -37,11 +41,27 @@ const initAccount = (address: string, isContract = false): EthAccount => ({
   address,
   transactions: [],
   balance: '0x00',
-  isContract
+  isContract  
 });
 
+async function initFactories(root: string) {
+  const folders = await fs.readdir(root);
+  for (const folder of folders) {
+    const files = await fs.readdir(join(root, folder));
+    for (const file of files) {
+      const path = join(root, folder, file);
+      if (path.endsWith('.dbg.json')) continue;
+      if (path.endsWith('.json')) {
+        const res = await fs.readFile(path, 'utf8');
+        const arfitact = JSON.parse(res);
+        setArtifact(arfitact);
+      }
+    }
+  }
+}
 
 async function init() {
+  await initFactories('C:/code/blockchain/ngeth/e2e/explorer/hardhat/artifacts/src')
   const current = await provider.getBlockNumber();
   for (let i = 0; i < current; i++) {
     provider.getBlock(i).then(registerBlock);
@@ -61,7 +81,7 @@ async function init() {
 export function blockListener(network: Networkish = 'http://localhost:8545') {
   const sockets: Record<string, Socket> = {};
   const emit = () => {
-    const data = { blocks, transactions, addresses, states };
+    const data = { blocks, transactions, addresses, states, abis };
     Object.values(sockets).forEach(socket => socket.emit('block', data))
   }
 
@@ -69,9 +89,7 @@ export function blockListener(network: Networkish = 'http://localhost:8545') {
   console.log('Start listening on Ethereum Network', network);
   provider = getDefaultProvider(network);
 
-  // TODO: Listen on pending transaction
-
-  // Listen on block changes
+  // Listen on block changes (Hardh hat doesn't support pending transaction event)
   provider.on('block', async (blockNumber: number) => {
     const block = await provider.getBlock(blockNumber);
     await registerBlock(block);
@@ -92,7 +110,7 @@ export function blockListener(network: Networkish = 'http://localhost:8545') {
 
 async function registerBlock(block: Block) {
   blocks[block.number] = block;
-  const get = block.transactions.map(hash => provider.getTransactionReceipt(hash))
+  const get = block.transactions.map(hash => provider.getTransactionReceipt(hash));
   const txs = await Promise.all(get);
   registerTransactions(txs);
   registerState(block, txs);
@@ -103,9 +121,7 @@ function registerTransactions(txs: TransactionReceipt[]) {
     transactions[tx.transactionHash] = tx;
     // Add to addresses (from, to, contractAddress)
     addressesFromTx(tx).map(address => addTx(address, tx));
-
-    // Get logs
-
+    if (tx.contractAddress) registerABI(tx.contractAddress);
   }
 }
 
@@ -145,3 +161,9 @@ async function setBalance(address: string) {
 //////////////
 // CONTRACT //
 //////////////
+async function registerABI(address: string) {
+  const code = await provider.getCode(address);
+  const abi = findABI(code);
+  if (!abi) return;
+  setABI(address, abi);
+}

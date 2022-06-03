@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "C:\\code\\blockchain\\ngeth\\e2e\\explorer\\hardhat\\src\\BaseERC20.sol": {
-      "lastModificationDate": 1653664223166,
-      "contentHash": "6c325ee751ddd61cff70c813b920ca0d",
+      "lastModificationDate": 1654182068459,
+      "contentHash": "10fb8e1dea23dae1b5fabdb9a9ca272d",
       "sourceName": "src/BaseERC20.sol",
       "solcConfig": {
         "version": "0.8.11",

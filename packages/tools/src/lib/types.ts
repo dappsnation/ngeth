@@ -44,9 +44,15 @@ export interface ABIParameter {
   internalType?: string;
 }
 
+interface ABIEventParameter extends ABIParameter {
+  /** true if the field is part of the log’s topics, false if it one of the log’s data segment. */
+  indexed: boolean;
+}
+
+
 export interface FunctionDescription {
   /** Type of the method. default is 'function' */
-  type?: 'function' | 'constructor' | 'fallback';
+  type?: 'function' | 'constructor' | 'fallback' | 'receive';
   /** The name of the function. Constructor and fallback functions never have a name */
   name?: string;
   /** List of parameters of the method. Fallback functions don’t have inputs. */
@@ -64,10 +70,7 @@ export interface FunctionDescription {
 export interface EventDescription {
   type: 'event';
   name: string;
-  inputs: (ABIParameter & {
-    /** true if the field is part of the log’s topics, false if it one of the log’s data segment. */
-    indexed: boolean;
-  })[];
+  inputs: ABIEventParameter[];
   /** true if the event was declared as anonymous. */
   anonymous: boolean;
 }

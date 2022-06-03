@@ -14,7 +14,7 @@ export default {
   ngeth: {
     outDir: './contracts',
     autoDeploy: {
-      BaseERC20: [],
+      BaseERC20: ["Name"],
     },
   },
 };

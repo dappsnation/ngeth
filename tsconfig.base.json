@@ -25,7 +25,8 @@
       "@ngeth/opensea": ["packages/opensea/src/index.ts"],
       "@ngeth/openzeppelin": ["packages/openzeppelin/src/index.ts"],
       "@ngeth/polygon": ["packages/polygon/src/index.ts"],
-      "@ngeth/tools": ["packages/tools/src/index.ts"]
+      "@ngeth/tools": ["packages/tools/src/index.ts"],
+      "@type/solc": ["packages/@type/solc/index.d.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

@@ -1,3 +1,5 @@
+import { EvmVersion } from "@type/solc";
+
 export type EtherscanParams = AccountsParams | ContractParams | TransactionParams;
 
 export type Tag = number | 'latest' | 'pending' | 'earliest';
@@ -63,13 +65,41 @@ export interface TxListInternal extends BaseParams<'account', 'txlistinternal'> 
 // CONTRACT //
 //////////////
 // Params
-export type ContractParams = GetABI;
+export type ContractParams = GetABI | VerifySourceCode;
 export interface GetABI {
   module: 'contract';
   action: 'getabi';
   address: string;
   apiKey: string;
 }
+
+type LibraryName<T extends number> = {[key in `libraryname${T}`]: string };
+type LibraryAddress<T extends number> = {[key in `libraryaddress${T}`]: string };
+type Library<T extends number> = Partial<LibraryName<T>> & Partial<LibraryAddress<T>>;
+
+interface VerifySourceCodeParams extends BaseParams<'contract', 'verifysourcecode'> {
+  contractaddress: string;
+  /** Contract Source Code (Flattened if necessary) */
+  sourceCode: string;
+  /** solidity-single-file (default) or solidity-standard-json-input (for std-input-json-format support */          
+  codeformat: 'solidity-single-file' | 'solidity-standard-json-input';
+  /** ContractName (if codeformat=solidity-standard-json-input, then enter contractname as ex: erc20.sol:erc20) */
+  contractname: string;
+  /** see https://etherscan.io/solcversions for list of support versions */
+  compilerversion: string;
+  /** 0 = No Optimization, 1 = Optimization used (applicable when codeformat=solidity-single-file) */
+  optimizationUsed: 0 | 1;
+  /** set to 200 as default unless otherwise  (applicable when codeformat=solidity-single-file) */
+  runs: number;
+  /** Arguments used in the constructor of the contract when it has been deployed */
+  constructorArguements?: string;
+  /** leave blank for compiler default, homestead, tangerineWhistle, spuriousDragon, byzantium, constantinople, petersburg, istanbul (applicable when codeformat=solidity-single-file) */
+  evmversion?: EvmVersion;
+  /** Valid codes 1-14 see https://etherscan.io/contract-license-types */
+  licenseType: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14;
+}
+
+export type VerifySourceCode = VerifySourceCodeParams & Library<1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10>;
 
 
 /////////////////

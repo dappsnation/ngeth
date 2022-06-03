@@ -1,0 +1,5 @@
+{
+  "name": "@types/solc",
+  "version": "0.8.14",
+  "types": "index.d.ts"
+}
