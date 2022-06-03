@@ -57,6 +57,5 @@ export function txList(params: GetParams<TxList>): TransactionReceipt[] {
   const sortFn = sorting[sort];    
   const sorted = txs.sort(sortFn);
   if (! offset || !page) return sorted;
-  if (page === 1) return sorted.slice(page, offset*page);
-  return sorted.slice((page*offset), offset*(page + 1));
+  return sorted.slice(offset*(page-1), offset*page);
 }
