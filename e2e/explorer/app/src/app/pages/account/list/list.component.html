@@ -1,6 +1,6 @@
 <ul class="grid">
   <li *ngFor="let account of accounts$ | async">
-    <a class="surface item" [routerLink]="['/address', account.address]">
+    <a class="surface item" [routerLink]="['/account', account.address]">
       <header>
         <eth-blockies [address]="account.address"></eth-blockies>
         <h3>{{ account.address | address:'short' }}</h3>

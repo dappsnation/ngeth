@@ -166,6 +166,27 @@ ul.grid {
   }
 }
 
+nav ul {
+  list-style: none;
+  margin: 0;
+  padding-left: 0;
+  display: flex;
+  gap: var(--size-1);
+  li {
+    display: contents;
+  }
+  a {
+    padding: var(--size-1) var(--size-2);
+    color: inherit;
+    text-decoration: none;
+    &:hover {
+      background-color: var(--background-2);
+    }
+    &.active {
+      border-bottom: 1px solid var(--accent-0);
+    }
+  }
+}
 
 form {
   input {

@@ -36,20 +36,25 @@ import { AppComponent } from './app.component';
           import('./pages/transaction/view/view.module').then((m) => m.ViewModule),
       },
       {
-        path: 'addresses',
+        path: 'accounts',
         loadChildren: () =>
-          import('./pages/address/list/list.module').then((m) => m.ListModule),
+          import('./pages/account/list/list.module').then((m) => m.ListModule),
       },
       {
-        path: 'address/:address',
+        path: 'account/:address',
         loadChildren: () =>
-          import('./pages/address/view/view.module').then((m) => m.ViewModule),
+          import('./pages/account/view/view.module').then((m) => m.ViewModule),
+      },
+      {
+        path: 'contracts',
+        loadChildren: () =>
+          import('./pages/contract/list/list.module').then((m) => m.ListModule),
       },
       {
         path: 'contract/:address',
         loadChildren: () =>
-          import('./pages/contract/contract.module').then((m) => m.ContractModule),
-      },
+          import('./pages/contract/view/view.module').then((m) => m.ViewModule),
+      }
     ]),
   ],
   providers: [rpcProvider('http://localhost:8545')],

@@ -3,14 +3,14 @@ import { BlockExplorer } from '../../../explorer';
 import { map } from 'rxjs/operators';
 
 @Component({
-  selector: 'explorer-transaction-list',
+  selector: 'explorer-account-list',
   templateUrl: './list.component.html',
   styleUrls: ['./list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ListComponent {
-  txs$ = this.explorer.txs$.pipe(
-    map(txs => Object.values(txs))
+  accounts$ = this.explorer.accounts$.pipe(
+    map(record => Object.values(record))
   );
   constructor(private explorer: BlockExplorer) {}
 }

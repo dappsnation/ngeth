@@ -13,3 +13,9 @@ article {
     border-bottom: solid 1px var(--border-1);
   }
 }
+
+.block-number {
+  display: flex;
+  align-items: center;
+  gap: var(--size-2);
+}

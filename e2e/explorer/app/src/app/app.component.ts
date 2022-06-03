@@ -36,7 +36,7 @@ export class AppComponent {
     if (isAddress(value)) {
       const code = await this.provider.getCode(value);
       const isContract = code.length > 2;
-      const base = isContract ? '/contract' : '/address';
+      const base = isContract ? '/contract' : '/account';
       this.router.navigate([base, value]);
     } else if (value.startsWith('0x')) {
       this.router.navigate(['/tx', value]);

@@ -1,32 +1,35 @@
-<h1>Transactions</h1>
-<ng-container *ngIf="txs$ | async as txs; else loading">
-  <table class="list surface" *ngIf="txs.length; else empty">
+<ng-container *ngIf="contract$ | async as contract">
+  <table class="list" *ngIf="contract.transactions.length; else empty">
     <thead>
       <tr>
         <th>Txn Hash</th>
+        <th>Method</th>
         <th>Block</th>
         <th>From</th>
+        <th></th>
         <th>To</th>
       </tr>
     </thead>
     <tbody>
-      <ng-container *ngFor="let tx of txs">
-        <tr>
+      <ng-container  *ngFor="let getTx$ of contract.transactions">
+        <tr *ngIf="getTx$ | async as tx">
           <td>
             <a [routerLink]="['/tx', tx.transactionHash]">{{ tx.transactionHash }}</a>
           </td>
+          <td>Method</td>
           <td>
             <a [routerLink]="['/block', tx.blockNumber]">{{ tx.blockNumber }}</a>
           </td>
           <td>
-            <a [routerLink]="['/account', tx.from]">{{ tx.from }}</a>
+            <a [routerLink]="['/contract', tx.from]">{{ tx.from }}</a>
           </td>
+          <td>{{ tx.from === contract.address ? 'OUT' : 'IN' }}</td>
           <td>
             <ng-container *ngIf="tx.to; else contractAddress">
-              <a [routerLink]="['/account', tx.to]">{{ tx.to }}</a>
+              <a [routerLink]="['/contract', tx.to]">{{ tx.to }}</a>
             </ng-container>
             <ng-template #contractAddress>
-              <a [routerLink]="['/account', tx.contractAddress]">{{ tx.contractAddress }}</a>
+              <a [routerLink]="['/contract', tx.contractAddress]">{{ tx.contractAddress }}</a>
             </ng-template>
           </td>
         </tr>
@@ -34,11 +37,6 @@
     </tbody>
   </table>
 </ng-container>
-
-<ng-template #loading>
-  <p class="loading">Loading</p>
-</ng-template>
-
 <ng-template #empty>
   <p class="empty">There is no transaction for this address yet</p>
 </ng-template>

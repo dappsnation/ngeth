@@ -1,0 +1,25 @@
+<ng-container *ngIf="contract$ | async as contract">
+  <header>
+    <eth-blockies [address]="contract.address"></eth-blockies>
+    <h1>
+      Contract: <small>{{ contract.address }}</small>
+    </h1>
+  </header>
+  <article class="surface details">
+    <h2>Tokens</h2>
+    <span>Balance: {{ contract.balance | ether }}</span>
+  </article>
+  <article class="surface">
+    <nav>
+      <ul>
+        <li>
+          <a routerLink="transactions" routerLinkActive="active">Transactions</a>
+        </li>
+        <li>
+          <a routerLink="abi" routerLinkActive="active">ABI</a>
+        </li>
+      </ul>
+    </nav>
+    <router-outlet></router-outlet>
+  </article>
+</ng-container>

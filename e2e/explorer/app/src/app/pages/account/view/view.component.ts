@@ -7,7 +7,7 @@ import { filter, map } from 'rxjs/operators';
 import { EthAccount } from '@explorer';
 
 @Component({
-  selector: 'explorer-address-view',
+  selector: 'explorer-account-view',
   templateUrl: './view.component.html',
   styleUrls: ['./view.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -18,8 +18,8 @@ export class ViewComponent {
     filter(exist)
   );
 
-  account$ = combineLatest([this.explorer.addresses$, this.address$]).pipe(
-    map(([addresses, address]) => addresses[address]),
+  account$ = combineLatest([this.explorer.accounts$, this.address$]).pipe(
+    map(([accounts, address]) => accounts[address]),
     map(account => this.populate(account))
   );
 

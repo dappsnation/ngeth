@@ -6,12 +6,10 @@
     <table class="record">
       <tr>
         <th>Block Height</th>
-        <td>
+        <td class="block-number">
           <a [routerLink]="['..', block.number - 1]" *ngIf="block.number">Previous</a>
           <span>{{ block.number }}</span>
-          <a [routerLink]="['..', block.number + 1]" *ngIf="hasNext$ | async"
-            >Next</a
-          >
+          <a [routerLink]="['..', block.number + 1]" *ngIf="hasNext$ | async">Next</a>
         </td>
       </tr>
       <tr>
@@ -21,7 +19,7 @@
       <tr>
         <th>Mined By</th>
         <td>
-          <a [routerLink]="['/address', block.miner]">{{ block.miner }}</a>
+          <a [routerLink]="['/account', block.miner]">{{ block.miner }}</a>
         </td>
       </tr>
     </table>
