@@ -1,5 +1,6 @@
-import { Balance, BalanceMulti, GetParams } from "./types";
-import { states } from '../block';
+import { TransactionReceipt } from "@ethersproject/abstract-provider";
+import { Balance, BalanceMulti, GetParams, TxList } from "./types";
+import { states, addresses, transactions } from '../block';
 import { EthState } from "@explorer";
 
 export function balance({ address, tag }: GetParams<Balance>): string {
@@ -33,4 +34,28 @@ export function balanceMulti({ address, tag }: GetParams<BalanceMulti>): {accoun
     account,
     balance: balance({ address: account, tag })
   }));
+}
+
+export function txList(params: GetParams<TxList>): TransactionReceipt[] {  
+  const {address, startblock = 0, endblock, page, sort = 'asc'} = params;  
+  if (!address) throw new Error('Error! Missing or invalid Action name');
+
+  const txs = addresses[address].transactions
+    .map(tx => transactions[tx])
+    .filter(tx => {
+      if (tx.from !== address) return false;
+      if (startblock && tx.blockNumber < startblock) return false;
+      if (endblock && tx.blockNumber > endblock) return false;
+      return true;
+    });
+
+  const sorting = {
+    asc: (a: TransactionReceipt, b: TransactionReceipt) => a.blockNumber - b.blockNumber,
+    desc: (a: TransactionReceipt, b: TransactionReceipt) => b.blockNumber - a.blockNumber
+  };
+  const sortFn = sorting[sort];    
+  const sorted = txs.sort(sortFn);
+  if (!params.offset || !page) return sorted;
+  const offset = Math.min(params.offset, 10000);
+  return sorted.slice(offset*(page-1), offset*page);
 }
