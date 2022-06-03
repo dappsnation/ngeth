@@ -36,20 +36,24 @@ export function balanceMulti({ address, tag }: GetParams<BalanceMulti>): {accoun
   }));
 }
 
-export function txList(params: GetParams<TxList>) {
-  const {address, startblock, endblock, page, offset, sort} = params;
+export function txList(params: GetParams<TxList>) {  
+  const {address, startblock = 0, endblock, page = 1, offset = 10000, sort = 'asc'} = params;
+  if (!params.address) throw new Error('Error! Missing or invalid Action name');
+  if (offset > 10000) return Math.min(offset, 10000);
+  const txs = addresses[address].transactions
+    .map(tx => transactions[tx])
+    .filter(tx => {
+      if (tx.from !== address) return false;
+      if (startblock && tx.blockNumber < startblock) return false;
+      if (endblock && tx.blockNumber > endblock) return false;
+      return true;
+    });
+
   const sorting = {
     asc: (a: TransactionReceipt, b: TransactionReceipt) => a.blockNumber - b.blockNumber,
     desc: (a: TransactionReceipt, b: TransactionReceipt) => b.blockNumber - a.blockNumber
   };
-  const sortFn = sorting[sort];
-
-  const txs = addresses[address].transactions
-    .map(tx => transactions[tx])
-    .filter(tx => tx.from === address)
-    .filter(tx => tx.blockNumber >= startblock && tx.blockNumber <= endblock);
-    
+  const sortFn = sorting[sort];    
   const sorted = txs.sort(sortFn);
-  if (!page) return sorted;
   return sorted.slice((page*offset), page*(offset + 1));
 }

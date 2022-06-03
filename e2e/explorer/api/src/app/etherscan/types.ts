@@ -34,15 +34,15 @@ export interface TxList extends BaseParams<'account', 'txlist'> {
   /** the strings representing the addresses to check for balance, separated by , up to 20 addresses per call */
   address: string;
   /** the integer block number to start searching for transactions */
-  startblock: number;
+  startblock?: number;
   /** the integer block number to stop searching for transactions */
-  endblock: number;
+  endblock?: number;
   /** the integer page number, if pagination is enabled */
   page?: number;
   /** the number of transactions displayed per page */
   offset?: number;
   /** the sorting preference, use asc to sort by ascending and desc to sort by descendin Tip: Specify a smaller startblock and endblock range for faster search results. */
-  sort: Sort;
+  sort?: Sort;
 }
 export interface TxListInternal extends BaseParams<'account', 'txlistinternal'> {
   /** the strings representing the addresses to check for balance, separated by , up to 20 addresses per call */
