@@ -48,7 +48,7 @@ export function txList(params: GetParams<TxList>) {
       .slice((page*offset), page*(offset + 1));
     }
     else {
-      return transaction.sort();
+      return transaction.sort((a, b) => a.blockNumber - b.blockNumber);
     }        
   }
   if (sort === "desc") {
@@ -56,7 +56,7 @@ export function txList(params: GetParams<TxList>) {
       return transaction.sort((a, b) => b.blockNumber - a.blockNumber)
       .slice((page*offset), page*(offset + 1));
     } else {
-      return transaction.sort().reverse();
+      return transaction.sort((a, b) => b.blockNumber - a.blockNumber);
     }
   }
 }
