@@ -37,9 +37,9 @@ export function balanceMulti({ address, tag }: GetParams<BalanceMulti>): {accoun
 }
 
 export function txList(params: GetParams<TxList>): TransactionReceipt[] {  
-  const {address, startblock = 0, endblock, page = 1, sort = 'asc'} = params;
+  const {address, startblock = 0, endblock, page, sort = 'asc'} = params;
   const offset = Math.min(params.offset ?? 10000, 10000);
-  if (!params.address) throw new Error('Error! Missing or invalid Action name');
+  if (!address) throw new Error('Error! Missing or invalid Action name');
 
   const txs = addresses[address].transactions
     .map(tx => transactions[tx])
@@ -56,5 +56,6 @@ export function txList(params: GetParams<TxList>): TransactionReceipt[] {
   };
   const sortFn = sorting[sort];    
   const sorted = txs.sort(sortFn);
-  return sorted.slice((page*offset), page*(offset + 1));
+  if (!page) return sorted;
+  return sorted.slice((page*offset), offset*(page + 1));
 }
