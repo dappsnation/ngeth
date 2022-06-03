@@ -1,3 +1,4 @@
+import { TransactionReceipt } from "@ethersproject/abstract-provider";
 import { Balance, BalanceMulti, GetParams, TxList } from "./types";
 import { states, addresses, transactions } from '../block';
 import { EthState } from "@explorer";
@@ -37,26 +38,18 @@ export function balanceMulti({ address, tag }: GetParams<BalanceMulti>): {accoun
 
 export function txList(params: GetParams<TxList>) {
   const {address, startblock, endblock, page, offset, sort} = params;
-  const transaction = addresses[address].transactions
+  const sorting = {
+    asc: (a: TransactionReceipt, b: TransactionReceipt) => a.blockNumber - b.blockNumber,
+    desc: (a: TransactionReceipt, b: TransactionReceipt) => b.blockNumber - a.blockNumber
+  };
+  const sortFn = sorting[sort];
+
+  const txs = addresses[address].transactions
     .map(tx => transactions[tx])
     .filter(tx => tx.from === address)
-    .filter(tx => tx.blockNumber >= startblock && tx.blockNumber <= endblock);    
-
-  if (sort === "asc") {
-    if(page) {
-      return transaction.sort((a, b) => a.blockNumber - b.blockNumber)
-      .slice((page*offset), page*(offset + 1));
-    }
-    else {
-      return transaction.sort((a, b) => a.blockNumber - b.blockNumber);
-    }        
-  }
-  if (sort === "desc") {
-    if(page) {
-      return transaction.sort((a, b) => b.blockNumber - a.blockNumber)
-      .slice((page*offset), page*(offset + 1));
-    } else {
-      return transaction.sort((a, b) => b.blockNumber - a.blockNumber);
-    }
-  }
+    .filter(tx => tx.blockNumber >= startblock && tx.blockNumber <= endblock);
+    
+  const sorted = txs.sort(sortFn);
+  if (!page) return sorted;
+  return sorted.slice((page*offset), page*(offset + 1));
 }
