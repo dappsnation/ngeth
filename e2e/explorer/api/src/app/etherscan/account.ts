@@ -1,6 +1,6 @@
 import { TransactionReceipt } from "@ethersproject/abstract-provider";
-import { Balance, BalanceMulti, GetParams, TxList } from "./types";
-import { states, addresses, transactions } from '../block';
+import { Balance, BalanceMulti, GetParams, TxList, BlockMined } from "./types";
+import { states, addresses, transactions, blocks } from '../block';
 import { EthState } from "@explorer";
 
 export function balance({ address, tag }: GetParams<Balance>): string {
@@ -59,3 +59,20 @@ export function txList(params: GetParams<TxList>): TransactionReceipt[] {
   const offset = Math.min(params.offset, 10000);
   return sorted.slice(offset*(page-1), offset*page);
 }
+
+export function getMinedBlocks(params: GetParams<BlockMined>) {
+  const { address, blocktype, page, offset } = params;
+  if (!address) throw new Error('Error! Missing or invalid Action name');
+
+  const minedBlocks = blocks
+    .filter(block => {
+      if (block.miner !== address) return false;
+    })
+
+  if (!offset || !page) return minedBlocks;
+  return minedBlocks.slice(offset*(page-1), offset*page);
+}
+
+// missing blocktype (blocks or uncles), the result should be [{blockNumber, timeStamp, blockReward}, ...]
+// but currently is [{hash, parentHash, number, timestamp, nonce, difficulty, _difficulty, gasLimit, gasUsed, miner, extraData, baseFeePerGas}]
+// to do : have the correct result, how to get block reward, type of block
