@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { formatTs } from './format';
-import { ABIDescription, EventDescription, FunctionDescription } from './types';
-import { getAllCalls, getAllEvents, getAllFilters, getAllMethods, getAllQueries, getAllStructs, isCall, isEvent, isMethod } from './utils';
+import { ABIDescription, EventDescription, FunctionDescription } from '@type/solc';
+import { getAllCalls, getAllEvents, getAllFilters, getAllMethods, getAllQueries, getAllStructs, isRead, isEvent, isWrite } from './utils';
 
 export const getContract = (contractName: string, abi: ABIDescription[]) => {
-  const calls: FunctionDescription[] = abi.filter(isCall);
-  const methods: FunctionDescription[] = abi.filter(isMethod);
+  const calls: FunctionDescription[] = abi.filter(isRead);
+  const methods: FunctionDescription[] = abi.filter(isWrite);
   const events: EventDescription[] = abi.filter(isEvent);
   const structs = getAllStructs(abi);
 

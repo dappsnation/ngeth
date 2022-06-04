@@ -1,5 +1,5 @@
 import { formatTs } from "./format";
-import { ABIDescription } from "./types";
+import { ABIDescription } from "@type/solc";
 import { getDeploy, isConstrutor } from "./utils";
 
 

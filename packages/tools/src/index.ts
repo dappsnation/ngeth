@@ -4,3 +4,4 @@ export * from './lib/imports';
 export * from './lib/types';
 export * from './lib/format';
 export * from './lib/manager';
+export * from './lib/utils';

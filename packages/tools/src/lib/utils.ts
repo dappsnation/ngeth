@@ -1,15 +1,18 @@
-import { ABIDescription, ABIParameter, ABITypeParameter, EventDescription, ExportTypes, FunctionDescription } from "./types";
+import { ABIDescription, ABIParameter, ABITypeParameter, EventDescription, FunctionDescription } from "@type/solc";
+import { ExportTypes } from './types';
+
 
 export function isEvent(node: ABIDescription): node is EventDescription {
   return node.type === 'event';
 }
-export function isCall(node: ABIDescription): node is FunctionDescription {
+export function isRead(node: ABIDescription): node is FunctionDescription {
   return (
     node.type === 'function' &&
     (node.stateMutability === 'view' || node.stateMutability === 'pure')
   );
 }
-export function isMethod(node: ABIDescription): node is FunctionDescription {
+
+export function isWrite(node: ABIDescription): node is FunctionDescription {
   return (
     node.type === 'function' &&
     (node.stateMutability === 'nonpayable' ||
@@ -35,7 +38,7 @@ const getParam = (param: ABIParameter, index: number) => {
 const getType = (param: ABIParameter, kind: 'input' | 'output'): string => {
   const type = param.type;
   if (type.endsWith(']')) return getArray(param, kind);
-  if (type === 'tuple') return getStructName(param.internalType!);
+  if (type === 'tuple') return getStructName(param.internalType) ?? '';
   if (type === 'string') return 'string';
   if (type === 'address') return 'string';
   if (type === 'bool') return 'boolean';
@@ -88,35 +91,52 @@ const getOverloadType = (types: string[]) => {
 // STRUCT //
 ////////////
 
-/** "struct ContractName.StructName" => "StructName" */
-const getStructName = (internalType: string) =>
-  internalType.split(' ')[1].split('.').pop()!;
-  const getStruct = (name: string, fields: ABIParameter[] = []) => {
+/** "struct ContractName.StructName[4][]" => "StructName" */
+const getStructName = (internalType?: string) => {
+  if (!internalType) return;
+  // "struct ContractName.StructName[4][]" => "ContractName.StructName[4][]"
+  const [_, path] = internalType.split(' ');
+  // "ContractName.StructName[4][]" => "StructName[4][]"
+  const type = path.split('.').pop();
+  if (!type) return;
+  // "StructName[4][]" => "StructName"
+  return type.split('[').shift();
+}
+const getStruct = (name: string, fields: ABIParameter[] = []) => {
   return `interface ${name} {
     ${fields.map(getParam).join('\n')}
   }`;
 };
 export const getAllStructs = (abi: ABIDescription[]) => {
   const record: Record<string, string> = {};
+  // Find deep structs
+  const getDeepParams = (param: ABIParameter): ABIParameter[] => {
+    if (param.components) {
+      const children = param.components.map(getDeepParams).flat();
+      return children.concat(param);
+    }
+    return [param];
+  }
   const getAllParams = (description: ABIDescription) => {
-    if (description.type === 'event') return description.inputs;
-    if (description.outputs)
-      return description.outputs.concat(description.inputs || []);
-    return description.inputs || [];
+    if (description.type === 'error') return [];
+    if (description.type === 'event') return description.inputs.map(getDeepParams).flat();
+    const { inputs = [], outputs = [] } = description;
+    return inputs.map(getDeepParams).concat(outputs.map(getDeepParams)).flat();
   };
   const tuples = abi
     .map(getAllParams)
     .flat()
-    .filter((node) => node.type === 'tuple');
+    .filter((node) => node.type.startsWith('tuple'));
   for (const tuple of tuples) {
-    const name = getStructName(tuple.internalType!);
+    const name = getStructName(tuple.internalType);
+    if (!name) continue;
     if (!record[name]) record[name] = getStruct(name, tuple.components);
   }
   return Object.values(record).join('\n');
 };
 
 ///////////
-// CALLS //
+// READS //
 ///////////
 const getSignatureCall = (call: FunctionDescription, exports: ExportTypes) => {
   const inputs = call.inputs || [];
@@ -170,9 +190,9 @@ const getCall = (call: FunctionDescription, exports: ExportTypes) => {
   return calls.join('\n');
 };
 
-/////////////
-// METHODS //
-/////////////
+////////////
+// WRITES //
+////////////
 
 const getSignatureMethod = (method: FunctionDescription, exports: ExportTypes) => {
   const inputs = method.inputs || [];
@@ -319,9 +339,9 @@ export const getDeploy = (contractName: string, inputs: ABIParameter[] = []) => 
 };
 
 
-// const getOverload = (nodes: FunctionDescription[], isMethod = false) => {
+// const getOverload = (nodes: FunctionDescription[], isWrite = false) => {
 //   const maxSize = Math.max(...nodes.map(node => node.inputs.length));
-//   const outputs = isMethod
+//   const outputs = isWrite
 //     ? 'ContractTransaction'
 //     : Array.from(new Set(nodes.map(node => node.outputs).map(getOutputs).map(o => o || 'void'))).join(' | ');
 //   const inputs: (ABIParameter[] | undefined)[] = [];
