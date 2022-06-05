@@ -1,0 +1,16 @@
+<ng-container *ngIf="forms$ | async as forms">
+  <article>
+    <h3>Read Contract</h3>
+    <ng-container *ngFor="let call of forms.reads">
+      <form>
+        <input type="text">
+      </form>
+    </ng-container>
+  </article>
+  <article>
+    <h3>Write Contract</h3>
+    <ng-container *ngFor="let write of forms.writes">
+      
+    </ng-container>
+  </article>
+</ng-container>

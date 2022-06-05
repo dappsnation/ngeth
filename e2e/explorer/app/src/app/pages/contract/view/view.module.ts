@@ -19,6 +19,9 @@ import { EthersModule } from '@ngeth/ethers';
       }, {
         path: 'transactions',
         loadChildren: () => import('./transactions/transactions.module').then(m => m.TransactionsModule)
+      }, {
+        path: 'abi',
+        loadChildren: () => import('./abi/abi.module').then(m => m.AbiModule)
       }]
     }]),
   ],

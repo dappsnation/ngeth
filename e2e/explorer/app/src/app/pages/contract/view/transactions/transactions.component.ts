@@ -2,7 +2,7 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { ViewComponent } from '../view.component';
 
 @Component({
-  selector: 'eth-transactions',
+  selector: 'explorer-contract-transactions',
   templateUrl: './transactions.component.html',
   styleUrls: ['./transactions.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
