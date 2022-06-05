@@ -13,20 +13,20 @@
       <ng-container *ngFor="let tx of txs">
         <tr>
           <td>
-            <a [routerLink]="['/tx', tx.transactionHash]">{{ tx.transactionHash }}</a>
+            <a class="clamp" [routerLink]="['/tx', tx.transactionHash]">{{ tx.transactionHash }}</a>
           </td>
           <td>
             <a [routerLink]="['/block', tx.blockNumber]">{{ tx.blockNumber }}</a>
           </td>
           <td>
-            <a [routerLink]="['/account', tx.from]">{{ tx.from }}</a>
+            <a class="clamp" [routerLink]="['/account', tx.from]">{{ tx.from }}</a>
           </td>
           <td>
             <ng-container *ngIf="tx.to; else contractAddress">
-              <a [routerLink]="['/account', tx.to]">{{ tx.to }}</a>
+              <a class="clamp" [routerLink]="['/account', tx.to]">{{ tx.to }}</a>
             </ng-container>
             <ng-template #contractAddress>
-              <a [routerLink]="['/account', tx.contractAddress]">{{ tx.contractAddress }}</a>
+              <a class="clamp" [routerLink]="['/contract', tx.contractAddress]">{{ tx.contractAddress }}</a>
             </ng-template>
           </td>
         </tr>

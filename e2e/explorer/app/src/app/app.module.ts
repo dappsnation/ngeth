@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { rpcProvider } from '@ngeth/ethers';
+import { RedirectAddress } from './address.guard';
 
 import { AppComponent } from './app.component';
 import { walletSigner } from './wallet';
@@ -35,6 +36,11 @@ import { walletSigner } from './wallet';
         path: 'tx/:hash',
         loadChildren: () =>
           import('./pages/transaction/view/view.module').then((m) => m.ViewModule),
+      },
+      {
+        path: 'address/:address',
+        canActivate: [RedirectAddress],
+        component: AppComponent // Component or loadChildren is required
       },
       {
         path: 'account',

@@ -22,6 +22,9 @@ import { EthersModule } from '@ngeth/ethers';
       }, {
         path: 'abi',
         loadChildren: () => import('./abi/abi.module').then(m => m.AbiModule)
+      }, {
+        path: 'events',
+        loadChildren: () => import('./events/events.module').then(m => m.EventsModule)
       }]
     }]),
   ],

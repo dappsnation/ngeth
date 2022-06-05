@@ -1,4 +1,4 @@
-import { TransactionReceipt, Block } from '@ethersproject/abstract-provider';
+import { TransactionReceipt, Block, Log } from '@ethersproject/abstract-provider';
 import { ABIDescription } from '@type/solc';
 
 export interface EthAccount {
@@ -24,4 +24,6 @@ export interface BlockchainState {
   states: EthState[];
   /** ABI per contract address */
   abis: Record<string, ABIDescription[]>
+  /** Logs per addresses in "desc" order */
+  logs: Record<string, Log[]>
 }

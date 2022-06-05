@@ -23,11 +23,14 @@ export class BlockExplorer {
     transactions: {},
     addresses: {},
     states: [],
-    abis: {}
+    abis: {},
+    logs: {}
   };
   blocks$ = this.#sourceChanges.pipe(map(() => this.source.blocks));
   txs$ = this.#sourceChanges.pipe(map(() => this.source.transactions));
   states$ = this.#sourceChanges.pipe(map(() => this.source.states));
+  logs$ = this.#sourceChanges.pipe(map(() => this.source.logs));
+  abis$ = this.#sourceChanges.pipe(map(() => this.source.abis));
   accounts$ = this.#sourceChanges.pipe(
     map(() => filterAccounts(this.source.addresses))
   );

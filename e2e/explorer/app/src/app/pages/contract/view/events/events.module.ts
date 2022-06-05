@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TransactionsComponent } from './transactions.component';
+import { EventsComponent } from './events.component';
 import { RouterModule } from '@angular/router';
 import { EthersModule } from '@ngeth/ethers';
 
@@ -8,12 +8,12 @@ import { EthersModule } from '@ngeth/ethers';
 
 @NgModule({
   declarations: [
-    TransactionsComponent
+    EventsComponent
   ],
   imports: [
     CommonModule,
     EthersModule,
-    RouterModule.forChild([{ path: '', component: TransactionsComponent }])
+    RouterModule.forChild([{ path: '', component: EventsComponent }])
   ]
 })
-export class TransactionsModule { }
+export class EventsModule { }

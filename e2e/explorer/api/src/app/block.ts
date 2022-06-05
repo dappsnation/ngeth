@@ -1,6 +1,6 @@
 import { Block, TransactionReceipt } from "@ethersproject/abstract-provider";
 import { Networkish } from "@ethersproject/networks";
-import { BaseProvider, getDefaultProvider } from "@ethersproject/providers";
+import { BaseProvider, getDefaultProvider, Log } from "@ethersproject/providers";
 import { getAddress } from "@ethersproject/address";
 import { EthState, EthAccount } from '@explorer';
 import { Socket } from 'socket.io';
@@ -19,6 +19,8 @@ export const transactions: Record<string, TransactionReceipt> = {};
 export const addresses: Record<string, EthAccount> = {};
 /** State of the network at a specific block */
 export const states: EthState[] = [];
+/** Logs per addresses */
+export const logs: Record<string, Log[]> = {};
 
 
 //////////
@@ -81,7 +83,7 @@ async function init() {
 export function blockListener(network: Networkish = 'http://localhost:8545') {
   const sockets: Record<string, Socket> = {};
   const emit = () => {
-    const data = { blocks, transactions, addresses, states, abis };
+    const data = { blocks, transactions, addresses, states, abis, logs };
     Object.values(sockets).forEach(socket => socket.emit('block', data))
   }
 
@@ -118,6 +120,10 @@ async function registerBlock(block: Block) {
 
 function registerTransactions(txs: TransactionReceipt[]) {
   for (const tx of txs) {
+    for (const log of tx.logs) {
+      if (!logs[log.address]) logs[log.address] = [];
+      logs[log.address].unshift(log);
+    }
     transactions[tx.transactionHash] = tx;
     // Add to addresses (from, to, contractAddress)
     addressesFromTx(tx).map(address => addTx(address, tx));

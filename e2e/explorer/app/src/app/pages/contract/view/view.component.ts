@@ -6,7 +6,6 @@ import { combineLatest } from 'rxjs';
 import { filter, map, shareReplay } from 'rxjs/operators';
 import { EthAccount } from '@explorer';
 import { Contract } from '@ethersproject/contracts';
-import { Signer } from '@ethersproject/abstract-signer';
 import { WalletManager } from '../../../wallet';
 
 @Component({

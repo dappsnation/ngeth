@@ -126,7 +126,7 @@ table {
     thead tr {
       border-bottom: 1px solid var(--border-1);
     }
-    td a, td span {
+    td .clamp {
       display: -webkit-box;
       -webkit-line-clamp: 1;
       -webkit-box-orient: vertical;
@@ -136,33 +136,36 @@ table {
   }
 }
 
-ul.list {
+// We use > to enable deep list of grid / list
+
+ol.list, ul.list {
   list-style: none;
   margin: 0;
   padding-left: 0;
-  li:not(.item) {
+  & > li:not(.item) {
     display: contents;
   }
-  .item {
+  & > .item,
+  & > li > .item {
     display: block;
     padding: var(--size-2) var(--size-2);
   }
-  a.item:hover {
+  & > li > a.item:hover {
     background-color: var(--background-2);
   }
-  li:not(:last-of-type) {
+  & > li:not(:last-of-type) {
     border-bottom: 1px solid var(--border-0);
   }
 }
 
-ul.grid {
+ol.grid, ul.grid {
   list-style: none;
   margin: 0;
   padding-left: 0;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: var(--size-3);
-  li:not(.item) {
+  & > li:not(.item) {
     display: contents;
   }
 }
@@ -172,7 +175,6 @@ nav ul {
   margin: 0;
   padding-left: 0;
   display: flex;
-  gap: var(--size-1);
   li {
     display: contents;
   }

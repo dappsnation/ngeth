@@ -1,0 +1,17 @@
+:host {
+  display: block;
+}
+
+
+header {
+  margin-bottom: var(--size-0);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  h4, p {
+    margin-bottom: 0;
+  }
+}
+ol li {
+  margin-bottom: var(--size-0);
+}
