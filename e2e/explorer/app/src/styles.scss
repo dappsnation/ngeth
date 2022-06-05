@@ -149,6 +149,8 @@ ol.list, ul.list {
   & > li > .item {
     display: block;
     padding: var(--size-2) var(--size-2);
+    color: inherit;
+    text-decoration: none;
   }
   & > li > a.item:hover {
     background-color: var(--background-2);

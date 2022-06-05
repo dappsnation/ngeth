@@ -1,5 +1,5 @@
 <ul class="grid">
-  <li *ngFor="let account of accounts$ | async">
+  <li *ngFor="let account of accounts$ | async; trackBy: trackByAddress">
     <a class="surface item" [routerLink]="['/account', account.address]">
       <header>
         <eth-blockies [address]="account.address"></eth-blockies>

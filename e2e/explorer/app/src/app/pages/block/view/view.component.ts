@@ -27,7 +27,7 @@ export class ViewComponent {
     map(([blocks, current]) => blocks[current])
   );
   hasNext$ = this.source$.pipe(
-    map(([blocks, current]) => current < blocks.length - 1)
+    map(([blocks, current]) => !!blocks[current + 1])
   );
 
   constructor(private route: ActivatedRoute, private explorer: BlockExplorer) {}

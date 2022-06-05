@@ -24,6 +24,7 @@ export class ViewComponent {
 
   contract$ = combineLatest([this.explorer.contracts$, this.address$]).pipe(
     map(([addresses, address]) => addresses[address]),
+    filter(exist),
     map(contract => this.populate(contract)),
     shareReplay({ refCount: true, bufferSize: 1 })
   );
@@ -35,7 +36,7 @@ export class ViewComponent {
   ) {}
 
   private populate(contract: EthAccount) {
-    const transactions = contract.transactions.map(hash => this.explorer.get('transactions', hash));
+    const transactions = contract.transactions.map(hash => this.explorer.source.transactions[hash]);
     const abi = this.explorer.source.abis[contract.address];
     this.contract = new Contract(contract.address, abi, this.walletManager.signer);
     return { ...contract, transactions, abi }

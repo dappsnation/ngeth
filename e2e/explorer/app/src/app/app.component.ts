@@ -34,10 +34,7 @@ export class AppComponent {
     event.preventDefault();
     const value = input.value.trim();
     if (isAddress(value)) {
-      const code = await this.provider.getCode(value);
-      const isContract = code.length > 2;
-      const base = isContract ? '/contract' : '/account';
-      this.router.navigate([base, value]);
+      this.router.navigate(['/address', value]);
     } else if (value.startsWith('0x')) {
       this.router.navigate(['/tx', value]);
     } else if (!isNaN(parseInt(value))) {

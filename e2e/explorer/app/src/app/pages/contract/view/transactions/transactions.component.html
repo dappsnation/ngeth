@@ -10,8 +10,8 @@
       </tr>
     </thead>
     <tbody>
-      <ng-container  *ngFor="let getTx$ of contract.transactions">
-        <tr *ngIf="getTx$ | async as tx">
+      <ng-container  *ngFor="let tx of contract.transactions">
+        <tr>
           <td>
             <a class="clamp" [routerLink]="['/tx', tx.transactionHash]">{{ tx.transactionHash }}</a>
           </td>

@@ -1,5 +1,6 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { BlockExplorer } from '../../../explorer';
+import { TransactionReceipt } from '@ethersproject/abstract-provider';
 import { map } from 'rxjs/operators';
 
 @Component({
@@ -12,5 +13,6 @@ export class ListComponent {
   txs$ = this.explorer.txs$.pipe(
     map(txs => Object.values(txs))
   );
+  trackByHash = (index: number, receipt: TransactionReceipt) => receipt.transactionHash;
   constructor(private explorer: BlockExplorer) {}
 }

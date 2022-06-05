@@ -10,7 +10,7 @@
       </tr>
     </thead>
     <tbody>
-      <ng-container *ngFor="let tx of txs">
+      <ng-container *ngFor="let tx of txs; trackBy: trackByHash">
         <tr>
           <td>
             <a class="clamp" [routerLink]="['/tx', tx.transactionHash]">{{ tx.transactionHash }}</a>

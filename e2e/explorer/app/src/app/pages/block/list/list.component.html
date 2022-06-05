@@ -1,5 +1,8 @@
 <ul class="list">
-  <li *ngFor="let block of blocks$ | async">
-    <a class="item" [routerLink]="['/block', block.number]">{{ block.number }}</a>
+  <li *ngFor="let block of blocks$ | async; trackBy: trackByBlock">
+    <a class="item" [routerLink]="['/block', block.number]">
+      <h4>Block {{ block.number }}</h4>
+      <p>Transactions: {{ block.transactions.length }}</p>
+    </a>
   </li>
 </ul>
