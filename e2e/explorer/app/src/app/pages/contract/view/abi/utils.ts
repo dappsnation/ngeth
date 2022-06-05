@@ -2,16 +2,24 @@ import { FormArray, FormControl } from '@angular/forms';
 import { ABIDescription, ABIParameter, ABITypeParameter, FunctionDescription } from '@type/solc';
 import { isWrite, isRead } from '@ngeth/tools';
 
+export interface AbiFormFunction {
+  name?: string;
+  inputs: AbiForm[];
+  outputs?: any[];
+  form: FormArray;
+  result?: any;
+}
+
 type AbiForm = {
   name: string;
-  control: FormControl | FormArray;
-  type: 'boolean' | 'number' | 'text' | 'address' | 'object';
+  control: FormControl;
+  type: 'checkbox' | 'number' | 'text' | 'address' | 'object';
   isArray: boolean;
 }
 
 
 
-function formABI(abi: ABIDescription[]) {
+export function formABI(abi: ABIDescription[]) {
   return {
     writes: abi.filter(isWrite).map(description => createAbiForm(description)),
     reads: abi.filter(isRead).map(description => createAbiForm(description)),
@@ -29,14 +37,16 @@ const getAbiControl = (param: ABIParameter): AbiForm => {
     type,
     isArray
   })
+  // TODO: Find out how to manage that
   if (type.endsWith(']')) {
-    const [type] = splitArray(param.type);
-    return abiForm(type, getFormArray(param), true);
+    return abiForm('text', new FormControl());
+    // const [type] = splitArray(param.type);
+    // return abiForm(type, getFormArray(param), true);
   }
   if (type === 'tuple') return abiForm('object', new FormControl());
   if (type === 'string') return abiForm('text', new FormControl());
   if (type === 'address') return abiForm('address', new FormControl());
-  if (type === 'bool') return abiForm('boolean', new FormControl());
+  if (type === 'bool') return abiForm('checkbox', new FormControl());
   if (type.startsWith('bytes')) return abiForm('text', new FormControl());
   if (type.includes('int')) return abiForm('number', new FormControl());
   return abiForm('text', new FormControl());
@@ -75,11 +85,9 @@ const getFormArray = (param: ABIParameter) => {
 
 
 
-function createAbiForm(description: FunctionDescription) {
-  if (!description.inputs?.length) return;
-  const controls: Record<string, AbiForm> = {};
-  for (const input of description.inputs) {
-    controls[input.name] = getAbiControl(input);
-  }
-  return controls;
+function createAbiForm(description: FunctionDescription): AbiFormFunction {
+  if (!description.inputs?.length) return { name: description.name, inputs: [], form: new FormArray([]) };
+  const inputs = description.inputs.map(getAbiControl);
+  const controls = inputs.map(input => input.control);
+  return  { name: description.name, inputs, form: new FormArray(controls) };
 }

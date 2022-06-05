@@ -5,6 +5,8 @@ import { exist } from '../../../utils';
 import { combineLatest } from 'rxjs';
 import { filter, map, shareReplay } from 'rxjs/operators';
 import { EthAccount } from '@explorer';
+import { Contract } from '@ethersproject/contracts';
+import { Provider } from '@ethersproject/abstract-provider';
 
 @Component({
   selector: 'explorer-contract-view',
@@ -13,6 +15,8 @@ import { EthAccount } from '@explorer';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ViewComponent {
+  contract?: Contract;
+
   address$ = this.route.paramMap.pipe(
     map((paramMap) => paramMap.get('address')),
     filter(exist)
@@ -26,12 +30,14 @@ export class ViewComponent {
 
   constructor(
     private explorer: BlockExplorer,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private provider: Provider,
   ) {}
 
   private populate(contract: EthAccount) {
     const transactions = contract.transactions.map(hash => this.explorer.get('transactions', hash));
     const abi = this.explorer.source.abis[contract.address];
+    this.contract = new Contract(contract.address, abi, this.provider);
     return { ...contract, transactions, abi }
   }
 }

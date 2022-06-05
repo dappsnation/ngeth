@@ -1,0 +1,70 @@
+:host {
+  display: block;
+}
+
+article {
+  margin-bottom: var(--size-3);
+}
+
+details:not(:last-of-type) {
+  summary {
+    border-bottom: 1px solid var(--border-0);
+  }
+}
+
+summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: var(--size-1);
+  cursor: pointer;
+  h4 {
+    color: var(--text-1);
+    margin-bottom: 0;
+  }
+}
+form {
+  margin-bottom: var(--size-3);
+  ul {
+    padding: var(--size-1);
+    list-style: none;
+    margin: 0;
+    display: flex;
+    gap: var(--size-2);
+  }
+  .field {
+    display: flex;
+    flex-direction: column;
+    label {
+      color: var(--text-1);
+      margin-bottom: var(--size-0);
+    }
+    input {
+      border-radius: var(--size-0);
+      border: 1px solid var(--border-0);
+      background-color: var(--background-1);
+    }
+  }
+  footer {
+    display: flex;
+    gap: var(--size-3);
+    padding: var(--size-1);
+
+    button {
+      border-radius: var(--size-0);
+      border: 1px solid var(--border-0);
+      cursor: pointer;
+    }
+
+    output {
+      display: flex;
+      align-items: center;
+      flex: 1;
+      padding-inline: var(--size-2);
+      background-color: var(--background-1);
+      border-radius: var(--size-0);
+      border: 1px solid var(--border-0);
+    }
+  }
+}

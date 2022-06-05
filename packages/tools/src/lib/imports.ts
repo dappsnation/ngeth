@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { ABIDescription, EventDescription, FunctionDescription } from '@type/solc';
 import { getAllCalls, getAllEvents, getAllFilters, getAllMethods, getAllQueries, getAllStructs, isRead, isEvent, isWrite } from './utils';
-import { formatTs } from './format';
 
 export const getContractImport = (contractName: string, abi: ABIDescription[]) => {
   const calls: FunctionDescription[] = abi.filter(isRead);
@@ -10,7 +9,7 @@ export const getContractImport = (contractName: string, abi: ABIDescription[]) =
   const structs = getAllStructs(abi);
   
 
-  const code = `
+  return `
   import { NgContract, FilterParam, TypedFilter } from '@ngeth/ethers';
   import type { Contract, BigNumber, Overrides, CallOverrides, PayableOverrides, Signer, ContractTransaction, BytesLike, BigNumberish } from "ethers";
   
@@ -34,5 +33,4 @@ export const getContractImport = (contractName: string, abi: ABIDescription[]) =
   }
 
   export const ${contractName}Abi = ${JSON.stringify(abi)};`;
-  return formatTs(code);
 }

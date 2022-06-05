@@ -3,6 +3,16 @@ import { existsSync, mkdirSync, promises as fs } from 'fs';
 import { Artifact, HardhatRuntimeEnvironment } from 'hardhat/types';
 import { getContract, getContractManager, getFactory } from '@ngeth/tools';
 
+import * as parserTypeScript from "prettier/parser-typescript";
+import * as prettier from "prettier/standalone";
+export function formatTs(code: string) {
+  return prettier.format(code, {
+    parser: 'typescript',
+    plugins: [parserTypeScript],
+    printWidth: 120,
+  });
+}
+
 
 const contractIndex = (contractName: string) => `
 export * from './contract';
@@ -36,9 +46,9 @@ export async function generate(hre: HardhatRuntimeEnvironment, allArtifacts: Art
     return Promise.all([
       fs.writeFile(join(contractFolder, 'abi.ts'), abi),
       fs.writeFile(join(contractFolder, 'bytecode.ts'), bytecode),
-      fs.writeFile(join(contractFolder, 'contract.ts'), contract),
-      fs.writeFile(join(contractFolder, 'manager.ts'), manager),
-      fs.writeFile(join(contractFolder, 'factory.ts'), factory),
+      fs.writeFile(join(contractFolder, 'contract.ts'), formatTs(contract)),
+      fs.writeFile(join(contractFolder, 'manager.ts'), formatTs(manager)),
+      fs.writeFile(join(contractFolder, 'factory.ts'), formatTs(factory)),
       fs.writeFile(join(contractFolder, 'index.ts'), index),
     ])
   })

@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { formatTs } from './format';
 import { ABIDescription, EventDescription, FunctionDescription } from '@type/solc';
 import { getAllCalls, getAllEvents, getAllFilters, getAllMethods, getAllQueries, getAllStructs, isRead, isEvent, isWrite } from './utils';
 
@@ -9,7 +8,7 @@ export const getContract = (contractName: string, abi: ABIDescription[]) => {
   const events: EventDescription[] = abi.filter(isEvent);
   const structs = getAllStructs(abi);
 
-  const code = `
+  return `
   import { NgZone } from '@angular/core';
   import { NgContract, FilterParam, TypedFilter } from '@ngeth/ethers';
   import type { BigNumber, Overrides, CallOverrides, PayableOverrides, Signer, ContractTransaction, BytesLike, BigNumberish } from "ethers";
@@ -35,5 +34,4 @@ export const getContract = (contractName: string, abi: ABIDescription[]) => {
       super(address, abi, signer, zone);
     }
   }`;
-  return formatTs(code);
 }

@@ -1,7 +1,5 @@
-import { formatTs } from "./format";
-
 export const getContractManager = (contractName: string) => {
-  const code = `
+  return `
   import { Injectable } from "@angular/core";
   import { ContractsManager } from "@ngeth/ethers";
   import { ${contractName} } from "./contract";
@@ -13,5 +11,4 @@ export const getContractManager = (contractName: string) => {
       return new ${contractName}(address, this.signer, this.zone);
     }
   }`;
-  return formatTs(code);
 }

@@ -1,4 +1,3 @@
-import { formatTs } from "./format";
 import { ABIDescription } from "@type/solc";
 import { getDeploy, isConstrutor } from "./utils";
 
@@ -7,7 +6,7 @@ import { getDeploy, isConstrutor } from "./utils";
 
 export const getFactory = (contractName: string, abi: ABIDescription[]) => {
   const deploy = getDeploy(contractName, abi.find(isConstrutor)?.inputs);
-  const code = `
+  return `
   import { ContractFactory } from '@ethersproject/contracts';
   import type { ${contractName} } from './contract';
   import type { BigNumber, Overrides, CallOverrides, PayableOverrides, Signer, BytesLike, BigNumberish } from "ethers";
@@ -21,5 +20,4 @@ export const getFactory = (contractName: string, abi: ABIDescription[]) => {
       super(abi, bytecode, signer);
     }
   }`;
-  return formatTs(code);
 }

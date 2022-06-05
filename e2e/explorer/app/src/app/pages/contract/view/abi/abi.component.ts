@@ -1,25 +1,8 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { ABIDescription, FunctionDescription } from '@type/solc';
-import { map } from 'rxjs';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { ViewComponent } from '../view.component';
-interface ABIOrder {
-  writes: FunctionDescription[];
-  reads: FunctionDescription[];
-}
-
-
-function formABI(abi: ABIDescription[]) {
-  const order: ABIOrder = { writes: [], reads: [] };
-  for (const description of abi) {
-    if (description.type !== 'function') continue;
-    if (description.stateMutability === 'view' || description.stateMutability === 'pure') {
-      order.writes.push(description);
-    } else {
-      order.reads.push(description);
-    }
-  }
-  return order;
-}
+import { AbiFormFunction, formABI } from './utils';
+import { map } from 'rxjs/operators';
+import { FormArray } from '@angular/forms';
 
 @Component({
   selector: 'explorer-contract-abi',
@@ -32,6 +15,26 @@ export class AbiComponent {
     map(contract => formABI(contract.abi))
   );
 
-  constructor(private shell: ViewComponent) { }
+  constructor(
+    private shell: ViewComponent,
+    private cdr: ChangeDetectorRef
+  ) { }
 
+  async callRead(read: AbiFormFunction) {
+    if (!read.name) return;
+    if (read.form.invalid) return read.form.markAllAsTouched();
+    const inputs = read.form.value;
+    read.result = await this.shell.contract?.callStatic[read.name](...inputs);
+    read.form.reset();
+    this.cdr.markForCheck();
+  }
+
+  async callWrite(write: AbiFormFunction) {
+    if (!write.name) return;
+    if (write.form.invalid) return write.form.markAllAsTouched();
+    const inputs = write.form.value;
+    await this.shell.contract?.functions[write.name](...inputs);
+    write.form.reset();
+    this.cdr.markForCheck();
+  }
 }
