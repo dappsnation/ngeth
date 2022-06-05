@@ -8,6 +8,7 @@
   --background-0: hsl(250, 13%, 9%);
   --background-1: hsl(247, 12%, 15%);
   --background-2: hsl(247, 10%, 18%);
+  --background-hover: hsla(var(--text-hsl), 0.05);
 
   --text-0: hsl(240, 60%, 99%);
   --text-1: hsl(240, 10%, 83%);
@@ -180,7 +181,7 @@ nav ul {
     color: inherit;
     text-decoration: none;
     &:hover {
-      background-color: var(--background-2);
+      background-color: var(--background-hover);
     }
     &.active {
       border-bottom: 1px solid var(--accent-0);

@@ -1,7 +1,16 @@
 import { Injectable } from '@angular/core';
 import { Provider } from '@ethersproject/providers';
-import { Wallet } from 'ethers';
+import { Signer } from '@ethersproject/abstract-signer';
+import { Wallet } from '@ethersproject/wallet';
 import { BehaviorSubject, ReplaySubject } from 'rxjs';
+
+export function walletSigner() {
+  return {
+    provide: Signer,
+    useFactory: (manager: WalletManager) => manager.signer,
+    deps: [WalletManager]
+  };
+}
 
 @Injectable({ providedIn: 'root' })
 export class WalletManager {

@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { rpcProvider } from '@ngeth/ethers';
 
 import { AppComponent } from './app.component';
+import { walletSigner } from './wallet';
 
 @NgModule({
   declarations: [AppComponent],
@@ -12,11 +13,11 @@ import { AppComponent } from './app.component';
     RouterModule.forRoot([
       {
         path: '',
-        redirectTo: 'blocks',
+        redirectTo: 'block',
         pathMatch: 'full'
       },
       {
-        path: 'blocks',
+        path: 'block',
         loadChildren: () =>
           import('./pages/block/list/list.module').then((m) => m.ListModule),
       },
@@ -26,7 +27,7 @@ import { AppComponent } from './app.component';
           import('./pages/block/view/view.module').then((m) => m.ViewModule),
       },
       {
-        path: 'txs',
+        path: 'tx',
         loadChildren: () =>
           import('./pages/transaction/list/list.module').then((m) => m.ListModule),
       },
@@ -36,7 +37,7 @@ import { AppComponent } from './app.component';
           import('./pages/transaction/view/view.module').then((m) => m.ViewModule),
       },
       {
-        path: 'accounts',
+        path: 'account',
         loadChildren: () =>
           import('./pages/account/list/list.module').then((m) => m.ListModule),
       },
@@ -46,7 +47,7 @@ import { AppComponent } from './app.component';
           import('./pages/account/view/view.module').then((m) => m.ViewModule),
       },
       {
-        path: 'contracts',
+        path: 'contract',
         loadChildren: () =>
           import('./pages/contract/list/list.module').then((m) => m.ListModule),
       },
@@ -57,7 +58,10 @@ import { AppComponent } from './app.component';
       }
     ]),
   ],
-  providers: [rpcProvider('http://localhost:8545')],
+  providers: [
+    rpcProvider('http://localhost:8545'),
+    walletSigner()
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

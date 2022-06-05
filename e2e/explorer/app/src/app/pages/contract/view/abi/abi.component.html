@@ -6,7 +6,7 @@
         <h4>{{ read.name }}</h4>
       </summary>
       <form [formGroup]="$any(read.form)" (ngSubmit)="callRead(read)">
-        <ul class="inputs">
+        <ul class="inputs" *ngIf="read.inputs.length">
           <li class="field" *ngFor="let input of read.inputs">
             <label [for]="input.name">{{ input.name }}</label>
             <input [id]="input.name" [type]="input.type" [formControl]="input.control" [placeholder]="input.type"/>

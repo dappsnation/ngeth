@@ -6,9 +6,32 @@ article {
   margin-bottom: var(--size-3);
 }
 
-details:not(:last-of-type) {
-  summary {
+details {
+  border-left: 1px solid var(--border-0);
+  border-right: 1px solid var(--border-0);
+  &:first-of-type {
+    border-top-left-radius: var(--size-0);
+    border-top-right-radius: var(--size-0);
+    border-top: 1px solid var(--border-0);
+  }
+  &:last-of-type {
+    border-bottom-left-radius: var(--size-0);
+    border-bottom-right-radius: var(--size-0);
     border-bottom: 1px solid var(--border-0);
+  }
+  &[open] {
+    summary {
+      border-bottom: 1px solid var(--border-1);
+      h4 {
+        color: var(--text-0);
+      }
+    }
+  }
+}
+
+details:not(:first-of-type) {
+  summary {
+    border-top: 1px solid var(--border-0);
   }
 }
 
@@ -23,9 +46,12 @@ summary {
     color: var(--text-1);
     margin-bottom: 0;
   }
+  &:hover {
+    background-color: var(--background-hover);
+  }
 }
 form {
-  margin-bottom: var(--size-3);
+  padding: var(--size-1);
   ul {
     padding: var(--size-1);
     list-style: none;

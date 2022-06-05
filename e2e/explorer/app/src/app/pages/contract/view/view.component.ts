@@ -6,7 +6,8 @@ import { combineLatest } from 'rxjs';
 import { filter, map, shareReplay } from 'rxjs/operators';
 import { EthAccount } from '@explorer';
 import { Contract } from '@ethersproject/contracts';
-import { Provider } from '@ethersproject/abstract-provider';
+import { Signer } from '@ethersproject/abstract-signer';
+import { WalletManager } from '../../../wallet';
 
 @Component({
   selector: 'explorer-contract-view',
@@ -31,13 +32,13 @@ export class ViewComponent {
   constructor(
     private explorer: BlockExplorer,
     private route: ActivatedRoute,
-    private provider: Provider,
+    private walletManager: WalletManager,
   ) {}
 
   private populate(contract: EthAccount) {
     const transactions = contract.transactions.map(hash => this.explorer.get('transactions', hash));
     const abi = this.explorer.source.abis[contract.address];
-    this.contract = new Contract(contract.address, abi, this.provider);
+    this.contract = new Contract(contract.address, abi, this.walletManager.signer);
     return { ...contract, transactions, abi }
   }
 }
