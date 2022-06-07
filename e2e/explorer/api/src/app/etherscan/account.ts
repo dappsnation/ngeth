@@ -61,16 +61,19 @@ export function txList(params: GetParams<TxList>): TransactionReceipt[] {
 }
 
 /**
- * No reward calculation on hardHat, so blockReward = 0;
- * When a same block is mined 2 times at the same time, it create 2 parallel branch
- * the one keep by the network is the block, the other one is the uncle.
- * No parallel branch on hardhat so no uncles block 
+ * return the list of blocks mined by an address
  */
 export function getMinedBlocks(params: GetParams<BlockMined>) {
   const { address, blocktype, page, offset } = params;
   if (!address) throw new Error('Error! Missing or invalid Action name');
-  if (blocktype === "uncles") throw new Error('No uncles block on local hardhat network');
 
+  /**
+  * When a same block is mined 2 times at the same time, it create 2 parallel branch
+  * the one keep by the network is the block, the other one is the uncle.
+  * No parallel branch on hardhat so no uncles block 
+  */
+  if (blocktype === "uncles") throw new Error('No uncles block on local hardhat network');
+ // No reward calculation on hardHat, so blockReward = 0;
   const minedBlocks = blocks
   .filter(block => (block.miner === address))
   .map(minedblock => {
