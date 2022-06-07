@@ -83,10 +83,10 @@ export function getMinedBlocks(params: GetParams<BlockMined>) {
 
 /** returns the balance of an address at a certain block height */
 export function balanceHistory(params: GetParams<BalanceHistory>) {
-  const {address, blockno } = params;
+  const { address, blockno } = params;
   let state: EthState | undefined;
   if (!address || ! blockno) throw new Error('Error! Missing or invalid Action name');
-  
-  const balance = state[blockno].balance[address] ?? '0x00';
+
+  const balance = state[blockno - 1].balance[address] ?? '0x00';
   return balance.toString().replace('0x', '');
 }
