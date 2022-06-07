@@ -63,7 +63,9 @@ async function initFactories(root: string) {
 }
 
 async function init() {
-  await initFactories('C:/code/blockchain/ngeth/e2e/explorer/hardhat/artifacts/src')
+  // Only use cwd for local development
+  const artifactRoot = process.env['ARTIFACTS_ROOT'] ?? join(process.cwd(), 'e2e/explorer/hardhat/artifacts/src');
+  await initFactories(artifactRoot);
   const current = await provider.getBlockNumber();
   for (let i = 0; i < current; i++) {
     provider.getBlock(i).then(registerBlock);

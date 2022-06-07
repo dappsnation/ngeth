@@ -1,12 +1,14 @@
 import './lib/config';
 // import '@nomiclabs/hardhat-ethers';
 import { extendConfig, task } from 'hardhat/config';
-import { dirname, join, resolve } from 'path';
+import { dirname, join, relative, resolve } from 'path';
 import { generate } from './lib/generate';
 import { getDefaultConfig } from './lib/config';
 import { deploy } from './lib/deploy';
 import { existsSync, mkdirSync, promises as fs } from 'fs';
 import { getContractImport } from '@ngeth/tools';
+import { execute } from '@ngeth/devkit';
+import { serveApp } from './lib/utils';
 
 extendConfig((config) => {
   config.ngeth = getDefaultConfig(config)
@@ -87,6 +89,29 @@ task(
         .map(artifact => `export * from "./${dirname(artifact.sourceName)}/${artifact.contractName}";`)
         .join('\n');
       fs.writeFile(join(importFolder, 'index.ts'), exportImports);
+    }
+
+    // Run explorer
+    if (hre.config.ngeth.explorer) {
+      const { api, app } = hre.config.ngeth.explorer;
+      const artifactsSuffix = relative(root, hre.config.paths.artifacts);
+      const sourcesSuffix = relative(root, hre.config.paths.sources);
+
+      // API
+      const artifactRoot = join(root, artifactsSuffix, sourcesSuffix);
+      const cwd = __dirname;
+      const env = {
+        ARTIFACTS_ROOT: artifactRoot,
+        EXPLORER_APP_PORT: app.toString(),
+        EXPLORER_API_PORT: api.toString()
+      };
+      execute({logger: console}, 'node explorer/api/main.js', { cwd, env });
+      
+      // APP
+      const appPath = join(cwd, 'explorer/app');
+      const appConfig = JSON.stringify({ api: `http://localhost:${api}` });
+      await fs.writeFile(join(appPath, 'assets/config.json'), appConfig);
+      serveApp(appPath, app);
     }
   }
 );

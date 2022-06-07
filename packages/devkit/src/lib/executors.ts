@@ -1,14 +1,27 @@
-import { BuilderContext, BuilderOutput } from '@angular-devkit/architect';
+import { BuilderOutput } from '@angular-devkit/architect';
 import { spawn } from 'child_process';
 
+interface ExecContext {
+  logger: {
+    info(message: string): void;
+    error(message: string): void;
+  }
+}
 
-export function execute(ctx: BuilderContext, cwd: string, cmd: string) {
+interface ExecConfig {
+  env?: Record<string, string>;
+  cwd: string;
+}
+
+export function execute(ctx: ExecContext, cmd: string, config: ExecConfig) {
   const [command, ...args] = cmd.split(' ');
+  const { cwd, env = process.env } = config;
   return new Promise<BuilderOutput>((resolve, reject) => {
     const child = spawn(command, args, {
-      cwd: cwd,
       stdio: "inherit", // keep color
-      shell: true
+      shell: true,
+      cwd,
+      env
     });
 
     child.stdout?.on('data', (data) => {

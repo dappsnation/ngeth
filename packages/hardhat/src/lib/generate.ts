@@ -2,16 +2,7 @@ import { join, resolve } from 'path';
 import { existsSync, mkdirSync, promises as fs } from 'fs';
 import { Artifact, HardhatRuntimeEnvironment } from 'hardhat/types';
 import { getContract, getContractManager, getFactory } from '@ngeth/tools';
-
-import * as parserTypeScript from "prettier/parser-typescript";
-import * as prettier from "prettier/standalone";
-export function formatTs(code: string) {
-  return prettier.format(code, {
-    parser: 'typescript',
-    plugins: [parserTypeScript],
-    printWidth: 120,
-  });
-}
+import { formatTs } from './utils';
 
 
 const contractIndex = (contractName: string) => `

@@ -39,7 +39,13 @@ export class BlockExplorer {
   );
 
   constructor() {
-    const socket = io('http://localhost:3333');
+    this.init();
+  }
+
+  async init() {
+    const res = await fetch('/assets/config.json');
+    const { api } = await res.json();
+    const socket = io(api);
     socket.on('block', source => {
       this.source = source;
       this.#sourceChanges.next();

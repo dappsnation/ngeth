@@ -16,5 +16,6 @@ export default {
     autoDeploy: {
       BaseERC20: ["Name"],
     },
+    explorer: false
   },
 };

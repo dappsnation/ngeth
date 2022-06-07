@@ -1,5 +1,5 @@
 {
-  "projectType": "application",
+  "projectType": "library",
   "root": "e2e/explorer",
   "sourceRoot": "e2e/explorer",
   "prefix": "eth",

@@ -35,6 +35,6 @@ export function runTask(task: string) {
     if (!projectName) throw new Error('No project found');
     const cwd = join(context.workspaceRoot, dirname(options.config));
     const args = formatArgs(options);
-    return execute(context, cwd, `hardhat ngeth:${task} ${args}`);
+    return execute(context, `hardhat ngeth:${task} ${args}`, { cwd });
   });
 }

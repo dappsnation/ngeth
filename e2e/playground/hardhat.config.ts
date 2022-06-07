@@ -20,5 +20,9 @@ export default {
       BaseERC20: [],
       BaseERC721: [],
     },
+    explorer: {
+      api: 3000,
+      app: 3001
+    }
   },
 };

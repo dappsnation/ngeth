@@ -84,6 +84,7 @@
     "ipfsd-ctl": "^10.0.6",
     "jest": "27.2.3",
     "jest-preset-angular": "11.0.0",
+    "kill-port": "^2.0.0",
     "ng-packagr": "^13.0.0",
     "postcss": "^8.4.5",
     "postcss-import": "^14.0.2",

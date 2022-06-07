@@ -6,11 +6,14 @@ import { createServer } from "http";
 import { Server } from "socket.io";
 import { setArtifact } from './app/artifacts';
 
+const explorerAppPort = process.env['EXPLORER_APP_PORT'] || 4200;
+const explorerApiPort = process.env['EXPLORER_API_PORT'] || 3333;
+
 const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: "http://localhost:4200"
+    origin: `http://localhost:${explorerAppPort}`
   }
 });
 
@@ -25,8 +28,8 @@ app.get('/etherscan/**', async (req: Request<EtherscanParams>, res) => {
   }
 });
 
-const port = process.env['PORT'] || 3333;
-httpServer.listen(port);
+
+httpServer.listen(explorerApiPort);
 
 const { addSocket } = blockListener();
 io.on("connection", (socket) => {

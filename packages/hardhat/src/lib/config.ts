@@ -6,6 +6,8 @@ interface NgEthConfig {
   /** Constructor params used when serving the application */
   autoDeploy: Record<string, unknown[]>;
   withImports: boolean;
+  /** Ports for the explorer api & app */
+  explorer: false | { api: number, app: number }
 }
 
 declare module 'hardhat/types/config' {
@@ -22,5 +24,9 @@ export const getDefaultConfig = (config: Partial<HardhatConfig>): NgEthConfig =>
   outDir: 'ngeth',
   autoDeploy: {},
   withImports: false,
+  explorer: {
+    api: 3000,
+    app: 3001,
+  },
   ...(config.ngeth || {})
 })

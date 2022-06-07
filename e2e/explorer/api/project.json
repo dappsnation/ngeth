@@ -7,7 +7,7 @@
       "executor": "@nrwl/node:build",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/e2e/explorer/api",
+        "outputPath": "dist/packages/hardhat/src/explorer/api",
         "main": "e2e/explorer/api/src/main.ts",
         "tsConfig": "e2e/explorer/api/tsconfig.app.json",
         "assets": ["e2e/explorer/api/src/assets"]
@@ -48,5 +48,8 @@
       }
     }
   },
-  "tags": []
+  "tags": [],
+  "implicitDependencies": [
+    "hardhat"
+  ]
 }

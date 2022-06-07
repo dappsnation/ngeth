@@ -1,6 +1,6 @@
-import { formatTs } from "@ngeth/tools";
 import { existsSync, mkdirSync, promises as fs } from "fs";
 import { Artifact, HardhatRuntimeEnvironment } from "hardhat/types";
+import { formatTs } from './utils';
 import { join } from "path";
 
 export async function deploy(hre: HardhatRuntimeEnvironment, artifacts: Artifact[]) {

@@ -151,5 +151,8 @@
       }
     }
   },
-  "tags": []
+  "tags": [],
+  "implicitDependencies": [
+    "hardhat-tools"
+  ]
 }

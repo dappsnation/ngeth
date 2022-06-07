@@ -4,13 +4,6 @@
   "sourceRoot": "e2e/explorer/hardhat/src",
   "prefix": "eth",
   "targets": {
-    "build": {
-      "options": {
-        "config": "e2e/explorer/hardhat/hardhat.config.ts",
-        "tsconfig": "e2e/explorer/hardhat/tsconfig.app.json"
-      },
-      "executor": "@ngeth/hardhat:build"
-    },
     "serve": {
       "options": {
         "config": "e2e/explorer/hardhat/hardhat.config.ts",

@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { WalletManager } from './wallet';
 import { isAddress } from '@ethersproject/address';
 import { Router } from '@angular/router';
-import { Provider } from '@ethersproject/providers';
 import { parseEther } from '@ethersproject/units';
 
 const privateKeys = [
@@ -12,7 +11,7 @@ const privateKeys = [
 ];
 
 @Component({
-  selector: 'eth-root',
+  selector: 'explorer-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -21,7 +20,6 @@ export class AppComponent {
   accounts$ = this.walletManager.accounts$;
   account$ = this.walletManager.account$;
   constructor(
-    private provider: Provider,
     private walletManager: WalletManager,
     private router: Router
   ) {
