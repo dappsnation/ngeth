@@ -85,9 +85,8 @@ export function getMinedBlocks(params: GetParams<BlockMined>) {
 export function balanceHistory(params: GetParams<BalanceHistory>) {
   const { address, blockno } = params;
   if (!address || ! blockno) throw new Error('Error! Missing or invalid Action name');
-  let state: EthState | undefined;
   
-  state = states[blockno - 1];
-  const balance = state.balances[address] ?? '0x00';
+  const balance = states[blockno]?.balances[address] ?? '0x00';
+  if (!balance) return '0';
   return balance.toString().replace('0x', '');
 }
