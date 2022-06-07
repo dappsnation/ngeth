@@ -60,9 +60,7 @@ export function txList(params: GetParams<TxList>): TransactionReceipt[] {
   return sorted.slice(offset*(page-1), offset*page);
 }
 
-/**
- * return the list of blocks mined by an address
- */
+/** return the list of blocks mined by an address */
 export function getMinedBlocks(params: GetParams<BlockMined>) {
   const { address, blocktype, page, offset } = params;
   if (!address) throw new Error('Error! Missing or invalid Action name');
