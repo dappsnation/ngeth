@@ -60,17 +60,26 @@ export function txList(params: GetParams<TxList>): TransactionReceipt[] {
   return sorted.slice(offset*(page-1), offset*page);
 }
 
+/**
+ * No reward calculation on hardHat, so blockReward = 0;
+ * When a same block is mined 2 times at the same time, it create 2 parallel branch
+ * the one keep by the network is the block, the other one is the uncle.
+ * No parallel branch on hardhat so no uncles block 
+ */
 export function getMinedBlocks(params: GetParams<BlockMined>) {
   const { address, blocktype, page, offset } = params;
   if (!address) throw new Error('Error! Missing or invalid Action name');
+  if (blocktype === "uncles") throw new Error('No uncles block on local hardhat network');
 
   const minedBlocks = blocks
-    .filter(block => (block.miner === address))
-
+  .filter(block => (block.miner === address))
+  .map(minedblock => {
+    return { 
+      blockNumber: minedblock.number,
+      timeStamp: minedblock.timestamp,
+      blockReward: 0
+    }
+  })
   if (!offset || !page) return minedBlocks;
   return minedBlocks.slice(offset*(page-1), offset*page);
 }
-
-// missing blocktype (blocks or uncles), the result should be [{blockNumber, timeStamp, blockReward}, ...]
-// but currently is [{hash, parentHash, number, timestamp, nonce, difficulty, _difficulty, gasLimit, gasUsed, miner, extraData, baseFeePerGas}]
-// to do : have the correct result, how to get block reward, type of block
