@@ -67,19 +67,15 @@ export function getMinedBlocks(params: GetParams<BlockMined>) {
   const { address, blocktype, page, offset } = params;
   if (!address) throw new Error('Error! Missing or invalid Action name');
 
-  /**
-  * When a same block is mined 2 times at the same time, it create 2 parallel branch
-  * the one keep by the network is the block, the other one is the uncle.
-  * No parallel branch on hardhat so no uncles block 
-  */
+  // No parallel branch on hardhat so no uncles block
   if (blocktype === "uncles") throw new Error('No uncles block on local hardhat network');
- // No reward calculation on hardHat, so blockReward = 0;
   const minedBlocks = blocks
   .filter(block => (block.miner === address))
   .map(minedblock => {
     return { 
       blockNumber: minedblock.number,
       timeStamp: minedblock.timestamp,
+      // No reward calculation on hardHat, so blockReward = 0;
       blockReward: 0
     }
   })
