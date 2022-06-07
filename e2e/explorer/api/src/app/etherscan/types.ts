@@ -17,7 +17,7 @@ export type GetParams<T> = Omit<T, 'module' | 'action' | 'apiKey'>
 // ACCOUNT //
 /////////////
 // Params
-export type AccountsParams = Balance | BalanceMulti | TxList | TxListInternal | BlockMined;
+export type AccountsParams = Balance | BalanceMulti | BalanceHistory | TxList | TxListInternal | BlockMined;
 export interface Balance extends BaseParams<'account', 'balance'> {
   /** the string representing the address to check for balance   */
   address: string;
@@ -29,6 +29,12 @@ export interface BalanceMulti extends BaseParams<'account', 'balancemulti'> {
   address: string;
   /** The integer pre-defined block parameter, either earliest, pending or latest */
   tag: Tag;
+}
+export interface BalanceHistory extends BaseParams<'account', 'balancehistory'> {
+  /** the string representing the address to check for balance */
+  address: string;
+  /** the integer block number to check balance for eg. 12697906 */
+  blockno: number;
 }
 export interface TxList extends BaseParams<'account', 'txlist'> {
   /** the strings representing the addresses to check for balance, separated by , up to 20 addresses per call */
