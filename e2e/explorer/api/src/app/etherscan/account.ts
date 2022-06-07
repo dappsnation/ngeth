@@ -65,9 +65,7 @@ export function getMinedBlocks(params: GetParams<BlockMined>) {
   if (!address) throw new Error('Error! Missing or invalid Action name');
 
   const minedBlocks = blocks
-    .filter(block => {
-      if (block.miner !== address) return false;
-    })
+    .filter(block => (block.miner === address))
 
   if (!offset || !page) return minedBlocks;
   return minedBlocks.slice(offset*(page-1), offset*page);
