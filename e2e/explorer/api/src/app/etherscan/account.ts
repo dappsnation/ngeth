@@ -1,5 +1,5 @@
 import { TransactionReceipt } from "@ethersproject/abstract-provider";
-import { Balance, BalanceMulti, GetParams, TxList, BlockMined } from "./types";
+import { Balance, BalanceMulti, GetParams, TxList, BlockMined, BalanceHistory } from "./types";
 import { store } from '../store';
 import { EthState } from "@explorer";
 
@@ -79,4 +79,14 @@ export function getMinedBlocks(params: GetParams<BlockMined>) {
     })
   if (!offset || !page) return minedBlocks;
   return minedBlocks.slice(offset*(page-1), offset*page);
+}
+
+/** returns the balance of an address at a certain block height */
+export function balanceHistory(params: GetParams<BalanceHistory>) {
+  const { address, blockno } = params;
+  if (!address || ! blockno) throw new Error('Error! Missing or invalid Action name');
+
+  const balance = store.states[blockno]?.balances[address];
+  if (!balance) return '0';
+  return balance.replace('0x', '');
 }
