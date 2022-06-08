@@ -57,6 +57,26 @@
       <th>Value</th>
       <td>{{ tx.value | ether }}</td>
     </tr>
+    <tr class="logs">
+      <th>Logs</th>
+      <td>
+        <details *ngFor="let log of tx.logs; trackBy: trackByIndex">
+          <summary>
+            Emitter: <a [routerLink]="['/contract', log.address, 'events']">{{ log.address }}</a>
+          </summary>
+          <article *ngIf="log.topics.length">
+            <h5>Indexed</h5>
+            <ol>
+              <li *ngFor="let topic of log.topics">{{ topic }}</li>
+            </ol>
+          </article>
+          <article *ngIf="log.data !== '0x'">
+            <h5>Non indexed data</h5>
+            <pre><code>{{ log.data }}</code></pre>
+          </article>
+        </details>
+      </td>
+    </tr>
     <tr class="data">
       <th>Data</th>
       <td>

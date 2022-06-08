@@ -67,6 +67,7 @@ export class ViewComponent {
   );
 
   showData = false;
+  trackByIndex = (i: number) => i;
 
   constructor(
     private explorer: BlockExplorer,

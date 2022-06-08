@@ -4,8 +4,6 @@ import { ViewComponent } from './view.component';
 import { RouterModule } from '@angular/router';
 import { EthersModule } from '@ngeth/ethers';
 
-
-
 @NgModule({
   declarations: [
     ViewComponent
