@@ -16,6 +16,8 @@ export class AbiComponent {
     map(contract => formABI(contract.artifact.abi))
   );
 
+  trackByName = (i: number, form: AbiFormFunction) => form.name;
+
   constructor(
     private shell: ViewComponent,
     private walletManager: WalletManager,
@@ -26,8 +28,13 @@ export class AbiComponent {
     if (!read.name) return;
     if (read.form.invalid) return read.form.markAllAsTouched();
     const inputs = read.form.value;
-    read.result = await this.shell.contract?.callStatic[read.name](...inputs);
-    read.form.reset();
+    try {
+      read.result = await this.shell.contract?.callStatic[read.name](...inputs);
+      read.form.reset();
+    } catch(err) {
+      read.form.addValidators(() => ({ err }));
+      read.form.updateValueAndValidity();
+    }
     this.cdr.markForCheck();
   }
 
@@ -35,8 +42,14 @@ export class AbiComponent {
     if (!write.name) return;
     if (write.form.invalid) return write.form.markAllAsTouched();
     const inputs = write.form.value;
-    await this.shell.contract?.functions[write.name](...inputs);
-    write.form.reset();
+    try {
+      const tx = await this.shell.contract?.functions[write.name](...inputs);
+      await tx.wait();
+      write.form.reset();
+    } catch(err) {
+      write.form.addValidators(() => ({ err }));
+      write.form.updateValueAndValidity();
+    }
     this.cdr.markForCheck();
   }
 }

@@ -1,7 +1,7 @@
 <ng-container *ngIf="forms$ | async as forms">
   <article>
     <h3>Read Contract</h3>
-    <details *ngFor="let read of forms.reads">
+    <details *ngFor="let read of forms.reads; trackBy: trackByName">
       <summary>
         <h4>{{ read.name }}</h4>
       </summary>
@@ -25,7 +25,7 @@
     <p>
       Current signer: <span class="signer">{{ account$ | async }}</span>
     </p>
-    <details *ngFor="let write of forms.writes">
+    <details *ngFor="let write of forms.writes; trackBy: trackByName">
       <summary>
         <h4>{{ write.name }}</h4>
       </summary>

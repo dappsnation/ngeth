@@ -97,4 +97,13 @@ form {
       border: 1px solid var(--border-0);
     }
   }
+
+  &.ng-invalid.ng-touched {
+    label {
+      color: var(--warn);
+    }
+    input {
+      border: 1px solid var(--warn);
+    }
+  }
 }
