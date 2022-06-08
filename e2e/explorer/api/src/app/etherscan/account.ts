@@ -1,6 +1,6 @@
 import { TransactionReceipt } from "@ethersproject/abstract-provider";
-import { Balance, BalanceMulti, GetParams, TxList } from "./types";
-import { states, addresses, transactions } from '../block';
+import { Balance, BalanceMulti, GetParams, TxList, BlockMined } from "./types";
+import { states, addresses, transactions, blocks } from '../block';
 import { EthState } from "@explorer";
 
 export function balance({ address, tag }: GetParams<Balance>): string {
@@ -58,4 +58,25 @@ export function txList(params: GetParams<TxList>): TransactionReceipt[] {
   if (!params.offset || !page) return sorted;
   const offset = Math.min(params.offset, 10000);
   return sorted.slice(offset*(page-1), offset*page);
+}
+
+/** return the list of blocks mined by an address */
+export function getMinedBlocks(params: GetParams<BlockMined>) {
+  const { address, blocktype, page, offset } = params;
+  if (!address) throw new Error('Error! Missing or invalid Action name');
+
+  // No parallel branch on hardhat so no uncles block
+  if (blocktype === "uncles") throw new Error('No uncles block on local hardhat network');
+  const minedBlocks = blocks
+  .filter(block => (block.miner === address))
+  .map(minedblock => {
+    return { 
+      blockNumber: minedblock.number,
+      timeStamp: minedblock.timestamp,
+      // No reward calculation on hardHat, so blockReward = 0;
+      blockReward: 0
+    }
+  })
+  if (!offset || !page) return minedBlocks;
+  return minedBlocks.slice(offset*(page-1), offset*page);
 }
