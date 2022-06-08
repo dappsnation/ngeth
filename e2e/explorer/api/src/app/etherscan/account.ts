@@ -88,5 +88,5 @@ export function balanceHistory(params: GetParams<BalanceHistory>) {
 
   const balance = states[blockno]?.balances[address];
   if (!balance) return '0';
-  return balance.toString().replace('0x', '');
+  return balance.replace('0x', '');
 }
