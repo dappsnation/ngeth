@@ -1,6 +1,5 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { BlockExplorer } from '../../../explorer';
-import { map } from 'rxjs/operators';
 import { EthAccount } from '@explorer';
 
 @Component({
@@ -10,9 +9,7 @@ import { EthAccount } from '@explorer';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ListComponent {
-  contracts$ = this.explorer.contracts$.pipe(
-    map(addresses => Object.values(addresses))
-  );
+  contracts$ = this.explorer.contracts$;
   trackByAddress = (index: number, account: EthAccount) => account.address;
   constructor(private explorer: BlockExplorer) {}
 }

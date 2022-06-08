@@ -4,7 +4,7 @@ import { BlockExplorer } from '../../../explorer';
 import { exist } from '../../../utils';
 import { combineLatest } from 'rxjs';
 import { filter, map, shareReplay } from 'rxjs/operators';
-import { EthAccount } from '@explorer';
+import { ContractAccount, isContract } from '@explorer';
 import { Contract } from '@ethersproject/contracts';
 import { WalletManager } from '../../../wallet';
 
@@ -22,9 +22,9 @@ export class ViewComponent {
     filter(exist)
   );
 
-  contract$ = combineLatest([this.explorer.contracts$, this.address$]).pipe(
+  contract$ = combineLatest([this.explorer.addresses$, this.address$]).pipe(
     map(([addresses, address]) => addresses[address]),
-    filter(exist),
+    filter(isContract),
     map(contract => this.populate(contract)),
     shareReplay({ refCount: true, bufferSize: 1 })
   );
@@ -35,10 +35,10 @@ export class ViewComponent {
     private walletManager: WalletManager,
   ) {}
 
-  private populate(contract: EthAccount) {
-    const transactions = contract.transactions.map(hash => this.explorer.source.transactions[hash]);
-    const abi = this.explorer.source.abis[contract.address];
-    this.contract = new Contract(contract.address, abi, this.walletManager.signer);
-    return { ...contract, transactions, abi }
+  private populate(contract: ContractAccount) {
+    const receipts = contract.transactions.map(hash => this.explorer.source.receipts[hash]);
+    const artifact = this.explorer.source.artifacts[contract.artifact];
+    this.contract = new Contract(contract.address, artifact.abi, this.walletManager.signer);
+    return { ...contract, receipts, artifact }
   }
 }

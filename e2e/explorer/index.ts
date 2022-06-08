@@ -1,5 +1,27 @@
-import { TransactionReceipt, Block, Log } from '@ethersproject/abstract-provider';
+import { TransactionReceipt, TransactionResponse, Block, Log } from '@ethersproject/abstract-provider';
 import { ABIDescription } from '@type/solc';
+
+export interface EthStore {
+  /** block indexed by block height */
+  blocks: Block[];
+  /** Transaction response indexed by Transaction hash */
+  transactions: Record<string, TransactionResponse>;
+  /** Transaction receipt indexed by Transaction hash */
+  receipts: Record<string, TransactionReceipt>;
+  /** History of transaction indexed by addresses */
+  addresses: Record<string, EthAccount>;
+  /** State of the network indexed by block height */
+  states: EthState[];
+  /** Logs indexed by addresses */
+  logs: Record<string, Log[]>;
+  /** List of external account addresses (not contract) */
+  accounts: string[],
+  /** List of contract addresses */
+  contracts: string[],
+  /** Artifacts */
+  artifacts: Record<string, ContractArtifact>
+}
+
 
 export interface EthAccount {
   isContract: boolean;
@@ -9,21 +31,25 @@ export interface EthAccount {
   transactions: string[];
 }
 
+
+export interface ContractArtifact {
+  contractName: string;
+  sourceName: string;
+  abi: ABIDescription[];
+  deployedBytecode: string; // "0x"-prefixed hex string
+}
+
+
+export interface ContractAccount extends EthAccount{
+  isContract: true;
+  /** Key of the artifact in the artifact record */
+  artifact: string;
+}
+
 export interface EthState {
   balances: Record<string, string>;
 }
 
-export interface BlockchainState {
-  /** All the blocks */
-  blocks: Block[];
-  /** All transactions recorded by their hash */
-  transactions: Record<string, TransactionReceipt>;
-  /** History of transaction per addresses */
-  addresses: Record<string, EthAccount>;
-  /** State of the network at a specific block */
-  states: EthState[];
-  /** ABI per contract address */
-  abis: Record<string, ABIDescription[]>
-  /** Logs per addresses in "desc" order */
-  logs: Record<string, Log[]>
+export const isContract = (account: EthAccount): account is ContractAccount => {
+  return account.isContract;
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { firstValueFrom, ReplaySubject } from 'rxjs';
 import { map, filter } from 'rxjs/operators';
-import { BlockchainState, EthAccount } from '@explorer';
+import { EthAccount, EthStore } from '@explorer';
 
 import { io } from "socket.io-client";
 
@@ -18,24 +18,29 @@ const filterContracts= filterAddress(true);
 @Injectable({ providedIn: 'root' })
 export class BlockExplorer {
   #sourceChanges = new ReplaySubject<void>();
-  source: BlockchainState = {
+  source: EthStore = {
     blocks: [],
-    transactions: {},
-    addresses: {},
     states: [],
-    abis: {},
-    logs: {}
+    transactions: {},
+    receipts: {},
+    addresses: {},
+    logs: {},
+    accounts: [],
+    contracts: [],
+    artifacts: {}
   };
   blocks$ = this.#sourceChanges.pipe(map(() => this.source.blocks));
   txs$ = this.#sourceChanges.pipe(map(() => this.source.transactions));
+  receipts$ = this.#sourceChanges.pipe(map(() => this.source.receipts));
   states$ = this.#sourceChanges.pipe(map(() => this.source.states));
   logs$ = this.#sourceChanges.pipe(map(() => this.source.logs));
-  abis$ = this.#sourceChanges.pipe(map(() => this.source.abis));
+  artifacts$ = this.#sourceChanges.pipe(map(() => this.source.artifacts));
+  addresses$ = this.#sourceChanges.pipe(map(() => this.source.addresses));
   accounts$ = this.#sourceChanges.pipe(
-    map(() => filterAccounts(this.source.addresses))
+    map(() => this.source.accounts.map(address => this.source.addresses[address]))
   );
   contracts$ = this.#sourceChanges.pipe(
-    map(() => filterContracts(this.source.addresses))
+    map(() => this.source.contracts.map(address => this.source.addresses[address]))
   );
 
   constructor() {
@@ -46,18 +51,18 @@ export class BlockExplorer {
     const res = await fetch('/assets/config.json');
     const { api } = await res.json();
     const socket = io(api);
-    socket.on('block', source => {
+    socket.on('block', (source: EthStore) => {
       this.source = source;
       this.#sourceChanges.next();
     })
   }
 
-  async get<K extends keyof BlockchainState>(key: K, value: keyof BlockchainState[K]) {
-    if (value in this.source[key]) return this.source[key][value];
-    const obs = this.#sourceChanges.pipe(
-      filter(() => value in this.source[key]),
-      map(() => this.source[key][value])
-    );
-    return firstValueFrom(obs);
-  }
+  // async get<K extends keyof BlockchainState>(key: K, value: keyof BlockchainState[K]) {
+  //   if (value in this.source[key]) return this.source[key][value];
+  //   const obs = this.#sourceChanges.pipe(
+  //     filter(() => value in this.source[key]),
+  //     map(() => this.source[key][value])
+  //   );
+  //   return firstValueFrom(obs);
+  // }
 }

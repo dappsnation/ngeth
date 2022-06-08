@@ -2,7 +2,6 @@ import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/
 import { ViewComponent } from '../view.component';
 import { AbiFormFunction, formABI } from './utils';
 import { map } from 'rxjs/operators';
-import { FormArray } from '@angular/forms';
 
 @Component({
   selector: 'explorer-contract-abi',
@@ -12,7 +11,7 @@ import { FormArray } from '@angular/forms';
 })
 export class AbiComponent {
   forms$ = this.shell.contract$.pipe(
-    map(contract => formABI(contract.abi))
+    map(contract => formABI(contract.artifact.abi))
   );
 
   constructor(

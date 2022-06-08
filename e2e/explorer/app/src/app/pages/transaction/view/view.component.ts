@@ -17,10 +17,10 @@ export class ViewComponent {
     filter(exist),
   );
   tx$ = combineLatest([
-    this.explorer.txs$,
+    this.explorer.receipts$,
     this.hash$,
   ]).pipe(
-    map(([txs, hash]) => txs[hash])
+    map(([receipts, hash]) => receipts[hash])
   )
 
   constructor(

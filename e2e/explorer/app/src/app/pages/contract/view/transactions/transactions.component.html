@@ -1,5 +1,5 @@
 <ng-container *ngIf="contract$ | async as contract">
-  <table class="list" *ngIf="contract.transactions.length; else empty">
+  <table class="list" *ngIf="contract.receipts.length; else empty">
     <thead>
       <tr>
         <th>Txn Hash</th>
@@ -10,7 +10,7 @@
       </tr>
     </thead>
     <tbody>
-      <ng-container  *ngFor="let tx of contract.transactions">
+      <ng-container  *ngFor="let tx of contract.receipts">
         <tr>
           <td>
             <a class="clamp" [routerLink]="['/tx', tx.transactionHash]">{{ tx.transactionHash }}</a>

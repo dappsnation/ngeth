@@ -1,26 +1,23 @@
-import { Block, TransactionReceipt } from "@ethersproject/abstract-provider";
-import { Networkish } from "@ethersproject/networks";
-import { BaseProvider, getDefaultProvider, Log } from "@ethersproject/providers";
+import { Block, TransactionReceipt, Log } from "@ethersproject/abstract-provider";
 import { getAddress } from "@ethersproject/address";
 import { EthState, EthAccount } from '@explorer';
 import { Socket } from 'socket.io';
-import { findABI, setArtifact } from "./artifacts";
-import { setABI, abis } from "./abi";
 import { promises as fs } from "fs";
 import { join } from "path";
+import { provider } from "./provider";
+import { setBlock, store, setArtifact, setBalance } from "./store";
 
 
-export let provider: BaseProvider;
-/** All the blocks */
-export const blocks: Block[] = [];
-/** All transactions response recorded by their hash */
-export const transactions: Record<string, TransactionReceipt> = {};
-/** History of transaction per addresses */
-export const addresses: Record<string, EthAccount> = {};
-/** State of the network at a specific block */
-export const states: EthState[] = [];
-/** Logs per addresses */
-export const logs: Record<string, Log[]> = {};
+// /** All the blocks */
+// export const blocks: Block[] = [];
+// /** All transactions response recorded by their hash */
+// export const transactions: Record<string, TransactionReceipt> = {};
+// /** History of transaction per addresses */
+// export const addresses: Record<string, EthAccount> = {};
+// /** State of the network at a specific block */
+// export const states: EthState[] = [];
+// /** Logs per addresses */
+// export const logs: Record<string, Log[]> = {};
 
 
 //////////
@@ -68,12 +65,10 @@ async function init() {
   await initFactories(artifactRoot);
   const current = await provider.getBlockNumber();
   for (let i = 0; i < current; i++) {
-    provider.getBlock(i).then(registerBlock);
+    provider.getBlock(i).then(setBlock);
   }
-  for (const account of hardhatAccounts) {
-    if (!addresses[account]) addresses[account] = initAccount(account);
-    const balance = await provider.getBalance(account);
-    addresses[account].balance = balance.toHexString();
+  for (const address of hardhatAccounts) {
+    setBalance({ address, isContract: false });
   }
 }
 
@@ -82,21 +77,19 @@ async function init() {
 // BLOCK LISTENER //
 ////////////////////
 
-export function blockListener(network: Networkish = 'http://localhost:8545') {
+export function blockListener() {
   const sockets: Record<string, Socket> = {};
   const emit = () => {
-    const data = { blocks, transactions, addresses, states, abis, logs };
-    Object.values(sockets).forEach(socket => socket.emit('block', data))
+    Object.values(sockets).forEach(socket => socket.emit('block', store));
   }
 
   // Start Listening on the node
-  console.log('Start listening on Ethereum Network', network);
-  provider = getDefaultProvider(network);
+  console.log('Start listening on Ethereum Network');
 
   // Listen on block changes (Hardh hat doesn't support pending transaction event)
   provider.on('block', async (blockNumber: number) => {
     const block = await provider.getBlock(blockNumber);
-    await registerBlock(block);
+    await setBlock(block);
     emit();
   });
 
@@ -112,66 +105,70 @@ export function blockListener(network: Networkish = 'http://localhost:8545') {
   }
 }
 
-async function registerBlock(block: Block) {
-  blocks[block.number] = block;
-  const get = block.transactions.map(hash => provider.getTransactionReceipt(hash));
-  const txs = await Promise.all(get);
-  registerTransactions(txs);
-  registerState(block, txs);
-}
+// async function registerBlock(block: Block) {
+//   blocks[block.number] = block;
+//   const getReceipts = block.transactions.map(hash => provider.getTransactionReceipt(hash));
+//   const getResponses = block.transactions.map(hash => provider.getTransaction(hash));
+//   const [responses, receipts] = await Promise.all([
+//     Promise.all(getResponses),
+//     Promise.all(getReceipts),
+//   ]);
+//   registerTransactions(receipts);
+//   registerState(block, receipts);
+// }
 
-function registerTransactions(txs: TransactionReceipt[]) {
-  for (const tx of txs) {
-    for (const log of tx.logs) {
-      if (!logs[log.address]) logs[log.address] = [];
-      logs[log.address].unshift(log);
-    }
-    transactions[tx.transactionHash] = tx;
-    // Add to addresses (from, to, contractAddress)
-    addressesFromTx(tx).map(address => addTx(address, tx));
-    if (tx.contractAddress) registerABI(tx.contractAddress);
-  }
-}
+// function registerTransactions(receipts: TransactionReceipt[]) {
+//   for (const receipt of receipts) {
+//     for (const log of receipt.logs) {
+//       if (!logs[log.address]) logs[log.address] = [];
+//       logs[log.address].unshift(log);
+//     }
+//     transactions[receipt.transactionHash] = receipt;
+//     // Add to addresses (from, to, contractAddress)
+//     addressesFromTx(receipt).map(address => addTx(address, receipt));
+//     if (receipt.contractAddress) registerABI(receipt.contractAddress);
+//   }
+// }
 
-function addressesFromTx(tx: TransactionReceipt) {
-  const addresses = [tx.from];
-  if (tx.to) addresses.push(tx.to);
-  if (tx.contractAddress) addresses.push(tx.contractAddress);
-  return addresses.map(getAddress);
-}
+// function addressesFromTx(tx: TransactionReceipt) {
+//   const addresses = [tx.from];
+//   if (tx.to) addresses.push(tx.to);
+//   if (tx.contractAddress) addresses.push(tx.contractAddress);
+//   return addresses.map(getAddress);
+// }
 
-function registerState(block: Block, txs: TransactionReceipt[]) {
-  states[block.number] = states[block.number - 1] ?? { balances: {} };
-  const addressesSet = new Set(txs.map(addressesFromTx).flat());
-  addressesSet.forEach(async address => {
-    const balance = await provider.getBalance(address, block.number);
-    states[block.number].balances[address] = balance.toHexString();
-  });
-  addressesSet.forEach(setBalance)
-  // Overwrite last balance
-}
+// function registerState(block: Block, txs: TransactionReceipt[]) {
+//   states[block.number] = states[block.number - 1] ?? { balances: {} };
+//   const addressesSet = new Set(txs.map(addressesFromTx).flat());
+//   addressesSet.forEach(async address => {
+//     const balance = await provider.getBalance(address, block.number);
+//     states[block.number].balances[address] = balance.toHexString();
+//   });
+//   addressesSet.forEach(setBalance)
+//   // Overwrite last balance
+// }
 
 
-/////////////
-// ACCOUNT //
-/////////////
-async function addTx(address: string, tx: TransactionReceipt) {
-  if (!addresses[address]) addresses[address] = initAccount(address, !!tx.contractAddress);
-  addresses[address].transactions.unshift(tx.transactionHash);
-}
+// /////////////
+// // ACCOUNT //
+// /////////////
+// async function addTx(address: string, tx: TransactionReceipt) {
+//   if (!addresses[address]) addresses[address] = initAccount(address, !!tx.contractAddress);
+//   addresses[address].transactions.unshift(tx.transactionHash);
+// }
 
-async function setBalance(address: string) {
-  const balance = await provider.getBalance(address);
-  if (!addresses[address]) addresses[address] = initAccount(address);
-  addresses[address].balance = balance.toHexString();
-}
+// async function setBalance(address: string) {
+//   const balance = await provider.getBalance(address);
+//   if (!addresses[address]) addresses[address] = initAccount(address);
+//   addresses[address].balance = balance.toHexString();
+// }
 
-//////////////
-// CONTRACT //
-//////////////
-async function registerABI(address: string) {
-  const code = await provider.getCode(address);
-  const abi = findABI(code);
-  if (!abi) return;
-  setABI(address, abi);
-}
+// //////////////
+// // CONTRACT //
+// //////////////
+// async function registerABI(address: string) {
+//   const code = await provider.getCode(address);
+//   const abi = findABI(code);
+//   if (!abi) return;
+//   setABI(address, abi);
+// }

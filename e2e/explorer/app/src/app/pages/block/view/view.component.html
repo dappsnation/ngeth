@@ -30,7 +30,7 @@
       <h2>Transactions</h2>
       <small>{{ block.transactions.length }}</small>
     </header>
-    <table class="list" *ngIf="block.txs.length; else empty">
+    <table class="list" *ngIf="block.receipts.length; else empty">
       <thead>
         <tr>
           <th>Txn Hash</th>
@@ -40,7 +40,7 @@
         </tr>
       </thead>
       <tbody>
-        <ng-container *ngFor="let tx of block.txs; trackBy: trackByHash">
+        <ng-container *ngFor="let tx of block.receipts; trackBy: trackByHash">
           <tr>
             <td>
               <a class="clamp" [routerLink]="['/tx', tx.transactionHash]">{{ tx.transactionHash }}</a>

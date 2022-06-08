@@ -23,8 +23,8 @@
         </tr>
       </thead>
       <tbody>
-        <ng-container  *ngFor="let getTx$ of account.transactions">
-          <tr *ngIf="getTx$ | async as tx">
+        <ng-container  *ngFor="let tx of account.receipts">
+          <tr>
             <td>
               <a class="clamp" [routerLink]="['/tx', tx.transactionHash]">{{ tx.transactionHash }}</a>
             </td>
@@ -53,9 +53,5 @@
     <ng-template #empty>
       <p class="empty">There is no transaction for this address yet</p>
     </ng-template>
-  </article>
-
-  <article *ngIf="account.abi">
-    
   </article>
 </ng-container>

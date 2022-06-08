@@ -1,33 +1,35 @@
 import { VerifySourceCode, GetParams } from "./types";
 import solc from 'solc';
 import { CompilationInput, CompilationResult } from '@type/solc';
-import { provider } from "../block";
-import { setABI } from "../abi";
-
+import { provider } from "../provider";
+import { addArtifactToAddress, setArtifact } from "../store";
 
 async function verifySourceCode(params: GetParams<VerifySourceCode>) {
   const code = await provider.getCode(params.contractaddress);
+  const { contractname, sourceCode, optimizationUsed, runs, evmversion } = params;
   const input: CompilationInput = {
     language: 'Solidity',
     sources: {
-      [params.contractname]: {
-        content: params.sourceCode
+      [contractname]: {
+        content: sourceCode
       }
     },
     settings: {
       optimizer: {
-        enable: !!params.optimizationUsed,
-        runs: params.runs ?? 200
+        enable: !!optimizationUsed,
+        runs: runs ?? 200
       },
-      evmVersion: params.evmversion ?? 'london',
+      evmVersion: evmversion ?? 'london',
       libraries: {}
     }
   }
+  const sourceName = ''; // sourceName is going to be empty for this input
   const result: CompilationResult = JSON.parse(solc.compile(JSON.stringify(input)));
-  const contract = result.contracts[''][params.contractname];
-  const bytecode = contract.evm.deployedBytecode.object;
-  if (bytecode !== code) {
+  const contract = result.contracts[sourceName][contractname];
+  const deployedBytecode = contract.evm.deployedBytecode.object;
+  if (deployedBytecode !== code) {
     throw new Error('Bytecode is not the same');
   }
-  setABI(params.contractaddress, contract.abi);
+  const key = setArtifact({ deployedBytecode, contractName: contractname, sourceName: '', abi: contract.abi });
+  addArtifactToAddress(params.contractaddress, key);
 }

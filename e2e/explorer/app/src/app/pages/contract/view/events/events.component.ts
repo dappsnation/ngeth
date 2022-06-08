@@ -4,7 +4,7 @@ import { ViewComponent } from '../view.component';
 import { Log } from '@ethersproject/abstract-provider';
 import { Interface } from '@ethersproject/abi';
 import { combineLatest } from 'rxjs';
-import { map, distinctUntilChanged, tap } from 'rxjs/operators';
+import { map, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
   selector: 'explorer-contract-events',
@@ -21,11 +21,8 @@ export class EventsComponent {
     distinctUntilChanged((prev, next) => prev.length !== next.length)
   );
 
-  interface$ = combineLatest([
-    this.explorer.abis$,
-    this.shell.address$,
-  ]).pipe(
-    map(([abis, address]) => abis[address]),
+  interface$ = this.shell.contract$.pipe(
+    map(contract => contract.artifact.abi),
     distinctUntilChanged((prev, next) => prev.length !== next.length),
     map(abi => new Interface(abi)),
   );

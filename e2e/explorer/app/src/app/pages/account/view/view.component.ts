@@ -18,8 +18,8 @@ export class ViewComponent {
     filter(exist)
   );
 
-  account$ = combineLatest([this.explorer.accounts$, this.address$]).pipe(
-    map(([accounts, address]) => accounts[address]),
+  account$ = combineLatest([this.explorer.addresses$, this.address$]).pipe(
+    map(([addresses, address]) => addresses[address]),
     map(account => this.populate(account))
   );
 
@@ -29,8 +29,7 @@ export class ViewComponent {
   ) {}
 
   private populate(account: EthAccount) {
-    const transactions = account.transactions.map(hash => this.explorer.get('transactions', hash));
-    const abi = this.explorer.source.abis[account.address];
-    return { ...account, transactions, abi }
+    const receipts = account.transactions.map(hash => this.explorer.source.receipts[hash]);
+    return { ...account, receipts }
   }
 }

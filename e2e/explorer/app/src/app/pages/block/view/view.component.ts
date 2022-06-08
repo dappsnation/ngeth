@@ -39,7 +39,7 @@ export class ViewComponent {
   populate(block: Block) {
     return {
       ...block,
-      txs: block.transactions.map(hash => this.explorer.source.transactions[hash])
+      receipts: block.transactions.map(hash => this.explorer.source.receipts[hash])
     }
   }
 }

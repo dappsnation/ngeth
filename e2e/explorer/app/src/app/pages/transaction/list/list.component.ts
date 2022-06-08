@@ -10,7 +10,7 @@ import { map } from 'rxjs/operators';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ListComponent {
-  txs$ = this.explorer.txs$.pipe(
+  txs$ = this.explorer.receipts$.pipe(
     map(txs => Object.values(txs))
   );
   trackByHash = (index: number, receipt: TransactionReceipt) => receipt.transactionHash;
