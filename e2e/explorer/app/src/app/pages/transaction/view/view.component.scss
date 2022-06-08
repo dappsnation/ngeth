@@ -1,0 +1,26 @@
+:host {
+  display: block;
+}
+
+.data {
+  th {
+    vertical-align: initial;
+  }
+  pre {
+    text-align: left;
+    padding: var(--size-1);
+    border-radius: var(--size-0);
+    background-color: var(--background-1);
+    border: 1px solid var(--border-1);
+    white-space: initial;
+  }
+  code {
+    display: inline-block;
+    word-break: break-all;
+    margin-bottom: var(--size-0);
+  }
+  button {
+    display: inline-block;
+    cursor: pointer;
+  }
+}

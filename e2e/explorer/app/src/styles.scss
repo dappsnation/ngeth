@@ -120,6 +120,7 @@ table {
     th {
       border-right: 1px solid var(--border-0);
       text-align: left;
+      white-space: nowrap;
     }
   }
   &.list {

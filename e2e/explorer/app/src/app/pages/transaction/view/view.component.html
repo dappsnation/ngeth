@@ -2,17 +2,20 @@
 <ng-container *ngIf="tx$ | async as tx">
   <table class="surface record">
     <tr>
-      <th>Transaction hash</th>
-      <td>{{ tx.transactionHash }}</td>
+      <th>Transaction Hash</th>
+      <td>{{ tx.hash }}</td>
     </tr>
     <tr>
-      <th>Transaction Index</th>
-      <td>{{ tx.transactionIndex }}</td>
+      <th>Nonce</th>
+      <td>{{ tx.nonce }}</td>
     </tr>
     <tr>
-      <th>Transaction Status</th>
-      <td>{{ tx.status === 1 ? 'Succeed' : 'Failed' }}</td>
+      <th>Block</th>
+      <td>
+        <a [routerLink]="['/block', tx.blockNumber]">{{ tx.blockNumber }}</a> ({{ tx.blockHash }})
+      </td>
     </tr>
+
     <tr>
       <th>From</th>
       <td><a [routerLink]="['/account', tx.from]">{{ tx.from }}</a></td>
@@ -23,11 +26,55 @@
     </tr>
     <tr>
       <th>Contract Address</th>
-      <td><a [routerLink]="['/account', tx.contractAddress]">{{ tx.contractAddress }}</a></td>
+      <td><a [routerLink]="['/contract', tx.contractAddress]">{{ tx.contractAddress }}</a></td>
+    </tr>
+
+    <tr>
+      <th>Transaction Index</th>
+      <td>{{ tx.transactionIndex }}</td>
     </tr>
     <tr>
-      <th>Gas Used</th>
-      <td>{{ tx.gasUsed | bignumber }}</td>
+      <th>Transaction Status</th>
+      <td>{{ tx.status === 1 ? 'Succeed' : 'Failed' }}</td>
+    </tr>
+    <tr>
+      <th>Confirmations</th>
+      <td>{{ tx.confirmations }}</td>
+    </tr>
+    <tr>
+      <th>Cumulative Gas Used</th>
+      <td>{{ tx.cumulativeGasUsed | bignumber }}</td>
+    </tr>
+    <tr>
+      <th>Type</th>
+      <td>{{ tx.type }}</td>
+    </tr>
+    <tr>
+      <th>Timestamp</th>
+      <td>{{ tx.timestamp }}</td>
+    </tr>
+    <tr>
+      <th>Value</th>
+      <td>{{ tx.value | ether }}</td>
+    </tr>
+    <tr class="data">
+      <th>Data</th>
+      <td>
+        <pre>
+          <ng-container *ngIf="(showData || tx.data.length < 300) else reducedData">
+            <code>{{ tx.data }}</code>
+            <button (click)="showData = false" *ngIf="showData">
+              Show less
+            </button>
+          </ng-container>
+          <ng-template #reducedData>
+            <code>{{ tx.data | slice:0:300 }}...</code>
+            <button (click)="showData = true">
+              Show more ({{ tx.data.length - 300 }})
+            </button>
+          </ng-template>
+        </pre>
+      </td>
     </tr>
   </table>
 </ng-container>

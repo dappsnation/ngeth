@@ -150,6 +150,7 @@ export function setArtifact(artifact: ContractArtifact) {
   return key;
 }
 
+// If some variables are immutable they would be in the deployed bytecode but not the artifact...
 export function getArtifact(code: string): ContractArtifact {
   return Object.values(store.artifacts).find(artifact => artifact.deployedBytecode === code);
 }
@@ -157,6 +158,7 @@ export function getArtifact(code: string): ContractArtifact {
 async function linkArtifactToContract(address: string) {
   const code = await provider.getCode(address);
   const artifact = getArtifact(code);
+  // TODO: if no artifact, try to recompile 
   if (!artifact) return;
   await addArtifactToAddress(address, artifactKey(artifact));
 }
