@@ -4,6 +4,10 @@
 
 article {
   margin-bottom: var(--size-3);
+  
+  .signer {
+    color: var(--text-1);
+  }
 }
 
 details {

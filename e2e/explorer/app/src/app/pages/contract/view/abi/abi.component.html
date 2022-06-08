@@ -22,6 +22,9 @@
   
   <article>
     <h3>Write Contract</h3>
+    <p>
+      Current signer: <span class="signer">{{ account$ | async }}</span>
+    </p>
     <details *ngFor="let write of forms.writes">
       <summary>
         <h4>{{ write.name }}</h4>

@@ -2,6 +2,7 @@ import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/
 import { ViewComponent } from '../view.component';
 import { AbiFormFunction, formABI } from './utils';
 import { map } from 'rxjs/operators';
+import { WalletManager } from '../../../../wallet';
 
 @Component({
   selector: 'explorer-contract-abi',
@@ -10,13 +11,15 @@ import { map } from 'rxjs/operators';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AbiComponent {
+  account$ = this.walletManager.account$;
   forms$ = this.shell.contract$.pipe(
     map(contract => formABI(contract.artifact.abi))
   );
 
   constructor(
     private shell: ViewComponent,
-    private cdr: ChangeDetectorRef
+    private walletManager: WalletManager,
+    private cdr: ChangeDetectorRef,
   ) { }
 
   async callRead(read: AbiFormFunction) {

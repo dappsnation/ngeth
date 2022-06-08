@@ -140,6 +140,8 @@ table {
 // We use > to enable deep list of grid / list
 
 ol.list, ul.list {
+  display: flex;
+  flex-direction: column;
   list-style: none;
   margin: 0;
   padding-left: 0;
@@ -148,13 +150,16 @@ ol.list, ul.list {
   }
   & > .item,
   & > li > .item {
-    display: block;
     padding: var(--size-2) var(--size-2);
     color: inherit;
     text-decoration: none;
   }
-  & > li > a.item:hover {
-    background-color: var(--background-2);
+  & > li > a.item,
+  & > li > button.item {
+    background-color: transparent;
+    &:hover {
+      background-color: var(--background-hover);
+    }
   }
   & > li:not(:last-of-type) {
     border-bottom: 1px solid var(--border-0);
@@ -194,7 +199,7 @@ nav ul {
   }
 }
 
-form {
+form:not([method="dialog"]) {
   input {
     padding: var(--size-1);
     background-color: var(--background-2);
@@ -203,4 +208,11 @@ form {
     padding: var(--size-1) var(--size-2);
     background-color: var(--background-0);
   }
+}
+
+dialog {
+  border-radius: var(--size-2);
+  border: 1px solid var(--border-1);
+  background-color: var(--background-2);
+  padding: 0;
 }

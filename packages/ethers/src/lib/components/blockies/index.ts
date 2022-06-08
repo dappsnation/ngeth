@@ -13,7 +13,7 @@ export class BlockiesComponent {
   @HostBinding('title') title?: string;
 
   @Input()
-  set address(address: string) {
+  set address(address: string | undefined | null) {
     if (!address) return;
     this.title = address;
     if (this.previous) this.renderer.removeChild(this.el.nativeElement, this.previous);

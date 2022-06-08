@@ -43,7 +43,6 @@ export class BlockExplorer {
     const { api } = await res.json();
     const socket = io(api);
     socket.on('block', (source: EthStore) => {
-      console.log(source);
       this.source = source;
       this.#sourceChanges.next();
     })
