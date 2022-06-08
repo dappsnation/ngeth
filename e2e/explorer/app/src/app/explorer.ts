@@ -1,19 +1,10 @@
 import { Injectable } from '@angular/core';
-import { firstValueFrom, ReplaySubject } from 'rxjs';
-import { map, filter } from 'rxjs/operators';
-import { EthAccount, EthStore } from '@explorer';
+import { ReplaySubject } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { EthStore } from '@explorer';
 
 import { io } from "socket.io-client";
 
-const filterAddress = (keepContract: boolean) => (record: Record<string, EthAccount>) => {
-  const result: Record<string, EthAccount> = {};
-  for (const address in record) {
-    if (record[address].isContract === keepContract) result[address] = record[address];
-  }
-  return result;
-}
-const filterAccounts = filterAddress(false);
-const filterContracts= filterAddress(true);
 
 @Injectable({ providedIn: 'root' })
 export class BlockExplorer {
@@ -52,17 +43,9 @@ export class BlockExplorer {
     const { api } = await res.json();
     const socket = io(api);
     socket.on('block', (source: EthStore) => {
+      console.log(source);
       this.source = source;
       this.#sourceChanges.next();
     })
   }
-
-  // async get<K extends keyof BlockchainState>(key: K, value: keyof BlockchainState[K]) {
-  //   if (value in this.source[key]) return this.source[key][value];
-  //   const obs = this.#sourceChanges.pipe(
-  //     filter(() => value in this.source[key]),
-  //     map(() => this.source[key][value])
-  //   );
-  //   return firstValueFrom(obs);
-  // }
 }

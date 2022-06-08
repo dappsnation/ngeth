@@ -141,7 +141,8 @@ function artifactKey({ contractName, sourceName }: ContractArtifact) {
   return [sourceName, contractName].join('_');
 }
 
-/** Register the artifact and return the  */
+
+/** Register the artifact and return the key */
 export function setArtifact(artifact: ContractArtifact) {
   const { contractName, sourceName, abi, deployedBytecode } = artifact;
   const key = artifactKey(artifact);

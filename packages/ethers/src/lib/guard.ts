@@ -85,9 +85,7 @@ export class HasSignerGuard implements CanActivate {
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     this.previous = state.url;
     const redirect = route.data['hasSignerRedirect'] ?? '/no-signer';
-    return this.erc1193.account$.pipe(
-      map(account => !!account || this.router.parseUrl(redirect))
-    );
+    return !!this.erc1193.account || this.router.parseUrl(redirect);
   }
 }
 

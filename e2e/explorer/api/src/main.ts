@@ -29,7 +29,4 @@ app.get('/etherscan/**', async (req: Request<EtherscanParams>, res) => {
 httpServer.listen(explorerApiPort);
 
 const { addSocket } = blockListener();
-io.on("connection", (socket) => {
-  console.log('CONNECTED', socket.id)
-  addSocket(socket);
-});
+io.on("connection", (socket) => addSocket(socket));

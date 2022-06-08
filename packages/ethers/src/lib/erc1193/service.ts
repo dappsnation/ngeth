@@ -34,10 +34,12 @@ export abstract class ERC1193<Wallet extends WalletProfile = WalletProfile> {
 
   walletChanges = this.#wallet.asObservable();
   
+  protected provider?: ERC1193Provider;
   abstract account?: string;
   abstract chainId?: number;
   abstract wallets: Wallet[];
-  protected provider?: ERC1193Provider;
+  /** Method used to ask the user which wallet to select if multiple wallet available */
+  protected abstract getWallet(): Promise<Wallet | undefined>;
 
   /** Observe if current account is connected */
   connected$ = this.walletChanges.pipe(
@@ -60,7 +62,7 @@ export abstract class ERC1193<Wallet extends WalletProfile = WalletProfile> {
    * @note This might not be the selected account in Metamask
    */
   account$ = this.walletChanges.pipe(
-    filter(exist),
+    filter(exist), // TODO: this is blocking HasSignerGuard
     switchMap(wallet => this.fromEvent(wallet, 'accountsChanged', [])),
     switchMap(() => {
       if (this.account) return of([this.account]);
@@ -115,10 +117,11 @@ export abstract class ERC1193<Wallet extends WalletProfile = WalletProfile> {
     return this.#events[event] as Observable<ERC1193Param<K>>;
   }
 
-  selectWallet(wallet?: Wallet) {
+  async selectWallet(wallet?: Wallet) {
     if (!wallet) {
       if (!this.wallets.length) throw new Error('No wallet provided or found');
-      wallet = this.wallets[0];
+      wallet = await this.getWallet();
+      if (!wallet) throw new Error('No wallet selected');
     }
     if (wallet.provider !== this.provider) {
       this.#ethersProvider = new Web3Provider(wallet.provider);
@@ -128,8 +131,8 @@ export abstract class ERC1193<Wallet extends WalletProfile = WalletProfile> {
     }
   }
 
-  enable(wallet?: Wallet): Promise<string[]> {
-    this.selectWallet(wallet);
+  async enable(wallet?: Wallet): Promise<string[]> {
+    await this.selectWallet(wallet);
     if (!this.provider) throw new Error('No provider connected to ERC1193 service');
     return this.provider.request({ method: 'eth_requestAccounts' });
   }

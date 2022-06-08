@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.11;
+pragma solidity ^0.8.14;
 
 import "./OpenseaERC1155.sol";
 import "@openzeppelin/contracts/proxy/Clones.sol";

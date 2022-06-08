@@ -41,6 +41,10 @@ export class MetaMask extends ERC1193 {
     if (metamask) this.wallets.push(metamask);
   }
 
+  protected async getWallet(): Promise<WalletProfile | undefined> {
+    return this.wallets[0];
+  }
+  
   get account() {
     if (!this.provider?.selectedAddress) return;
     return getAddress(this.provider.selectedAddress);

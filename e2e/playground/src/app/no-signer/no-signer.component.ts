@@ -13,11 +13,11 @@ export class NoSignerComponent {
   constructor(
     private guard: HasSignerGuard,
     private router: Router,
-    private metamask: ERC1193
+    private erc1193: ERC1193
   ) { }
 
   async enable() {
-    const isEnabled = await this.metamask.enable();
+    const isEnabled = await this.erc1193.enable();
     if (isEnabled) {
       this.router.navigateByUrl(this.guard.previous ?? '/');
     }
