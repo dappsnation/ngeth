@@ -27,12 +27,12 @@ export async function setBlock(block: Block) {
     Promise.all(getResponses),
     Promise.all(getReceipts),
   ]);
-  setBlockTransactions(txs, receipts);
-  setState(block, txs);
+  await setBlockTransactions(txs, receipts);
+  await setState(block, txs);
   // Update the balance to latest
-  for (const { address, isContract } of Object.values(store.addresses)) {
-    setBalance({ address, isContract });
-  }
+  const setBalances = Object.values(store.addresses).map(setBalance);
+  await Promise.all(setBalances);
+
 }
 
 //////////////////
@@ -40,15 +40,16 @@ export async function setBlock(block: Block) {
 //////////////////
 
 /** Store transactions responses and receipt from a block */
-function setBlockTransactions(txs: TransactionResponse[], receipts: TransactionReceipt[]) {
+async function setBlockTransactions(txs: TransactionResponse[], receipts: TransactionReceipt[]) {
   for (const tx of txs) {
     store.transactions[tx.hash] = tx;
   }
-  for (const receipt of receipts) {
+  const addReceipts = receipts.map(async receipt => {
     store.receipts[receipt.transactionHash] = receipt;
     setLogs(receipt);
-    addTxToAddress(receipt);
-  }
+    await addTxToAddress(receipt);
+  })
+  await Promise.all(addReceipts);
 }
 
 //////////
@@ -72,7 +73,7 @@ interface CreateEthAccount extends Partial<EthAccount> {
   isContract: boolean;
 }
 
-function createEthAccount(params: CreateEthAccount) {
+async function createEthAccount(params: CreateEthAccount) {
   store.addresses[params.address] =  {
     transactions: [],
     balance: '0',
@@ -81,6 +82,7 @@ function createEthAccount(params: CreateEthAccount) {
   };
   if (params.isContract) {
     store.contracts.push(params.address);
+    await linkArtifactToContract(params.address)
   } else {
     store.accounts.push(params.address);
   }
@@ -88,22 +90,22 @@ function createEthAccount(params: CreateEthAccount) {
 
 export async function setBalance({ address, isContract }: CreateEthAccount) {
   const balance = await provider.getBalance(address);
-  if (!store.addresses[address]) createEthAccount({ address, isContract });
+  if (!store.addresses[address]) await createEthAccount({ address, isContract });
   store.addresses[address].balance = balance.toString();
 }
 
 /** Add the artifact key to an address */
-export function addArtifactToAddress(address: string, key: string) {
-  if (!store.addresses[address]) createEthAccount({ address, isContract: true });
+export async function addArtifactToAddress(address: string, key: string) {
+  if (!store.addresses[address]) await createEthAccount({ address, isContract: true });
   (store.addresses[address] as ContractAccount).artifact = key;
 }
 
 /** Store the transaction hash to the addresses involved in the transaction */
-function addTxToAddress(receipt: TransactionReceipt) {
+async function addTxToAddress(receipt: TransactionReceipt) {
   const addresses = [receipt.from, receipt.to, receipt.contractAddress].filter(address => !!address);
   for (const address of addresses) {
     const isContract = !!receipt.contractAddress;
-    if (!store.addresses[address]) createEthAccount({ address, isContract });
+    if (!store.addresses[address]) await createEthAccount({ address, isContract });
     store.addresses[address].transactions.unshift(receipt.transactionHash);
   }
 }
@@ -145,8 +147,15 @@ export function setArtifact(artifact: ContractArtifact) {
   const key = artifactKey(artifact);
   store.artifacts[key] = { contractName, sourceName, abi, deployedBytecode };
   return key;
-} 
+}
 
 export function getArtifact(code: string): ContractArtifact {
   return Object.values(store.artifacts).find(artifact => artifact.deployedBytecode === code);
+}
+
+async function linkArtifactToContract(address: string) {
+  const code = await provider.getCode(address);
+  const artifact = getArtifact(code);
+  if (!artifact) return;
+  await addArtifactToAddress(address, artifactKey(artifact));
 }

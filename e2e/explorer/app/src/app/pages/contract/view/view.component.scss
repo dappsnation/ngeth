@@ -2,11 +2,16 @@
   display: block;
 }
 header {
-  display: flex;
-  align-items: center;
-  gap: var(--size-2);
+  display: grid;
+  grid-template-columns: 40px auto;
+  grid-template-rows: auto auto;
+  gap: var(--size-0) var(--size-2);
   margin-bottom: var(--size-3);
-  h1 {
+  eth-blockies {
+    grid-row: 1 / 3;
+    align-self: center;
+  }
+  h1, p {
     margin-block-end: 0;
   }
 }
