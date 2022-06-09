@@ -8,7 +8,7 @@ export function getLogs(params: GetParams<Logs>) {
   } = params;
   if (!fromBlock || !toBlock || !address) throw new Error('Error! Missing or invalid Action name');
 
-  return Object.values(store.logs).map(logs => logs.filter(log => {
+  return Object.values(store.logs).flat().filter(log => {
     if(log.address !== address) return false;
     if(log.blockNumber <= fromBlock ||log.blockNumber >= toBlock ) return false;
     if(log.topics .filter(topic => {
@@ -16,5 +16,5 @@ export function getLogs(params: GetParams<Logs>) {
       return true; 
       }))
     return true;
-  }))
+  })
 }
