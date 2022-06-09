@@ -1,8 +1,11 @@
 <ng-container *ngIf="contract$ | async as contract">
   <header>
-    <eth-blockies [address]="contract.address"></eth-blockies>
-    <h1>{{ contract.artifact.contractName }}</h1>
-    <p>{{ contract.address }}</p>
+    <div class="profile">
+      <eth-blockies [address]="contract.address"></eth-blockies>
+      <h1>{{ contract.artifact.contractName }}</h1>
+      <p>{{ contract.address }}</p>
+    </div>
+    <span class="tag">{{ contract.artifact.standard }}</span>
   </header>
   <article class="surface details">
     <h2>Tokens</h2>

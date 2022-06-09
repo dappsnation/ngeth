@@ -1,5 +1,6 @@
 import { Block, TransactionResponse, TransactionReceipt } from '@ethersproject/abstract-provider';
 import { EthAccount, ContractArtifact, ContractAccount, EthStore } from '@explorer';
+import { ABIDescription } from '@type/solc';
 import { provider } from './provider';
 
 export const store: EthStore = {
@@ -95,9 +96,9 @@ export async function setBalance({ address, isContract }: CreateEthAccount) {
 }
 
 /** Add the artifact key to an address */
-export async function addArtifactToAddress(address: string, key: string) {
+export async function addArtifactToAddress(address: string, artifact: ContractArtifact) {
   if (!store.addresses[address]) await createEthAccount({ address, isContract: true });
-  (store.addresses[address] as ContractAccount).artifact = key;
+  (store.addresses[address] as ContractAccount).artifact = artifactKey(artifact);
 }
 
 /** Store the transaction hash to the addresses involved in the transaction */
@@ -147,6 +148,8 @@ export function setArtifact(artifact: ContractArtifact) {
   const { contractName, sourceName, abi, deployedBytecode } = artifact;
   const key = artifactKey(artifact);
   store.artifacts[key] = { contractName, sourceName, abi, deployedBytecode };
+  const standard = contractStandard(abi);
+  if (standard) store.artifacts[key].standard = standard;
   return key;
 }
 
@@ -160,5 +163,42 @@ async function linkArtifactToContract(address: string) {
   const artifact = getArtifact(code);
   // TODO: if no artifact, try to recompile 
   if (!artifact) return;
-  await addArtifactToAddress(address, artifactKey(artifact));
+  await addArtifactToAddress(address, artifact);
+}
+
+//////////////
+// STANDARD //
+//////////////
+function abiNames(abi: ABIDescription[]) {
+  const fields: Record<string, boolean> = {};
+  for (const description of abi) {
+    fields[description.name] = true;
+  }
+  return fields;
+}
+const standards = {
+  ERC1155: {
+    methods: ['totalSupply', 'balanceOf', 'transfer', 'transferFrom', 'approve', 'allowance'],
+    events: ['Transfer', 'Approval'],
+  },
+  ERC721: {
+    methods: ['ownerOf', 'balanceOf', 'safeTransferFrom', 'setApprovalForAll', 'approve', 'getApproved', 'isApprovedForAll'],
+    events: ['Transfer', 'Approval', 'ApprovalForAll'],
+  },
+  ERC20: {
+    methods: ['balanceOf', 'balanceOfBatch', 'safeTransferFrom', 'safeBatchTransferFrom', 'setApprovalForAll', 'isApprovedForAll'],
+    events: ['TransferSingle', 'TransferBatch', 'ApprovalForAll', 'URI'],
+  },
+}
+function isStandard(abi: ABIDescription[], name: keyof typeof standards) {
+  const names = abiNames(abi);
+  const { methods, events } = standards[name];
+  return [...methods, ...events].every(name => names[name]);
+}
+
+function contractStandard(abi: ABIDescription[]) {
+  if (isStandard(abi, 'ERC1155')) return 'ERC1155';
+  if (isStandard(abi, 'ERC721')) return 'ERC721';
+  if (isStandard(abi, 'ERC20')) return 'ERC20';
+  return;
 }

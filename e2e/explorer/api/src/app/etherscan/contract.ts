@@ -30,6 +30,7 @@ async function verifySourceCode(params: GetParams<VerifySourceCode>) {
   if (deployedBytecode !== code) {
     throw new Error('Bytecode is not the same');
   }
-  const key = setArtifact({ deployedBytecode, contractName: contractname, sourceName: '', abi: contract.abi });
-  addArtifactToAddress(params.contractaddress, key);
+  const artifact = { deployedBytecode, contractName: contractname, sourceName: '', abi: contract.abi };
+  setArtifact(artifact);
+  addArtifactToAddress(params.contractaddress, artifact);
 }
