@@ -123,19 +123,19 @@ export type VerifySourceCode = VerifySourceCodeParams & Library<1 | 2 | 3 | 4 | 
 /////////////////
 //logs
 export interface Logs extends BaseParams<'logs', "getLogs"> {
-  fromBlock: number;
-  toBlock: number;
+  fromBlock: number | "lastest";
+  toBlock: number | "lastest";
   address: string;
-  topic0: string;
-  topic1: string;
-  topic2: string;
-  topic3: string;
-  topic0_1_opr: 'and' | 'or';
-  topic0_2_opr: 'and' | 'or';
-  topic0_3_opr: 'and' | 'or';
-  topic1_2_opr: 'and' | 'or';
-  topic1_3_opr: 'and' | 'or';
-  topic2_3_opr: 'and' | 'or';
+  topic0?: string;
+  topic1?: string;
+  topic2?: string;
+  topic3?: string;
+  topic0_1_opr?: 'and' | 'or';
+  topic0_2_opr?: 'and' | 'or';
+  topic0_3_opr?: 'and' | 'or';
+  topic1_2_opr?: 'and' | 'or';
+  topic1_3_opr?: 'and' | 'or';
+  topic2_3_opr?: 'and' | 'or';
 }
 
 // Params
