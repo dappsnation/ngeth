@@ -99,11 +99,14 @@ form {
   }
 
   &.ng-invalid.ng-touched {
-    label {
-      color: var(--warn);
-    }
-    input {
-      border: 1px solid var(--warn);
+    // label {
+    //   color: var(--warn);
+    // }
+    // input {
+    //   border-color: var(--warn);
+    // }
+    output {
+      border-color: var(--warn);
     }
   }
 }

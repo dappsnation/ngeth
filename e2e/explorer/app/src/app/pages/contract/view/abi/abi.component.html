@@ -14,7 +14,8 @@
         </ul>
         <footer>
           <button>Query</button>
-          <output *ngIf="read.result">{{ read.result }}</output>
+          <output *ngIf="read.form.valid && read.result">{{ read.result }}</output>
+          <output *ngIf="read.form.hasError('err')">{{ read.form.getError('err') }}</output>
         </footer>
       </form>
     </details>
@@ -38,6 +39,7 @@
         </ul>
         <footer>
           <button>Submit</button>
+          <output *ngIf="write.form.hasError('err')">{{ write.form.getError('err') }}</output>
         </footer>
       </form>
     </details>
