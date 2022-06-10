@@ -16,7 +16,7 @@ const io = new Server(httpServer, {
   }
 });
 
-app.get('/etherscan/**', async (req: Request<EtherscanParams>, res) => {
+app.get('/etherscan', async (req: Request<EtherscanParams>, res) => {
   try {
     const result = await etherscanApi(req.params);
     res.send({ status: '1', message: 'OK', result});
