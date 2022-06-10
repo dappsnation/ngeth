@@ -2,7 +2,7 @@ import { Contract } from "@ethersproject/contracts";
 import { Interface } from "@ethersproject/abi";
 import { BigNumber } from "@ethersproject/bignumber";
 import { provider } from "../provider";
-import { TokenBalance, TokenSupply } from "./types";
+import { TokenBalance, TokenSupply, TokenSupplyHistory, TokenBalanceHistory, TokenInfo } from "./types";
 
 const ERC20 = new Interface([
   "function totalSupply() view returns (uint)",
@@ -25,4 +25,20 @@ export async function tokenBalance({ contractaddress, address, tag }: TokenBalan
     balance = await contract.callStatic.balanceOf(address, { blockTag });
   }
   return balance.toString();
+}
+
+export async function tokenSupplyHistory({ contractaddress, blockno }: TokenSupplyHistory) {
+  const contract = new Contract(contractaddress, ERC20, provider);
+  const balance = await contract.callStatic.totalSupply({ blockTag: blockno });
+  return balance.toString();
+}
+
+export async function tokenBalanceHistoy({ contractaddress, address, blockno }: TokenBalanceHistory) {
+  const contract = new Contract(contractaddress, ERC20, provider);
+  const balance = await contract.callStatic.balanceOf(address, { blockTag: blockno });
+  return balance.toString();
+}
+
+export async function tokenInfo(params: TokenInfo) {
+  throw { message: 'API not supported by Hardhat node', params };
 }
