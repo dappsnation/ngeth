@@ -97,7 +97,7 @@ interface VerifySourceCodeParams extends BaseParams<'contract', 'verifysourcecod
   contractaddress: string;
   /** Contract Source Code (Flattened if necessary) */
   sourceCode: string;
-  /** solidity-single-file (default) or solidity-standard-json-input (for std-input-json-format support */          
+  /** solidity-single-file (default) or solidity-standard-json-input (for std-input-json-format support */
   codeformat: 'solidity-single-file' | 'solidity-standard-json-input';
   /** ContractName (if codeformat=solidity-standard-json-input, then enter contractname as ex: erc20.sol:erc20) */
   contractname: string;
@@ -147,7 +147,9 @@ export interface StatusResult {
 //Stats//
 /////////
 
-export type StatsParams = TokenSupply | TokenSupplyHistory; 
+export type StatsParams = TokenSupply | TokenSupplyHistory | EthSupply;
+
+export interface EthSupply extends BaseParams<'stats', 'ethsupply'> { };
 
 /////////
 //Token//
@@ -163,7 +165,7 @@ export interface TokenBalance extends BaseParams<'account', 'tokenbalance'> {
   contractaddress: string;
   address: string;
   /** Either the blocknumber in hexadecimal or latest / earliest */
-  tag?: string | 'latest' | 'earliest'; 
+  tag?: string | 'latest' | 'earliest';
 }
 
 export interface TokenBalanceHistory extends BaseParams<'account', 'tokenbalancehistory'> {
