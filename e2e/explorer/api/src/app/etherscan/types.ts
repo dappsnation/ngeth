@@ -162,5 +162,9 @@ export interface TokenBalance extends BaseParams<'account', 'tokenbalance'> {
 
 export interface TokenSupply extends BaseParams<'stats', 'tokensupply'> {
   contractaddress: string;
+}
+
+export interface TokenSupplyHistory extends BaseParams<'stats', 'tokensupplyhistory'> {
+  contractaddress: string;
   blockno: number;
 }

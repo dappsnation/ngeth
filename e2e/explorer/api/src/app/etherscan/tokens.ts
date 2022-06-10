@@ -1,26 +1,33 @@
 import { Contract } from "@ethersproject/contracts";
 import { Interface } from "@ethersproject/abi";
+import { BigNumber } from "@ethersproject/bignumber";
 import { provider } from "../provider";
-import { TokenBalance, TokenSupply } from "./types";
+import { TokenBalance, TokenSupply, TokenSupplyHistory } from "./types";
 
 const ERC20 = new Interface([
   "function totalSupply() view returns (uint)",
   "function balanceOf(address owner) view returns (uint)"
 ]);
 
-export function tokenSupply({ contractaddress }: TokenSupply) {
+export async function tokenSupply({ contractaddress }: TokenSupply) {
   const contract = new Contract(contractaddress, ERC20, provider);
-  return contract.callStatic.totalSupply();
+  const supply: BigNumber = await contract.callStatic.totalSupply();
+  return supply.toString();
 }
 
-export function tokenBalance({ contractaddress, address, tag }: TokenBalance) {
+export async function tokenBalance({ contractaddress, address, tag }: TokenBalance) {
   const contract = new Contract(contractaddress, ERC20, provider);
-  if (!tag || tag === 'latest') return contract.callStatic.balanceOf(address);
-  const blockTag = parseInt(tag, 10);
-  return contract.callStatic.balanceOf(address, { blockTag });
+  let balance: BigNumber;
+  if (!tag || tag === 'latest') {
+    balance = await contract.callStatic.balanceOf(address);
+  } else {
+    const blockTag = parseInt(tag, 10);
+    balance = await contract.callStatic.balanceOf(address, { blockTag });
+  }
+  return balance.toString();
 }
 
-export function tokenSupplyHistory({ contractaddress, blockno }: TokenSupply) {
+export function tokenSupplyHistory({ contractaddress, blockno }: TokenSupplyHistory) {
   const contract = new Contract(contractaddress, ERC20, provider);
-  return contract.callStatic.totalSupply(contractaddress, { blockno });
+  return contract.callStatic.totalSupply(contractaddress, { blockTag: blockno });
 }
