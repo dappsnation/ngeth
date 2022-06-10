@@ -1,10 +1,10 @@
 import { EvmVersion } from "@type/solc";
 
-export type EtherscanParams = AccountsParams | ContractParams | TransactionParams;
+export type EtherscanParams = AccountsParams | ContractParams | TransactionParams | StatsParams;
 
 export type Tag = number | 'latest' | 'pending' | 'earliest';
 export type Sort = 'asc' | 'desc';
-type Module = 'account' | 'contract' | 'transaction';
+type Module = 'account' | 'contract' | 'transaction' | 'stats';
 
 interface BaseParams<M extends Module, Action> {
   module: M;
@@ -19,7 +19,7 @@ export type GetParams<T> = Omit<T, 'module' | 'action' | 'apiKey'>
 // ACCOUNT //
 /////////////
 // Params
-export type AccountsParams = Balance | BalanceMulti | BalanceHistory | TxList | TxListInternal | BlockMined;
+export type AccountsParams = Balance | BalanceMulti | BalanceHistory | TxList | TxListInternal | BlockMined | TokenBalance;
 export interface Balance extends BaseParams<'account', 'balance'> {
   /** the string representing the address to check for balance   */
   address: string;
@@ -141,4 +141,25 @@ export interface ExecutionStatusResult {
 export interface StatusResult {
   /** 0: Succeed, 1: Failed */
   status: 0 | 1;
+}
+
+/////////
+//Stats//
+/////////
+
+export type StatsParams = TokenSupply; 
+
+/////////
+//Token//
+/////////
+
+export interface TokenBalance extends BaseParams<'account', 'tokenbalance'> {
+  contractaddress: string;
+  address: string;
+  /** Either the blocknumber in hexadecimal or latest / earliest */
+  tag?: string | 'latest' | 'earliest'; 
+}
+
+export interface TokenSupply extends BaseParams<'stats', 'tokensupply'> {
+  contractaddress: string;
 }
