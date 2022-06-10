@@ -4,7 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 
 import { ContractsManager, SUPPORTED_CHAINS, IsSupportedChainGuard, HasSignerGuard, ethersProviders, InjectedProviders, EthersModule, HasWalletGuard } from '@ngeth/ethers';
-import { MetaMaskModule, METAMASK_RELOAD } from '@ngeth/metamask';
+import { MetaMask, MetaMaskModule, METAMASK_RELOAD } from '@ngeth/metamask';
 import { FIREBASE_CONFIG } from 'ngfire';
 import { environment } from '../environments/environment';
 
@@ -43,7 +43,7 @@ const metamaskReload = () => {
     EthersModule
   ],
   providers: [
-    ...ethersProviders(InjectedProviders),
+    ...ethersProviders(MetaMask),
     { provide: FIREBASE_CONFIG, useValue: environment.firebase },
     { provide: SUPPORTED_CHAINS, useValue: '*' },
     { provide: METAMASK_RELOAD, useValue: metamaskReload },

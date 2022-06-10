@@ -1,7 +1,6 @@
 import { inject, Injectable, InjectionToken, Injector } from '@angular/core';
-import { AddChainParameter, MetaMaskProvider, RequestedPermissions, WatchAssetParams, Web3WalletPermission } from './types';
-import { getChain, toChainId, ERC1193, toChainIndex, WalletProfile } from '@ngeth/ethers';
-import { fromChain } from './utils';
+import { MetaMaskProvider, RequestedPermissions, Web3WalletPermission } from './types';
+import { ERC1193, toChainIndex, WalletProfile } from '@ngeth/ethers';
 import { getAddress } from '@ethersproject/address';
 
 // Reload message when "Could not establish connection." happens
@@ -38,7 +37,10 @@ export class MetaMask extends ERC1193 {
   constructor() {
     super();
     const metamask = metamaskWallet();
-    if (metamask) this.wallets.push(metamask);
+    if (metamask) {
+      this.wallets.push(metamask);
+      super.selectWallet(); // Use super to avoid notInitializedError warning at loadtime
+    }
   }
 
   protected async getWallet(): Promise<WalletProfile | undefined> {
@@ -68,38 +70,8 @@ export class MetaMask extends ERC1193 {
 
   override selectWallet() {
     if (!this.wallets.length) throw new Error('No metamask injected');
-    if (!(this.wallets[0] as any)._state.initialized) this.notInitializedError();
+    if (!(this.wallets[0].provider as any)._state.initialized) this.notInitializedError();
     return super.selectWallet();
-  }
-
-  /**
-   * Request user to change chain
-   * @note If the error code (error.code) is 4902, then the requested chain has not been added by MetaMask, and you have to request to add it via addChain
-   * @param id The 0x-non zero chainId or decimal number
-   */
-  switchChain(id: string | number) {
-    const chainId = toChainId(id);
-    return this.provider?.request<null>({
-      method: 'wallet_switchEthereumChain',
-      params: [{ chainId }]
-    });
-  }
-
-  async addChain(chain: AddChainParameter | string) {
-    const params = (typeof chain === "string")
-      ? await getChain(chain).then(fromChain)
-      : chain;
-    return this.provider?.request<null>({
-      method: 'wallet_addEthereumChain',
-      params: [params]
-    });
-  }
-
-  watchAsset(params: WatchAssetParams['options']) {
-    return this.provider?.request<boolean>({
-      method: 'wallet_watchAsset',
-      params: { type: 'ERC20', options: params }
-    });
   }
 
   /** Gets the caller's current permissions */

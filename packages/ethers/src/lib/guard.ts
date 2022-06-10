@@ -1,6 +1,6 @@
 import { Inject, Injectable } from "@angular/core";
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from "@angular/router";
-import { map } from "rxjs";
+import { map, tap } from "rxjs";
 import { SUPPORTED_CHAINS, toChainIndex } from "./chain";
 import { ERC1193 } from "./erc1193";
 
@@ -85,7 +85,10 @@ export class HasSignerGuard implements CanActivate {
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     this.previous = state.url;
     const redirect = route.data['hasSignerRedirect'] ?? '/no-signer';
-    return !!this.erc1193.account || this.router.parseUrl(redirect);
+    return this.erc1193.account$.pipe(
+      tap(console.log),
+      map(account => !!account || this.router.parseUrl(redirect))
+    );
   }
 }
 

@@ -29,6 +29,8 @@ export class InjectedProviders extends ERC1193 {
   }
 
   protected async getWallet() {
+    if (!this.wallets.length) return;
+    if (this.wallets.length === 1) return this.wallets[0];
     const labels = this.wallets.map(w => w.label);
     const res = prompt(`Which wallet do you want to use ? ${labels.join(', ')}`);
     const wallet = this.wallets.find(w => w.label.toLowerCase() === res?.toLowerCase());
