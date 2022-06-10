@@ -1,8 +1,8 @@
 export { EtherscanParams } from './types';
-import { EtherscanParams, AccountsParams, ContractParams, TransactionParams, StatsParams } from './types';
+import { EtherscanParams, AccountsParams, ContractParams, TransactionParams, StatsParams, TokenParams } from './types';
 import { balance, balanceMulti } from './account';
 import { getStatus, getTxReceiptStatus } from './transaction';
-import { tokenBalance, tokenSupply } from './tokens';
+import { tokenBalance, tokenBalanceHistoy, tokenSupply, tokenSupplyHistory, tokenInfo } from './tokens';
 
 export function etherscanApi(params: EtherscanParams) {
   switch (params.module) {
@@ -10,6 +10,7 @@ export function etherscanApi(params: EtherscanParams) {
     case 'contract': return contract(params);
     case 'transaction': return transaction(params);
     case 'stats': return stats(params);
+    case 'token': return token(params);
   }
 }
 
@@ -18,6 +19,7 @@ function account(params: AccountsParams) {
     case 'balance': return balance(params);
     case 'balancemulti': return balanceMulti(params);
     case 'tokenbalance': return tokenBalance(params);
+    case 'tokenbalancehistory': return tokenBalanceHistoy(params);
     default: return {};
   }
 }
@@ -36,8 +38,15 @@ function transaction(params: TransactionParams) {
   }
 }
 
-function stats(params: StatsParams){
-  switch(params.action) {
+function stats(params: StatsParams) {
+  switch (params.action) {
     case 'tokensupply': return tokenSupply(params);
+    case 'tokensupplyhistory': return tokenSupplyHistory(params);
+  }
+}
+
+function token(params: TokenParams) {
+  switch (params.action) {
+    case 'tokeninfo': return tokenInfo(params);
   }
 }
