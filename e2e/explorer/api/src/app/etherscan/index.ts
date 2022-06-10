@@ -3,6 +3,7 @@ import { EtherscanParams, AccountsParams, ContractParams, TransactionParams, Sta
 import { balance, balanceMulti } from './account';
 import { getStatus, getTxReceiptStatus } from './transaction';
 import { tokenBalance, tokenBalanceHistoy, tokenSupply, tokenSupplyHistory, tokenInfo } from './tokens';
+import { ethSupply } from './stats';
 
 export function etherscanApi(params: EtherscanParams) {
   switch (params.module) {
@@ -42,6 +43,7 @@ function stats(params: StatsParams) {
   switch (params.action) {
     case 'tokensupply': return tokenSupply(params);
     case 'tokensupplyhistory': return tokenSupplyHistory(params);
+    case 'ethsupply': return ethSupply();
   }
 }
 
