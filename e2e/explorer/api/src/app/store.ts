@@ -7,6 +7,14 @@ import { id } from '@ethersproject/hash';
 import { ABIDescription } from '@type/solc';
 import { provider } from './provider';
 
+function bignumberReviver(key: string, value: any) {
+  if (typeof value === 'object' && value['type'] === 'BigNumber') return BigNumber.from(value);
+  return value;
+}
+function copyWithBigNumber<T>(source: T): T {
+  return JSON.parse(JSON.stringify(source), bignumberReviver)
+}
+
 export const store: EthStore = {
   blocks: [],
   states: [],
@@ -123,7 +131,7 @@ async function addTxToAddress(receipt: TransactionReceipt) {
 function setState(block: Block, receipts: TransactionReceipt[]) {
   // Copy previous
   if (store.states[block.number - 1]) {
-    store.states[block.number] = store.states[block.number - 1];
+    store.states[block.number] = copyWithBigNumber(store.states[block.number - 1]);
   } else {
     store.states[block.number] = { balances: {}, erc20: {}, erc721: {}, erc1155: {} };
   }
@@ -216,38 +224,60 @@ function contractStandard(abi: ABIDescription[]) {
 
 
 const ERC20Transfer = id('Transfer(address,address,uint256)');
+const ERC721Transfer = id('Transfer(address, address, uint256)');
 
 
 function setTransfers(receipts: TransactionReceipt[]) {
   const logs = receipts.map(receipt => receipt.logs).flat();
   for (const log of logs) {
-    const account = store.addresses[log.address];
-    if (!isContract(account)) continue;
-    const artifact = store.artifacts[account.artifact];
-    if (!artifact.standard) continue;
-    if (artifact.standard === 'ERC20' && log.topics[0] === ERC20Transfer) {
-      updateERC20(log);
-      continue;
+    if (log.topics[0] === ERC20Transfer) {
+      const account = store.addresses[log.address];
+      if (!isContract(account)) continue;
+      const artifact = store.artifacts[account.artifact];
+      if (artifact.standard === 'ERC20') updateERC20(log);
+      if (artifact.standard === 'ERC721') updateERC721(log);
+      if (artifact.standard === 'ERC1155') updateERC721(log);
     }
   }
 }
 
-function currentERC20(blockNumber: number, address: string, contractAddress: string): BigNumber {
-  if (!store.states[blockNumber].erc20[address]) store.states[blockNumber].erc20[address] = {};
-  if (!store.states[blockNumber].erc20[address][contractAddress]) store.states[blockNumber].erc20[address][contractAddress] = BigNumber.from(0);
-  return store.states[blockNumber].erc20[address][contractAddress];
+function deepUpdate<T>(source: T, fields: string[], cb: (current: any) => void) {
+  const key = fields.shift();
+  if (fields.length) {
+      if (!source[key]) source[key] = {};
+      return deepUpdate(source[key], fields, cb);
+  }
+  source[key] = cb(source[key]);
 }
 
+// ERC20
 function updateERC20(log: Log) {
   const { blockNumber, address, topics, data } = log;
   const [from] = defaultAbiCoder.decode(['address'], topics[1]);
   const [to] = defaultAbiCoder.decode(['address'], topics[2]);
   const [amount] = defaultAbiCoder.decode(['uint256'], data);
   // Add
-  const currentTo = currentERC20(blockNumber, to, address);
-  store.states[blockNumber].erc20[to][address] = currentTo.add(amount); 
+  deepUpdate(store.states, [blockNumber, 'erc20', to, address], (current = BigNumber.from(0)) => {
+    return current.add(amount);
+  });
   // Remove
   if (from === AddressZero) return;
-  const currentFrom = currentERC20(blockNumber, from, address);
-  store.states[blockNumber].erc20[from][address] = currentFrom.sub(amount); 
+  deepUpdate(store.states, [blockNumber, 'erc20', from, address], (current = BigNumber.from(0)) => {
+    return current.sub(amount);
+  });
+}
+
+// ERC721
+function updateERC721(log: Log) {
+  const { blockNumber, address, topics, data } = log;
+  const [from] = defaultAbiCoder.decode(['address'], topics[1]);
+  const [to] = defaultAbiCoder.decode(['address'], topics[2]);
+  const [tokenId] = defaultAbiCoder.decode(['uint256'], data);
+  // Add
+  deepUpdate(store.states, [blockNumber, 'erc721', to, address], (current = []) => current.push(tokenId));
+  // Remove
+  if (from === AddressZero) return;
+  deepUpdate(store.states, [blockNumber, 'erc721', from, address], (current = []) => {
+    return current.filter(id => id !== tokenId);
+  });
 }

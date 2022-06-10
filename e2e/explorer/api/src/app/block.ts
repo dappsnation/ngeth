@@ -44,7 +44,8 @@ async function init() {
   await initFactories(artifactRoot);
   const current = await provider.getBlockNumber();
   for (let i = 0; i < current; i++) {
-    provider.getBlock(i).then(setBlock);
+    const block = await provider.getBlock(i);
+    await setBlock(block);
   }
   for (const address of hardhatAccounts) {
     setBalance({ address, isContract: false });
@@ -65,15 +66,18 @@ export function blockListener() {
   // Start Listening on the node
   console.log('Start listening on Ethereum Network');
 
+
+  // Initialize the state
+  const initialized = init().then(() => emit());
+
   // Listen on block changes (Hardh hat doesn't support pending transaction event)
   provider.on('block', async (blockNumber: number) => {
+    await initialized;
     const block = await provider.getBlock(blockNumber);
     await setBlock(block);
     emit();
   });
 
-  // Initialize the state
-  init().then(() => emit());
 
   // Add a socket when a client connect to it
   return {

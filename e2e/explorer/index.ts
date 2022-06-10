@@ -57,7 +57,7 @@ export interface EthState {
   }
   erc721: {
     [owner: string]: {
-      [tokenAddres: string]: BigNumber
+      [tokenAddres: string]: number[]
     }
   }
   erc1155: {
