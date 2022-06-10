@@ -1,5 +1,6 @@
 import { TransactionReceipt, TransactionResponse, Block, Log } from '@ethersproject/abstract-provider';
 import { ABIDescription } from '@type/solc';
+import { BigNumber } from '@ethersproject/bignumber';
 
 export interface EthStore {
   /** block indexed by block height */
@@ -49,6 +50,23 @@ export interface ContractAccount extends EthAccount{
 
 export interface EthState {
   balances: Record<string, string>;
+  erc20: {
+    [owner: string]: {
+      [tokenAddres: string]: BigNumber
+    }
+  }
+  erc721: {
+    [owner: string]: {
+      [tokenAddres: string]: BigNumber
+    }
+  }
+  erc1155: {
+    [owner: string]: {
+      [tokenAddres: string]: {
+        [tokenId: string]: BigNumber
+      }
+    }
+  }
 }
 
 export const isContract = (account: EthAccount): account is ContractAccount => {

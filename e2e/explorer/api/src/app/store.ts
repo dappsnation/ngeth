@@ -1,5 +1,9 @@
-import { Block, TransactionResponse, TransactionReceipt } from '@ethersproject/abstract-provider';
-import { EthAccount, ContractArtifact, ContractAccount, EthStore } from '@explorer';
+import { Block, TransactionResponse, TransactionReceipt, Log } from '@ethersproject/abstract-provider';
+import { EthAccount, ContractArtifact, ContractAccount, EthStore, isContract } from '@explorer';
+import { AddressZero } from '@ethersproject/constants';
+import { BigNumber } from '@ethersproject/bignumber';
+import { defaultAbiCoder } from '@ethersproject/abi';
+import { id } from '@ethersproject/hash';
 import { ABIDescription } from '@type/solc';
 import { provider } from './provider';
 
@@ -29,7 +33,7 @@ export async function setBlock(block: Block) {
     Promise.all(getReceipts),
   ]);
   await setBlockTransactions(txs, receipts);
-  await setState(block, txs);
+  await setState(block, receipts);
   // Update the balance to latest
   const setBalances = Object.values(store.addresses).map(setBalance);
   await Promise.all(setBalances);
@@ -116,14 +120,20 @@ async function addTxToAddress(receipt: TransactionReceipt) {
 ///////////
 
 /** Set the state of the network at a specific block */
-function setState(block: Block, txs: TransactionResponse[]) {
+function setState(block: Block, receipts: TransactionReceipt[]) {
   // Copy previous
-  store.states[block.number] = store.states[block.number - 1] ?? { balances: {} };
+  if (store.states[block.number - 1]) {
+    store.states[block.number] = store.states[block.number - 1];
+  } else {
+    store.states[block.number] = { balances: {}, erc20: {}, erc721: {}, erc1155: {} };
+  }
+  setTransfers(receipts);
   // Get unique addresses
   const rawAddresses = [block.miner];
-  for (const tx of txs) {
-    rawAddresses.push(tx.from);
-    if (tx.to) rawAddresses.push(tx.to);
+  for (const receipt of receipts) {
+    rawAddresses.push(receipt.from);
+    if (receipt.to) rawAddresses.push(receipt.to);
+    if (receipt.contractAddress) rawAddresses.push(receipt.contractAddress);
   }
   const addresses = Array.from(new Set(rawAddresses));
   // Get new balance per unique addresses
@@ -190,7 +200,8 @@ const standards = {
     events: ['TransferSingle', 'TransferBatch', 'ApprovalForAll', 'URI'],
   },
 }
-function isStandard(abi: ABIDescription[], name: keyof typeof standards) {
+type Tokens = keyof typeof standards;
+function isStandard(abi: ABIDescription[], name: Tokens) {
   const names = abiNames(abi);
   const { methods, events } = standards[name];
   return [...methods, ...events].every(name => names[name]);
@@ -201,4 +212,42 @@ function contractStandard(abi: ABIDescription[]) {
   if (isStandard(abi, 'ERC721')) return 'ERC721';
   if (isStandard(abi, 'ERC20')) return 'ERC20';
   return;
+}
+
+
+const ERC20Transfer = id('Transfer(address,address,uint256)');
+
+
+function setTransfers(receipts: TransactionReceipt[]) {
+  const logs = receipts.map(receipt => receipt.logs).flat();
+  for (const log of logs) {
+    const account = store.addresses[log.address];
+    if (!isContract(account)) continue;
+    const artifact = store.artifacts[account.artifact];
+    if (!artifact.standard) continue;
+    if (artifact.standard === 'ERC20' && log.topics[0] === ERC20Transfer) {
+      updateERC20(log);
+      continue;
+    }
+  }
+}
+
+function currentERC20(blockNumber: number, address: string, contractAddress: string): BigNumber {
+  if (!store.states[blockNumber].erc20[address]) store.states[blockNumber].erc20[address] = {};
+  if (!store.states[blockNumber].erc20[address][contractAddress]) store.states[blockNumber].erc20[address][contractAddress] = BigNumber.from(0);
+  return store.states[blockNumber].erc20[address][contractAddress];
+}
+
+function updateERC20(log: Log) {
+  const { blockNumber, address, topics, data } = log;
+  const [from] = defaultAbiCoder.decode(['address'], topics[1]);
+  const [to] = defaultAbiCoder.decode(['address'], topics[2]);
+  const [amount] = defaultAbiCoder.decode(['uint256'], data);
+  // Add
+  const currentTo = currentERC20(blockNumber, to, address);
+  store.states[blockNumber].erc20[to][address] = currentTo.add(amount); 
+  // Remove
+  if (from === AddressZero) return;
+  const currentFrom = currentERC20(blockNumber, from, address);
+  store.states[blockNumber].erc20[from][address] = currentFrom.sub(amount); 
 }
