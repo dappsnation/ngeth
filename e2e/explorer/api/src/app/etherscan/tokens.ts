@@ -14,9 +14,13 @@ export function tokenSupply({ contractaddress }: TokenSupply) {
 }
 
 export function tokenBalance({ contractaddress, address, tag }: TokenBalance) {
-  console.log('start');
   const contract = new Contract(contractaddress, ERC20, provider);
   if (!tag || tag === 'latest') return contract.callStatic.balanceOf(address);
   const blockTag = parseInt(tag, 10);
   return contract.callStatic.balanceOf(address, { blockTag });
+}
+
+export function tokenSupplyHistory({ contractaddress, blockno }: TokenSupply) {
+  const contract = new Contract(contractaddress, ERC20, provider);
+  return contract.callStatic.totalSupply(contractaddress, { blockno });
 }
