@@ -5,6 +5,7 @@ import { getStatus, getTxReceiptStatus } from './transaction';
 import { tokenBalance, tokenSupply } from './tokens';
 
 export function etherscanApi(params: EtherscanParams) {
+  console.log('Module', params.module);
   switch (params.module) {
     case 'account': return account(params);
     case 'contract': return contract(params);
