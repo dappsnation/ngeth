@@ -1,10 +1,10 @@
 import { EvmVersion } from "@type/solc";
 
-export type EtherscanParams = AccountsParams | ContractParams | TransactionParams | StatsParams;
+export type EtherscanParams = AccountsParams | ContractParams | TransactionParams | StatsParams | TokenParams;
 
 export type Tag = number | 'latest' | 'pending' | 'earliest';
 export type Sort = 'asc' | 'desc';
-type Module = 'account' | 'contract' | 'transaction' | 'stats';
+type Module = 'account' | 'contract' | 'transaction' | 'stats' | 'token';
 
 interface BaseParams<M extends Module, Action> {
   module: M;
@@ -19,7 +19,7 @@ export type GetParams<T> = Omit<T, 'module' | 'action' | 'apiKey'>
 // ACCOUNT //
 /////////////
 // Params
-export type AccountsParams = Balance | BalanceMulti | BalanceHistory | TxList | TxListInternal | BlockMined | TokenBalance;
+export type AccountsParams = Balance | BalanceMulti | BalanceHistory | TxList | TxListInternal | BlockMined | TokenBalance | TokenBalanceHistory;
 export interface Balance extends BaseParams<'account', 'balance'> {
   /** the string representing the address to check for balance   */
   address: string;
@@ -147,11 +147,17 @@ export interface StatusResult {
 //Stats//
 /////////
 
-export type StatsParams = TokenSupply; 
+export type StatsParams = TokenSupply | TokenSupplyHistory; 
 
 /////////
 //Token//
 /////////
+
+export type TokenParams = TokenInfo;
+
+export interface TokenInfo extends BaseParams<'token', 'tokeninfo'> {
+  contractaddress: string;
+}
 
 export interface TokenBalance extends BaseParams<'account', 'tokenbalance'> {
   contractaddress: string;
@@ -160,11 +166,19 @@ export interface TokenBalance extends BaseParams<'account', 'tokenbalance'> {
   tag?: string | 'latest' | 'earliest'; 
 }
 
+export interface TokenBalanceHistory extends BaseParams<'account', 'tokenbalancehistory'> {
+  contractaddress: string;
+  address: string;
+  blockno: string;
+}
+
 export interface TokenSupply extends BaseParams<'stats', 'tokensupply'> {
   contractaddress: string;
 }
 
 export interface TokenSupplyHistory extends BaseParams<'stats', 'tokensupplyhistory'> {
   contractaddress: string;
-  blockno: number;
+  blockno: string;
 }
+
+
