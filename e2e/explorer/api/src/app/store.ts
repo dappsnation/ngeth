@@ -223,14 +223,13 @@ function contractStandard(abi: ABIDescription[]) {
 }
 
 
-const ERC20Transfer = id('Transfer(address,address,uint256)');
-const ERC721Transfer = id('Transfer(address, address, uint256)');
+const TransferID = id('Transfer(address,address,uint256)');
 
 
 function setTransfers(receipts: TransactionReceipt[]) {
   const logs = receipts.map(receipt => receipt.logs).flat();
   for (const log of logs) {
-    if (log.topics[0] === ERC20Transfer) {
+    if (log.topics[0] === TransferID) {
       const account = store.addresses[log.address];
       if (!isContract(account)) continue;
       const artifact = store.artifacts[account.artifact];
