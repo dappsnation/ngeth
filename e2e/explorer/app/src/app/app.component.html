@@ -1,4 +1,4 @@
-<header>
+<header class="main-nav">
   <nav>
     <ul>
       <li>
@@ -16,14 +16,16 @@
     </ul>
   </nav>
   
-  <form (submit)="search($event, input)">
-    <input #input type="text" />
-    <button type="submit">Search</button>
-  </form>
-
-  <button class="address" (click)="$any(selectDialog).showModal()">
-    <eth-blockies [address]="account$ | async"></eth-blockies>
-  </button>
+  <div class="search">
+    <form (submit)="search($event, input)">
+      <input #input type="text" />
+      <button type="submit">Search</button>
+    </form>
+  
+    <button class="address" (click)="$any(selectDialog).showModal()">
+      <eth-blockies [address]="account$ | async"></eth-blockies>
+    </button>
+  </div>
 </header>
 <main>
   <router-outlet></router-outlet>

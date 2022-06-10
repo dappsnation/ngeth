@@ -1,10 +1,11 @@
-header {
+header.main-nav {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: var(--size-1);
   padding: var(--size-2) var(--size-3);
   form {
-    margin-left: auto;
+    display: flex;
     input, button {
       border: 1px solid var(--border-0);
     }
@@ -16,10 +17,28 @@ header {
       cursor: pointer;
     }
   }
-  button.address {
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
+  .search {
+    display: flex;
+    align-items: center;
+    gap: var(--size-2);
+    button.address {
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+    }
+  }
+}
+
+@media (max-width: 904px) {
+  header.main-nav {
+    flex-direction: column-reverse;
+    align-items: stretch;
+    form {
+      flex: 1;
+      input {
+        flex: 1;
+      }
+    }
   }
 }
 

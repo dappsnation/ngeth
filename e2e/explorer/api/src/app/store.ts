@@ -177,7 +177,7 @@ function abiNames(abi: ABIDescription[]) {
   return fields;
 }
 const standards = {
-  ERC1155: {
+  ERC20: {
     methods: ['totalSupply', 'balanceOf', 'transfer', 'transferFrom', 'approve', 'allowance'],
     events: ['Transfer', 'Approval'],
   },
@@ -185,7 +185,7 @@ const standards = {
     methods: ['ownerOf', 'balanceOf', 'safeTransferFrom', 'setApprovalForAll', 'approve', 'getApproved', 'isApprovedForAll'],
     events: ['Transfer', 'Approval', 'ApprovalForAll'],
   },
-  ERC20: {
+  ERC1155: {
     methods: ['balanceOf', 'balanceOfBatch', 'safeTransferFrom', 'safeBatchTransferFrom', 'setApprovalForAll', 'isApprovedForAll'],
     events: ['TransferSingle', 'TransferBatch', 'ApprovalForAll', 'URI'],
   },
