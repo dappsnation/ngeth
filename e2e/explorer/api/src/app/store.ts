@@ -117,7 +117,7 @@ export async function addArtifactToAddress(address: string, artifact: ContractAr
 async function addTxToAddress(receipt: TransactionReceipt) {
   const addresses = [receipt.from, receipt.to, receipt.contractAddress].filter(address => !!address);
   for (const address of addresses) {
-    const isContract = !!receipt.contractAddress;
+    const isContract = address === receipt.contractAddress;
     if (!store.addresses[address]) await createEthAccount({ address, isContract });
     store.addresses[address].transactions.unshift(receipt.transactionHash);
   }

@@ -1,6 +1,7 @@
-import { Directive, ElementRef, forwardRef, HostListener, Renderer2 } from "@angular/core";
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
+import { Directive, ElementRef, forwardRef, HostListener, Injector, OnInit, Optional, Renderer2, Self } from "@angular/core";
+import { AbstractControl, ControlValueAccessor, FormControl, NgControl, NG_VALUE_ACCESSOR } from "@angular/forms";
 import { getAddress } from "@ethersproject/address";
+import { EthValidators } from "../../form";
 
 @Directive({
   selector: 'input[type="ethAddress"]',
@@ -10,7 +11,8 @@ import { getAddress } from "@ethersproject/address";
     multi: true
   }],
 })
-export class AddressInputDirective implements ControlValueAccessor {
+export class AddressInputDirective implements ControlValueAccessor, OnInit {
+  private control?: AbstractControl | null;
 
   @HostListener('change', ['$event']) change(event: Event) {
     this.onChange((event.target as HTMLInputElement).value);
@@ -25,7 +27,14 @@ export class AddressInputDirective implements ControlValueAccessor {
   constructor(
     private renderer: Renderer2,
     private el: ElementRef<HTMLInputElement>,
-  ) { }
+    private injector: Injector
+  ) {}
+  
+  
+  ngOnInit() {
+    this.control = this.injector.get(NgControl)?.control;
+    this.control?.addValidators(EthValidators.address)
+  }
 
   private setProperty(key: string, value: unknown): void {
     this.renderer.setProperty(this.el.nativeElement, key, value);
@@ -41,6 +50,7 @@ export class AddressInputDirective implements ControlValueAccessor {
 
   registerOnChange(fn: (value: string) => null): void {
     this.onChange = (value: string) => {
+      this.control?.markAsDirty();
       fn(getAddress(value));
     }
   }

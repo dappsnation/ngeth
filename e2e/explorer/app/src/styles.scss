@@ -200,7 +200,7 @@ nav menu {
 }
 
 form:not([method="dialog"]) {
-  input {
+  input, select {
     padding: var(--size-1);
     background-color: var(--background-2);
   }

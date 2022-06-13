@@ -8,13 +8,12 @@
       <form [formGroup]="$any(read.form)" (ngSubmit)="callRead(read)">
         <ul class="inputs" *ngIf="read.inputs.length">
           <li class="field" *ngFor="let input of read.inputs">
-            <label [for]="input.name">{{ input.name }}</label>
-            <input [id]="input.name" [type]="input.type" [formControl]="input.control" [placeholder]="input.type"/>
+            <ng-container *ngTemplateOutlet="field; context: { $implicit: input }"></ng-container>
           </li>
         </ul>
         <footer>
           <button>Query</button>
-          <output *ngIf="read.form.valid && read.result">{{ read.result }}</output>
+          <output *ngIf="!read.form.hasError('err') && read.result">{{ read.result }}</output>
           <output *ngIf="read.form.hasError('err')">{{ read.form.getError('err') }}</output>
         </footer>
       </form>
@@ -33,8 +32,7 @@
       <form [formGroup]="$any(write.form)" (ngSubmit)="callWrite(write)">
         <ul class="inputs">
           <li class="field" *ngFor="let input of write.inputs">
-            <label [for]="input.name">{{ input.name }}</label>
-            <input [id]="input.name" [type]="input.type" [formControl]="input.control" [placeholder]="input.type"/>
+            <ng-container *ngTemplateOutlet="field; context: { $implicit: input }"></ng-container>
           </li>
         </ul>
         <footer>
@@ -46,6 +44,32 @@
   </article>
 </ng-container>
 
-<ng-template #text let-field>
-
+<ng-template #field let-input>
+  <label [for]="input.name">{{ input.name }} <small>({{ input.paramType }})</small></label>
+  <ng-container [ngSwitch]="input.type">
+    <!-- Object / array -->
+    <ng-container *ngSwitchCase="'object'">
+      <input
+        [attr.aria-describedby]="'hint-'+input.name"
+        [id]="input.name"
+        [formControl]="input.control"
+        [placeholder]="input.paramType"
+      />
+      <p [id]="'hint-'+input.name" class="hint"><small>Data as JSON object</small></p>
+    </ng-container>
+    <!-- Boolean -->
+    <ng-container *ngSwitchCase="'boolean'">
+      <select [id]="input.name" [formControl]="input.control">
+        <option [ngValue]="true">True</option>
+        <option [ngValue]="false">False</option>
+      </select>
+    </ng-container>
+    <ng-container *ngSwitchCase="'address'">
+      <input [id]="input.name" type="ethAddress" [formControl]="input.control" [placeholder]="input.paramType"/>
+    </ng-container>
+    <!-- String / bytes / int / address -->
+    <ng-container *ngSwitchDefault>
+      <input [id]="input.name" [type]="input.type" [formControl]="input.control" [placeholder]="input.paramType"/>
+    </ng-container>
+  </ng-container>
 </ng-template>

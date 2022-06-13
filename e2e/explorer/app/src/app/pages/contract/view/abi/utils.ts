@@ -1,6 +1,7 @@
 import { FormArray, FormControl } from '@angular/forms';
 import { ABIDescription, ABIParameter, ABITypeParameter, FunctionDescription } from '@type/solc';
 import { isWrite, isRead } from '@ngeth/tools';
+import { EthValidators } from '@ngeth/ethers';
 
 export interface AbiFormFunction {
   name?: string;
@@ -13,7 +14,8 @@ export interface AbiFormFunction {
 type AbiForm = {
   name: string;
   control: FormControl;
-  type: 'checkbox' | 'number' | 'text' | 'address' | 'object';
+  type: 'boolean' | 'number' | 'text' | 'address' | 'object';
+  paramType: ABITypeParameter;
   isArray: boolean;
 }
 
@@ -30,23 +32,24 @@ export function formABI(abi: ABIDescription[]) {
 // FORM CONTROL //
 //////////////////
 const getAbiControl = (param: ABIParameter): AbiForm => {
-  const type = param.type;
   const abiForm = (type: AbiForm['type'], control: AbiForm['control'], isArray: boolean = false) => ({
     name: param.name,
+    paramType: param.type,
     control,
     type,
     isArray
   })
   // TODO: Find out how to manage that
+  const type = param.type;
   if (type.endsWith(']')) {
-    return abiForm('text', new FormControl());
+    return abiForm('object', new FormControl());
     // const [type] = splitArray(param.type);
     // return abiForm(type, getFormArray(param), true);
   }
   if (type === 'tuple') return abiForm('object', new FormControl());
   if (type === 'string') return abiForm('text', new FormControl());
   if (type === 'address') return abiForm('address', new FormControl());
-  if (type === 'bool') return abiForm('checkbox', new FormControl());
+  if (type === 'bool') return abiForm('boolean', new FormControl());
   if (type.startsWith('bytes')) return abiForm('text', new FormControl());
   if (type.includes('int')) return abiForm('number', new FormControl());
   return abiForm('text', new FormControl());

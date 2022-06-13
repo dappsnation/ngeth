@@ -32,9 +32,20 @@ export class AbiComponent {
     console.error(err);
   }
 
+  private getValue(field: AbiFormFunction) {
+    const value = [];
+    for (let i = 0; i < field.form.length; i++) {
+      const result = field.inputs[i].type === 'object'
+        ? JSON.parse(field.form.at(i).value)
+        : field.form.at(i).value;
+      value.push(result);
+    }
+    return value;
+  }
+
   async callRead(read: AbiFormFunction) {
     if (!read.name) return;
-    const inputs = read.form.value;
+    const inputs = this.getValue(read);
     try {
       read.result = await this.shell.contract?.callStatic[read.name](...inputs);
       read.form.clearValidators();
@@ -42,12 +53,13 @@ export class AbiComponent {
     } catch(error) {
       this.onError(read.form, error as Error);
     }
+    console.log(read.result);
     this.cdr.markForCheck();
   }
 
   async callWrite(write: AbiFormFunction) {
     if (!write.name) return;
-    const inputs = write.form.value;
+    const inputs = this.getValue(write);
     try {
       const tx = await this.shell.contract?.functions[write.name](...inputs);
       await tx.wait();
