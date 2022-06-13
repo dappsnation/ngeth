@@ -231,8 +231,8 @@ const TransferBatchId = id('TransferBatch(address, address, address, uint256, ui
 function setTransfers(receipts: TransactionReceipt[]) {
   const logs = receipts.map(receipt => receipt.logs).flat();
   for (const log of logs) {
-    const account = store.addresses[log.address];
     if (log.topics[0] === TransferID) {
+      const account = store.addresses[log.address];
       if (!isContract(account)) continue;
       const artifact = store.artifacts[account.artifact];
       if (artifact.standard === 'ERC20') updateERC20(log);
@@ -292,7 +292,7 @@ function updateERC1155Single(log: Log) {
   const [tokenId, amount] = defaultAbiCoder.decode(['uint256', 'uint256'], data);
   // Add
   deepUpdate(store.states, [blockNumber, 'erc1155', to, address, tokenId], (current = BigNumber.from(0)) => {
-    return current.add(amount)
+    return current.add(amount);
   });
   // Remove
   if (from === AddressZero) return;
@@ -310,11 +310,11 @@ function updateERC1155Batch(log: Log) {
   // Add
   for (let i = 0; i < tokenIds.length; i++) {
     deepUpdate(store.states, [blockNumber, 'erc1155', to, address, tokenIds[i]], (current = BigNumber.from(0)) => {
-      return current.add(amounts[i])
+      return current.add(amounts[i]);
     })
     if (from === AddressZero) return;
     deepUpdate(store.states, [blockNumber, 'erc1155', from, address, tokenIds[i]], (current = BigNumber.from(0)) => {
-      return current.sub(amounts[i])
+      return current.sub(amounts[i]);
     })
   }
 }

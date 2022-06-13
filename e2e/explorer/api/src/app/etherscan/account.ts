@@ -2,7 +2,7 @@ import { TransactionReceipt } from "@ethersproject/abstract-provider";
 import { Balance, BalanceMulti, GetParams, TxList, BlockMined, BalanceHistory } from "./types";
 import { store } from '../store';
 import { EthState } from "@explorer";
-import { BigNumber } from "ethers";
+import { BigNumber } from "@ethersproject/bignumber";
 
 export function balance({ address, tag }: GetParams<Balance>): string {
   let state: EthState | undefined;
@@ -29,11 +29,11 @@ export function balance({ address, tag }: GetParams<Balance>): string {
   return balance.toString();
 }
 
-export function balanceMulti({ address, tag }: GetParams<BalanceMulti>): {account: string, balance: BigNumber}[] {
+export function balanceMulti({ address, tag }: GetParams<BalanceMulti>): {account: string, balance: string}[] {
   const addresses = address.split(',');
   return addresses.map(account => ({
     account,
-    balance: BigNumber.from(balance({ address: account, tag }))
+    balance: balance({ address: account, tag })
   }));
 }
 
