@@ -3,6 +3,7 @@ import { Interface } from "@ethersproject/abi";
 import { BigNumber } from "@ethersproject/bignumber";
 import { provider } from "../provider";
 import { TokenBalance, TokenSupply, TokenSupplyHistory, TokenBalanceHistory, TokenInfo } from "./types";
+import { store } from "../store";
 
 const ERC20 = new Interface([
   "function totalSupply() view returns (uint)",
@@ -21,8 +22,8 @@ export async function tokenBalance({ contractaddress, address, tag }: TokenBalan
   if (!tag || tag === 'latest') {
     balance = await contract.callStatic.balanceOf(address);
   } else {
-    const blockTag = parseInt(tag, 10);
-    balance = await contract.callStatic.balanceOf(address, { blockTag });
+    const blockNumber = tag === 'earliest' ? 0 : parseInt(tag, 16);
+    balance = store.states[blockNumber].erc20[address]?.[contractaddress] ?? BigNumber.from(0);
   }
   return balance.toString();
 }

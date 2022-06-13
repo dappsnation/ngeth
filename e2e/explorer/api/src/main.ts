@@ -21,7 +21,7 @@ app.get('/etherscan', async (req: Request<unknown, unknown, unknown, EtherscanPa
     const result = await etherscanApi(req.query);
     res.send({ status: '1', message: 'OK', result});
   } catch(err) {
-    res.sendStatus(400);
+    res.status(400).send(err);
   }
 });
 
