@@ -30,8 +30,9 @@ export async function tokenBalance({ contractaddress, address, tag }: TokenBalan
 
 export async function tokenSupplyHistory({ contractaddress, blockno }: TokenSupplyHistory) {
   let balance = BigNumber.from(0);
-  for (const address of Object.keys(store.states[blockno].erc20)) {
-    const userBalance = store.states[blockno].erc20[address]?.[contractaddress] ?? BigNumber.from(0);
+  for (const address in store.states[blockno].erc20) {
+    const userBalance = store.states[blockno].erc20[address]?.[contractaddress];
+    if (userBalance) balance = balance.add(userBalance);
     balance = balance.add(userBalance);
   }
   return balance.toString();
