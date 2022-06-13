@@ -1,0 +1,39 @@
+:host {
+  display: block;
+}
+
+pre {
+  text-align: left;
+  padding: var(--size-1);
+  border-radius: var(--size-0);
+  background-color: var(--background-1);
+  border: 1px solid var(--border-1);
+  white-space: initial;
+}
+code {
+  display: inline-block;
+  word-break: break-all;
+}
+
+.logs {
+  article {
+    margin-block: var(--size-1);
+  }
+  h5 {
+    margin-bottom: var(--size-0);
+  }
+  ol, pre {
+    margin-block: 0;
+  }
+}
+
+.data {
+  th {
+    vertical-align: initial;
+  }
+  button {
+    margin-top: var(--size-1);
+    display: inline-block;
+    cursor: pointer;
+  }
+}

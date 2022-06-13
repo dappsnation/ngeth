@@ -19,14 +19,14 @@
             <a [routerLink]="['/block', tx.blockNumber]">{{ tx.blockNumber }}</a>
           </td>
           <td>
-            <a class="clamp" [routerLink]="['/contract', tx.from]">{{ tx.from }}</a>
+            <a class="clamp" [routerLink]="['/account', tx.from]">{{ tx.from }}</a>
           </td>
           <td>
             <span class="tag">{{ tx.from === contract.address ? 'OUT' : 'IN' }}</span>
           </td>
           <td>
             <ng-container *ngIf="tx.to; else contractAddress">
-              <a class="clamp" [routerLink]="['/contract', tx.to]">{{ tx.to }}</a>
+              <a class="clamp" [routerLink]="['/account', tx.to]">{{ tx.to }}</a>
             </ng-container>
             <ng-template #contractAddress>
               <a class="clamp" [routerLink]="['/contract', tx.contractAddress]">{{ tx.contractAddress }}</a>

@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { BlockExplorer } from '../../../explorer';
 import { exist } from '../../../utils';
 import { combineLatest } from 'rxjs';
-import { filter, map, shareReplay } from 'rxjs/operators';
+import { filter, map, shareReplay, withLatestFrom } from 'rxjs/operators';
 import { ContractAccount, isContract } from '@explorer';
 import { Contract } from '@ethersproject/contracts';
 import { WalletManager } from '../../../wallet';
@@ -25,7 +25,8 @@ export class ViewComponent {
   contract$ = combineLatest([this.explorer.addresses$, this.address$]).pipe(
     map(([addresses, address]) => addresses[address]),
     filter(isContract),
-    map(contract => this.populate(contract)),
+    withLatestFrom(this.walletManager.account$), // used to change the contract signer
+    map(([contract]) => this.populate(contract)),
     shareReplay({ refCount: true, bufferSize: 1 })
   );
 

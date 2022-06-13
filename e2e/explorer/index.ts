@@ -36,6 +36,7 @@ export interface ContractArtifact {
   contractName: string;
   sourceName: string;
   abi: ABIDescription[];
+  standard?: 'ERC20' | 'ERC721' | 'ERC1155';
   deployedBytecode: string; // "0x"-prefixed hex string
 }
 

@@ -1,10 +1,10 @@
 import { EvmVersion } from "@type/solc";
 
-export type EtherscanParams = AccountsParams | ContractParams | TransactionParams;
+export type EtherscanParams = AccountsParams | ContractParams | TransactionParams | StatsParams | TokenParams;
 
 export type Tag = number | 'latest' | 'pending' | 'earliest';
 export type Sort = 'asc' | 'desc';
-type Module = 'account' | 'contract' | 'transaction' | 'logs';
+type Module = 'account' | 'contract' | 'transaction' | 'stats' | 'token' | 'logs';
 
 interface BaseParams<M extends Module, Action> {
   module: M;
@@ -19,7 +19,7 @@ export type GetParams<T> = Omit<T, 'module' | 'action' | 'apiKey'>
 // ACCOUNT //
 /////////////
 // Params
-export type AccountsParams = Balance | BalanceMulti | BalanceHistory | TxList | TxListInternal | BlockMined;
+export type AccountsParams = Balance | BalanceMulti | BalanceHistory | TxList | TxListInternal | BlockMined | TokenBalance | TokenBalanceHistory;
 export interface Balance extends BaseParams<'account', 'balance'> {
   /** the string representing the address to check for balance   */
   address: string;
@@ -97,7 +97,7 @@ interface VerifySourceCodeParams extends BaseParams<'contract', 'verifysourcecod
   contractaddress: string;
   /** Contract Source Code (Flattened if necessary) */
   sourceCode: string;
-  /** solidity-single-file (default) or solidity-standard-json-input (for std-input-json-format support */          
+  /** solidity-single-file (default) or solidity-standard-json-input (for std-input-json-format support */
   codeformat: 'solidity-single-file' | 'solidity-standard-json-input';
   /** ContractName (if codeformat=solidity-standard-json-input, then enter contractname as ex: erc20.sol:erc20) */
   contractname: string;
@@ -159,3 +159,45 @@ export interface StatusResult {
   /** 0: Succeed, 1: Failed */
   status: 0 | 1;
 }
+
+/////////
+//Stats//
+/////////
+
+export type StatsParams = TokenSupply | TokenSupplyHistory | EthSupply;
+
+export interface EthSupply extends BaseParams<'stats', 'ethsupply'> { };
+
+/////////
+//Token//
+/////////
+
+export type TokenParams = TokenInfo;
+
+export interface TokenInfo extends BaseParams<'token', 'tokeninfo'> {
+  contractaddress: string;
+}
+
+export interface TokenBalance extends BaseParams<'account', 'tokenbalance'> {
+  contractaddress: string;
+  address: string;
+  /** Either the blocknumber in hexadecimal or latest / earliest */
+  tag?: string | 'latest' | 'earliest';
+}
+
+export interface TokenBalanceHistory extends BaseParams<'account', 'tokenbalancehistory'> {
+  contractaddress: string;
+  address: string;
+  blockno: string;
+}
+
+export interface TokenSupply extends BaseParams<'stats', 'tokensupply'> {
+  contractaddress: string;
+}
+
+export interface TokenSupplyHistory extends BaseParams<'stats', 'tokensupplyhistory'> {
+  contractaddress: string;
+  blockno: string;
+}
+
+

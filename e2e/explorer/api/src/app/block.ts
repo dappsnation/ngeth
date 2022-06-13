@@ -1,23 +1,9 @@
-import { Block, TransactionReceipt, Log } from "@ethersproject/abstract-provider";
 import { getAddress } from "@ethersproject/address";
-import { EthState, EthAccount } from '@explorer';
 import { Socket } from 'socket.io';
 import { promises as fs } from "fs";
 import { join } from "path";
 import { provider } from "./provider";
 import { setBlock, store, setArtifact, setBalance } from "./store";
-
-
-// /** All the blocks */
-// export const blocks: Block[] = [];
-// /** All transactions response recorded by their hash */
-// export const transactions: Record<string, TransactionReceipt> = {};
-// /** History of transaction per addresses */
-// export const addresses: Record<string, EthAccount> = {};
-// /** State of the network at a specific block */
-// export const states: EthState[] = [];
-// /** Logs per addresses */
-// export const logs: Record<string, Log[]> = {};
 
 
 //////////
@@ -35,13 +21,6 @@ const hardhatAccounts = [
   '0x23618e81e3f5cdf7f54c3d65f7fbc0abf5b21e8f',
   '0xa0ee7a142d267c1f36714e4a8f75612f20a79720',
 ].map(getAddress);
-
-const initAccount = (address: string, isContract = false): EthAccount => ({
-  address,
-  transactions: [],
-  balance: '0x00',
-  isContract  
-});
 
 async function initFactories(root: string) {
   const folders = await fs.readdir(root);
@@ -104,71 +83,3 @@ export function blockListener() {
     }
   }
 }
-
-// async function registerBlock(block: Block) {
-//   blocks[block.number] = block;
-//   const getReceipts = block.transactions.map(hash => provider.getTransactionReceipt(hash));
-//   const getResponses = block.transactions.map(hash => provider.getTransaction(hash));
-//   const [responses, receipts] = await Promise.all([
-//     Promise.all(getResponses),
-//     Promise.all(getReceipts),
-//   ]);
-//   registerTransactions(receipts);
-//   registerState(block, receipts);
-// }
-
-// function registerTransactions(receipts: TransactionReceipt[]) {
-//   for (const receipt of receipts) {
-//     for (const log of receipt.logs) {
-//       if (!logs[log.address]) logs[log.address] = [];
-//       logs[log.address].unshift(log);
-//     }
-//     transactions[receipt.transactionHash] = receipt;
-//     // Add to addresses (from, to, contractAddress)
-//     addressesFromTx(receipt).map(address => addTx(address, receipt));
-//     if (receipt.contractAddress) registerABI(receipt.contractAddress);
-//   }
-// }
-
-// function addressesFromTx(tx: TransactionReceipt) {
-//   const addresses = [tx.from];
-//   if (tx.to) addresses.push(tx.to);
-//   if (tx.contractAddress) addresses.push(tx.contractAddress);
-//   return addresses.map(getAddress);
-// }
-
-// function registerState(block: Block, txs: TransactionReceipt[]) {
-//   states[block.number] = states[block.number - 1] ?? { balances: {} };
-//   const addressesSet = new Set(txs.map(addressesFromTx).flat());
-//   addressesSet.forEach(async address => {
-//     const balance = await provider.getBalance(address, block.number);
-//     states[block.number].balances[address] = balance.toHexString();
-//   });
-//   addressesSet.forEach(setBalance)
-//   // Overwrite last balance
-// }
-
-
-// /////////////
-// // ACCOUNT //
-// /////////////
-// async function addTx(address: string, tx: TransactionReceipt) {
-//   if (!addresses[address]) addresses[address] = initAccount(address, !!tx.contractAddress);
-//   addresses[address].transactions.unshift(tx.transactionHash);
-// }
-
-// async function setBalance(address: string) {
-//   const balance = await provider.getBalance(address);
-//   if (!addresses[address]) addresses[address] = initAccount(address);
-//   addresses[address].balance = balance.toHexString();
-// }
-
-// //////////////
-// // CONTRACT //
-// //////////////
-// async function registerABI(address: string) {
-//   const code = await provider.getCode(address);
-//   const abi = findABI(code);
-//   if (!abi) return;
-//   setABI(address, abi);
-// }

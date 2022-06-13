@@ -4,6 +4,10 @@
 
 article {
   margin-bottom: var(--size-3);
+  
+  .signer {
+    color: var(--text-1);
+  }
 }
 
 details {
@@ -91,6 +95,18 @@ form {
       background-color: var(--background-1);
       border-radius: var(--size-0);
       border: 1px solid var(--border-0);
+    }
+  }
+
+  &.ng-invalid.ng-touched {
+    // label {
+    //   color: var(--warn);
+    // }
+    // input {
+    //   border-color: var(--warn);
+    // }
+    output {
+      border-color: var(--warn);
     }
   }
 }

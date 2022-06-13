@@ -1,6 +1,6 @@
 {
   "name": "ngeth",
-  "version": "0.0.17",
+  "version": "0.0.19",
   "license": "MIT",
   "scripts": {
     "start": "nx serve",
@@ -80,7 +80,7 @@
     "eslint": "8.2.0",
     "eslint-config-prettier": "8.1.0",
     "firebase-tools": "^10.5.0",
-    "hardhat": "^2.8.3",
+    "hardhat": "^2.9.7",
     "ipfsd-ctl": "^10.0.6",
     "jest": "27.2.3",
     "jest-preset-angular": "11.0.0",

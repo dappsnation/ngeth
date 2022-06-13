@@ -1,4 +1,4 @@
-<header>
+<header class="main-nav">
   <nav>
     <ul>
       <li>
@@ -16,11 +16,35 @@
     </ul>
   </nav>
   
-  <form (submit)="search($event, input)">
-    <input #input type="text" />
-    <button type="submit">Search</button>
-  </form>
+  <div class="search">
+    <form (submit)="search($event, input)">
+      <input #input type="text" />
+      <button type="submit">Search</button>
+    </form>
+  
+    <button class="address" (click)="$any(selectDialog).showModal()">
+      <eth-blockies [address]="account$ | async"></eth-blockies>
+    </button>
+  </div>
 </header>
 <main>
   <router-outlet></router-outlet>
 </main>
+
+
+<dialog #selectDialog>
+  <form method="dialog">
+    <header>
+      <h2>Change Account</h2>
+      <button>X</button>
+    </header>
+    <ul class="list">
+      <li *ngFor="let account of accounts$ | async">
+        <button class="item" (click)="select(account)">
+          <eth-blockies [address]="account"></eth-blockies>
+          <span>{{ account }}</span>
+        </button>
+      </li>
+    </ul>
+  </form>
+</dialog>

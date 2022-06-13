@@ -1,5 +1,4 @@
 import { inject, Injectable, Injector, NgZone } from '@angular/core';
-// import { WebSigner } from './provider';
 import { Signer } from '@ethersproject/abstract-signer';
 
 @Injectable()

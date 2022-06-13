@@ -16,9 +16,9 @@ const io = new Server(httpServer, {
   }
 });
 
-app.get('/etherscan/**', async (req: Request<EtherscanParams>, res) => {
+app.get('/etherscan', async (req: Request<unknown, unknown, unknown, EtherscanParams>, res) => {
   try {
-    const result = await etherscanApi(req.params);
+    const result = await etherscanApi(req.query);
     res.send({ status: '1', message: 'OK', result});
   } catch(err) {
     res.sendStatus(400);
@@ -29,7 +29,4 @@ app.get('/etherscan/**', async (req: Request<EtherscanParams>, res) => {
 httpServer.listen(explorerApiPort);
 
 const { addSocket } = blockListener();
-io.on("connection", (socket) => {
-  console.log('CONNECTED', socket.id)
-  addSocket(socket);
-});
+io.on("connection", (socket) => addSocket(socket));

@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
-import { rpcProvider } from '@ngeth/ethers';
+import { EthersModule, rpcProvider } from '@ngeth/ethers';
 import { RedirectAddress } from './address.guard';
 
 import { AppComponent } from './app.component';
@@ -10,6 +10,7 @@ import { walletSigner } from './wallet';
 @NgModule({
   declarations: [AppComponent],
   imports: [
+    EthersModule,
     BrowserModule.withServerTransition({ appId: 'serverApp' }),
     RouterModule.forRoot([
       {

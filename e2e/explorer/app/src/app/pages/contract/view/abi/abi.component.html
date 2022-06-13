@@ -1,7 +1,7 @@
 <ng-container *ngIf="forms$ | async as forms">
   <article>
     <h3>Read Contract</h3>
-    <details *ngFor="let read of forms.reads">
+    <details *ngFor="let read of forms.reads; trackBy: trackByName">
       <summary>
         <h4>{{ read.name }}</h4>
       </summary>
@@ -14,7 +14,8 @@
         </ul>
         <footer>
           <button>Query</button>
-          <output *ngIf="read.result">{{ read.result }}</output>
+          <output *ngIf="read.form.valid && read.result">{{ read.result }}</output>
+          <output *ngIf="read.form.hasError('err')">{{ read.form.getError('err') }}</output>
         </footer>
       </form>
     </details>
@@ -22,7 +23,10 @@
   
   <article>
     <h3>Write Contract</h3>
-    <details *ngFor="let write of forms.writes">
+    <p>
+      Current signer: <span class="signer">{{ account$ | async }}</span>
+    </p>
+    <details *ngFor="let write of forms.writes; trackBy: trackByName">
       <summary>
         <h4>{{ write.name }}</h4>
       </summary>
@@ -35,6 +39,7 @@
         </ul>
         <footer>
           <button>Submit</button>
+          <output *ngIf="write.form.hasError('err')">{{ write.form.getError('err') }}</output>
         </footer>
       </form>
     </details>
