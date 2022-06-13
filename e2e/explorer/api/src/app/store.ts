@@ -271,7 +271,7 @@ function updateERC721(log: Log) {
   const { blockNumber, address, topics, data } = log;
   const [from] = defaultAbiCoder.decode(['address'], topics[1]);
   const [to] = defaultAbiCoder.decode(['address'], topics[2]);
-  const [tokenId] = defaultAbiCoder.decode(['uint256'], data);
+  const [tokenId] = defaultAbiCoder.decode(['uint256'], topics[3]);
   // Add
   deepUpdate(store.states, [blockNumber, 'erc721', to, address], (current = []) => current.push(tokenId));
   // Remove
