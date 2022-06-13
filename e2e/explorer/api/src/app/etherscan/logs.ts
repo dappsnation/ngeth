@@ -10,8 +10,9 @@ export function getLogs(params: GetParams<Logs>) {
 
   return Object.values(store.logs).flat().filter(log => {
     if(log.address !== address) return false;
-    if(log.blockNumber <= fromBlock ||log.blockNumber >= toBlock ) return false;
-    if(log.topics .filter(topic => {
+    if(log.blockNumber <= fromBlock || log.blockNumber >= toBlock ) return false;
+    else if (fromBlock === "latest" || toBlock === "latest") return true;
+    if(log.topics.filter(topic => {
       if(topic !== topic0 || topic !== topic1 || topic !== topic2 || topic !== topic3) return false;
       return true; 
       }))

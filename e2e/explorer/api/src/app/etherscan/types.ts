@@ -123,8 +123,8 @@ export type VerifySourceCode = VerifySourceCodeParams & Library<1 | 2 | 3 | 4 | 
 /////////////////
 //logs
 export interface Logs extends BaseParams<'logs', "getLogs"> {
-  fromBlock: number | "lastest";
-  toBlock: number | "lastest";
+  fromBlock: number | "latest";
+  toBlock: number | "latest";
   address: string;
   topic0?: string;
   topic1?: string;
