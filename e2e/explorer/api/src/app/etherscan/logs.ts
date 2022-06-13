@@ -20,11 +20,10 @@ export function getLogs(params: GetParams<Logs>) {
     filter = { from: 0, to: 3, operator: "and" };
   }
 
-  // todo check if toBlock/fromBlock is latest mutate them in block.lenght-1
-
   return Object.values(store.logs).flat().filter(log => {
-    if(log.address !== address) return false;
-    if(log.blockNumber <= fromBlock || log.blockNumber >= toBlock ) return false;
+    if (log.address !== address) return false;
+    if ((typeof fromBlock === "string" && fromBlock !== "latest") || (typeof toBlock === "string" && toBlock !== "latest")) return false;
+    if (log.blockNumber <= fromBlock || log.blockNumber >= toBlock ) return false;
     if (filter.operator === "and") {
       for (let i = filter.from; i <= filter.to; i++) {
         if (!params[`topic${i}`]) continue;
