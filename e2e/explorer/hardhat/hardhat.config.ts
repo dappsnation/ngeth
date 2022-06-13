@@ -15,6 +15,7 @@ export default {
     outDir: './contracts',
     autoDeploy: {
       BaseERC20: ["Name"],
+      BaseERC1155: ["uri"],
     },
     explorer: false
   },

@@ -61,7 +61,8 @@ form {
     list-style: none;
     margin: 0;
     display: flex;
-    gap: var(--size-2);
+    flex-wrap: wrap;
+    gap: var(--size-0) var(--size-2);
   }
   .field {
     display: flex;
@@ -70,14 +71,22 @@ form {
       color: var(--text-1);
       margin-bottom: var(--size-0);
     }
-    input {
+    input, select {
       border-radius: var(--size-0);
       border: 1px solid var(--border-0);
       background-color: var(--background-1);
+      &.ng-invalid.ng-dirty.ng-touched {
+        border-color: var(--warn);
+      }
+    }
+    .hint {
+      margin: none;
+      color: var(--text-1);
     }
   }
   footer {
     display: flex;
+    align-items: flex-start;
     gap: var(--size-3);
     padding: var(--size-1);
 
@@ -91,7 +100,7 @@ form {
       display: flex;
       align-items: center;
       flex: 1;
-      padding-inline: var(--size-2);
+      padding: var(--size-1) var(--size-2);
       background-color: var(--background-1);
       border-radius: var(--size-0);
       border: 1px solid var(--border-0);
@@ -99,12 +108,6 @@ form {
   }
 
   &.ng-invalid.ng-touched {
-    // label {
-    //   color: var(--warn);
-    // }
-    // input {
-    //   border-color: var(--warn);
-    // }
     output {
       border-color: var(--warn);
     }

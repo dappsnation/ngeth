@@ -2,12 +2,10 @@ import { AbstractControl, ValidationErrors, ValidatorFn } from "@angular/forms";
 import { isAddress } from "@ethersproject/address";
 import { BigNumber } from "@ethersproject/bignumber";
 
-export function address(): ValidatorFn  {
-  return (control: AbstractControl): ValidationErrors|null => {
-    if (isAddress(control.value)) return null;
-    return { address: true };
-  };
-}
+export const address: ValidatorFn = (control: AbstractControl): ValidationErrors|null => {
+  if (isAddress(control.value)) return null;
+  return { address: true };
+};
 
 export function ownToken(tokenIds: string[]): ValidatorFn  {
   return (control: AbstractControl): ValidationErrors|null => {

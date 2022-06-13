@@ -179,8 +179,7 @@ ol.grid, ul.grid {
   }
 }
 
-nav ul {
-  list-style: none;
+nav menu {
   margin: 0;
   padding-left: 0;
   display: flex;
@@ -201,7 +200,7 @@ nav ul {
 }
 
 form:not([method="dialog"]) {
-  input {
+  input, select {
     padding: var(--size-1);
     background-color: var(--background-2);
   }
