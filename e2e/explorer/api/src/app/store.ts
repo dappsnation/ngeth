@@ -224,7 +224,8 @@ function contractStandard(abi: ABIDescription[]) {
 
 
 const TransferID = id('Transfer(address,address,uint256)');
-const TransferSingleID = id('TransferSingle(address, address, address, uint256, uint256)')
+const TransferSingleID = id('TransferSingle(address, address, address, uint256, uint256)');
+const TransferBatchId = id('TransferBatch(address, address, address, uint256, uint256)');
 
 
 function setTransfers(receipts: TransactionReceipt[]) {
@@ -237,7 +238,8 @@ function setTransfers(receipts: TransactionReceipt[]) {
       if (artifact.standard === 'ERC20') updateERC20(log);
       if (artifact.standard === 'ERC721') updateERC721(log);
     }
-    if (log.topics[0] === TransferSingleID) updateERC1155(log);
+    if (log.topics[0] === TransferSingleID) updateERC1155Single(log);
+    if (log.topics[0] === TransferBatchId) updateERC1155Batch(log);
   }
 }
 
@@ -283,7 +285,7 @@ function updateERC721(log: Log) {
 }
 
 // ERC1155 Single
-function updateERC1155(log: Log) {
+function updateERC1155Single(log: Log) {
   const { blockNumber, address, topics, data } = log;
   const [from] = defaultAbiCoder.decode(['address'], topics[1]);
   const [to] = defaultAbiCoder.decode(['address'], topics[2]);
@@ -297,4 +299,22 @@ function updateERC1155(log: Log) {
   deepUpdate(store.states, [blockNumber, 'erc1155', from, address, tokenId], (current = BigNumber.from(0)) => {
     return current.sub(amount);
   })
+}
+
+// ERC1155 Batch
+function updateERC1155Batch(log: Log) {
+  const { blockNumber, address, topics, data } = log;
+  const [from] = defaultAbiCoder.decode(['address'], topics[1]);
+  const [to] = defaultAbiCoder.decode(['address'], topics[2]);
+  const [tokenIds, amounts] = defaultAbiCoder.decode(['uint256[]', 'uint256[]'], data);
+  // Add
+  for (let i = 0; i < tokenIds.length; i++) {
+    deepUpdate(store.states, [blockNumber, 'erc1155', to, address, tokenIds[i]], (current = BigNumber.from(0)) => {
+      return current.add(amounts[i])
+    })
+    if (from === AddressZero) return;
+    deepUpdate(store.states, [blockNumber, 'erc1155', from, address, tokenIds[i]], (current = BigNumber.from(0)) => {
+      return current.sub(amounts[i])
+    })
+  }
 }
