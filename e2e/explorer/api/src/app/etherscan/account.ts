@@ -2,6 +2,7 @@ import { TransactionReceipt } from "@ethersproject/abstract-provider";
 import { Balance, BalanceMulti, GetParams, TxList, BlockMined, BalanceHistory } from "./types";
 import { store } from '../store';
 import { EthState } from "@explorer";
+import { BigNumber } from "@ethersproject/bignumber";
 
 export function balance({ address, tag }: GetParams<Balance>): string {
   let state: EthState | undefined;
@@ -24,8 +25,8 @@ export function balance({ address, tag }: GetParams<Balance>): string {
     state = store.states[index];
   }
 
-  const balance = state?.balances[address] ?? '0x00';
-  return balance.toString().replace('0x', '');
+  const balance = state?.balances[address] ?? BigNumber.from(0);
+  return balance.toString();
 }
 
 export function balanceMulti({ address, tag }: GetParams<BalanceMulti>): {account: string, balance: string}[] {
@@ -88,5 +89,5 @@ export function balanceHistory(params: GetParams<BalanceHistory>) {
 
   const balance = store.states[blockno]?.balances[address];
   if (!balance) return '0';
-  return balance.replace('0x', '');
+  return balance.toString();
 }
