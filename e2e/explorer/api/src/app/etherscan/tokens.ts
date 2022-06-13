@@ -28,15 +28,18 @@ export async function tokenBalance({ contractaddress, address, tag }: TokenBalan
   return balance.toString();
 }
 
-export async function tokenSupplyHistory({ contractaddress, blockno }: TokenSupplyHistory) {
-  const contract = new Contract(contractaddress, ERC20, provider);
-  const balance = await contract.callStatic.totalSupply({ blockTag: blockno });
+export function tokenSupplyHistory({ contractaddress, blockno }: TokenSupplyHistory) {
+  let balance = BigNumber.from(0);
+  for (const address in store.states[blockno].erc20) {
+    const userBalance = store.states[blockno].erc20[address]?.[contractaddress];
+    if (userBalance) balance = balance.add(userBalance);
+    balance = balance.add(userBalance);
+  }
   return balance.toString();
 }
 
-export async function tokenBalanceHistoy({ contractaddress, address, blockno }: TokenBalanceHistory) {
-  const contract = new Contract(contractaddress, ERC20, provider);
-  const balance = await contract.callStatic.balanceOf(address, { blockTag: blockno });
+export function tokenBalanceHistoy({ contractaddress, address, blockno }: TokenBalanceHistory) {
+  const balance = store.states[blockno].erc20[address]?.[contractaddress] ?? BigNumber.from(0);
   return balance.toString();
 }
 
