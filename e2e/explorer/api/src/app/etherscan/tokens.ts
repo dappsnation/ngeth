@@ -29,8 +29,11 @@ export async function tokenBalance({ contractaddress, address, tag }: TokenBalan
 }
 
 export async function tokenSupplyHistory({ contractaddress, blockno }: TokenSupplyHistory) {
-  const contract = new Contract(contractaddress, ERC20, provider);
-  const balance = await contract.callStatic.totalSupply({ blockTag: blockno });
+  let balance = BigNumber.from(0);
+  for (const address of Object.keys(store.states[blockno].erc20)) {
+    const userBalance = store.states[blockno].erc20[address]?.[contractaddress] ?? BigNumber.from(0);
+    balance = balance.add(userBalance);
+  }
   return balance.toString();
 }
 
