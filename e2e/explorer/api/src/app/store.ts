@@ -147,7 +147,7 @@ function setState(block: Block, receipts: TransactionReceipt[]) {
   // Get new balance per unique addresses
   const setBalances = addresses.map(async address => {
     const balance = await provider.getBalance(address, block.number);
-    store.states[block.number].balances[address] = balance.toString();
+    store.states[block.number].balances[address] = balance;
   });
   return Promise.all(setBalances);
 }
