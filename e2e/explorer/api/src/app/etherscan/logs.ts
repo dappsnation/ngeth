@@ -5,8 +5,7 @@ export function getLogs(params: GetParams<Logs>) {
   const { address } = params;
   let {fromBlock, toBlock} = params;  
   if (!fromBlock || !toBlock || !address) throw new Error('Error! Missing or invalid Action name');
-  if ((typeof fromBlock === "string" && fromBlock !== "latest") || (typeof toBlock === "string" && toBlock !== "latest"))
-    throw new Error('Only "latest" is supported as a blocktag for "fromBlock". Got ' + fromBlock);
+  if ((typeof fromBlock === "string" && fromBlock !== "latest") || (typeof toBlock === "string" && toBlock !== "latest")) throw new Error('Only "latest" is supported as a blocktag for "fromBlock". Got ' + fromBlock);
   if (fromBlock === "latest") fromBlock = store.blocks.length - 1;
   if (toBlock === "latest") toBlock = store.blocks.length - 1;
 
