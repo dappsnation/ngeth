@@ -97,6 +97,7 @@ export function tokenTx(params: GetParams<TokenTx>) {
   if (!address || !contractAddress) throw new Error('Error! Missing address or contract address');
   const transferID = id('Transfer(address,address,uint256)');
 
+  // get the address transactions logs
   const logs = store.addresses[address].transactions
     .map(log => store.logs[log])
     .flat()
