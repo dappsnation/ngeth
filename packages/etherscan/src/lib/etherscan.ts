@@ -5,6 +5,13 @@ interface BalanceMultiResponse {
   account: string;
   balance: string;
 }
+
+interface MinedBlockResponse {
+  blockNumber: string;
+  timeStamp: string;
+  blockReward: string;
+}
+
 type Etherscan = ReturnType<typeof initEtherscan>;
 
 type OptionalKeys<T> = {
@@ -81,7 +88,7 @@ function token1155Tx(call: Etherscan, contractaddress: string, params: Optional<
 }
 
 function getMinedBlocks(call: Etherscan, address: string, params: Optional<MinedBlock>) {
-  return call<TransactionResponse[]>({ module: 'account', action: 'getminedblocks', address, ...params });
+  return call<MinedBlockResponse[]>({ module: 'account', action: 'getminedblocks', address, ...params });
 }
 
 //block no might be optionnal but no testing available since it requires API pro
