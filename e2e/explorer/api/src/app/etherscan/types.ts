@@ -4,7 +4,7 @@ export type EtherscanParams = AccountsParams | ContractParams | TransactionParam
 
 export type Tag = number | 'latest' | 'pending' | 'earliest';
 export type Sort = 'asc' | 'desc';
-type Module = 'account' | 'contract' | 'transaction' | 'stats' | 'token';
+type Module = 'account' | 'contract' | 'transaction' | 'stats' | 'token' | 'logs';
 
 interface BaseParams<M extends Module, Action> {
   module: M;
@@ -121,6 +121,23 @@ export type VerifySourceCode = VerifySourceCodeParams & Library<1 | 2 | 3 | 4 | 
 /////////////////
 // TRANSACTION //
 /////////////////
+//logs
+export interface Logs extends BaseParams<'logs', "getLogs"> {
+  fromBlock: number | "latest";
+  toBlock: number | "latest";
+  address: string;
+  topic0?: string;
+  topic1?: string;
+  topic2?: string;
+  topic3?: string;
+  topic0_1_opr?: 'and' | 'or';
+  topic0_2_opr?: 'and' | 'or';
+  topic0_3_opr?: 'and' | 'or';
+  topic1_2_opr?: 'and' | 'or';
+  topic1_3_opr?: 'and' | 'or';
+  topic2_3_opr?: 'and' | 'or';
+}
+
 // Params
 export type TransactionParams = GetStatus | GetTxReceiptStatus;
 export interface GetStatus extends BaseParams<'transaction', 'getstatus'> {
