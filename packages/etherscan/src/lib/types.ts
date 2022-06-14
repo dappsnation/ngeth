@@ -82,7 +82,7 @@ export interface BlockMined extends BaseParams<'account', 'getminedblocks'> {
 }
 
 /** Same interface used for TokenNftTx & Token1155Tx */
-export interface TokenTx extends BaseParams<'account', 'tokentx'> {
+export interface BaseTokenTx<action extends string> extends BaseParams<'account', action> {
   /** the string representing the token contract address to check for balance */
   contractaddress: string;
   /** the string representing the address to check for balance */
@@ -99,9 +99,11 @@ export interface TokenTx extends BaseParams<'account', 'tokentx'> {
   sort?: Sort;
 }
 
-export interface TokenNftTx extends TokenTx {};
+export interface TokenTx extends BaseTokenTx<'tokentx'> {};
 
-export interface Token1155Tx extends TokenTx {};
+export interface TokenNftTx extends BaseTokenTx<'tokennfttx'> {};
+
+export interface Token1155Tx extends BaseTokenTx<'token1155tx'> {};
 
 export interface MinedBlock extends BaseParams<'account', 'getminedblocks'> {
   /** the string representing the address to check for balance */
