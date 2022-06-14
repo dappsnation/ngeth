@@ -1,4 +1,4 @@
-import { GetParams, Logs } from "./types";
+import { GetParams, Logs } from "@ngeth/etherscan";
 import { store } from '../store';
 
 export function getLogs(params: GetParams<Logs>) {
