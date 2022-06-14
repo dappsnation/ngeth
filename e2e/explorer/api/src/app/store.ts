@@ -1,7 +1,19 @@
-import { Block, TransactionResponse, TransactionReceipt } from '@ethersproject/abstract-provider';
-import { EthAccount, ContractArtifact, ContractAccount, EthStore } from '@explorer';
+import { Block, TransactionResponse, TransactionReceipt, Log } from '@ethersproject/abstract-provider';
+import { EthAccount, ContractArtifact, ContractAccount, EthStore, isContract } from '@explorer';
+import { AddressZero } from '@ethersproject/constants';
+import { BigNumber } from '@ethersproject/bignumber';
+import { defaultAbiCoder } from '@ethersproject/abi';
+import { id } from '@ethersproject/hash';
 import { ABIDescription } from '@type/solc';
 import { provider } from './provider';
+
+function bignumberReviver(key: string, value: any) {
+  if (typeof value === 'object' && value['type'] === 'BigNumber') return BigNumber.from(value);
+  return value;
+}
+function copyWithBigNumber<T>(source: T): T {
+  return JSON.parse(JSON.stringify(source), bignumberReviver)
+}
 
 export const store: EthStore = {
   blocks: [],
@@ -29,7 +41,7 @@ export async function setBlock(block: Block) {
     Promise.all(getReceipts),
   ]);
   await setBlockTransactions(txs, receipts);
-  await setState(block, txs);
+  await setState(block, receipts);
   // Update the balance to latest
   const setBalances = Object.values(store.addresses).map(setBalance);
   await Promise.all(setBalances);
@@ -75,7 +87,7 @@ interface CreateEthAccount extends Partial<EthAccount> {
 }
 
 async function createEthAccount(params: CreateEthAccount) {
-  store.addresses[params.address] =  {
+  store.addresses[params.address] = {
     transactions: [],
     balance: '0',
     isContract: false,
@@ -105,7 +117,7 @@ export async function addArtifactToAddress(address: string, artifact: ContractAr
 async function addTxToAddress(receipt: TransactionReceipt) {
   const addresses = [receipt.from, receipt.to, receipt.contractAddress].filter(address => !!address);
   for (const address of addresses) {
-    const isContract = !!receipt.contractAddress;
+    const isContract = address === receipt.contractAddress;
     if (!store.addresses[address]) await createEthAccount({ address, isContract });
     store.addresses[address].transactions.unshift(receipt.transactionHash);
   }
@@ -116,20 +128,26 @@ async function addTxToAddress(receipt: TransactionReceipt) {
 ///////////
 
 /** Set the state of the network at a specific block */
-function setState(block: Block, txs: TransactionResponse[]) {
+function setState(block: Block, receipts: TransactionReceipt[]) {
   // Copy previous
-  store.states[block.number] = store.states[block.number - 1] ?? { balances: {} };
+  if (store.states[block.number - 1]) {
+    store.states[block.number] = copyWithBigNumber(store.states[block.number - 1]);
+  } else {
+    store.states[block.number] = { balances: {}, erc20: {}, erc721: {}, erc1155: {} };
+  }
+  setTransfers(receipts);
   // Get unique addresses
   const rawAddresses = [block.miner];
-  for (const tx of txs) {
-    rawAddresses.push(tx.from);
-    if (tx.to) rawAddresses.push(tx.to);
+  for (const receipt of receipts) {
+    rawAddresses.push(receipt.from);
+    if (receipt.to) rawAddresses.push(receipt.to);
+    if (receipt.contractAddress) rawAddresses.push(receipt.contractAddress);
   }
   const addresses = Array.from(new Set(rawAddresses));
   // Get new balance per unique addresses
   const setBalances = addresses.map(async address => {
     const balance = await provider.getBalance(address, block.number);
-    store.states[block.number].balances[address] = balance.toString();
+    store.states[block.number].balances[address] = balance;
   });
   return Promise.all(setBalances);
 }
@@ -190,7 +208,8 @@ const standards = {
     events: ['TransferSingle', 'TransferBatch', 'ApprovalForAll', 'URI'],
   },
 }
-function isStandard(abi: ABIDescription[], name: keyof typeof standards) {
+type Tokens = keyof typeof standards;
+function isStandard(abi: ABIDescription[], name: Tokens) {
   const names = abiNames(abi);
   const { methods, events } = standards[name];
   return [...methods, ...events].every(name => names[name]);
@@ -201,4 +220,101 @@ function contractStandard(abi: ABIDescription[]) {
   if (isStandard(abi, 'ERC721')) return 'ERC721';
   if (isStandard(abi, 'ERC20')) return 'ERC20';
   return;
+}
+
+
+const TransferID = id('Transfer(address,address,uint256)');
+const TransferSingleID = id('TransferSingle(address, address, address, uint256, uint256)');
+const TransferBatchId = id('TransferBatch(address, address, address, uint256, uint256)');
+
+
+function setTransfers(receipts: TransactionReceipt[]) {
+  const logs = receipts.map(receipt => receipt.logs).flat();
+  for (const log of logs) {
+    if (log.topics[0] === TransferID) {
+      const account = store.addresses[log.address];
+      if (!isContract(account)) continue;
+      const artifact = store.artifacts[account.artifact];
+      if (artifact.standard === 'ERC20') updateERC20(log);
+      if (artifact.standard === 'ERC721') updateERC721(log);
+    }
+    if (log.topics[0] === TransferSingleID) updateERC1155Single(log);
+    if (log.topics[0] === TransferBatchId) updateERC1155Batch(log);
+  }
+}
+
+function deepUpdate<T>(source: T, fields: string[], cb: (current: any) => void) {
+  const key = fields.shift();
+  if (fields.length) {
+    if (!source[key]) source[key] = {};
+    return deepUpdate(source[key], fields, cb);
+  }
+  source[key] = cb(source[key]);
+}
+
+// ERC20
+function updateERC20(log: Log) {
+  const { blockNumber, address, topics, data } = log;
+  const [from] = defaultAbiCoder.decode(['address'], topics[1]);
+  const [to] = defaultAbiCoder.decode(['address'], topics[2]);
+  const [amount] = defaultAbiCoder.decode(['uint256'], data);
+  // Add
+  deepUpdate(store.states, [blockNumber, 'erc20', to, address], (current = BigNumber.from(0)) => {
+    return current.add(amount);
+  });
+  // Remove
+  if (from === AddressZero) return;
+  deepUpdate(store.states, [blockNumber, 'erc20', from, address], (current = BigNumber.from(0)) => {
+    return current.sub(amount);
+  });
+}
+
+// ERC721
+function updateERC721(log: Log) {
+  const { blockNumber, address, topics, data } = log;
+  const [from] = defaultAbiCoder.decode(['address'], topics[1]);
+  const [to] = defaultAbiCoder.decode(['address'], topics[2]);
+  const [tokenId] = defaultAbiCoder.decode(['uint256'], topics[3]);
+  // Add
+  deepUpdate(store.states, [blockNumber, 'erc721', to, address], (current = []) => current.push(tokenId));
+  // Remove
+  if (from === AddressZero) return;
+  deepUpdate(store.states, [blockNumber, 'erc721', from, address], (current = []) => {
+    return current.filter(id => id !== tokenId);
+  });
+}
+
+// ERC1155 Single
+function updateERC1155Single(log: Log) {
+  const { blockNumber, address, topics, data } = log;
+  const [from] = defaultAbiCoder.decode(['address'], topics[1]);
+  const [to] = defaultAbiCoder.decode(['address'], topics[2]);
+  const [tokenId, amount] = defaultAbiCoder.decode(['uint256', 'uint256'], data);
+  // Add
+  deepUpdate(store.states, [blockNumber, 'erc1155', to, address, tokenId], (current = BigNumber.from(0)) => {
+    return current.add(amount);
+  });
+  // Remove
+  if (from === AddressZero) return;
+  deepUpdate(store.states, [blockNumber, 'erc1155', from, address, tokenId], (current = BigNumber.from(0)) => {
+    return current.sub(amount);
+  })
+}
+
+// ERC1155 Batch
+function updateERC1155Batch(log: Log) {
+  const { blockNumber, address, topics, data } = log;
+  const [from] = defaultAbiCoder.decode(['address'], topics[1]);
+  const [to] = defaultAbiCoder.decode(['address'], topics[2]);
+  const [tokenIds, amounts] = defaultAbiCoder.decode(['uint256[]', 'uint256[]'], data);
+  // Add
+  for (let i = 0; i < tokenIds.length; i++) {
+    deepUpdate(store.states, [blockNumber, 'erc1155', to, address, tokenIds[i]], (current = BigNumber.from(0)) => {
+      return current.add(amounts[i]);
+    })
+    if (from === AddressZero) return;
+    deepUpdate(store.states, [blockNumber, 'erc1155', from, address, tokenIds[i]], (current = BigNumber.from(0)) => {
+      return current.sub(amounts[i]);
+    })
+  }
 }

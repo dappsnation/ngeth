@@ -1,0 +1,32 @@
+{
+  "root": "packages/etherscan",
+  "sourceRoot": "packages/etherscan/src",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/packages/etherscan",
+        "main": "packages/etherscan/src/index.ts",
+        "tsConfig": "packages/etherscan/tsconfig.lib.json",
+        "assets": ["packages/etherscan/*.md"]
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["packages/etherscan/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/packages/etherscan"],
+      "options": {
+        "jestConfig": "packages/etherscan/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

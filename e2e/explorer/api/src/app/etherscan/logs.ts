@@ -1,9 +1,18 @@
-import { GetParams, Logs } from "./types";
+import { GetParams, Logs } from "@ngeth/etherscan";
 import { store } from '../store';
 
 export function getLogs(params: GetParams<Logs>) {
-  const { fromBlock, toBlock, address } = params;
-  if (!fromBlock || !toBlock || !address) throw new Error('Error! Missing or invalid Action name');
+  let {fromBlock, toBlock} = params;  
+  if (!fromBlock || !toBlock || !params.address) throw new Error('Error! Missing or invalid Action name');
+  if (typeof fromBlock === "string" && fromBlock !== "latest") {
+    throw new Error('Only "latest" is supported as a blocktag for "fromBlock". Got' +fromBlock);
+  }
+  if (typeof toBlock === "string" && toBlock !== "latest") {
+    throw new Error('Only "latest" is supported as a blocktag for "toBlock". Got' + toBlock);
+  }
+  
+  if (fromBlock === "latest") fromBlock = store.blocks.length - 1;
+  if (toBlock === "latest") toBlock = store.blocks.length - 1;
 
   let filter: {from: number; to: number; operator: 'or' | 'and' };
   from:
@@ -20,10 +29,10 @@ export function getLogs(params: GetParams<Logs>) {
     filter = { from: 0, to: 3, operator: "and" };
   }
 
+  // todo check if toBlock/fromBlock is latest mutate them in block.lenght-1
   return Object.values(store.logs).flat().filter(log => {
-    if (log.address !== address) return false;
-    if ((typeof fromBlock === "string" && fromBlock !== "latest") || (typeof toBlock === "string" && toBlock !== "latest")) return false;
-    if (log.blockNumber <= fromBlock || log.blockNumber >= toBlock ) return false;
+    if (log.address !== params.address) return false;
+    if (log.blockNumber < fromBlock || log.blockNumber > toBlock ) return false;
     if (filter.operator === "and") {
       for (let i = filter.from; i <= filter.to; i++) {
         if (!params[`topic${i}`]) continue;
@@ -36,6 +45,6 @@ export function getLogs(params: GetParams<Logs>) {
       }
       return false;
     }
-  throw new Error('Operator should be either "and" or "or"');
+    throw new Error('Operator should be either "and" or "or"');
   })
 }

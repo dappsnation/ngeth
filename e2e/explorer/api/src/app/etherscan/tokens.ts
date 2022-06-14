@@ -2,7 +2,8 @@ import { Contract } from "@ethersproject/contracts";
 import { Interface } from "@ethersproject/abi";
 import { BigNumber } from "@ethersproject/bignumber";
 import { provider } from "../provider";
-import { TokenBalance, TokenSupply, TokenSupplyHistory, TokenBalanceHistory, TokenInfo } from "./types";
+import { TokenBalance, TokenSupply, TokenSupplyHistory, TokenBalanceHistory, TokenInfo } from "@ngeth/etherscan";
+import { store } from "../store";
 
 const ERC20 = new Interface([
   "function totalSupply() view returns (uint)",
@@ -21,21 +22,24 @@ export async function tokenBalance({ contractaddress, address, tag }: TokenBalan
   if (!tag || tag === 'latest') {
     balance = await contract.callStatic.balanceOf(address);
   } else {
-    const blockTag = parseInt(tag, 10);
-    balance = await contract.callStatic.balanceOf(address, { blockTag });
+    const blockNumber = tag === 'earliest' ? 0 : parseInt(tag, 16);
+    balance = store.states[blockNumber].erc20[address]?.[contractaddress] ?? BigNumber.from(0);
   }
   return balance.toString();
 }
 
-export async function tokenSupplyHistory({ contractaddress, blockno }: TokenSupplyHistory) {
-  const contract = new Contract(contractaddress, ERC20, provider);
-  const balance = await contract.callStatic.totalSupply({ blockTag: blockno });
+export function tokenSupplyHistory({ contractaddress, blockno }: TokenSupplyHistory) {
+  let balance = BigNumber.from(0);
+  for (const address in store.states[blockno].erc20) {
+    const userBalance = store.states[blockno].erc20[address]?.[contractaddress];
+    if (userBalance) balance = balance.add(userBalance);
+    balance = balance.add(userBalance);
+  }
   return balance.toString();
 }
 
-export async function tokenBalanceHistoy({ contractaddress, address, blockno }: TokenBalanceHistory) {
-  const contract = new Contract(contractaddress, ERC20, provider);
-  const balance = await contract.callStatic.balanceOf(address, { blockTag: blockno });
+export function tokenBalanceHistoy({ contractaddress, address, blockno }: TokenBalanceHistory) {
+  const balance = store.states[blockno].erc20[address]?.[contractaddress] ?? BigNumber.from(0);
   return balance.toString();
 }
 
