@@ -2,7 +2,7 @@ import { Contract } from "@ethersproject/contracts";
 import { Interface } from "@ethersproject/abi";
 import { BigNumber } from "@ethersproject/bignumber";
 import { provider } from "../provider";
-import { TokenBalance, TokenSupply, TokenSupplyHistory, TokenBalanceHistory, TokenInfo } from "./types";
+import { TokenBalance, TokenSupply, TokenSupplyHistory, TokenBalanceHistory, TokenInfo } from "@ngeth/etherscan";
 import { store } from "../store";
 
 const ERC20 = new Interface([

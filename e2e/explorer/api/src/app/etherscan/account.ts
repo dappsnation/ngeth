@@ -1,5 +1,5 @@
 import { TransactionReceipt } from "@ethersproject/abstract-provider";
-import { Balance, BalanceMulti, GetParams, TxList, BlockMined, BalanceHistory } from "./types";
+import { Balance, BalanceMulti, GetParams, TxList, BlockMined, BalanceHistory } from "@ngeth/etherscan";
 import { store } from '../store';
 import { EthState } from "@explorer";
 import { BigNumber } from "@ethersproject/bignumber";

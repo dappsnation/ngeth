@@ -1,4 +1,4 @@
-import { ExecutionStatusResult, GetParams, GetStatus, GetTxReceiptStatus, StatusResult } from "./types";
+import { ExecutionStatusResult, GetParams, GetStatus, GetTxReceiptStatus, StatusResult } from "@ngeth/etherscan";
 import { store } from '../store';
 
 export function getStatus({ txhash }: GetParams<GetStatus>): ExecutionStatusResult {

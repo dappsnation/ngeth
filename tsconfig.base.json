@@ -19,6 +19,7 @@
       "@explorer": ["e2e/explorer/index.ts"],
       "@ngeth/devkit": ["packages/devkit/src/index.ts"],
       "@ngeth/ethers": ["packages/ethers/src/index.ts"],
+      "@ngeth/etherscan": ["packages/etherscan/src/index.ts"],
       "@ngeth/hardhat": ["packages/hardhat/src/index.ts"],
       "@ngeth/ipfs": ["packages/ipfs/src/index.ts"],
       "@ngeth/metamask": ["packages/metamask/src/index.ts"],
