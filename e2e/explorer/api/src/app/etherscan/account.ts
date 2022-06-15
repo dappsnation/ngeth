@@ -1,9 +1,29 @@
 import { TransactionReceipt, TransactionResponse } from "@ethersproject/abstract-provider";
-import { Balance, BalanceMulti, GetParams, TxList, BlockMined, BalanceHistory, TokenTx } from "@ngeth/etherscan";
+import { Balance, BalanceMulti, GetParams, TxList, BlockMined, BalanceHistory, TokenTx, EtherscanTransaction } from "@ngeth/etherscan";
 import { store } from '../store';
 import { EthState } from "@explorer";
 import { BigNumber } from "@ethersproject/bignumber";
 import { id } from "@ethersproject/hash";
+
+function toEtherscanTransaction(tx: TransactionResponse, receipt: TransactionReceipt): EtherscanTransaction {
+  return {
+    blockNumber: tx.blockNumber,
+    timeStamp: tx.timestamp,
+    hash: tx.hash,
+    nonce:tx.nonce,
+    blockHash: tx.blockHash,
+    from: tx.from,
+    contractAddress: receipt.contractAddress,
+    to:tx.to,
+    value: tx.value,
+    transactionIndex: receipt.transactionIndex ,
+    gas: tx.gasLimit.toString(),
+    gasPrice: tx.gasPrice.toString(),
+    gasUsed: receipt.gasUsed.toString(),
+    cumulativeGasUsed: receipt.cumulativeGasUsed.toString(),
+    confirmation: tx.confirmations,
+  }
+}
 
 export function balance({ address, tag }: GetParams<Balance>): string {
   let state: EthState | undefined;

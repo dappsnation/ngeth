@@ -1,4 +1,5 @@
 import { EvmVersion } from "@type/solc";
+import { BigNumber } from "ethers";
 
 export type EtherscanParams = AccountsParams | ContractParams | TransactionParams | StatsParams | TokenParams;
 
@@ -191,6 +192,24 @@ export interface Logs extends BaseParams<'logs', "getLogs"> {
   topic1_2_opr?: 'and' | 'or';
   topic1_3_opr?: 'and' | 'or';
   topic2_3_opr?: 'and' | 'or';
+}
+
+export interface EtherscanTransaction {
+  blockNumber: number;
+  timeStamp: number;
+  hash: string;
+  nonce: number;
+  blockHash: string;
+  from: string;
+  contractAddress: string;
+  to: string;
+  value: BigNumber;
+  transactionIndex: number;
+  gas: string;
+  gasPrice: string;
+  gasUsed: string;
+  cumulativeGasUsed: string;
+  confirmation: number;
 }
 
 // Params
