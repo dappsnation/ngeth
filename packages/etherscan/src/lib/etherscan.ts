@@ -9,8 +9,6 @@ import {
   MinedBlock,
   ExecutionStatusResult,
   StatusResult,
-  BlockReward,
-  BlockCountdown,
   Closest,
   DailyAvgBlocksize,
   DailyBlockCountAndReward,
@@ -18,65 +16,19 @@ import {
   DailyBlockTime,
   DailyUncleBlockCount
 } from "./types";
+import { 
+  BalanceMultiResponse,
+  MinedBlockResponse,
+  ContractSourceCode,
+  BlockReward,
+  BlockCountdown,
+  DailyAvgBlocksizeResponse,
+  DailyBlockCountAndRewardResponse,
+  DailyBlockRewardResponse,
+  DailyBlockTimeResponse,
+  DailyUncleBlockCountReponse
+} from "./response-types";
 
-interface BalanceMultiResponse {
-  account: string;
-  balance: string;
-}
-
-interface MinedBlockResponse {
-  blockNumber: string;
-  timeStamp: string;
-  blockReward: string;
-}
-
-interface ContractSourceCode {
-  SourceCode: string;
-  ABI: ABIDescription[];
-  ContractName: string;
-  CompilerVersion: string;
-  OptimizationUsed: string;
-  Runs: string;
-  ConstructorArguments: string;
-  EVMVersion: string;
-  Library: string;
-  LicenseType: string;
-  Proxy: string;
-  Implementation: string;
-  SwarmSource: string;
-}
-
-interface DailyAvgBlocksizeResponse {
-  UTCDate: string;
-  unixTimeStamp: string;
-  blockSize_bytes: string;
-}
-
-interface DailyBlockCountAndRewardResponse {
-  UTCDate: string;
-  unixTimeStamp: string;
-  blockCount: string;
-  blockRewards_Eth: string;
-}
-
-interface DailyBlockRewardResponse {
-  UTCDate: string;
-  unixTimeStamp: string;
-  blockRewards_Eth: string;
-}
-
-interface DailyBlockTimeResponse {
-  UTCDate: string;
-  unixTimeStamp: string;
-  blockTime_sec: string;
-}
-
-interface DailyUncleBlockCountReponse {
-  UTCDate: string;
-  unixTimeStamp: string;
-  uncleBlockCount: string;
-  uncleBlockRewards_Eth: string;
-}
 
 type Etherscan = ReturnType<typeof initEtherscan>;
 
@@ -262,5 +214,3 @@ function dailyUncleBlkCount(call: Etherscan, startdate: Date, enddate: Date, par
     ...params
   });
 }
-
-

@@ -208,51 +208,6 @@ export type StatsParams = TokenSupply | TokenSupplyHistory | EthSupply;
 
 export interface EthSupply extends BaseParams<'stats', 'ethsupply'> { };
 
-export interface DailyAvgBlocksize {
-  /** the starting date in yyyy-MM-dd format, eg. 2019-02-01 */
-  startdate: Date; // TODO : Verify if Date is the correct type
-  /** the ending date in yyyy-MM-dd format, eg. 2019-02-28 */
-  enddate: Date; // TODO : Verify if Date is the correct type
-  /** the sorting preference, use asc to sort by ascending and desc to sort by descending */
-  sort?: Sort
-}
-
-export interface DailyBlockCountAndReward {
-  /** the starting date in yyyy-MM-dd format, eg. 2019-02-01 */
-  startdate: Date; // TODO : Verify if Date is the correct type
-  /** the ending date in yyyy-MM-dd format, eg. 2019-02-28 */
-  enddate: Date; // TODO : Verify if Date is the correct type
-  /** the sorting preference, use asc to sort by ascending and desc to sort by descending */
-  sort?: Sort
-}
-
-export interface DailyBlockReward {
-  /** the starting date in yyyy-MM-dd format, eg. 2019-02-01 */
-  startdate: Date; // TODO : Verify if Date is the correct type
-  /** the ending date in yyyy-MM-dd format, eg. 2019-02-28 */
-  enddate: Date; // TODO : Verify if Date is the correct type
-  /** the sorting preference, use asc to sort by ascending and desc to sort by descending */
-  sort?: Sort
-}
-
-export interface DailyBlockTime {
-  /** the starting date in yyyy-MM-dd format, eg. 2019-02-01 */
-  startdate: Date; // TODO : Verify if Date is the correct type
-  /** the ending date in yyyy-MM-dd format, eg. 2019-02-28 */
-  enddate: Date; // TODO : Verify if Date is the correct type
-  /** the sorting preference, use asc to sort by ascending and desc to sort by descending */
-  sort?: Sort
-}
-
-export interface DailyUncleBlockCount {
-  /** the starting date in yyyy-MM-dd format, eg. 2019-02-01 */
-  startdate: Date; // TODO : Verify if Date is the correct type
-  /** the ending date in yyyy-MM-dd format, eg. 2019-02-28 */
-  enddate: Date; // TODO : Verify if Date is the correct type
-  /** the sorting preference, use asc to sort by ascending and desc to sort by descending */
-  sort?: Sort
-}
-
 /////////
 //Token//
 /////////
@@ -290,24 +245,22 @@ export interface TokenSupplyHistory extends BaseParams<'stats', 'tokensupplyhist
 // BLOCKS //
 ////////////
 
-export interface BlockReward {
-  blockNumber: string;
-  timeStamp: string;
-  blockMiner: string;
-  blockReward: string;
-  uncles: Uncles[];
-  uncleInclusionReward: string;
+export interface BaseBlock<action extends string> extends BaseParams<'stats', action> {
+  /** the starting date in yyyy-MM-dd format, eg. 2019-02-01 */
+  startdate: Date; // TODO : Verify if Date is the correct type
+  /** the ending date in yyyy-MM-dd format, eg. 2019-02-28 */
+  enddate: Date; // TODO : Verify if Date is the correct type
+  /** the sorting preference, use asc to sort by ascending and desc to sort by descending */
+  sort?: Sort
 }
 
-export interface Uncles {
-  miner: string;
-  unclePosition: string;
-  blockreward: string;
-}
+export interface DailyAvgBlocksize extends BaseBlock<'dailyavgblocksize'> { };
 
-export interface BlockCountdown {
-  CurrentBlock: string;
-  CountdownBlock: string;
-  RemainingBlock: string;
-  EstimateTimeInSec: string;
-}
+export interface DailyBlockCountAndReward extends BaseBlock<'dailyblkcount'> { };
+
+export interface DailyBlockReward extends BaseBlock<'dailyblockrewards'> { };
+
+export interface DailyBlockTime extends BaseBlock<'dailyavgblocktime'> { };
+
+export interface DailyUncleBlockCount extends BaseBlock<'dailyuncleblkcount'> { };
+
