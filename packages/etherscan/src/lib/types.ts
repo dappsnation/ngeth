@@ -5,6 +5,7 @@ export type EtherscanParams = AccountsParams | ContractParams | TransactionParam
 export type Tag = number | 'latest' | 'pending' | 'earliest';
 export type Sort = 'asc' | 'desc';
 export type Block = 'blocks' | 'uncles';
+export type Closest = 'before' | 'after';
 type Module = 'account' | 'contract' | 'transaction' | 'stats' | 'token' | 'logs';
 
 interface BaseParams<M extends Module, Action> {
@@ -99,11 +100,11 @@ export interface BaseTokenTx<action extends string> extends BaseParams<'account'
   sort?: Sort;
 }
 
-export interface TokenTx extends BaseTokenTx<'tokentx'> {};
+export interface TokenTx extends BaseTokenTx<'tokentx'> { };
 
-export interface TokenNftTx extends BaseTokenTx<'tokennfttx'> {};
+export interface TokenNftTx extends BaseTokenTx<'tokennfttx'> { };
 
-export interface Token1155Tx extends BaseTokenTx<'token1155tx'> {};
+export interface Token1155Tx extends BaseTokenTx<'token1155tx'> { };
 
 export interface MinedBlock extends BaseParams<'account', 'getminedblocks'> {
   /** the string representing the address to check for balance */
@@ -128,8 +129,8 @@ export interface GetABI {
   apiKey: string;
 }
 
-type LibraryName<T extends number> = {[key in `libraryname${T}`]: string };
-type LibraryAddress<T extends number> = {[key in `libraryaddress${T}`]: string };
+type LibraryName<T extends number> = { [key in `libraryname${T}`]: string };
+type LibraryAddress<T extends number> = { [key in `libraryaddress${T}`]: string };
 type Library<T extends number> = Partial<LibraryName<T>> & Partial<LibraryAddress<T>>;
 
 interface VerifySourceCodeParams extends BaseParams<'contract', 'verifysourcecode'> {
@@ -191,12 +192,12 @@ export interface GetTxReceiptStatus extends BaseParams<'transaction', 'gettxrece
 // Result
 export interface ExecutionStatusResult {
   /** 0: Succeed, 1: Failed */
-  isError: 0 | 1;
+  isError: '0' | '1';
   errDescription?: string;
 }
 export interface StatusResult {
   /** 0: Succeed, 1: Failed */
-  status: 0 | 1;
+  status: '0' | '1';
 }
 
 /////////
@@ -206,6 +207,51 @@ export interface StatusResult {
 export type StatsParams = TokenSupply | TokenSupplyHistory | EthSupply;
 
 export interface EthSupply extends BaseParams<'stats', 'ethsupply'> { };
+
+export interface DailyAvgBlocksize {
+  /** the starting date in yyyy-MM-dd format, eg. 2019-02-01 */
+  startdate: Date; // TODO : Verify if Date is the correct type
+  /** the ending date in yyyy-MM-dd format, eg. 2019-02-28 */
+  enddate: Date; // TODO : Verify if Date is the correct type
+  /** the sorting preference, use asc to sort by ascending and desc to sort by descending */
+  sort?: Sort
+}
+
+export interface DailyBlockCountAndReward {
+  /** the starting date in yyyy-MM-dd format, eg. 2019-02-01 */
+  startdate: Date; // TODO : Verify if Date is the correct type
+  /** the ending date in yyyy-MM-dd format, eg. 2019-02-28 */
+  enddate: Date; // TODO : Verify if Date is the correct type
+  /** the sorting preference, use asc to sort by ascending and desc to sort by descending */
+  sort?: Sort
+}
+
+export interface DailyBlockReward {
+  /** the starting date in yyyy-MM-dd format, eg. 2019-02-01 */
+  startdate: Date; // TODO : Verify if Date is the correct type
+  /** the ending date in yyyy-MM-dd format, eg. 2019-02-28 */
+  enddate: Date; // TODO : Verify if Date is the correct type
+  /** the sorting preference, use asc to sort by ascending and desc to sort by descending */
+  sort?: Sort
+}
+
+export interface DailyBlockTime {
+  /** the starting date in yyyy-MM-dd format, eg. 2019-02-01 */
+  startdate: Date; // TODO : Verify if Date is the correct type
+  /** the ending date in yyyy-MM-dd format, eg. 2019-02-28 */
+  enddate: Date; // TODO : Verify if Date is the correct type
+  /** the sorting preference, use asc to sort by ascending and desc to sort by descending */
+  sort?: Sort
+}
+
+export interface DailyUncleBlockCount {
+  /** the starting date in yyyy-MM-dd format, eg. 2019-02-01 */
+  startdate: Date; // TODO : Verify if Date is the correct type
+  /** the ending date in yyyy-MM-dd format, eg. 2019-02-28 */
+  enddate: Date; // TODO : Verify if Date is the correct type
+  /** the sorting preference, use asc to sort by ascending and desc to sort by descending */
+  sort?: Sort
+}
 
 /////////
 //Token//
@@ -240,3 +286,28 @@ export interface TokenSupplyHistory extends BaseParams<'stats', 'tokensupplyhist
 }
 
 
+////////////
+// BLOCKS //
+////////////
+
+export interface BlockReward {
+  blockNumber: string;
+  timeStamp: string;
+  blockMiner: string;
+  blockReward: string;
+  uncles: Uncles[];
+  uncleInclusionReward: string;
+}
+
+export interface Uncles {
+  miner: string;
+  unclePosition: string;
+  blockreward: string;
+}
+
+export interface BlockCountdown {
+  CurrentBlock: string;
+  CountdownBlock: string;
+  RemainingBlock: string;
+  EstimateTimeInSec: string;
+}

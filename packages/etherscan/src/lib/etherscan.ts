@@ -1,6 +1,23 @@
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 import { ABIDescription } from '@type/solc';
-import { Tag, TxList, TokenTx, TokenNftTx, Token1155Tx, MinedBlock } from "./types";
+import {
+  Tag,
+  TxList,
+  TokenTx,
+  TokenNftTx,
+  Token1155Tx,
+  MinedBlock,
+  ExecutionStatusResult,
+  StatusResult,
+  BlockReward,
+  BlockCountdown,
+  Closest,
+  DailyAvgBlocksize,
+  DailyBlockCountAndReward,
+  DailyBlockReward,
+  DailyBlockTime,
+  DailyUncleBlockCount
+} from "./types";
 
 interface BalanceMultiResponse {
   account: string;
@@ -29,6 +46,38 @@ interface ContractSourceCode {
   SwarmSource: string;
 }
 
+interface DailyAvgBlocksizeResponse {
+  UTCDate: string;
+  unixTimeStamp: string;
+  blockSize_bytes: string;
+}
+
+interface DailyBlockCountAndRewardResponse {
+  UTCDate: string;
+  unixTimeStamp: string;
+  blockCount: string;
+  blockRewards_Eth: string;
+}
+
+interface DailyBlockRewardResponse {
+  UTCDate: string;
+  unixTimeStamp: string;
+  blockRewards_Eth: string;
+}
+
+interface DailyBlockTimeResponse {
+  UTCDate: string;
+  unixTimeStamp: string;
+  blockTime_sec: string;
+}
+
+interface DailyUncleBlockCountReponse {
+  UTCDate: string;
+  unixTimeStamp: string;
+  uncleBlockCount: string;
+  uncleBlockRewards_Eth: string;
+}
+
 type Etherscan = ReturnType<typeof initEtherscan>;
 
 type OptionalKeys<T> = {
@@ -50,9 +99,9 @@ function initEtherscan(apiKey: string, baseUrl: string) {
   }
 }
 
-/////////////
-// ACCOUNT //
-/////////////
+//////////////
+// ACCOUNTS //
+//////////////
 
 function balance(call: Etherscan, address: string, tag: Tag) {
   return call<string>({ module: 'account', action: 'balance', address, tag });
@@ -113,9 +162,9 @@ function balanceHistory(call: Etherscan, address: string, blockno: number) {
   return call<string>({ module: 'account', action: 'balancehistory', address, blockno });
 }
 
-////////////
-//CONTRACT//
-////////////
+///////////////
+// CONTRACTS //
+///////////////
 
 async function getAbi(call: Etherscan, address: string) {
   const abi = await call<string>({ module: 'contract', action: 'getabi', address });
@@ -130,6 +179,88 @@ async function getSourceCode(call: Etherscan, address: string) {
   });
 }
 
-////////////////
-//TRANSACTIONS//
-////////////////
+//////////////////
+// TRANSACTIONS //
+//////////////////
+
+function getStatus(call: Etherscan, txhash: string) {
+  return call<ExecutionStatusResult>({ module: 'transaction', action: 'getstatus', txhash });
+}
+
+function getTxReceiptStatus(call: Etherscan, txhash: string) {
+  return call<StatusResult>({ module: 'transaction', action: 'gettxreceiptstatus', txhash });
+}
+
+////////////
+// BLOCKS //
+////////////
+
+function getBlockReward(call: Etherscan, blockno: number) {
+  return call<BlockReward>({ module: 'block', action: 'getblockreward', blockno });
+}
+
+function getBlockCountdown(call: Etherscan, blockno: number) {
+  return call<BlockCountdown>({ module: 'block', action: 'getblockcountdown', blockno });
+}
+
+function getBlocknoByTime(call: Etherscan, timestamp: number, closest: Closest) {
+  return call<string>({ module: 'block', action: 'getblocknobytime', timestamp, closest });
+}
+
+//////////////////////////
+// BLOCKS: STATS MODULE //
+//////////////////////////
+
+// TODO : Verify if Date is the correct type
+function dailyAvgBlockSize(call: Etherscan, startdate: Date, enddate: Date, params: Optional<DailyAvgBlocksize>) {
+  return call<DailyAvgBlocksizeResponse[]>({
+    module: 'stats',
+    action: 'dailyavgblocksize',
+    startdate,
+    enddate,
+    ...params
+  });
+}
+
+// TODO : Verify if Date is the correct type
+function dailyBlkCount(call: Etherscan, startdate: Date, enddate: Date, params: Optional<DailyBlockCountAndReward>) {
+  return call<DailyBlockCountAndRewardResponse[]>({
+    module: 'stats',
+    action: 'dailyblkcount',
+    startdate,
+    enddate,
+    ...params
+  });
+}
+
+function dailyBlockRewards(call: Etherscan, startdate: Date, enddate: Date, params: Optional<DailyBlockReward>) {
+  return call<DailyBlockRewardResponse[]>({
+    module: 'stats',
+    action: 'dailyblockrewards',
+    startdate,
+    enddate,
+    ...params
+  });
+}
+
+function dailyBlockTime(call: Etherscan, startdate: Date, enddate: Date, params: Optional<DailyBlockTime>) {
+  return call<DailyBlockTimeResponse[]>({
+    module: 'stats',
+    action: 'dailyavgblocktime',
+    startdate,
+    enddate,
+    ...params
+  });
+}
+
+function dailyUncleBlkCount(call: Etherscan, startdate: Date, enddate: Date, params: Optional<DailyUncleBlockCount>) {
+  return call<DailyUncleBlockCountReponse[]>({
+    module: 'stats',
+    action: 'dailyuncleblkcount',
+    startdate,
+    enddate,
+    ...params
+  });
+}
+
+
