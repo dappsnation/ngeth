@@ -269,15 +269,25 @@ export interface DailyUncleBlockCount extends BaseBlock<'dailyuncleblkcount'> { 
 ///////////
 
 export interface BlockByNumber {
-  /** the block number, in hex eg. 0xC36B3C */
+  /** the block number, in hex  */
   tag: string;
   /** the boolean value to show full transaction objects */
   boolean: boolean;
 }
 
 export interface UncleByBlockNumberAndIndex {
-  /** the block number, in hex eg. 0xC36B3C */
+  /** the block number, in hex  */
   tag: string;
-  /** the position of the uncle's index in the block, in hex eg. 0x5 */
+  /** the position of the uncle's index in the block, in hex  */
   index?: string;
+}
+
+/** the block number, in hex  */
+export type ProxyTag = string;
+/** the position of the uncle's index in the block, in hex */
+export type ProxyIndex = string;
+
+export interface BlockTransactionCountByNumber {
+  /** the block number, in hex */
+  tag?: string;
 }

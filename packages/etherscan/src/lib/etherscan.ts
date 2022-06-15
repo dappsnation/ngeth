@@ -16,7 +16,9 @@ import {
   DailyBlockTime,
   DailyUncleBlockCount,
   Logs,
-  UncleByBlockNumberAndIndex
+  UncleByBlockNumberAndIndex,
+  ProxyTag,
+  BlockTransactionCountByNumber
 } from "./types";
 import {
   BalanceMultiResponse,
@@ -30,7 +32,9 @@ import {
   DailyBlockTimeResponse,
   DailyUncleBlockCountReponse,
   LogsResponse,
-  Block
+  Block,
+  UncleBlock,
+  TransactionInfos
 } from "./response-types";
 
 
@@ -237,11 +241,6 @@ function ethBlockNumber(call: Etherscan) {
   return call<string>({ module: 'proxy', action: 'eth_getBlockByNumber' })
 }
 
-/** the block number, in hex eg. 0xC36B3C */
-type ProxyTag = string;
-/** the position of the uncle's index in the block, in hex eg. 0x5 */
-type ProxyIndex = string;
-
 function ethGetBlockByNumber(call: Etherscan, tag: ProxyTag, boolean: boolean) {
   if (boolean === true) {
     return call<Block<TransactionResponse[]>>({ module: 'proxy', action: 'eth_getBlockByNumber', tag, boolean });
@@ -251,5 +250,14 @@ function ethGetBlockByNumber(call: Etherscan, tag: ProxyTag, boolean: boolean) {
 }
 
 function ethGetUncleByBlockNumberAndIndex(call: Etherscan, tag: ProxyTag, params: Optional<UncleByBlockNumberAndIndex>) {
-  return call<any>({ module: 'proxy', action: 'eth_getUncleByBlockNumberAndIndex', tag, ...params });
+  return call<UncleBlock>({ module: 'proxy', action: 'eth_getUncleByBlockNumberAndIndex', tag, ...params });
 }
+
+function getBlockTransactionCountByNumber(call: Etherscan, params: Optional<BlockTransactionCountByNumber>) {
+  return call<string>({ module: 'proxy', action: 'eth_getBlockTransactionCountByNumber', ...params });
+}
+
+function getTransactionByHash(call: Etherscan, txhash: string) {
+  return call<TransactionInfos>({ module: 'proxy', action: 'eth_getTransactionByHash', txhash });
+}
+

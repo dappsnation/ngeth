@@ -119,5 +119,49 @@ export interface Block<T extends Transaction> {
   totalDifficulty: string;
   transactions: T;
   transactionsRoot: string;
-  uncles: string | [];
+  uncles: string[];
+}
+
+export interface UncleBlock {
+  baseFeePerGas: string;
+  difficulty: string;
+  extraData: string;
+  gasLimit: string;
+  gasUsed: string;
+  hash: string;
+  logsBloom: string;
+  miner: string;
+  mixHash: string;
+  nonce: string;
+  number: string;
+  parentHash: string;
+  receiptsRoot: string;
+  sha3Uncles: string;
+  size: string;
+  stateRoot: string;
+  timestamp: string;
+  transactionsRoot: string;
+  uncles: string[];
+}
+
+export interface TransactionInfos {
+  blockHash: string;
+  blockNumber: string;
+  from: string;
+  gas: string;
+  gasPrice: string;
+  maxFeePerGas: string;
+  maxPriorityFeePerGas: string;
+  hash: string;
+  input: string;
+  nonce: string;
+  to: string;
+  transactionIndex: string;
+  value: string;
+  type: string;
+  accessList: string[];
+  chainId: string;
+  v: string;
+  r: string;
+  s: string;
 }
