@@ -1,4 +1,4 @@
-import { TransactionReceipt } from "@ethersproject/abstract-provider";
+import { TransactionReceipt, TransactionResponse } from "@ethersproject/abstract-provider";
 import { Balance, BalanceMulti, GetParams, TxList, BlockMined, BalanceHistory, TokenTx } from "@ngeth/etherscan";
 import { store } from '../store';
 import { EthState } from "@explorer";
@@ -94,41 +94,28 @@ export function balanceHistory(params: GetParams<BalanceHistory>) {
 }
 
 export function tokenTx(params: GetParams<TokenTx>) {
-  const {address, contractAddress, startblock = 0, endblock, page, sort='asc'} = params;
+  const {address, contractAddress, startblock = 0, endblock, page, sort='asc', offset} = params;
   if (!address || !contractAddress) throw new Error('Error! Missing address or contract address');
   const transferID = id('Transfer(address,address,uint256)');
 
   const sorting = {
-    asc: (a: TransactionReceipt, b: TransactionReceipt) => a.blockNumber - b.blockNumber,
-    desc: (a: TransactionReceipt, b: TransactionReceipt) => b.blockNumber - a.blockNumber
+    asc: (a: TransactionResponse, b: TransactionResponse) => a.blockNumber - b.blockNumber,
+    desc: (a: TransactionResponse, b: TransactionResponse) => b.blockNumber - a.blockNumber
   };  
 
   // get the address transactions logs
-  const logs = store.addresses[address].transactions
-    .map(log => store.logs[log])
-    .flat()
+  const logs = store.logs[address]
     .filter(log => {
       if (log.address !== address) return false;
       if (startblock && log.blockNumber < startblock) return false;
       if (endblock && log.blockNumber > endblock) return false;
       if (log.topics[0] !== transferID) return false;
-      return;
+      return true;
     })
-    .map(log => {
-      return log.transactionHash;
-    })
-
-  const txs = store.addresses[address].transactions
-    .map(tx => store.receipts[tx])
-    .filter(tx => {
-      for(let i = 0; i< logs.length; i++) {
-        if(logs[i] !== tx.transactionHash) return false;
-      }
-    })
+    .map(log => store.transactions[log.transactionHash])
     
   const sortFn = sorting[sort];
-  const sorted = txs.sort(sortFn);
+  const sorted = logs.sort(sortFn);
   if (!params.offset || !page) return sorted;
-  const offset = Math.min(params.offset, 10000);
   return sorted.slice(offset*(page-1), offset*page);
 }
