@@ -34,3 +34,12 @@ export async function deploy(hre: HardhatRuntimeEnvironment, artifacts: Artifact
   await fs.writeFile(join(outDir, 'addresses.ts'), code);
 
 }
+
+
+export function saveAddresses(hre: HardhatRuntimeEnvironment, addresses: Record<string, string>) {
+  const root = hre.config.paths.root;
+  const outDir = join(root, hre.config.ngeth.outDir);
+  if (!existsSync(outDir)) mkdirSync(outDir, { recursive: true });
+  const code = formatTs(`export default ${JSON.stringify(addresses)};`);
+  return fs.writeFile(join(outDir, 'addresses.ts'), code);
+}

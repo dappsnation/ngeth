@@ -13,10 +13,10 @@ export default {
   },
   ngeth: {
     outDir: './contracts',
-    autoDeploy: {
-      BaseERC20: ["Name"],
-      BaseERC1155: ["uri"],
-    },
-    explorer: false
+    explorer: false,
+    exec: {
+      scripts: ['scripts/deploy.ts'],
+      parallel: true
+    }
   },
 };

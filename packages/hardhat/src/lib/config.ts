@@ -4,6 +4,7 @@ import { HardhatConfig } from 'hardhat/types';
 interface NgEthConfig {
   outDir: string;
   /** Constructor params used when serving the application */
+  exec: string[] | { scripts: string[], parallel: boolean };
   autoDeploy: Record<string, unknown[]>;
   withImports: boolean;
   /** Ports for the explorer api & app */
@@ -22,6 +23,7 @@ declare module 'hardhat/types/config' {
 
 export const getDefaultConfig = (config: Partial<HardhatConfig>): NgEthConfig => ({
   outDir: 'ngeth',
+  exec: [],
   autoDeploy: {},
   withImports: false,
   explorer: {

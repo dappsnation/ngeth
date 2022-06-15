@@ -10,6 +10,8 @@ import { getContractImport } from '@ngeth/tools';
 import { execute } from '@ngeth/devkit';
 import { serveApp } from './lib/utils';
 
+export { saveAddresses } from './lib/deploy';
+
 extendConfig((config) => {
   config.ngeth = getDefaultConfig(config)
 });
@@ -25,10 +27,8 @@ task('ngeth:test', 'Run test with jest')
     process.exitCode = failures.results.success ? 0 : 1;
   });
 
-task(
-  'ngeth:build',
-  'Build the contracts and generate outputs',
-  async (taskArguments: any, hre) => {
+task('ngeth:build', 'Build the contracts and generate outputs')
+  .setAction(async (taskArguments: any, hre) => {
     await hre.run('compile', taskArguments);
     // Generate contracts & index.ts
     const root = hre.config.paths.root;
@@ -38,22 +38,17 @@ task(
     const paths = await hre.artifacts.getAllFullyQualifiedNames();
     const artifacts = await Promise.all(paths.map(path => hre.artifacts.readArtifact(path)));
     await generate(hre, artifacts);
-  }
-);
+  });
 
-task(
-  'ngeth:serve',
-  '',
-  async (taskArguments: any, hre) => {
+task('ngeth:serve')
+  .setAction(async (taskArguments: any, hre) => {
     await hre.run('ngeth:build', taskArguments);
     return hre.run('node', taskArguments);
-  }
-);
+  });
 
-task(
-  'node:server-ready',
-  'Run once the node is ready',
-  async (taskArguments: any, hre, runSuper: any) => {
+// TODO: add "exec" field with scenario for E2E
+task('node:server-ready', 'Run once the node is ready')
+  .setAction(async (taskArguments: any, hre, runSuper: any) => {
     await runSuper();
 
     const paths = await hre.artifacts.getAllFullyQualifiedNames();
@@ -63,7 +58,8 @@ task(
     if (!existsSync(outDir)) mkdirSync(outDir, { recursive: true });
 
 
-    await deploy(hre, artifacts);
+    // await deploy(hre, artifacts);
+    
     // Generate contracts & index.ts
     generate(hre, artifacts);
 
@@ -113,5 +109,20 @@ task(
       await fs.writeFile(join(appPath, 'assets/config.json'), appConfig);
       serveApp(appPath, app);
     }
-  }
-);
+
+    // Run exec
+    if (hre.config.ngeth.exec) {
+      const exec = Array.isArray(hre.config.ngeth.exec)
+        ? { scripts: hre.config.ngeth.exec, parallel: false }
+        : hre.config.ngeth.exec;
+      
+      for (const path of exec.scripts) {
+        const script = join(hre.config.paths.root, path);
+        if (exec.parallel) {
+          hre.run('run', { script, noCompile: true });
+        } else {
+          await hre.run('run', { script, noCompile: true });
+        }
+      }
+    }
+  });
