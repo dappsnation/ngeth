@@ -1,4 +1,4 @@
-import { TransactionReceipt, TransactionResponse } from "@ethersproject/abstract-provider";
+import { TransactionReceipt, TransactionResponse, Log } from "@ethersproject/abstract-provider";
 import { Balance, BalanceMulti, GetParams, TxList, BlockMined, BalanceHistory, TokenTx, EtherscanTransaction } from "@ngeth/etherscan";
 import { store } from '../store';
 import { EthState } from "@explorer";
@@ -7,21 +7,21 @@ import { id } from "@ethersproject/hash";
 
 function toEtherscanTransaction(tx: TransactionResponse, receipt: TransactionReceipt): EtherscanTransaction {
   return {
-    blockNumber: tx.blockNumber,
-    timeStamp: tx.timestamp,
+    blockNumber: tx.blockNumber.toString(),
+    timeStamp: tx.timestamp.toString(),
     hash: tx.hash,
-    nonce:tx.nonce,
+    nonce:tx.nonce.toString(),
     blockHash: tx.blockHash,
     from: tx.from,
     contractAddress: receipt.contractAddress,
     to:tx.to,
     value: tx.value.toString(),
-    transactionIndex: receipt.transactionIndex ,
+    transactionIndex: receipt.transactionIndex.toString(),
     gas: tx.gasLimit.toString(),
     gasPrice: tx.gasPrice.toString(),
     gasUsed: receipt.gasUsed.toString(),
     cumulativeGasUsed: receipt.cumulativeGasUsed.toString(),
-    confirmation: tx.confirmations,
+    confirmation: tx.confirmations.toString(),
   }
 }
 
@@ -116,25 +116,24 @@ export function balanceHistory(params: GetParams<BalanceHistory>) {
 export function tokenTx(params: GetParams<TokenTx>) {
   const {address, contractaddress, startblock = 0, endblock, page, sort='asc', offset} = params;
   if (!address || !contractaddress) throw new Error('Error! Missing address or contract address');
+  
   const transferID = id('Transfer(address,address,uint256)');
+  const sorting = {
+    asc: (a: Log, b: Log) => a.blockNumber - b.blockNumber,
+    desc: (a: Log, b: Log) => b.blockNumber - a.blockNumber
+  };  
 
-  // get the address transactions logs
-  const logs = store.logs[address]
+  const etherscanTxs = store.logs[address]
     .filter(log => {
       if (startblock && log.blockNumber < startblock) return false;
       if (endblock && log.blockNumber > endblock) return false;
       if (log.topics[0] !== transferID) return false;
       return true;
     })
+    .sort(sorting[sort])
     .map(log => log.transactionHash)
     .map(hash => toEtherscanTransaction(store.transactions[hash], store.receipts[hash]));
 
-  let sorted;
-  if (sort === "asc") {
-    sorted = logs.sort();
-  } else if (sort ==="desc") {
-    sorted = logs.sort().reverse();
-  }
-  if (!params.offset || !page) return sorted;
-  return sorted.slice(offset*(page-1), offset*page);
+  if (!params.offset || !page) return etherscanTxs;
+  return etherscanTxs.slice(offset*(page-1), offset*page);
 }
