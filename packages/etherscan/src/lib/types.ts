@@ -179,21 +179,21 @@ export interface Logs extends BaseParams<'logs', "getLogs"> {
 }
 
 export interface EtherscanTransaction {
-  blockNumber: number;
-  timeStamp: number;
+  blockNumber: string;
+  timeStamp: string;
   hash: string;
-  nonce: number;
+  nonce: string;
   blockHash: string;
   from: string;
   contractAddress: string;
   to: string;
   value: string;
-  transactionIndex: number;
+  transactionIndex: string;
   gas: string;
   gasPrice: string;
   gasUsed: string;
   cumulativeGasUsed: string;
-  confirmation: number;
+  confirmation: string;
 }
 
 // Params

@@ -118,11 +118,6 @@ export function tokenTx(params: GetParams<TokenTx>) {
   if (!address || !contractaddress) throw new Error('Error! Missing address or contract address');
   const transferID = id('Transfer(address,address,uint256)');
 
-  const sorting = {
-    asc: (a: EtherscanTransaction, b: EtherscanTransaction) => a.blockNumber - b.blockNumber,
-    desc: (a: EtherscanTransaction, b: EtherscanTransaction) => b.blockNumber - a.blockNumber
-  };  
-
   // get the address transactions logs
   const logs = store.logs[address]
     .filter(log => {
@@ -134,8 +129,12 @@ export function tokenTx(params: GetParams<TokenTx>) {
     .map(log => log.transactionHash)
     .map(hash => toEtherscanTransaction(store.transactions[hash], store.receipts[hash]));
 
-  const sortFn = sorting[sort];
-  const sorted =  logs.sort(sortFn);
+  let sorted;
+  if (sort === "asc") {
+    sorted = logs.sort();
+  } else if (sort ==="desc") {
+    sorted = logs.sort().reverse();
+  }
   if (!params.offset || !page) return sorted;
   return sorted.slice(offset*(page-1), offset*page);
 }
