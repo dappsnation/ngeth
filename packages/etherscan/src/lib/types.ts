@@ -163,8 +163,8 @@ export type VerifySourceCode = VerifySourceCodeParams & Library<1 | 2 | 3 | 4 | 
 /////////////////
 //logs
 export interface Logs extends BaseParams<'logs', "getLogs"> {
-  fromBlock: number | "latest";
-  toBlock: number | "latest";
+  fromBlock?: number | "latest";
+  toBlock?: number | "latest";
   address: string;
   topic0?: string;
   topic1?: string;
@@ -264,3 +264,20 @@ export interface DailyBlockTime extends BaseBlock<'dailyavgblocktime'> { };
 
 export interface DailyUncleBlockCount extends BaseBlock<'dailyuncleblkcount'> { };
 
+///////////
+// PROXY //
+///////////
+
+export interface BlockByNumber {
+  /** the block number, in hex eg. 0xC36B3C */
+  tag: string;
+  /** the boolean value to show full transaction objects */
+  boolean: boolean;
+}
+
+export interface UncleByBlockNumberAndIndex {
+  /** the block number, in hex eg. 0xC36B3C */
+  tag: string;
+  /** the position of the uncle's index in the block, in hex eg. 0x5 */
+  index?: string;
+}

@@ -1,4 +1,5 @@
 import { ABIDescription } from '@type/solc';
+import { TransactionResponse } from "@ethersproject/abstract-provider";
 
 
 export interface BalanceMultiResponse {
@@ -80,4 +81,43 @@ export interface BlockCountdown {
   CountdownBlock: string;
   RemainingBlock: string;
   EstimateTimeInSec: string;
+}
+
+export interface LogsResponse {
+  address: string;
+  topics: string[];
+  data: string;
+  blockNumber: string;
+  timeStamp: string;
+  gasPrice: string;
+  gasUsed: string;
+  logIndex: string;
+  transactionHash: string;
+  transactionIndex: string;
+}
+
+type Transaction = string[] | TransactionResponse[];
+
+export interface Block<T extends Transaction> {
+  difficulty: string;
+  baseFeePerGas: string;
+  extraData: string;
+  gasLimit: string;
+  gasUsed: string;
+  hash: string;
+  logsBloom: string;
+  miner: string;
+  mixHash: string;
+  nonce: string;
+  number: string;
+  parentHash: string;
+  receiptsRoot: string;
+  sha3Uncles: string;
+  size: string;
+  stateRoot: string;
+  timestamp: string;
+  totalDifficulty: string;
+  transactions: T;
+  transactionsRoot: string;
+  uncles: string | [];
 }

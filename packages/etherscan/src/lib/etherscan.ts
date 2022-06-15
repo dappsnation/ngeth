@@ -14,9 +14,11 @@ import {
   DailyBlockCountAndReward,
   DailyBlockReward,
   DailyBlockTime,
-  DailyUncleBlockCount
+  DailyUncleBlockCount,
+  Logs,
+  UncleByBlockNumberAndIndex
 } from "./types";
-import { 
+import {
   BalanceMultiResponse,
   MinedBlockResponse,
   ContractSourceCode,
@@ -26,7 +28,9 @@ import {
   DailyBlockCountAndRewardResponse,
   DailyBlockRewardResponse,
   DailyBlockTimeResponse,
-  DailyUncleBlockCountReponse
+  DailyUncleBlockCountReponse,
+  LogsResponse,
+  Block
 } from "./response-types";
 
 
@@ -117,6 +121,8 @@ function balanceHistory(call: Etherscan, address: string, blockno: number) {
 ///////////////
 // CONTRACTS //
 ///////////////
+
+//TODO : add `verifysourcecode`, `checkverifystatus`, `verifyproxycontract`, `checkproxyverification`
 
 async function getAbi(call: Etherscan, address: string) {
   const abi = await call<string>({ module: 'contract', action: 'getabi', address });
@@ -213,4 +219,37 @@ function dailyUncleBlkCount(call: Etherscan, startdate: Date, enddate: Date, par
     enddate,
     ...params
   });
+}
+
+//////////
+// LOGS //
+//////////
+
+function getLogs(call: Etherscan, address: string, params: Optional<Logs>) {
+  return call<LogsResponse[]>({ module: 'logs', action: 'getLogs', address, ...params });
+}
+
+///////////
+// PROXY //
+///////////
+
+function ethBlockNumber(call: Etherscan) {
+  return call<string>({ module: 'proxy', action: 'eth_getBlockByNumber' })
+}
+
+/** the block number, in hex eg. 0xC36B3C */
+type ProxyTag = string;
+/** the position of the uncle's index in the block, in hex eg. 0x5 */
+type ProxyIndex = string;
+
+function ethGetBlockByNumber(call: Etherscan, tag: ProxyTag, boolean: boolean) {
+  if (boolean === true) {
+    return call<Block<TransactionResponse[]>>({ module: 'proxy', action: 'eth_getBlockByNumber', tag, boolean });
+  } else {
+    return call<Block<string[]>>({ module: 'proxy', action: 'eth_getBlockByNumber', tag, boolean });
+  }
+}
+
+function ethGetUncleByBlockNumberAndIndex(call: Etherscan, tag: ProxyTag, params: Optional<UncleByBlockNumberAndIndex>) {
+  return call<any>({ module: 'proxy', action: 'eth_getUncleByBlockNumberAndIndex', tag, ...params });
 }
