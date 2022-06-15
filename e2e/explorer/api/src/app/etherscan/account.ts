@@ -15,7 +15,7 @@ function toEtherscanTransaction(tx: TransactionResponse, receipt: TransactionRec
     from: tx.from,
     contractAddress: receipt.contractAddress,
     to:tx.to,
-    value: tx.value,
+    value: tx.value.toString(),
     transactionIndex: receipt.transactionIndex ,
     gas: tx.gasLimit.toString(),
     gasPrice: tx.gasPrice.toString(),
@@ -135,7 +135,7 @@ export function tokenTx(params: GetParams<TokenTx>) {
     .map(log => store.transactions[log.transactionHash])
     
   const sortFn = sorting[sort];
-  const sorted = logs.sort(sortFn);
+  const sorted =  logs.sort(sortFn);
   if (!params.offset || !page) return sorted;
   return sorted.slice(offset*(page-1), offset*page);
 }

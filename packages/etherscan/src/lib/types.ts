@@ -203,7 +203,7 @@ export interface EtherscanTransaction {
   from: string;
   contractAddress: string;
   to: string;
-  value: BigNumber;
+  value: string;
   transactionIndex: number;
   gas: string;
   gasPrice: string;
