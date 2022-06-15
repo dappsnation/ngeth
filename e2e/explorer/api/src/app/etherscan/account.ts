@@ -119,23 +119,23 @@ export function tokenTx(params: GetParams<TokenTx>) {
   const transferID = id('Transfer(address,address,uint256)');
 
   const sorting = {
-    asc: (a: TransactionResponse, b: TransactionResponse) => a.blockNumber - b.blockNumber,
-    desc: (a: TransactionResponse, b: TransactionResponse) => b.blockNumber - a.blockNumber
+    asc: (a: EtherscanTransaction, b: EtherscanTransaction) => a.blockNumber - b.blockNumber,
+    desc: (a: EtherscanTransaction, b: EtherscanTransaction) => b.blockNumber - a.blockNumber
   };  
 
   // get the address transactions logs
-  const logs = store.logs[address]
-    .filter(log => {
-      if (log.address !== address) return false;
-      if (startblock && log.blockNumber < startblock) return false;
-      if (endblock && log.blockNumber > endblock) return false;
-      if (log.topics[0] !== transferID) return false;
+  const txs = store.logs[address]
+    .filter(tx => {
+      if (startblock && tx.blockNumber < startblock) return false;
+      if (endblock && tx.blockNumber > endblock) return false;
+      if (tx.topics[0] !== transferID) return false;
       return true;
     })
-    .map(log => store.transactions[log.transactionHash])
-    
+    .map(tx => store.transactions[tx.transactionHash])
+
+  const etherscanTxs = txs.map(tx => toEtherscanTransaction(tx, store.receipts[tx.blockHash]));
   const sortFn = sorting[sort];
-  const sorted =  logs.sort(sortFn);
+  const sorted =  etherscanTxs.sort(sortFn);
   if (!params.offset || !page) return sorted;
   return sorted.slice(offset*(page-1), offset*page);
 }
