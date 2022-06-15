@@ -124,18 +124,18 @@ export function tokenTx(params: GetParams<TokenTx>) {
   };  
 
   // get the address transactions logs
-  const txs = store.logs[address]
-    .filter(tx => {
-      if (startblock && tx.blockNumber < startblock) return false;
-      if (endblock && tx.blockNumber > endblock) return false;
-      if (tx.topics[0] !== transferID) return false;
+  const logs = store.logs[address]
+    .filter(log => {
+      if (startblock && log.blockNumber < startblock) return false;
+      if (endblock && log.blockNumber > endblock) return false;
+      if (log.topics[0] !== transferID) return false;
       return true;
     })
-    .map(tx => store.transactions[tx.transactionHash])
+    .map(log => log.transactionHash)
+    .map(hash => toEtherscanTransaction(store.transactions[hash], store.receipts[hash]));
 
-  const etherscanTxs = txs.map(tx => toEtherscanTransaction(tx, store.receipts[tx.blockHash]));
   const sortFn = sorting[sort];
-  const sorted =  etherscanTxs.sort(sortFn);
+  const sorted =  logs.sort(sortFn);
   if (!params.offset || !page) return sorted;
   return sorted.slice(offset*(page-1), offset*page);
 }
