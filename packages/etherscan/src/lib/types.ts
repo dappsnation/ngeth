@@ -81,22 +81,6 @@ export interface BlockMined extends BaseParams<'account', 'getminedblocks'> {
   /** the number of transactions displayed per page */
   offset?: number;
 }
-export interface TokenTx extends BaseParams<'account', "tokentx"> {
-  /** the string representing the address to check for balance */
-  address?: string;
-  /** the string representing the token contract address to check for balance */
-  contractAddress?: string;
-  /** the integer page number, if pagination is enabled */
-  page?: number;
-  /** the number of transactions displayed per page */
-  offset?: number;
-  /** the integer block number to start searching for transactions */
-  startblock?: number;
-  /** the integer block number to stop searching for transactions */
-  endblock?: number;
-  /** the sorting preference, use asc to sort by ascending and desc to sort by descending */
-  sort? : Sort;
-}
 
 /** Same interface used for TokenNftTx & Token1155Tx */
 export interface BaseTokenTx<action extends string> extends BaseParams<'account', action> {

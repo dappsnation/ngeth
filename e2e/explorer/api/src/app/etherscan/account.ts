@@ -114,8 +114,8 @@ export function balanceHistory(params: GetParams<BalanceHistory>) {
 }
 
 export function tokenTx(params: GetParams<TokenTx>) {
-  const {address, contractAddress, startblock = 0, endblock, page, sort='asc', offset} = params;
-  if (!address || !contractAddress) throw new Error('Error! Missing address or contract address');
+  const {address, contractaddress, startblock = 0, endblock, page, sort='asc', offset} = params;
+  if (!address || !contractaddress) throw new Error('Error! Missing address or contract address');
   const transferID = id('Transfer(address,address,uint256)');
 
   const sorting = {
