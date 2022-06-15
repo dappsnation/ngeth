@@ -1,4 +1,5 @@
 import { TransactionResponse } from "@ethersproject/abstract-provider";
+import { ABIDescription } from '@type/solc';
 import { Tag, TxList, TokenTx, TokenNftTx, Token1155Tx, MinedBlock } from "./types";
 
 interface BalanceMultiResponse {
@@ -10,6 +11,22 @@ interface MinedBlockResponse {
   blockNumber: string;
   timeStamp: string;
   blockReward: string;
+}
+
+interface ContractSourceCode {
+  SourceCode: string;
+  ABI: ABIDescription[];
+  ContractName: string;
+  CompilerVersion: string;
+  OptimizationUsed: string;
+  Runs: string;
+  ConstructorArguments: string;
+  EVMVersion: string;
+  Library: string;
+  LicenseType: string;
+  Proxy: string;
+  Implementation: string;
+  SwarmSource: string;
 }
 
 type Etherscan = ReturnType<typeof initEtherscan>;
@@ -29,7 +46,7 @@ function initEtherscan(apiKey: string, baseUrl: string) {
   return <T>(params: Record<string, unknown>): Promise<T> => {
     const query = queryParams({ ...params, apiKey });
     const url = `${baseUrl}?${query}`;
-    return fetch(url).then(res => res.json());
+    return fetch(url).then(res => res.json()).then(res => res.result);
   }
 }
 
@@ -92,6 +109,27 @@ function getMinedBlocks(call: Etherscan, address: string, params: Optional<Mined
 }
 
 //block no might be optionnal but no testing available since it requires API pro
-function balanceHistory(call: Etherscan, address: string, blockno: number ) {
-  return call<string>({module: 'account', action: 'balancehistory', address, blockno});
+function balanceHistory(call: Etherscan, address: string, blockno: number) {
+  return call<string>({ module: 'account', action: 'balancehistory', address, blockno });
 }
+
+////////////
+//CONTRACT//
+////////////
+
+async function getAbi(call: Etherscan, address: string) {
+  const abi = await call<string>({ module: 'contract', action: 'getabi', address });
+  return JSON.parse(abi) as ABIDescription[];
+}
+
+async function getSourceCode(call: Etherscan, address: string) {
+  const data = await call<any[]>({ module: 'contract', action: 'getsourcecode', address });
+  return data.map(res => {
+    res.ABI = JSON.parse(res.ABI);
+    return res as ContractSourceCode
+  });
+}
+
+////////////////
+//TRANSACTIONS//
+////////////////
