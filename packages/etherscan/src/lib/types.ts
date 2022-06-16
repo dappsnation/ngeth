@@ -178,7 +178,7 @@ export interface Logs extends BaseParams<'logs', "getLogs"> {
   topic2_3_opr?: 'and' | 'or';
 }
 
-export interface EtherscanTransaction {
+export interface TransferTransaction {
   blockNumber: string;
   timeStamp: string;
   hash: string;
@@ -194,6 +194,17 @@ export interface EtherscanTransaction {
   gasUsed: string;
   cumulativeGasUsed: string;
   confirmation: string;
+}
+export interface ERC20TransferTransaction extends TransferTransaction {
+  tokenDecimal: string;
+}
+export interface ERC721TransferTransaction extends TransferTransaction {
+  tokenId: string;
+  tokenDecimal: '0';
+}
+export interface ERC1155TransferTransaction extends TransferTransaction {
+  tokenId: string;
+  tokenValue: string;
 }
 
 // Params
