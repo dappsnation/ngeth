@@ -4,8 +4,9 @@ import { store } from '../store';
 import { EthState } from "@explorer";
 import { BigNumber } from "@ethersproject/bignumber";
 import { id } from "@ethersproject/hash";
+import { defaultAbiCoder } from '@ethersproject/abi';
 
-function toEtherscanTransaction(tx: TransactionResponse, receipt: TransactionReceipt): TransferTransaction {
+function toTransferTransaction(tx: TransactionResponse, receipt: TransactionReceipt): TransferTransaction {
   return {
     blockNumber: tx.blockNumber.toString(),
     timeStamp: tx.timestamp.toString(),
@@ -132,7 +133,7 @@ export function tokenTx(params: GetParams<TokenTx>) {
     })
     .sort(sorting[sort])
     .map(log => log.transactionHash)
-    .map(hash => toEtherscanTransaction(store.transactions[hash], store.receipts[hash]));
+    .map(hash => toTransferTransaction(store.transactions[hash], store.receipts[hash]));
 
   if (!params.offset || !page) return etherscanTxs;
   return etherscanTxs.slice(offset*(page-1), offset*page);
@@ -155,17 +156,17 @@ export function tokenNftTx(params: GetParams<TokenNftTx>) {
     if(log.topics[0] !== transferID) return false;    
   })
   .sort(sorting[sort])
-  .map(log => log.transactionHash)
-  .map(hash => {
+  .map(log => {
+    const [tokenId] = defaultAbiCoder.decode(['uint256'], log.topics[3]);
+    const receipt = store.receipts[log.transactionHash];
+    const tx = store.transactions[log.transactionHash];
     return {
-      tokenId: store.logs[hash].filter(log => log.transactionHash === hash).filter(log => log.topics[3]).toString(),
-      tokenDecimal: '0',
-      ...toEtherscanTransaction(store.transactions[hash], store.receipts[hash])
+      ...toTransferTransaction(tx, receipt),
+      tokenId: tokenId.toString(),
+      tokenDecimal: '0'
     }
   })
 
   if (!params.offset || !page) return etherscanTxs;
   return etherscanTxs.slice(offset*(page-1), offset*page);
-
-
 }
