@@ -1,5 +1,5 @@
-export { EtherscanParams } from './types';
-import { EtherscanParams, AccountsParams, ContractParams, TransactionParams, StatsParams, TokenParams } from './types';
+export { EtherscanParams } from '@ngeth/etherscan';
+import { EtherscanParams, AccountsParams, ContractParams, TransactionParams, StatsParams, TokenParams } from '@ngeth/etherscan';
 import { balance, balanceMulti } from './account';
 import { getStatus, getTxReceiptStatus } from './transaction';
 import { tokenBalance, tokenBalanceHistoy, tokenSupply, tokenSupplyHistory, tokenInfo } from './tokens';

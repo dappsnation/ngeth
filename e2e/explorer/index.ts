@@ -49,7 +49,7 @@ export interface ContractAccount extends EthAccount{
 }
 
 export interface EthState {
-  balances: Record<string, string>;
+  balances: Record<string, BigNumber>;
   erc20: {
     [owner: string]: {
       [tokenAddres: string]: BigNumber

@@ -3,6 +3,7 @@
   "projects": {
     "devkit": "packages/devkit",
     "ethers": "packages/ethers",
+    "etherscan": "packages/etherscan",
     "explorer": "e2e/explorer",
     "explorer-api": "e2e/explorer/api",
     "explorer-app": "e2e/explorer/app",

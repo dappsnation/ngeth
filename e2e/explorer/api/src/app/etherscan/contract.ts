@@ -1,4 +1,4 @@
-import { VerifySourceCode, GetParams } from "./types";
+import { VerifySourceCode, GetParams } from "@ngeth/etherscan";
 import solc from 'solc';
 import { CompilationInput, CompilationResult } from '@type/solc';
 import { provider } from "../provider";

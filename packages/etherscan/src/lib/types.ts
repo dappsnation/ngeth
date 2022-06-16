@@ -1,10 +1,12 @@
 import { EvmVersion } from "@type/solc";
+import { BigNumber } from "ethers";
 
 export type EtherscanParams = AccountsParams | ContractParams | TransactionParams | StatsParams | TokenParams;
 
 export type Tag = number | 'latest' | 'pending' | 'earliest';
 export type Sort = 'asc' | 'desc';
-type Module = 'account' | 'contract' | 'transaction' | 'stats' | 'token';
+export type Block = 'blocks' | 'uncles';
+type Module = 'account' | 'contract' | 'transaction' | 'stats' | 'token' | 'logs';
 
 interface BaseParams<M extends Module, Action> {
   module: M;
@@ -19,7 +21,7 @@ export type GetParams<T> = Omit<T, 'module' | 'action' | 'apiKey'>
 // ACCOUNT //
 /////////////
 // Params
-export type AccountsParams = Balance | BalanceMulti | BalanceHistory | TxList | TxListInternal | BlockMined | TokenBalance | TokenBalanceHistory;
+export type AccountsParams = Balance | BalanceMulti | BalanceHistory | TxList | TxListInternal | BlockMined | TokenBalance | TokenBalanceHistory | TokenTx | TokenNftTx | Token1155Tx | MinedBlock;
 export interface Balance extends BaseParams<'account', 'balance'> {
   /** the string representing the address to check for balance   */
   address: string;
@@ -65,12 +67,50 @@ export interface TxListInternal extends BaseParams<'account', 'txlistinternal'> 
   offset: number;
   /** the sorting preference, use asc to sort by ascending and desc to sort by descendin Tip: Specify a smaller startblock and endblock range for faster search results. */
   sort: Sort;
+  /** the string representing the transaction hash to check for internal transactions */
+  txhash?: string;
+
 }
 export interface BlockMined extends BaseParams<'account', 'getminedblocks'> {
   /** the string representing the address to check for balance */
   address: string;
   /** the string pre-defined block type, either blocks for canonical blocks or uncles for uncle blocks only */
   blocktype?: 'blocks' | 'uncles';
+  /** the integer page number, if pagination is enabled */
+  page?: number;
+  /** the number of transactions displayed per page */
+  offset?: number;
+}
+
+/** Same interface used for TokenNftTx & Token1155Tx */
+export interface BaseTokenTx<action extends string> extends BaseParams<'account', action> {
+  /** the string representing the token contract address to check for balance */
+  contractaddress: string;
+  /** the string representing the address to check for balance */
+  address?: string;
+  /** the integer page number, if pagination is enabled */
+  page?: number;
+  /** the number of transactions displayed per page */
+  offset?: number;
+  /** the integer block number to start searching for transactions */
+  startblock?: number;
+  /** the integer block number to stop searching for transactions */
+  endblock?: number;
+  /** the sorting preference, use asc to sort by ascending and desc to sort by descending */
+  sort?: Sort;
+}
+
+export interface TokenTx extends BaseTokenTx<'tokentx'> {};
+
+export interface TokenNftTx extends BaseTokenTx<'tokennfttx'> {};
+
+export interface Token1155Tx extends BaseTokenTx<'token1155tx'> {};
+
+export interface MinedBlock extends BaseParams<'account', 'getminedblocks'> {
+  /** the string representing the address to check for balance */
+  address: string;
+  /** the string pre-defined block type, either blocks for canonical blocks or uncles for uncle blocks only */
+  blocktype?: Block;
   /** the integer page number, if pagination is enabled */
   page?: number;
   /** the number of transactions displayed per page */
@@ -121,6 +161,41 @@ export type VerifySourceCode = VerifySourceCodeParams & Library<1 | 2 | 3 | 4 | 
 /////////////////
 // TRANSACTION //
 /////////////////
+//logs
+export interface Logs extends BaseParams<'logs', "getLogs"> {
+  fromBlock: number | "latest";
+  toBlock: number | "latest";
+  address: string;
+  topic0?: string;
+  topic1?: string;
+  topic2?: string;
+  topic3?: string;
+  topic0_1_opr?: 'and' | 'or';
+  topic0_2_opr?: 'and' | 'or';
+  topic0_3_opr?: 'and' | 'or';
+  topic1_2_opr?: 'and' | 'or';
+  topic1_3_opr?: 'and' | 'or';
+  topic2_3_opr?: 'and' | 'or';
+}
+
+export interface EtherscanTransaction {
+  blockNumber: string;
+  timeStamp: string;
+  hash: string;
+  nonce: string;
+  blockHash: string;
+  from: string;
+  contractAddress: string;
+  to: string;
+  value: string;
+  transactionIndex: string;
+  gas: string;
+  gasPrice: string;
+  gasUsed: string;
+  cumulativeGasUsed: string;
+  confirmation: string;
+}
+
 // Params
 export type TransactionParams = GetStatus | GetTxReceiptStatus;
 export interface GetStatus extends BaseParams<'transaction', 'getstatus'> {
