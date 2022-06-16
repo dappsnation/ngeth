@@ -1,5 +1,6 @@
-module.exports = {
-  displayName: 'explorer-api',
+/* eslint-disable */
+export default {
+  displayName: 'ipfs-tools',
   preset: '../../../jest.preset.js',
   globals: {
     'ts-jest': {
@@ -11,5 +12,5 @@ module.exports = {
     '^.+/.[tj]s$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
-  coverageDirectory: '../../../coverage/e2e/explorer/api',
+  coverageDirectory: '../../../coverage/packages/ipfs/tools',
 };

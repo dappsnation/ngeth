@@ -1,6 +1,6 @@
 {
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
-  "root": "e2e/explorer/hardhat",
   "sourceRoot": "e2e/explorer/hardhat/src",
   "prefix": "eth",
   "targets": {

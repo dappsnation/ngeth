@@ -1,4 +1,4 @@
-import { FormControl, FormGroup, Validators } from "@angular/forms";
+import { UntypedFormControl, UntypedFormGroup, Validators } from "@angular/forms";
 import type { BigNumber } from '@ethersproject/bignumber';
 import type { Observable } from "rxjs";
 import { EthValidators } from "../../form";
@@ -20,16 +20,16 @@ interface ERC1155MintControls {
 
 
 
-export class ERC1155FormTransfer extends FormGroup {
+export class ERC1155FormTransfer extends UntypedFormGroup {
   override value!: ERC1155TransferControls;
   override valueChanges!: Observable<ERC1155TransferControls>;
 
   constructor(value: Partial<ERC1155TransferControls> = {}) {
     super({
-      from: new FormControl(value.from, [EthValidators.address]),
-      to: new FormControl(value.to, [Validators.required, EthValidators.address]),
-      tokenId: new FormControl(value.tokenId, [Validators.required]),
-      amount: new FormControl(value.amount, [Validators.required, Validators.min(0)])
+      from: new UntypedFormControl(value.from, [EthValidators.address]),
+      to: new UntypedFormControl(value.to, [Validators.required, EthValidators.address]),
+      tokenId: new UntypedFormControl(value.tokenId, [Validators.required]),
+      amount: new UntypedFormControl(value.amount, [Validators.required, Validators.min(0)])
     })
   }
 
@@ -39,17 +39,17 @@ export class ERC1155FormTransfer extends FormGroup {
 }
 
 
-export class ERC1155FormMint extends FormGroup {
+export class ERC1155FormMint extends UntypedFormGroup {
   override value!: ERC1155MintControls;
   override valueChanges!: Observable<ERC1155MintControls>;
 
   constructor(value: Partial<ERC1155MintControls> = {}) {
     super({
-      to: new FormControl(value.to, [Validators.required, EthValidators.address]),
-      tokenId: new FormControl(value.tokenId, [Validators.required]),
-      amount: new FormControl(value.amount, [Validators.required]),
-      uri: new FormControl(value.uri),
-      data: new FormControl(value.data)
+      to: new UntypedFormControl(value.to, [Validators.required, EthValidators.address]),
+      tokenId: new UntypedFormControl(value.tokenId, [Validators.required]),
+      amount: new UntypedFormControl(value.amount, [Validators.required]),
+      uri: new UntypedFormControl(value.uri),
+      data: new UntypedFormControl(value.data)
     })
   }
 }

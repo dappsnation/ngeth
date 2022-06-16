@@ -21,5 +21,6 @@
     "plugin-e2e": "e2e/plugin-e2e",
     "polygon": "packages/polygon",
     "tools": "packages/tools"
-  }
+  },
+  "$schema": "./node_modules/nx/schemas/workspace-schema.json"
 }

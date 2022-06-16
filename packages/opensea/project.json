@@ -1,14 +1,12 @@
 {
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "library",
-  "root": "packages/opensea",
   "sourceRoot": "packages/opensea/src",
   "prefix": "ngeth",
   "targets": {
     "build": {
       "executor": "@nrwl/angular:package",
-      "outputs": [
-        "dist/packages/opensea"
-      ],
+      "outputs": ["dist/packages/opensea"],
       "options": {
         "project": "packages/opensea/ng-package.json"
       },
@@ -24,11 +22,9 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": [
-        "coverage/packages/opensea"
-      ],
+      "outputs": ["coverage/packages/opensea"],
       "options": {
-        "jestConfig": "packages/opensea/jest.config.js",
+        "jestConfig": "packages/opensea/jest.config.ts",
         "passWithNoTests": true
       }
     },

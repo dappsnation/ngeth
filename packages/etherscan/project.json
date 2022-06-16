@@ -1,5 +1,5 @@
 {
-  "root": "packages/etherscan",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/etherscan/src",
   "targets": {
     "build": {
@@ -23,7 +23,7 @@
       "executor": "@nrwl/jest:jest",
       "outputs": ["coverage/packages/etherscan"],
       "options": {
-        "jestConfig": "packages/etherscan/jest.config.js",
+        "jestConfig": "packages/etherscan/jest.config.ts",
         "passWithNoTests": true
       }
     }

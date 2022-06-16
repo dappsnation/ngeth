@@ -1,14 +1,12 @@
 {
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "library",
-  "root": "packages/openzeppelin",
   "sourceRoot": "packages/openzeppelin/src",
   "prefix": "ngeth",
   "targets": {
     "build": {
       "executor": "@nrwl/angular:package",
-      "outputs": [
-        "dist/packages/openzeppelin"
-      ],
+      "outputs": ["dist/packages/openzeppelin"],
       "options": {
         "project": "packages/openzeppelin/ng-package.json"
       },
@@ -24,11 +22,9 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": [
-        "coverage/packages/openzeppelin"
-      ],
+      "outputs": ["coverage/packages/openzeppelin"],
       "options": {
-        "jestConfig": "packages/openzeppelin/jest.config.js",
+        "jestConfig": "packages/openzeppelin/jest.config.ts",
         "passWithNoTests": true
       }
     },
