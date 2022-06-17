@@ -1,14 +1,6 @@
 import { formatNumber } from "@angular/common";
 import { BigNumber } from '@ethersproject/bignumber';
-import { Event } from "ethers";
-import { sum } from "../utils";
 import { ERC20Metadata } from "./types";
-
-export function erc20Balance(received: Event[], sent: Event[]) {
-  const toAdd = sum(received, event => event.args?.[2] as BigNumber);
-  const toRemove = sum(sent, event => event.args?.[2] as BigNumber);
-  return toAdd.sub(toRemove);
-}
 
 export function formatERC20(balance: BigNumber, metadata: ERC20Metadata, digitInfo?: string, locale?: string) {
   const base = BigNumber.from(10).pow(metadata.decimals);

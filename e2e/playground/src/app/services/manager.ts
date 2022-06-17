@@ -1,6 +1,7 @@
 import type { Signer } from 'ethers';
 import { Injectable, NgZone } from '@angular/core';
-import { ContractsManager, erc1155Tokens } from '@ngeth/ethers';
+import { ContractsManager } from '@ngeth/ethers';
+import { erc1155Tokens } from '@ngeth/ethers-core';
 import { Opensea, OpenseaCollectionMetadata } from '@ngeth/opensea';
 import { OpenseaERC1155 } from '../contracts';
 import { combineLatest, map, switchMap } from 'rxjs';

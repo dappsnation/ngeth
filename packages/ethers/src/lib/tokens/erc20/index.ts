@@ -1,4 +1,3 @@
-export * from './contract';
 export * from './types';
 export * from './pipes';
 export * from './module';

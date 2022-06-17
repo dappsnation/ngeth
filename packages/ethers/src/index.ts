@@ -3,7 +3,7 @@ export * from './lib/contract';
 export * from './lib/chain';
 export * from './lib/components';
 export * from './lib/contracts-manager';
-export * from './lib/contracts';
+export * from './lib/tokens';
 export * from './lib/form';
 export * from './lib/guard';
 export * from './lib/pipes';
