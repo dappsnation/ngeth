@@ -1,5 +1,5 @@
 import { TransactionReceipt, TransactionResponse, Log } from "@ethersproject/abstract-provider";
-import { Balance, BalanceMulti, GetParams, TxList, BlockMined, BalanceHistory, TokenTx, TransferTransaction, TokenNftTx, ERC20TransferTransaction, ERC721TransferTransaction, Token1155Tx } from "@ngeth/etherscan";
+import { Balance, BalanceMulti, GetParams, TxList, BlockMined, BalanceHistory, TokenTx, TransferTransaction, TokenNftTx, ERC20TransferTransaction, ERC721TransferTransaction, Token1155Tx, ERC1155TransferTransaction } from "@ngeth/etherscan";
 import { store } from '../store';
 import { EthState } from "@explorer";
 import { BigNumber } from "@ethersproject/bignumber";
@@ -186,20 +186,27 @@ export function token1155Tx(params: GetParams<Token1155Tx>) {
   .filter(log => {
     if (startblock && startblock < log.blockNumber) return false;
     if (endblock && endblock > log.blockNumber) return false;
-    if (log.topics[0] !== transferSingleId ||log.topics[0] !== transferBatchId) return false;
+    if (log.topics[0] !== transferSingleId || log.topics[0] !== transferBatchId) return false;
     return true;
   })
   .sort(sorting[sort])
   .map(log => {
-    const [tokenId, tokenValue] = defaultAbiCoder.decode(['uint256', 'uint256' ], log.data);
     const receipt = store.receipts[log.transactionHash];
     const tx = store.transactions[log.transactionHash];
-    return {
+    const toERC1155tx = (id: BigNumber, value: BigNumber): ERC1155TransferTransaction => ({
       ...toTransferTransaction(tx, receipt),
-      tokenId: tokenId.toString(),
-      tokenValue: tokenValue.toString()
+      tokenId: id.toString(),
+      tokenValue: value.toString()
+    });
+    if (log.topics[0] === transferSingleId) {
+      const [id, value] = defaultAbiCoder.decode(['uint256', 'uint256' ], log.data);
+      return toERC1155tx(id, value)
+    } else {
+      const [ids, values] = defaultAbiCoder.decode(['uint256[]', 'uint256[]'], log.data);
+      return ids.map((id, i) => toERC1155tx(id, values[i]));
     }
   })
+  .flat()
 
   if(!offset || !page) return etherscanTxs;
   return etherscanTxs.slice(offset*(page-1), offset*page);
