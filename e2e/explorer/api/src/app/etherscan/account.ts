@@ -1,5 +1,5 @@
 import { TransactionReceipt, TransactionResponse, Log } from "@ethersproject/abstract-provider";
-import { Balance, BalanceMulti, GetParams, TxList, BlockMined, BalanceHistory, TokenTx, TransferTransaction, TokenNftTx, ERC20TransferTransaction, ERC721TransferTransaction, Token1155Tx } from "@ngeth/etherscan";
+import { Balance, BalanceMulti, GetParams, TxList, BlockMined, BalanceHistory, TokenTx, TransferTransaction, TokenNftTx, ERC20TransferTransaction, ERC721TransferTransaction, Token1155Tx, ERC1155TransferTransaction } from "@ngeth/etherscan";
 import { store } from '../store';
 import { EthState } from "@explorer";
 import { BigNumber } from "@ethersproject/bignumber";
@@ -193,7 +193,7 @@ export function token1155Tx(params: GetParams<Token1155Tx>) {
   .map(log => {
     const receipt = store.receipts[log.transactionHash];
     const tx = store.transactions[log.transactionHash];
-    const toERC1155tx = (id: BigNumber, value: BigNumber) => ({
+    const toERC1155tx = (id: BigNumber, value: BigNumber): ERC1155TransferTransaction => ({
       ...toTransferTransaction(tx, receipt),
       tokenId: id.toString(),
       tokenValue: value.toString()
