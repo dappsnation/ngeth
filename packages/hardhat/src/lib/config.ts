@@ -6,7 +6,7 @@ interface NgEthConfig {
   /** Type of build */
   type: 'angular' | 'typescript';
   /** Constructor params used when serving the application */
-  exec: string[] | { scripts: string[], parallel: boolean };
+  runs: string[] | { scripts: string[], parallel: boolean };
   withImports: boolean;
   /** Ports for the explorer api & app */
   explorer: false | { api: number, app: number }
@@ -25,7 +25,7 @@ declare module 'hardhat/types/config' {
 export const getDefaultConfig = (config: Partial<HardhatConfig>): NgEthConfig => ({
   outDir: 'ngeth',
   type: 'typescript',
-  exec: [],
+  runs: [],
   withImports: false,
   explorer: {
     api: 3000,

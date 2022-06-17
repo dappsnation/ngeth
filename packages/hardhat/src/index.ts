@@ -112,14 +112,14 @@ task('node:server-ready', 'Run once the node is ready')
     }
 
     // Run exec
-    if (hre.config.ngeth.exec) {
-      const exec = Array.isArray(hre.config.ngeth.exec)
-        ? { scripts: hre.config.ngeth.exec, parallel: false }
-        : hre.config.ngeth.exec;
+    if (hre.config.ngeth.runs) {
+      const runs = Array.isArray(hre.config.ngeth.runs)
+        ? { scripts: hre.config.ngeth.runs, parallel: false }
+        : hre.config.ngeth.runs;
       
-      for (const path of exec.scripts) {
+      for (const path of runs.scripts) {
         const script = join(hre.config.paths.root, path);
-        if (exec.parallel) {
+        if (runs.parallel) {
           hre.run('run', { script, noCompile: true });
         } else {
           await hre.run('run', { script, noCompile: true });
