@@ -1,7 +1,7 @@
 import { EvmVersion } from "@type/solc";
 import { BigNumber } from "ethers";
 
-export type EtherscanParams = AccountsParams | ContractParams | TransactionParams | StatsParams | TokenParams;
+export type EtherscanParams = AccountsParams | ContractParams | TransactionParams | StatsParams | TokenParams | LogParams;
 
 export type Tag = number | 'latest' | 'pending' | 'earliest';
 export type Sort = 'asc' | 'desc';
@@ -162,6 +162,7 @@ export type VerifySourceCode = VerifySourceCodeParams & Library<1 | 2 | 3 | 4 | 
 // TRANSACTION //
 /////////////////
 //logs
+export type LogParams = Logs;
 export interface Logs extends BaseParams<'logs', "getLogs"> {
   fromBlock: number | "latest";
   toBlock: number | "latest";
