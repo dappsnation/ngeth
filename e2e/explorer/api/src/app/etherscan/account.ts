@@ -1,5 +1,5 @@
 import { TransactionReceipt, TransactionResponse, Log } from "@ethersproject/abstract-provider";
-import { Balance, BalanceMulti, GetParams, TxList, BlockMined, BalanceHistory, TokenTx, TransferTransaction, TokenNftTx, ERC20TransferTransaction, ERC721TransferTransaction } from "@ngeth/etherscan";
+import { Balance, BalanceMulti, GetParams, TxList, BlockMined, BalanceHistory, TokenTx, TransferTransaction, TokenNftTx, ERC20TransferTransaction, ERC721TransferTransaction, Token1155Tx } from "@ngeth/etherscan";
 import { store } from '../store';
 import { EthState } from "@explorer";
 import { BigNumber } from "@ethersproject/bignumber";
@@ -169,4 +169,39 @@ export function tokenNftTx(params: GetParams<TokenNftTx>) {
 
   if (!params.offset || !page) return etherscanTxs;
   return etherscanTxs.slice(offset*(page-1), offset*page);
+}
+
+export function token1155Tx(params: GetParams<Token1155Tx>) {
+  const {address, contractaddress, startblock = 0, endblock, page, sort='asc', offset} = params;
+  if (!address || !contractaddress) throw new Error('Error! Missing address or contract address');
+
+  const transferSingleId = id('TransferSingle(address, address, address, uint256, uint256)');
+  const transferBatchId = id('TransferBatch(address, address, address, uint256[], uint256[])')
+  const sorting = {
+    asc: (a: Log, b: Log) => a.blockNumber - b.blockNumber,
+    desc: (a: Log, b: Log) => b.blockNumber - a.blockNumber
+  }
+
+  const etherscanTxs = store.logs[address]
+  .filter(log => {
+    if (startblock && startblock < log.blockNumber) return false;
+    if (endblock && endblock > log.blockNumber) return false;
+    if (log.topics[0] !== transferSingleId ||log.topics[0] !== transferBatchId) return false;
+    return true;
+  })
+  .sort(sorting[sort])
+  .map(log => {
+    const [tokenId, tokenValue] = defaultAbiCoder.decode(['uint256', 'uint256' ], log.data);
+    const receipt = store.receipts[log.transactionHash];
+    const tx = store.transactions[log.transactionHash];
+    return {
+      ...toTransferTransaction(tx, receipt),
+      tokenId: tokenId.toString(),
+      tokenValue: tokenValue.toString()
+    }
+  })
+
+  if(!offset || !page) return etherscanTxs;
+  return etherscanTxs.slice(offset*(page-1), offset*page);
+
 }
