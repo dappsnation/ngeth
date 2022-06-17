@@ -1,4 +1,4 @@
-import { FormControl, FormGroup, Validators } from "@angular/forms";
+import { UntypedFormControl, UntypedFormGroup, Validators } from "@angular/forms";
 import type { Observable } from "rxjs";
 import { EthValidators } from "../../form";
 
@@ -16,15 +16,15 @@ interface ERC721MintControls {
 
 
 
-export class ERC721FormTransfer extends FormGroup {
+export class ERC721FormTransfer extends UntypedFormGroup {
   override value!: ERC721TransferControls;
   override valueChanges!: Observable<ERC721TransferControls>;
 
   constructor(value: Partial<ERC721TransferControls> = {}) {
     super({
-      from: new FormControl(value.from, [EthValidators.address]),
-      to: new FormControl(value.to, [Validators.required, EthValidators.address]),
-      tokenId: new FormControl(value.tokenId, [Validators.required]),
+      from: new UntypedFormControl(value.from, [EthValidators.address]),
+      to: new UntypedFormControl(value.to, [Validators.required, EthValidators.address]),
+      tokenId: new UntypedFormControl(value.tokenId, [Validators.required]),
     })
   }
 
@@ -34,15 +34,15 @@ export class ERC721FormTransfer extends FormGroup {
 }
 
 
-export class ERC721FormMint extends FormGroup {
+export class ERC721FormMint extends UntypedFormGroup {
   override value!: ERC721MintControls;
   override valueChanges!: Observable<ERC721MintControls>;
 
   constructor(value: Partial<ERC721MintControls> = {}) {
     super({
-      to: new FormControl(value.to, [Validators.required, EthValidators.address]),
-      tokenId: new FormControl(value.tokenId, [Validators.required]),
-      uri: new FormControl(value.uri, [Validators.required]),
+      to: new UntypedFormControl(value.to, [Validators.required, EthValidators.address]),
+      tokenId: new UntypedFormControl(value.tokenId, [Validators.required]),
+      uri: new UntypedFormControl(value.uri, [Validators.required]),
     })
   }
 }

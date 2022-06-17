@@ -1,5 +1,4 @@
-import { NgZone } from "@angular/core";
-import { NgContract, FilterParam, TypedFilter } from "@ngeth/ethers";
+import { EthersContract, FilterParam, TypedFilter } from "@ngeth/ethers-core";
 import type {
   BigNumber,
   Overrides,
@@ -48,7 +47,7 @@ export interface BaseERC1155Events {
   };
 }
 
-export class BaseERC1155 extends NgContract<BaseERC1155Events> {
+export class BaseERC1155 extends EthersContract<BaseERC1155Events> {
   // Read
   balanceOf!: (account: string, id: BigNumberish, overrides?: CallOverrides) => Promise<BigNumber>;
   balanceOfBatch!: (accounts: string[], ids: BigNumberish[], overrides?: CallOverrides) => Promise<BigNumber[]>;
@@ -93,7 +92,7 @@ export class BaseERC1155 extends NgContract<BaseERC1155Events> {
   setURI!: (newuri: string, overrides?: Overrides) => Promise<ContractTransaction>;
   transferOwnership!: (newOwner: string, overrides?: Overrides) => Promise<ContractTransaction>;
 
-  constructor(address: string, signer?: Signer | Provider, zone?: NgZone) {
-    super(address, abi, signer, zone);
+  constructor(address: string, signer?: Signer | Provider) {
+    super(address, abi, signer);
   }
 }

@@ -53,6 +53,7 @@ export class MintComponent {
   async mint() {
     if (this.form.invalid) return this.form.markAllAsTouched();
     const { metadata, mint } = this.form.value;
+    if (!mint) return;
     const { to, tokenId, amount, data } = mint;
     this.form.disable();
     try {

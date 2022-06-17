@@ -1,0 +1,50 @@
+{
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/ethers/core/src",
+  "projectType": "library",
+  "targets": {
+    "link": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "npm link dist/packages/ethers/core"
+      }
+    },
+    "publish": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "npm publish --tag={args.tag} --access=public",
+        "cwd": "dist/packages/ethers/core"
+      },
+      "dependsOn": [{
+        "projects": "self",
+        "target": "build"
+      }]
+    },
+    "build": {
+      "executor": "@nrwl/js:swc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/packages/ethers/core",
+        "main": "packages/ethers/core/src/index.ts",
+        "tsConfig": "packages/ethers/core/tsconfig.lib.json",
+        "assets": ["packages/ethers/core/*.md"]
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["packages/ethers/core/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/packages/ethers/core"],
+      "options": {
+        "jestConfig": "packages/ethers/core/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

@@ -1,6 +1,7 @@
-module.exports = {
-  displayName: 'ipfs-tools',
-  preset: '../../../jest.preset.js',
+/* eslint-disable */
+export default {
+  displayName: 'tools',
+  preset: '../../jest.preset.js',
   globals: {
     'ts-jest': {
       tsconfig: '<rootDir>/tsconfig.spec.json',
@@ -8,8 +9,8 @@ module.exports = {
   },
   testEnvironment: 'node',
   transform: {
-    '^.+\\.[tj]s$': 'ts-jest',
+    '^.+/.[tj]s$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
-  coverageDirectory: '../../../coverage/packages/ipfs/tools',
+  coverageDirectory: '../../coverage/packages/tools',
 };

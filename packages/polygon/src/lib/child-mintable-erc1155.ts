@@ -1,4 +1,5 @@
-import { NgContract, FilterParam, TypedFilter } from "@ngeth/ethers";
+import { FilterParam, TypedFilter } from "@ngeth/ethers-core";
+import { NgContract } from "@ngeth/ethers";
 import {
   BigNumber,
   Overrides,

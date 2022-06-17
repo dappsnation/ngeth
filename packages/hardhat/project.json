@@ -1,5 +1,5 @@
 {
-  "root": "packages/hardhat",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/hardhat/src",
   "projectType": "library",
   "targets": {
@@ -17,43 +17,31 @@
       }
     },
     "build": {
-      "executor": "@nrwl/node:package",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "executor": "@nrwl/js:tsc",
+      "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/packages/hardhat",
         "tsConfig": "packages/hardhat/tsconfig.lib.json",
         "packageJson": "packages/hardhat/package.json",
         "main": "packages/hardhat/src/index.ts",
-        "assets": [
-          "packages/hardhat/*.md"
-        ]
+        "assets": ["packages/hardhat/*.md"]
       }
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",
-      "outputs": [
-        "{options.outputFile}"
-      ],
+      "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": [
-          "packages/hardhat/**/*.ts"
-        ]
+        "lintFilePatterns": ["packages/hardhat/**/*.ts"]
       }
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": [
-        "coverage/packages/hardhat"
-      ],
+      "outputs": ["coverage/packages/hardhat"],
       "options": {
-        "jestConfig": "packages/hardhat/jest.config.js",
+        "jestConfig": "packages/hardhat/jest.config.ts",
         "passWithNoTests": true
       }
     }
   },
-  "tags": [
-    "hardhat"
-  ]
+  "tags": ["hardhat"]
 }

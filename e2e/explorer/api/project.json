@@ -1,10 +1,10 @@
 {
-  "root": "e2e/explorer/api",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "e2e/explorer/api/src",
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nrwl/node:build",
+      "executor": "@nrwl/node:webpack",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/packages/hardhat/src/explorer/api",
@@ -27,7 +27,7 @@
       }
     },
     "serve": {
-      "executor": "@nrwl/node:execute",
+      "executor": "@nrwl/node:node",
       "options": {
         "buildTarget": "explorer-api:build"
       }
@@ -43,13 +43,11 @@
       "executor": "@nrwl/jest:jest",
       "outputs": ["coverage/e2e/explorer/api"],
       "options": {
-        "jestConfig": "e2e/explorer/api/jest.config.js",
+        "jestConfig": "e2e/explorer/api/jest.config.ts",
         "passWithNoTests": true
       }
     }
   },
   "tags": [],
-  "implicitDependencies": [
-    "hardhat"
-  ]
+  "implicitDependencies": ["hardhat"]
 }

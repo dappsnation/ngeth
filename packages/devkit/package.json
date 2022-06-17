@@ -3,7 +3,7 @@
   "version": "0.0.19",
   "type": "commonjs",
   "dependencies": {
-    "@nrwl/devkit": "^13.8.5",
-    "@nrwl/workspace": "^13.8.5"
+    "@nrwl/devkit": ">13.8.5",
+    "@nrwl/workspace": ">13.8.5"
   }
 }
