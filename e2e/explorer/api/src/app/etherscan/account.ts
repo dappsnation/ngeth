@@ -139,29 +139,22 @@ export function tokensTx(params: GetParams<TokenTx>) {
     const receipt = store.receipts[log.transactionHash];
     const tx = store.transactions[log.transactionHash];
     const txTransfer = toTransferTransaction(tx, receipt);
-    const toERC20tx = (decimal: string): ERC20TransferTransaction => ({
-      ...txTransfer,
-      tokenDecimal: decimal
-    });
-    const toERC721tx = (id: BigNumber, decimal: string): ERC721TransferTransaction => ({
-      ...txTransfer,
-      tokenId: id.toString(),
-      tokenDecimal: decimal
-    });
+    //ERC20
+    if (log.topics[0] === transferID && !log.topics[3]) {
+      return { ...txTransfer, tokenDecimal: '0' };
+    }
+    //ERC721
+    if (log.topics[0] === transferID && log.topics[3]) {
+      const [id] = defaultAbiCoder.decode(['uint256'], log.topics[3]);
+      return { ...txTransfer, tokenId: id.toString(), tokenDecimal: '0' };
+    }
+    //ERC1155
     const toERC1155tx = (id: BigNumber, value: BigNumber): ERC1155TransferTransaction => ({
       ...txTransfer,
       tokenId: id.toString(),
       tokenValue: value.toString()
     });
-
-    if (log.topics[0] === transferID && !log.topics[3]) {
-      return toERC20tx('0');
-    }
-    else if (log.topics[0] === transferID && log.topics[3]) {
-      const [id] = defaultAbiCoder.decode(['uint256'], log.topics[3]);
-      return toERC721tx(id, '0');
-    }
-    else if (log.topics[0] === transferSingleId) {
+    if (log.topics[0] === transferSingleId) {
       const [id, value] = defaultAbiCoder.decode(['uint256', 'uint256' ], log.data);
       return toERC1155tx(id, value)
     }
