@@ -154,7 +154,7 @@ export function tokensTx(params: GetParams<TokenTx>) {
       tokenValue: value.toString()
     });
 
-    if (log.topics[0] === transferID) {
+    if (log.topics[0] === transferID && !log.topics[3]) {
       return toERC20tx('0');
     }
     else if (log.topics[0] === transferID && log.topics[3]) {
