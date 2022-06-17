@@ -7,7 +7,6 @@ interface NgEthConfig {
   type: 'angular' | 'typescript';
   /** Constructor params used when serving the application */
   exec: string[] | { scripts: string[], parallel: boolean };
-  autoDeploy: Record<string, unknown[]>;
   withImports: boolean;
   /** Ports for the explorer api & app */
   explorer: false | { api: number, app: number }
@@ -27,7 +26,6 @@ export const getDefaultConfig = (config: Partial<HardhatConfig>): NgEthConfig =>
   outDir: 'ngeth',
   type: 'typescript',
   exec: [],
-  autoDeploy: {},
   withImports: false,
   explorer: {
     api: 3000,

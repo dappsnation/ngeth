@@ -15,12 +15,7 @@ export default {
     type: 'angular',
     outDir: './src/app/contracts',
     withImports: false,
-    autoDeploy: {
-      ERC1155Factory: [],
-      BaseERC1155: ['uri'],
-      BaseERC20: [],
-      BaseERC721: [],
-    },
+    exec: ['scripts/deploy.ts'],
     explorer: {
       api: 3000,
       app: 3001

@@ -1,16 +1,15 @@
 import './lib/config';
-// import '@nomiclabs/hardhat-ethers';
 import { extendConfig, task } from 'hardhat/config';
 import { dirname, join, relative, resolve } from 'path';
 import { generate } from './lib/generate';
 import { getDefaultConfig } from './lib/config';
-import { deploy } from './lib/deploy';
 import { existsSync, mkdirSync, promises as fs } from 'fs';
 import { getContractImport } from '@ngeth/tools';
 import { execute } from '@ngeth/devkit';
 import { serveApp } from './lib/utils';
 
-export { saveAddresses } from './lib/deploy';
+
+export * from './lib/deploy';
 
 extendConfig((config) => {
   config.ngeth = getDefaultConfig(config)
@@ -57,9 +56,7 @@ task('node:server-ready', 'Run once the node is ready')
     const outDir = join(root, hre.config.ngeth.outDir);
     if (!existsSync(outDir)) mkdirSync(outDir, { recursive: true });
 
-
-    // await deploy(hre, artifacts);
-    
+   
     // Generate contracts & index.ts
     generate(hre, artifacts);
 
@@ -108,6 +105,10 @@ task('node:server-ready', 'Run once the node is ready')
       const appConfig = JSON.stringify({ api: `http://localhost:${api}` });
       await fs.writeFile(join(appPath, 'assets/config.json'), appConfig);
       serveApp(appPath, app);
+
+      console.table([
+        { 'Explorer API': `http://localhost:${api}`, 'Explorer APP:': `http://localhost:${app}` }, 
+      ]);
     }
 
     // Run exec
