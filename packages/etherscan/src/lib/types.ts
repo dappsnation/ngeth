@@ -200,7 +200,7 @@ export interface ERC20TransferTransaction extends TransferTransaction {
 }
 export interface ERC721TransferTransaction extends TransferTransaction {
   tokenId: string;
-  tokenDecimal: '0';
+  tokenDecimal: string;
 }
 export interface ERC1155TransferTransaction extends TransferTransaction {
   tokenId: string;

@@ -126,6 +126,7 @@ export function tokensTx(params: GetParams<TokenTx>) {
     asc: (a: Log, b: Log) => a.blockNumber - b.blockNumber,
     desc: (a: Log, b: Log) => b.blockNumber - a.blockNumber
   };
+
   const etherscanTxs = store.logs[address]
   .filter(log => {
     if(startblock && log.blockNumber < startblock) return false;
@@ -137,20 +138,22 @@ export function tokensTx(params: GetParams<TokenTx>) {
   .map(log => {
     const receipt = store.receipts[log.transactionHash];
     const tx = store.transactions[log.transactionHash];
+    const txTransfer = toTransferTransaction(tx, receipt);
     const toERC20tx = (decimal: string): ERC20TransferTransaction => ({
-      ...toTransferTransaction(tx, receipt),
+      ...txTransfer,
       tokenDecimal: decimal
     });
-    const toERC721tx = (id: BigNumber, decimal: string) => ({
-      ...toTransferTransaction(tx, receipt),
+    const toERC721tx = (id: BigNumber, decimal: string): ERC721TransferTransaction => ({
+      ...txTransfer,
       tokenId: id.toString(),
       tokenDecimal: decimal
     });
     const toERC1155tx = (id: BigNumber, value: BigNumber): ERC1155TransferTransaction => ({
-      ...toTransferTransaction(tx, receipt),
+      ...txTransfer,
       tokenId: id.toString(),
       tokenValue: value.toString()
     });
+
     if (log.topics[0] === transferID) {
       return toERC20tx('0');
     }
