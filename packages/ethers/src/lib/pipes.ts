@@ -4,7 +4,8 @@ import { getAddress } from '@ethersproject/address';
 import { formatUnits, formatEther } from '@ethersproject/units';
 import { EtherSymbol } from '@ethersproject/constants';
 import { isBytes } from '@ethersproject/bytes';
-import { Chain, ChainCurrency, ChainId, ChainManager, explore, isSupportedChain, SupportedChains, SUPPORTED_CHAINS } from './chain';
+import { Chain, ChainCurrency, ChainId, explore, isSupportedChain, SupportedChains } from '@ngeth/ethers-core';
+import { ChainManager, SUPPORTED_CHAINS } from './chain';
 import { map } from 'rxjs/operators';
 
 function formatNativeCurrency(value: BigNumberish, currency: ChainCurrency) {

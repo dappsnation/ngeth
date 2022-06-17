@@ -46,7 +46,7 @@ export class Erc1155Component {
     if (this.form.invalid) return this.form.markAllAsTouched();
     const { from = this.erc1193.account, to, tokenId, amount } = this.form.value;
     // TODO: Create a error handler for "need to be connected"
-    if (!from) return;
+    if (!from || !to || !tokenId || !amount) return;
     this.contract.safeTransferFrom(from, to, tokenId, amount, '0x00');
   }
 }

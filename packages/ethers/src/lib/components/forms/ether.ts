@@ -2,7 +2,8 @@ import { Directive, ElementRef, forwardRef, HostListener, Input, Renderer2 } fro
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
 import type { BigNumberish } from "ethers";
 import { formatUnits, parseUnits } from "@ethersproject/units";
-import { Chain, ChainId, ChainManager } from "../../chain";
+import { Chain, ChainId } from "@ngeth/ethers-core";
+import { ChainManager } from "../../chain";
 
 @Directive({
   selector: 'input[type="ether"]',

@@ -1,12 +1,12 @@
 import { inject, NgZone } from '@angular/core';
 import { getAddress } from '@ethersproject/address';
 import { AddChainParameter, ERC1193Events, ERC1193Param, ERC1193Provider, WalletProfile, WatchAssetParams } from './types';
-import { toChainIndex } from '../chain/utils';
+import { toChainId, toChainHex } from '@ngeth/ethers-core';
 import { timer, Observable, of, combineLatest, defer, BehaviorSubject } from 'rxjs';
 import { map, shareReplay, switchMap, filter } from 'rxjs/operators';
 import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers';
 import { fromEthEvent } from '../events';
-import { getChain, toChainId } from '../chain';
+import { getChain } from '../chain';
 import { fromChain } from './utils';
 
 
@@ -84,7 +84,7 @@ export abstract class ERC1193<Wallet extends WalletProfile = WalletProfile> {
       return timer(500).pipe(map(() => this.chainId))
     }),
     filter(exist),
-    map(chainId => toChainIndex(chainId)),
+    map(chainId => toChainId(chainId)),
     shareReplay({ refCount: true, bufferSize: 1 })
   );
 
@@ -143,7 +143,7 @@ export abstract class ERC1193<Wallet extends WalletProfile = WalletProfile> {
    * @param id The 0x-non zero chainId or decimal number
    */
   switchChain(id: string | number) {
-    const chainId = toChainId(id);
+    const chainId = toChainHex(id);
     return this.provider?.request<null>({
       method: 'wallet_switchEthereumChain',
       params: [{ chainId }]

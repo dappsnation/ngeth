@@ -1,4 +1,4 @@
-import type { Chain } from '../chain';
+import type { Chain } from '@ngeth/ethers-core';
 import { AddChainParameter } from './types';
 
 export function fromChain(chain: Chain): AddChainParameter {

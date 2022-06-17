@@ -4,7 +4,7 @@
   "peerDependencies": {
     "@angular/common": ">13.0.0",
     "@angular/core": ">13.0.0",
-    "ethers": "^5.6.0"
+    "@ngeth/ethers-core": "0.0.19"
   },
   "dependencies": {
     "tslib": "^2.3.0",

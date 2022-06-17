@@ -1,7 +1,8 @@
 import { Inject, Injectable } from "@angular/core";
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from "@angular/router";
+import { toChainId } from '@ngeth/ethers-core';
 import { map, tap } from "rxjs";
-import { SUPPORTED_CHAINS, toChainIndex } from "./chain";
+import { SUPPORTED_CHAINS } from "./chain";
 import { ERC1193 } from "./erc1193";
 
 @Injectable({ providedIn: 'root' })
@@ -47,7 +48,7 @@ export class IsSupportedChainGuard {
     this.previous = state.url;
     if (this.supportedChains === '*') return true;
     if (!this.erc1193.chainId) return false;
-    const chainIndex = toChainIndex(this.erc1193.chainId);
+    const chainIndex = toChainId(this.erc1193.chainId);
     if (this.supportedChains.includes(chainIndex)) return true;
     const redirect = route.data['isSupportedChainRedirect'] ?? '/unsupported-chain';
     return this.router.navigate([redirect]);

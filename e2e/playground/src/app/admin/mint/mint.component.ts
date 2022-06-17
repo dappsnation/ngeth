@@ -55,6 +55,7 @@ export class MintComponent {
     const { metadata, mint } = this.form.value;
     if (!mint) return;
     const { to, tokenId, amount, data } = mint;
+    if (!to || !tokenId || !amount) return;
     this.form.disable();
     try {
       const content = JSON.stringify(metadata);

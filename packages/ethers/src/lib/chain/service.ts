@@ -1,8 +1,8 @@
 import { Inject, Injectable, InjectionToken, Optional } from "@angular/core";
+import type { ChainIcon, Chain, SupportedChains, ChainId } from "@ngeth/ethers-core";
+import { explore, toChainId, defaultCustomChains, toChainHex } from "@ngeth/ethers-core";
 import { Provider } from '@ethersproject/providers';
 import { ERC1193 } from "../erc1193";
-import { ChainIcon, Chain, SupportedChains, ChainId } from "./types";
-import { explore, getChain, getChainIcons, defaultCustomChains, toChainId } from "./utils";
 import { defer,  from } from "rxjs";
 import { filter, switchMap } from 'rxjs/operators';
 
@@ -18,6 +18,22 @@ export const SUPPORTED_CHAINS = new InjectionToken<SupportedChains>('List of sup
 
 function exist<T>(value?: T | null): value is T {
   return value !== undefined && value !== null;
+}
+
+export function getChain(chainId: string | number): Promise<Chain> {
+  const id = toChainId(chainId); // transform into decimals
+  const url = `https://raw.githubusercontent.com/ethereum-lists/chains/master/_data/chains/eip155-${id}.json`;
+  return fetch(url).then(res => res.json());
+}
+
+export function getChainIcons(name: string, format?: ChainIcon['format']): Promise<ChainIcon> {
+  const url = `https://github.com/ethereum-lists/chains/blob/master/_data/icons/${name}.json`;
+  return fetch(url)
+    .then(res => res.json())
+    .then((icons: ChainIcon[]) => {
+      if (!format) return icons[0];
+      return icons.find(icon => icon.format === format) ?? icons[0];
+    });
 }
 
 @Injectable({ providedIn: 'root' })
@@ -47,7 +63,7 @@ export class ChainManager {
   async getChain(chainId?: ChainId): Promise<Chain> {
     chainId = chainId ?? await this.currentChain();
     if (!chainId) throw new Error('No chainId provided');
-    const id = toChainId(chainId);
+    const id = toChainHex(chainId);
     if (id in this.customChains) return this.customChains[id];
     if (!this.chains[id]) {
       this.chains[id] = await getChain(id);

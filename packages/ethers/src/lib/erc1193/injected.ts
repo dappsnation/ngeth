@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ERC1193 } from './service';
 import { getAddress } from '@ethersproject/address';
-import { toChainIndex } from '../chain';
+import { toChainId } from '@ngeth/ethers-core';
 import { ERC1193Provider, WalletProfile } from './types';
 
 function toInjectedWallet(provider: any): WalletProfile {
@@ -45,6 +45,6 @@ export class InjectedProviders extends ERC1193 {
 
   get chainId() {
     if (!this.provider?.chainId) return;
-    return toChainIndex(this.provider.chainId);
+    return toChainId(this.provider.chainId);
   }
 }
