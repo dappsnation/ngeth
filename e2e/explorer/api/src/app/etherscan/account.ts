@@ -186,20 +186,33 @@ export function token1155Tx(params: GetParams<Token1155Tx>) {
   .filter(log => {
     if (startblock && startblock < log.blockNumber) return false;
     if (endblock && endblock > log.blockNumber) return false;
-    if (log.topics[0] !== transferSingleId ||log.topics[0] !== transferBatchId) return false;
+    if (log.topics[0] !== transferSingleId || log.topics[0] !== transferBatchId) return false;
     return true;
   })
   .sort(sorting[sort])
   .map(log => {
-    const [tokenId, tokenValue] = defaultAbiCoder.decode(['uint256', 'uint256' ], log.data);
     const receipt = store.receipts[log.transactionHash];
     const tx = store.transactions[log.transactionHash];
-    return {
-      ...toTransferTransaction(tx, receipt),
-      tokenId: tokenId.toString(),
-      tokenValue: tokenValue.toString()
+    const transferTx = toTransferTransaction(tx, receipt);
+    if (log.topics[0] === transferSingleId) {
+      const [tokenId, tokenValue] = defaultAbiCoder.decode(['uint256', 'uint256' ], log.data);
+      return {
+        ...transferTx,
+        tokenId: tokenId.toString(),
+        tokenValue: tokenValue.toString()
+      }
+    } else {
+      const [tokenIds, tokenValues] = defaultAbiCoder.decode(['uint256[]', 'uint256[]'], log.data);
+      const txs = [];
+      for (let i = 0; i < tokenIds.length; i++) {
+        const tokenId = tokenIds[i];
+        const tokenValue = tokenValues[i];
+        txs.push({...transferTx, tokenId: tokenId, tokenValue: tokenValue});
+      }
+      return txs;
     }
   })
+  .flat()
 
   if(!offset || !page) return etherscanTxs;
   return etherscanTxs.slice(offset*(page-1), offset*page);
