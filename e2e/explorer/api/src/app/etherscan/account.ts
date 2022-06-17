@@ -1,11 +1,12 @@
 import { TransactionReceipt, TransactionResponse, Log } from "@ethersproject/abstract-provider";
-import { Balance, BalanceMulti, GetParams, TxList, BlockMined, BalanceHistory, TokenTx, EtherscanTransaction } from "@ngeth/etherscan";
+import { Balance, BalanceMulti, GetParams, TxList, BlockMined, BalanceHistory, TokenTx, TransferTransaction, TokenNftTx, ERC20TransferTransaction, ERC721TransferTransaction } from "@ngeth/etherscan";
 import { store } from '../store';
 import { EthState } from "@explorer";
 import { BigNumber } from "@ethersproject/bignumber";
 import { id } from "@ethersproject/hash";
+import { defaultAbiCoder } from '@ethersproject/abi';
 
-function toEtherscanTransaction(tx: TransactionResponse, receipt: TransactionReceipt): EtherscanTransaction {
+function toTransferTransaction(tx: TransactionResponse, receipt: TransactionReceipt): TransferTransaction {
   return {
     blockNumber: tx.blockNumber.toString(),
     timeStamp: tx.timestamp.toString(),
@@ -132,7 +133,39 @@ export function tokenTx(params: GetParams<TokenTx>) {
     })
     .sort(sorting[sort])
     .map(log => log.transactionHash)
-    .map(hash => toEtherscanTransaction(store.transactions[hash], store.receipts[hash]));
+    .map(hash => toTransferTransaction(store.transactions[hash], store.receipts[hash]));
+
+  if (!params.offset || !page) return etherscanTxs;
+  return etherscanTxs.slice(offset*(page-1), offset*page);
+}
+
+export function tokenNftTx(params: GetParams<TokenNftTx>) {
+  const {address, contractaddress, startblock = 0, endblock, page, sort='asc', offset} = params;
+  if (!address || !contractaddress) throw new Error('Error! Missing address or contract address');
+  
+  const transferID = id('Transfer(address,address,uint256)');
+  const sorting = {
+    asc: (a: Log, b: Log) => a.blockNumber - b.blockNumber,
+    desc: (a: Log, b: Log) => b.blockNumber - a.blockNumber
+  }; 
+
+  const etherscanTxs = store.logs[address]
+  .filter(log => {
+    if(startblock && log.blockNumber < startblock) return false;
+    if(endblock && log.blockNumber > endblock) return false;
+    if(log.topics[0] !== transferID) return false;    
+  })
+  .sort(sorting[sort])
+  .map(log => {
+    const [tokenId] = defaultAbiCoder.decode(['uint256'], log.topics[3]);
+    const receipt = store.receipts[log.transactionHash];
+    const tx = store.transactions[log.transactionHash];
+    return {
+      ...toTransferTransaction(tx, receipt),
+      tokenId: tokenId.toString(),
+      tokenDecimal: '0'
+    }
+  })
 
   if (!params.offset || !page) return etherscanTxs;
   return etherscanTxs.slice(offset*(page-1), offset*page);
