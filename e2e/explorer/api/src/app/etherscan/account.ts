@@ -193,23 +193,17 @@ export function token1155Tx(params: GetParams<Token1155Tx>) {
   .map(log => {
     const receipt = store.receipts[log.transactionHash];
     const tx = store.transactions[log.transactionHash];
-    const transferTx = toTransferTransaction(tx, receipt);
+    const toERC1155tx = (id: BigNumber, value: BigNumber) => ({
+      ...toTransferTransaction(tx, receipt),
+      tokenId: id.toString(),
+      tokenValue: value.toString()
+    });
     if (log.topics[0] === transferSingleId) {
-      const [tokenId, tokenValue] = defaultAbiCoder.decode(['uint256', 'uint256' ], log.data);
-      return {
-        ...transferTx,
-        tokenId: tokenId.toString(),
-        tokenValue: tokenValue.toString()
-      }
+      const [id, value] = defaultAbiCoder.decode(['uint256', 'uint256' ], log.data);
+      return toERC1155tx(id, value)
     } else {
-      const [tokenIds, tokenValues] = defaultAbiCoder.decode(['uint256[]', 'uint256[]'], log.data);
-      const txs = [];
-      for (let i = 0; i < tokenIds.length; i++) {
-        const tokenId = tokenIds[i];
-        const tokenValue = tokenValues[i];
-        txs.push({ ...transferTx, tokenId: tokenId.toString(), tokenValue: tokenValue.toString() });
-      }
-      return txs;
+      const [ids, values] = defaultAbiCoder.decode(['uint256[]', 'uint256[]'], log.data);
+      return ids.map((id, i) => toERC1155tx(id, values[i]));
     }
   })
   .flat()
