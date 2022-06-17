@@ -114,101 +114,57 @@ export function balanceHistory(params: GetParams<BalanceHistory>) {
   return balance.toString();
 }
 
-export function tokenTx(params: GetParams<TokenTx>) {
+export function tokensTx(params: GetParams<TokenTx>) {
   const {address, contractaddress, startblock = 0, endblock, page, sort='asc', offset} = params;
   if (!address || !contractaddress) throw new Error('Error! Missing address or contract address');
   
   const transferID = id('Transfer(address,address,uint256)');
+  const transferSingleId = id('TransferSingle(address, address, address, uint256, uint256)');
+  const transferBatchId = id('TransferBatch(address, address, address, uint256[], uint256[])')
+
   const sorting = {
     asc: (a: Log, b: Log) => a.blockNumber - b.blockNumber,
     desc: (a: Log, b: Log) => b.blockNumber - a.blockNumber
-  };  
-
-  const etherscanTxs = store.logs[address]
-    .filter(log => {
-      if (startblock && log.blockNumber < startblock) return false;
-      if (endblock && log.blockNumber > endblock) return false;
-      if (log.topics[0] !== transferID) return false;
-      return true;
-    })
-    .sort(sorting[sort])
-    .map(log => log.transactionHash)
-    .map(hash => toTransferTransaction(store.transactions[hash], store.receipts[hash]));
-
-  if (!params.offset || !page) return etherscanTxs;
-  return etherscanTxs.slice(offset*(page-1), offset*page);
-}
-
-export function tokenNftTx(params: GetParams<TokenNftTx>) {
-  const {address, contractaddress, startblock = 0, endblock, page, sort='asc', offset} = params;
-  if (!address || !contractaddress) throw new Error('Error! Missing address or contract address');
-  
-  const transferID = id('Transfer(address,address,uint256)');
-  const sorting = {
-    asc: (a: Log, b: Log) => a.blockNumber - b.blockNumber,
-    desc: (a: Log, b: Log) => b.blockNumber - a.blockNumber
-  }; 
+  };
 
   const etherscanTxs = store.logs[address]
   .filter(log => {
     if(startblock && log.blockNumber < startblock) return false;
     if(endblock && log.blockNumber > endblock) return false;
-    if(log.topics[0] !== transferID) return false;    
+    if(log.topics[0] !== transferID || log.topics[0] !== transferSingleId || log.topics[0] !== transferBatchId) return false;  
+    return true;  
   })
   .sort(sorting[sort])
   .map(log => {
-    const [tokenId] = defaultAbiCoder.decode(['uint256'], log.topics[3]);
     const receipt = store.receipts[log.transactionHash];
     const tx = store.transactions[log.transactionHash];
-    return {
-      ...toTransferTransaction(tx, receipt),
-      tokenId: tokenId.toString(),
-      tokenDecimal: '0'
+    const txTransfer = toTransferTransaction(tx, receipt);
+    //ERC20
+    if (log.topics[0] === transferID && !log.topics[3]) {
+      return { ...txTransfer, tokenDecimal: '0' };
     }
-  })
-
-  if (!params.offset || !page) return etherscanTxs;
-  return etherscanTxs.slice(offset*(page-1), offset*page);
-}
-
-export function token1155Tx(params: GetParams<Token1155Tx>) {
-  const {address, contractaddress, startblock = 0, endblock, page, sort='asc', offset} = params;
-  if (!address || !contractaddress) throw new Error('Error! Missing address or contract address');
-
-  const transferSingleId = id('TransferSingle(address, address, address, uint256, uint256)');
-  const transferBatchId = id('TransferBatch(address, address, address, uint256[], uint256[])')
-  const sorting = {
-    asc: (a: Log, b: Log) => a.blockNumber - b.blockNumber,
-    desc: (a: Log, b: Log) => b.blockNumber - a.blockNumber
-  }
-
-  const etherscanTxs = store.logs[address]
-  .filter(log => {
-    if (startblock && startblock < log.blockNumber) return false;
-    if (endblock && endblock > log.blockNumber) return false;
-    if (log.topics[0] !== transferSingleId || log.topics[0] !== transferBatchId) return false;
-    return true;
-  })
-  .sort(sorting[sort])
-  .map(log => {
-    const receipt = store.receipts[log.transactionHash];
-    const tx = store.transactions[log.transactionHash];
+    //ERC721
+    if (log.topics[0] === transferID && log.topics[3]) {
+      const [id] = defaultAbiCoder.decode(['uint256'], log.topics[3]);
+      return { ...txTransfer, tokenId: id.toString(), tokenDecimal: '0' };
+    }
+    //ERC1155
     const toERC1155tx = (id: BigNumber, value: BigNumber): ERC1155TransferTransaction => ({
-      ...toTransferTransaction(tx, receipt),
+      ...txTransfer,
       tokenId: id.toString(),
       tokenValue: value.toString()
     });
     if (log.topics[0] === transferSingleId) {
       const [id, value] = defaultAbiCoder.decode(['uint256', 'uint256' ], log.data);
       return toERC1155tx(id, value)
-    } else {
+    } else if (log.topics[0] === transferBatchId) {
       const [ids, values] = defaultAbiCoder.decode(['uint256[]', 'uint256[]'], log.data);
       return ids.map((id, i) => toERC1155tx(id, values[i]));
     }
   })
   .flat()
-
-  if(!offset || !page) return etherscanTxs;
+  
+  if (!offset || !page) return etherscanTxs;
   return etherscanTxs.slice(offset*(page-1), offset*page);
 
 }
