@@ -207,7 +207,7 @@ export function token1155Tx(params: GetParams<Token1155Tx>) {
       for (let i = 0; i < tokenIds.length; i++) {
         const tokenId = tokenIds[i];
         const tokenValue = tokenValues[i];
-        txs.push({...transferTx, tokenId: tokenId, tokenValue: tokenValue});
+        txs.push({ ...transferTx, tokenId: tokenId.toString(), tokenValue: tokenValue.toString() });
       }
       return txs;
     }
