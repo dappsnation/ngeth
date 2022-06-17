@@ -1,24 +1,26 @@
-import hre from 'hardhat';
+import { config, ethers } from 'hardhat';
 import { saveAddresses } from '@ngeth/hardhat';
 import { BaseERC1155Factory, BaseERC20Factory } from '../contracts'
-console.log('Hi, I am a script test');
 
-
-async function deploy() {
-  const erc20Factory = new BaseERC20Factory();
-  const erc1155Factory = new BaseERC1155Factory();
+async function main() {
+  console.log('Start Deploying');
+  const [signer] = await ethers.getSigners()
+  const erc20Factory = new BaseERC20Factory(signer);
+  const erc1155Factory = new BaseERC1155Factory(signer);
   const [ erc20, erc1155 ] = await Promise.all([
-    erc20Factory.deploy('name'),
-    erc1155Factory.deploy('uri'),
+    erc20Factory.deploy('name').then(c => c.deployed()),
+    erc1155Factory.deploy('uri').then(c => c.deployed()),
   ]);
-  await Promise.all([
-    erc20.deployed(),
-    erc1155.deployed()
-  ]);
-  await saveAddresses(hre, {
-    erc20: erc1155.address,
+  await saveAddresses(config, {
+    erc20: erc20.address,
     erc1155: erc1155.address,
   });
+  console.log('Address saved.');
 }
 
-deploy();
+main()
+  .then(() => process.exit(0))
+  .catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });

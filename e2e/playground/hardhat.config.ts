@@ -12,6 +12,7 @@ export default {
     artifacts: './artifacts',
   },
   ngeth: {
+    type: 'angular',
     outDir: './src/app/contracts',
     withImports: false,
     autoDeploy: {

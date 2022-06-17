@@ -1,17 +1,17 @@
 import { join, resolve } from 'path';
 import { existsSync, mkdirSync, promises as fs } from 'fs';
 import { Artifact, HardhatRuntimeEnvironment } from 'hardhat/types';
-import { getContract, getContractManager, getFactory } from '@ngeth/tools';
+import { getEthersContract, getNgContract, getContractManager, getFactory } from '@ngeth/tools';
 import { formatTs } from './utils';
 
 
-const contractIndex = (contractName: string) => `
-export * from './contract';
-export * from './factory';
-export * from './manager';
-export { default as ${contractName}Abi } from './abi';
-export { default as ${contractName}Bytecode } from './bytecode';
-`;
+const contractIndex = (contractName: string, type: 'angular' | 'typescript') => formatTs(`
+  export * from './contract';
+  export * from './factory';
+  ${type === 'angular' ? "export * from './manager';" : ''}
+  export { default as ${contractName}Abi } from './abi';
+  export { default as ${contractName}Bytecode } from './bytecode';
+`);
 
 export async function generate(hre: HardhatRuntimeEnvironment, allArtifacts: Artifact[]) {
   const root = hre.config.paths.root;
@@ -24,24 +24,42 @@ export async function generate(hre: HardhatRuntimeEnvironment, allArtifacts: Art
 
   const write = artifacts.map(artifact => {
     const contractName = artifact.contractName;
+    const contractFolder = join(folder, contractName);
+    if (!existsSync(contractFolder)) mkdirSync(contractFolder, { recursive: true });
+
+    const writeFile = (filename: string, content: string) => {
+      return fs.writeFile(join(contractFolder, filename), content)
+    }
+
+    const type = hre.config.ngeth.type;
+    const actions = [];
+
+    if (type === 'angular') {
+      const contract = getNgContract(contractName, artifact.abi);
+      const manager = getContractManager(contractName);
+      actions.push(
+        writeFile('contract.ts', formatTs(contract)),
+        writeFile('manager.ts', formatTs(manager)),
+      );
+    }
+
+    if (type === 'typescript') {
+      const contract = getEthersContract(contractName, artifact.abi);
+      actions.push(writeFile('contract.ts', formatTs(contract)));
+    }
   
-    const contract = getContract(contractName, artifact.abi);
-    const manager = getContractManager(contractName);
     const factory = getFactory(contractName, artifact.abi);
     const abi = `export default ${JSON.stringify(artifact.abi)}`;
     const bytecode = `export default "${artifact.bytecode}"`;
-    const index = contractIndex(contractName);
+    const index = contractIndex(contractName, type);
   
-    const contractFolder = join(folder, contractName);
-    if (!existsSync(contractFolder)) mkdirSync(contractFolder, { recursive: true });
     return Promise.all([
-      fs.writeFile(join(contractFolder, 'abi.ts'), abi),
-      fs.writeFile(join(contractFolder, 'bytecode.ts'), bytecode),
-      fs.writeFile(join(contractFolder, 'contract.ts'), formatTs(contract)),
-      fs.writeFile(join(contractFolder, 'manager.ts'), formatTs(manager)),
-      fs.writeFile(join(contractFolder, 'factory.ts'), formatTs(factory)),
-      fs.writeFile(join(contractFolder, 'index.ts'), index),
-    ])
+      writeFile('abi.ts', abi),
+      writeFile('bytecode.ts', bytecode),
+      writeFile('factory.ts', formatTs(factory)),
+      writeFile('index.ts', index),
+      ...actions
+    ]);
   })
   await Promise.all(write);
   const exportContracts = artifacts

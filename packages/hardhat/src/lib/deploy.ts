@@ -1,5 +1,5 @@
 import { existsSync, mkdirSync, promises as fs } from "fs";
-import { Artifact, HardhatRuntimeEnvironment } from "hardhat/types";
+import { Artifact, HardhatConfig, HardhatRuntimeEnvironment } from "hardhat/types";
 import { formatTs } from './utils';
 import { join } from "path";
 
@@ -36,9 +36,9 @@ export async function deploy(hre: HardhatRuntimeEnvironment, artifacts: Artifact
 }
 
 
-export function saveAddresses(hre: HardhatRuntimeEnvironment, addresses: Record<string, string>) {
-  const root = hre.config.paths.root;
-  const outDir = join(root, hre.config.ngeth.outDir);
+export function saveAddresses(config: HardhatConfig, addresses: Record<string, string>) {
+  const root = config.paths.root;
+  const outDir = join(root, config.ngeth.outDir);
   if (!existsSync(outDir)) mkdirSync(outDir, { recursive: true });
   const code = formatTs(`export default ${JSON.stringify(addresses)};`);
   return fs.writeFile(join(outDir, 'addresses.ts'), code);

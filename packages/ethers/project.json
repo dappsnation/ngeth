@@ -7,19 +7,19 @@
     "link": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "command": "npm link dist/packages/ethers"
+        "command": "npm link dist/packages/ethers/angular"
       }
     },
     "publish": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "command": "npm publish --tag={args.tag} --access=public",
-        "cwd": "dist/packages/ethers"
+        "cwd": "dist/packages/ethers/angular"
       }
     },
     "build": {
       "executor": "@nrwl/angular:package",
-      "outputs": ["dist/packages/ethers"],
+      "outputs": ["dist/packages/ethers/angular"],
       "options": {
         "project": "packages/ethers/ng-package.json"
       },

@@ -12,6 +12,7 @@ export default {
     artifacts: './artifacts',
   },
   ngeth: {
+    type: 'typescript',
     outDir: './contracts',
     explorer: false,
     exec: {

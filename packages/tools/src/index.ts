@@ -1,3 +1,4 @@
+export * from './lib/angular';
 export * from './lib/contract';
 export * from './lib/factory';
 export * from './lib/imports';
