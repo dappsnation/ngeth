@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 
 @Component({
   selector: 'ngeth-root',
@@ -7,9 +7,9 @@ import { FormControl, FormGroup } from '@angular/forms';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-  form = new FormGroup({
-    name: new FormControl(),
-    abi: new FormControl(),
+  form = new UntypedFormGroup({
+    name: new UntypedFormControl(),
+    abi: new UntypedFormControl(),
   });
   generate() {
     const { name, abi } = this.form.value;

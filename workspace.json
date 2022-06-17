@@ -3,6 +3,7 @@
   "projects": {
     "devkit": "packages/devkit",
     "ethers": "packages/ethers",
+    "ethers-core": "packages/ethers/core",
     "etherscan": "packages/etherscan",
     "explorer": "e2e/explorer",
     "explorer-api": "e2e/explorer/api",
@@ -21,5 +22,6 @@
     "plugin-e2e": "e2e/plugin-e2e",
     "polygon": "packages/polygon",
     "tools": "packages/tools"
-  }
+  },
+  "$schema": "./node_modules/nx/schemas/workspace-schema.json"
 }

@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { ViewComponent } from '../view.component';
-import { FormArray } from '@angular/forms';
+import { UntypedFormArray } from '@angular/forms';
 import { AbiFormFunction, formABI } from './utils';
 import { map } from 'rxjs/operators';
 import { WalletManager } from '../../../../wallet';
@@ -25,7 +25,7 @@ export class AbiComponent {
     private cdr: ChangeDetectorRef,
   ) { }
 
-  private onError(form: FormArray, error: Error) {
+  private onError(form: UntypedFormArray, error: Error) {
     const err = error.message.length < 300 ? error.message : 'An error occured. Check your console';
     form.addValidators(() => ({ err }));
     form.updateValueAndValidity();

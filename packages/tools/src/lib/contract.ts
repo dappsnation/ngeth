@@ -2,15 +2,14 @@
 import { ABIDescription, EventDescription, FunctionDescription } from '@type/solc';
 import { getAllCalls, getAllEvents, getAllFilters, getAllMethods, getAllQueries, getAllStructs, isRead, isEvent, isWrite } from './utils';
 
-export const getContract = (contractName: string, abi: ABIDescription[]) => {
+export const getEthersContract = (contractName: string, abi: ABIDescription[]) => {
   const calls: FunctionDescription[] = abi.filter(isRead);
   const methods: FunctionDescription[] = abi.filter(isWrite);
   const events: EventDescription[] = abi.filter(isEvent);
   const structs = getAllStructs(abi);
 
   return `
-  import { NgZone } from '@angular/core';
-  import { NgContract, FilterParam, TypedFilter } from '@ngeth/ethers';
+  import { EthersContract, FilterParam, TypedFilter } from '@ngeth/ethers-core';
   import type { BigNumber, Overrides, CallOverrides, PayableOverrides, Signer, ContractTransaction, BytesLike, BigNumberish } from "ethers";
   import type { Provider } from '@ethersproject/providers';
   import abi from './abi';
@@ -23,15 +22,15 @@ export const getContract = (contractName: string, abi: ABIDescription[]) => {
   
   ${structs}
   
-  export class ${contractName} extends NgContract<${contractName}Events> {
+  export class ${contractName} extends EthersContract<${contractName}Events> {
     // Read
     ${getAllCalls(calls, 'class')}
 
     // Write
     ${getAllMethods(methods, 'class')}
 
-    constructor(address: string, signer?: Signer | Provider, zone?: NgZone) {
-      super(address, abi, signer, zone);
+    constructor(address: string, signer?: Signer | Provider) {
+      super(address, abi, signer);
     }
   }`;
 }

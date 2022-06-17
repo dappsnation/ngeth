@@ -1,27 +1,25 @@
 {
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "library",
-  "root": "packages/ethers",
   "sourceRoot": "packages/ethers/src",
   "prefix": "ngeth",
   "targets": {
     "link": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "command": "npm link dist/packages/ethers"
+        "command": "npm link dist/packages/ethers/angular"
       }
     },
     "publish": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "command": "npm publish --tag={args.tag} --access=public",
-        "cwd": "dist/packages/ethers"
+        "cwd": "dist/packages/ethers/angular"
       }
     },
     "build": {
       "executor": "@nrwl/angular:package",
-      "outputs": [
-        "dist/packages/ethers"
-      ],
+      "outputs": ["dist/packages/ethers/angular"],
       "options": {
         "project": "packages/ethers/ng-package.json"
       },
@@ -37,11 +35,9 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": [
-        "coverage/packages/ethers"
-      ],
+      "outputs": ["coverage/packages/ethers"],
       "options": {
-        "jestConfig": "packages/ethers/jest.config.js",
+        "jestConfig": "packages/ethers/jest.config.ts",
         "passWithNoTests": true
       }
     },

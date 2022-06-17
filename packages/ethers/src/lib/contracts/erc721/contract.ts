@@ -1,5 +1,6 @@
-import { NgContract, FilterParam, TypedFilter } from "../../contract";
-import {
+import { FilterParam, TypedFilter } from '@ngeth/ethers-core';
+import { NgContract } from "../../contract";
+import type {
   BigNumber,
   Overrides,
   CallOverrides,
@@ -7,8 +8,8 @@ import {
   ContractTransaction,
   BytesLike,
   BigNumberish,
-  constants,
 } from "ethers";
+import { AddressZero } from '@ethersproject/constants'
 import { Provider } from "@ethersproject/providers";
 import { NgZone } from "@angular/core";
 import { combineLatest } from "rxjs";
@@ -62,7 +63,7 @@ export class ERC721 extends NgContract<BaseERC721Events> {
     overrides?: Overrides
   ) => Promise<ContractTransaction>;
 
-  allTokens$ = this.from(this.filters.Transfer(constants.AddressZero)).pipe(
+  allTokens$ = this.from(this.filters.Transfer(AddressZero)).pipe(
     map(events => events.map(event => event.args[2].toString()))
   );
 
