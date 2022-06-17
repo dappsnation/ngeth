@@ -157,8 +157,7 @@ export function tokensTx(params: GetParams<TokenTx>) {
     if (log.topics[0] === transferSingleId) {
       const [id, value] = defaultAbiCoder.decode(['uint256', 'uint256' ], log.data);
       return toERC1155tx(id, value)
-    }
-    else if (log.topics[0] === transferBatchId) {
+    } else if (log.topics[0] === transferBatchId) {
       const [ids, values] = defaultAbiCoder.decode(['uint256[]', 'uint256[]'], log.data);
       return ids.map((id, i) => toERC1155tx(id, values[i]));
     }
