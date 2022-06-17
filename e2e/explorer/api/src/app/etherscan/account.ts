@@ -175,8 +175,8 @@ export function token1155Tx(params: GetParams<Token1155Tx>) {
   const {address, contractaddress, startblock = 0, endblock, page, sort='asc', offset} = params;
   if (!address || !contractaddress) throw new Error('Error! Missing address or contract address');
 
-  const transferId = id('TransferSingle(address, address, address, uint256, uint256)');
-  const transferIdBatch = id('TransferBatch(address, address, address, uint256, uint256)')
+  const transferSingleId = id('TransferSingle(address, address, address, uint256, uint256)');
+  const transferBatchId = id('TransferBatch(address, address, address, uint256, uint256)')
   const sorting = {
     asc: (a: Log, b: Log) => a.blockNumber - b.blockNumber,
     desc: (a: Log, b: Log) => b.blockNumber - a.blockNumber
@@ -186,7 +186,7 @@ export function token1155Tx(params: GetParams<Token1155Tx>) {
   .filter(log => {
     if (startblock && startblock < log.blockNumber) return false;
     if (endblock && endblock > log.blockNumber) return false;
-    if (log.topics[0] !== transferId) return false;
+    if (log.topics[0] !== transferSingleId ||log.topics[0] !== transferBatchId) return false;
     return true;
   })
   .sort(sorting[sort])
