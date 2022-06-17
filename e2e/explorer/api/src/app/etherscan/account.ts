@@ -176,7 +176,7 @@ export function token1155Tx(params: GetParams<Token1155Tx>) {
   if (!address || !contractaddress) throw new Error('Error! Missing address or contract address');
 
   const transferSingleId = id('TransferSingle(address, address, address, uint256, uint256)');
-  const transferBatchId = id('TransferBatch(address, address, address, uint256, uint256)')
+  const transferBatchId = id('TransferBatch(address, address, address, uint256[], uint256[])')
   const sorting = {
     asc: (a: Log, b: Log) => a.blockNumber - b.blockNumber,
     desc: (a: Log, b: Log) => b.blockNumber - a.blockNumber
