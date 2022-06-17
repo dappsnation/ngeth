@@ -5,7 +5,7 @@ import { generate } from './lib/generate';
 import { getDefaultConfig } from './lib/config';
 import { existsSync, mkdirSync, promises as fs } from 'fs';
 import { getContractImport } from '@ngeth/tools';
-import { execute } from '@ngeth/devkit';
+import { execute } from './lib/execute';
 import { serveApp } from './lib/utils';
 
 
