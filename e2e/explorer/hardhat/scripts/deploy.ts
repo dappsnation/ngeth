@@ -4,7 +4,10 @@ import { BaseERC1155Factory, BaseERC20Factory } from '../contracts'
 
 async function main() {
   console.log('Start Deploying');
-  const [signer] = await hre.ethers.getSigners()
+  // const provider = hre.ethers.getDefaultProvider('http://localhost:8545');
+  // const wallet = new Wallet('0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d', provider);
+
+  const [signer] = await hre.ethers.getSigners();
   const erc20Factory = new BaseERC20Factory(signer);
   const erc1155Factory = new BaseERC1155Factory(signer);
   const [ erc20, erc1155 ] = await Promise.all([

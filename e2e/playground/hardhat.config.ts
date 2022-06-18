@@ -19,6 +19,6 @@ export default {
     explorer: {
       api: 3000,
       app: 3001
-    }
+    },
   },
 };

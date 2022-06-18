@@ -41,11 +41,11 @@ task('ngeth:build', 'Build the contracts and generate outputs')
 
 task('ngeth:serve')
   .setAction(async (taskArguments: any, hre) => {
+    hre.hardhatArguments.network = 'localhost';
     await hre.run('ngeth:build', taskArguments);
     return hre.run('node', taskArguments);
   });
 
-// TODO: add "exec" field with scenario for E2E
 task('node:server-ready', 'Run once the node is ready')
   .setAction(async (taskArguments: any, hre, runSuper: any) => {
     await runSuper();
@@ -98,7 +98,7 @@ task('node:server-ready', 'Run once the node is ready')
         EXPLORER_APP_PORT: app.toString(),
         EXPLORER_API_PORT: api.toString()
       };
-      execute({logger: console}, 'node explorer/api/main.js', { cwd, env });
+      execute('node explorer/api/main.js', { cwd, env });
       
       // APP
       const appPath = join(cwd, 'explorer/app');
