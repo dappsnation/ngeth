@@ -43,11 +43,11 @@ Won't be implemented
 
 ## Tokens : already implement on different modules
 
-- [ ] tokensupply
-- [ ] tokenbalance
-- [ ] tokensupplyhistory
-- [ ] tokenbalancehistory
-- [ ] tokeninfo
+- [x] tokensupply
+- [x] tokenbalance
+- [x] tokensupplyhistory
+- [x] tokenbalancehistory
+- [ ] tokeninfo: ?
 
 ## Gas Tracker
 
@@ -55,7 +55,7 @@ Won't be implemented
 
 ## Stats
 
-- [ ] ethsupply : ?
+- [x] ethsupply
 
 The rest of the function aren't support by hardhat
 
