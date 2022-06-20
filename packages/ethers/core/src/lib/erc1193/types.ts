@@ -28,7 +28,7 @@ export interface ProviderConnectInfo {
 
 export interface WalletProfile {
   label: string;
-  provider: NgERC1193Provider;
+  provider: ERC1193Provider;
 }
 
 export interface NgERC1193Events {
@@ -44,7 +44,7 @@ export type NgERC1193Param<K extends keyof NgERC1193Events> = Parameters<NgERC11
   ? I
   : Parameters<NgERC1193Events[K]>;
 
-export interface NgERC1193Provider {
+export interface ERC1193Provider {
   chainId?: string;
   networkVersion?: string;
   selectedAddress?: string;

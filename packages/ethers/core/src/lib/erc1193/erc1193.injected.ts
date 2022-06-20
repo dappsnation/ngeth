@@ -1,7 +1,6 @@
-import { Injectable } from '@angular/core';
-import { NgERC1193 } from './service';
 import { getAddress } from '@ethersproject/address';
-import { toChainId } from '@ngeth/ethers-core';
+import { ERC1193 } from './erc1193';
+import { toChainId } from '../chain/utils';
 import { ERC1193Provider, WalletProfile } from './types';
 
 function toInjectedWallet(provider: any): WalletProfile {
@@ -19,13 +18,17 @@ function getInjectedProviders(): ERC1193Provider[] {
   return [ethereum];
 }
 
-@Injectable({ providedIn: 'root' })
-export class InjectedProviders extends NgERC1193 {
+export class InjectedProviders extends ERC1193 {
+  wallet?: WalletProfile;
   wallets = getInjectedProviders().map(toInjectedWallet);
 
   constructor() {
     super();
     if (this.wallets.length === 1) this.selectWallet(this.wallets[0]);
+  }
+
+  protected onWalletChange(wallet: WalletProfile) {
+    this.wallet = wallet;
   }
 
   protected async getWallet() {

@@ -1,4 +1,4 @@
-import { Chain, SupportedChains } from "./types";
+import { Chain, ChainIcon, SupportedChains } from "./types";
 
 export function toChainHex(id: string | number) {
   if (typeof id === 'string') return id;
@@ -18,6 +18,22 @@ export function isSupportedChain(chainId: string | number, supportedChains: Supp
   if (supportedChains === '*') return true;
   const chainIndex = toChainId(chainId);
   return supportedChains.includes(chainIndex);
+}
+
+export function getChain(chainId: string | number): Promise<Chain> {
+  const id = toChainId(chainId); // transform into decimals
+  const url = `https://raw.githubusercontent.com/ethereum-lists/chains/master/_data/chains/eip155-${id}.json`;
+  return fetch(url).then(res => res.json());
+}
+
+export function getChainIcons(name: string, format?: ChainIcon['format']): Promise<ChainIcon> {
+  const url = `https://github.com/ethereum-lists/chains/blob/master/_data/icons/${name}.json`;
+  return fetch(url)
+    .then(res => res.json())
+    .then((icons: ChainIcon[]) => {
+      if (!format) return icons[0];
+      return icons.find(icon => icon.format === format) ?? icons[0];
+    });
 }
 
 

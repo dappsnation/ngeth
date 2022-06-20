@@ -1,10 +1,10 @@
 import { NgZone } from "@angular/core";
 import { Provider, EventFilter } from "@ethersproject/abstract-provider";
 import { Observable } from "rxjs";
-import { NgERC1193Provider } from "./erc1193";
+import { ERC1193Provider } from "./erc1193";
 
 export function fromEthEvent<T>(
-  provider: Provider | NgERC1193Provider,
+  provider: Provider | ERC1193Provider,
   zone: NgZone,
   event: string | EventFilter,
   initial?: Partial<T>

@@ -1,6 +1,6 @@
-import { AddChainParameter, NgERC1193Provider, WalletProfile, WatchAssetParams } from './types';
-import { toChainHex } from '../chain/utils';
 import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers';
+import { AddChainParameter, ERC1193Provider, WalletProfile, WatchAssetParams } from './types';
+import { toChainHex } from '../chain/utils';
 
 
 const errorCode = {
@@ -15,7 +15,7 @@ export abstract class ERC1193<Wallet extends WalletProfile = WalletProfile> {
   #ethersProvider?: Web3Provider;
   #ethersSigner?: JsonRpcSigner;
   
-  protected provider?: NgERC1193Provider;
+  protected provider?: ERC1193Provider;
   abstract account?: string;
   abstract chainId?: number;
   abstract wallets: Wallet[];
@@ -49,7 +49,7 @@ export abstract class ERC1193<Wallet extends WalletProfile = WalletProfile> {
   /** Select a wallet and connect to it */
   async enable(wallet?: Wallet): Promise<string[]> {
     await this.selectWallet(wallet);
-    if (!this.provider) throw new Error('No provider connected to NgERC1193');
+    if (!this.provider) throw new Error('No provider connected to ERC1193');
     return this.provider.request({ method: 'eth_requestAccounts' });
   }
 
@@ -60,7 +60,7 @@ export abstract class ERC1193<Wallet extends WalletProfile = WalletProfile> {
    */
   switchChain(id: string | number) {
     const chainId = toChainHex(id);
-    if (!this.provider) throw new Error('No provider connected to NgERC1193');
+    if (!this.provider) throw new Error('No provider connected to ERC1193');
     return this.provider.request<null>({
       method: 'wallet_switchEthereumChain',
       params: [{ chainId }]
@@ -68,7 +68,7 @@ export abstract class ERC1193<Wallet extends WalletProfile = WalletProfile> {
   }
 
   addChain(chain: AddChainParameter) {
-    if (!this.provider) throw new Error('No provider connected to NgERC1193');
+    if (!this.provider) throw new Error('No provider connected to ERC1193');
     return this.provider.request<null>({
       method: 'wallet_addEthereumChain',
       params: [chain]
@@ -76,7 +76,7 @@ export abstract class ERC1193<Wallet extends WalletProfile = WalletProfile> {
   }
 
   watchAsset(params: WatchAssetParams['options']) {
-    if (!this.provider) throw new Error('No provider connected to NgERC1193');
+    if (!this.provider) throw new Error('No provider connected to ERC1193');
     return this.provider.request<boolean>({
       method: 'wallet_watchAsset',
       params: { type: 'ERC20', options: params }
