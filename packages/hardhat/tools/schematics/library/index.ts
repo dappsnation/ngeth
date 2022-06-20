@@ -1,12 +1,6 @@
-import { getProjectOptions } from '@ngeth/devkit';
-import {
-  addProjectConfiguration,
-  addDependenciesToPackageJson,
-  formatFiles,
-  Tree,
-} from '@nrwl/devkit';
-import { BaseOptions, addFiles } from '@ngeth/devkit';
-
+import { getProjectOptions, addFiles } from '@ngeth/devkit';
+import { Tree, addProjectConfiguration, formatFiles } from '@nrwl/devkit';
+import { HardhatOptions, installHardhatDeps } from '../utils';
 
 function hardhatTarget(root: string, task: 'build' | 'serve' | 'test') {
   const tsconfig = task === 'test'
@@ -21,11 +15,8 @@ function hardhatTarget(root: string, task: 'build' | 'serve' | 'test') {
   }
 }
 
-interface HardhatLibOptions extends BaseOptions {
-  outputType: 'angular' | 'typescript';
-}
 
-export default async function (tree: Tree, baseOptions: HardhatLibOptions) {
+export default async function (tree: Tree, baseOptions: HardhatOptions) {
   const options = getProjectOptions(tree, baseOptions.project);
   addProjectConfiguration(tree, options.project, {
     root: options.projectRoot,
@@ -40,23 +31,5 @@ export default async function (tree: Tree, baseOptions: HardhatLibOptions) {
   });
   addFiles(tree, options, __dirname);
   await formatFiles(tree);
-  const deps: Record<string, string> = {
-    "ethers": "^5.6.0",
-    "@ngeth/ethers-core": "0.0.19"
-  };
-
-  if (baseOptions.outputType === 'angular') {
-    deps["@ngeth/ethers-angular"] = "0.0.19";
-  }
-
-  const devDeps: Record<string, string> = {
-    "@ngeth/hardhat": "0.0.19",
-    "@nomiclabs/hardhat-ethers": "^2.0.5",
-    "hardhat": "^2.9.0",
-    "prettier": "^2.6.0",
-    "ts-node": "^10.7.0",
-    "socket.io": "^4.5.0"
-  };
-  const installTask = addDependenciesToPackageJson(tree, deps, devDeps);
-  return () => installTask();
+  return installHardhatDeps(tree, baseOptions);
 }

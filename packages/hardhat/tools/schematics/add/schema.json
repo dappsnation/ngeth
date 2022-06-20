@@ -11,6 +11,11 @@
       "$default": {
         "$source": "projectName"
       }
+    },
+    "outputType": {
+      "type": "string",
+      "description": "Type of output. Either 'typescript' or 'angular' for now. Default: 'typescript'",
+      "default": "typescript"
     }
   },
   "required": []

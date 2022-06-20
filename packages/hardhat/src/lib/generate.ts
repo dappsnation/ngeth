@@ -19,8 +19,8 @@ export async function generate(hre: HardhatRuntimeEnvironment, allArtifacts: Art
   const artifacts = allArtifacts.filter(a => resolve(a.sourceName).startsWith(src));
   if (!artifacts.length) return;
 
-  const outDir = resolve(root, hre.config.ngeth.outDir);
-  const folder = join(outDir, 'contracts');
+  const outputPath = resolve(root, hre.config.ngeth.outputPath);
+  const folder = join(outputPath, 'contracts');
 
   const write = artifacts.map(artifact => {
     const contractName = artifact.contractName;
@@ -31,7 +31,7 @@ export async function generate(hre: HardhatRuntimeEnvironment, allArtifacts: Art
       return fs.writeFile(join(contractFolder, filename), content)
     }
 
-    const type = hre.config.ngeth.type;
+    const type = hre.config.ngeth.outputType;
     const actions = [];
 
     if (type === 'angular') {
@@ -66,5 +66,5 @@ export async function generate(hre: HardhatRuntimeEnvironment, allArtifacts: Art
     .map(artifact => `export * from "./contracts/${artifact.contractName}";`)
     .concat(`export { default as addresses } from './addresses';`)
     .join('\n');
-  return fs.writeFile(join(outDir, 'index.ts'), exportContracts);
+  return fs.writeFile(join(outputPath, 'index.ts'), exportContracts);
 }
