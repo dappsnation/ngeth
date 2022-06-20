@@ -207,6 +207,25 @@ export interface ERC1155TransferTransaction extends TransferTransaction {
   tokenId: string;
   tokenValue: string;
 }
+export interface TransactionList {
+  blockNumber: string,
+  timeStamp: string,
+  hash: string,
+  nonce: string,
+  blockHash: string,
+  transactionIndex: string,
+  from: string,
+  to: string,
+  value: string,
+  gas:string,
+  gasPrice: string,
+  isError: string,
+  txreceipt_status: string,
+  contractAddress: string,
+  cumulativesGasUsed: string,
+  gasUsed: string,
+  confirmation: string
+}
 
 // Params
 export type TransactionParams = GetStatus | GetTxReceiptStatus;

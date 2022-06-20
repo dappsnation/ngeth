@@ -1,5 +1,5 @@
 import { TransactionReceipt, TransactionResponse, Log } from "@ethersproject/abstract-provider";
-import { Balance, BalanceMulti, GetParams, TxList, BlockMined, BalanceHistory, TokenTx, TransferTransaction, TokenNftTx, ERC20TransferTransaction, ERC721TransferTransaction, Token1155Tx, ERC1155TransferTransaction } from "@ngeth/etherscan";
+import { Balance, BalanceMulti, GetParams, TxList, BlockMined, BalanceHistory, TokenTx, TransferTransaction, TokenNftTx, ERC20TransferTransaction, ERC721TransferTransaction, Token1155Tx, ERC1155TransferTransaction, TransactionList } from "@ngeth/etherscan";
 import { store } from '../store';
 import { EthState } from "@explorer";
 import { BigNumber } from "@ethersproject/bignumber";
@@ -23,6 +23,27 @@ function toTransferTransaction(tx: TransactionResponse, receipt: TransactionRece
     gasUsed: receipt.gasUsed.toString(),
     cumulativeGasUsed: receipt.cumulativeGasUsed.toString(),
     confirmation: tx.confirmations.toString(),
+  }
+}
+function toTransactionList(tx: TransactionResponse, receipt: TransactionReceipt): TransactionList {
+  return {
+    blockNumber: tx.blockNumber.toString(),
+    timeStamp: tx.timestamp.toString(),
+    hash: tx.hash,
+    nonce: tx.nonce.toString(),
+    blockHash: tx.blockHash,
+    transactionIndex: receipt.transactionIndex.toString(),
+    from: tx.from,
+    to: tx.to,
+    value: tx.value.toString(),
+    gas: tx.gasLimit.toString(),
+    gasPrice: receipt.effectiveGasPrice.toString(),
+    isError: "0",
+    txreceipt_status: "",
+    contractAddress: receipt.contractAddress,
+    cumulativesGasUsed: receipt.cumulativeGasUsed.toString(),
+    gasUsed: receipt.gasUsed.toString() ,
+    confirmation: tx.confirmations.toString()
   }
 }
 
@@ -59,28 +80,30 @@ export function balanceMulti({ address, tag }: GetParams<BalanceMulti>): {accoun
   }));
 }
 
-export function txList(params: GetParams<TxList>): TransactionReceipt[] {  
+export function txList(params: GetParams<TxList>) {  
   const {address, startblock = 0, endblock, page, sort = 'asc'} = params;  
   if (!address) throw new Error('Error! Missing or invalid Action name');
 
-  const txs = store.addresses[address].transactions
-    .map(tx => store.receipts[tx])
+  const sorting = {
+    asc: (a: Log, b: Log) => a.blockNumber - b.blockNumber,
+    desc: (a: Log, b: Log) => b.blockNumber - a.blockNumber
+  };
+  const txs = store.logs[address]
     .filter(tx => {
-      if (tx.from !== address) return false;
       if (startblock && tx.blockNumber < startblock) return false;
       if (endblock && tx.blockNumber > endblock) return false;
       return true;
-    });
+    })
+    .sort(sorting[sort])
+    .map(txs => {
+      const receipt = store.receipts[txs.transactionHash];
+      const tx = store.transactions[txs.transactionHash];
+      return toTransactionList(tx, receipt)
+    })
 
-  const sorting = {
-    asc: (a: TransactionReceipt, b: TransactionReceipt) => a.blockNumber - b.blockNumber,
-    desc: (a: TransactionReceipt, b: TransactionReceipt) => b.blockNumber - a.blockNumber
-  };
-  const sortFn = sorting[sort];    
-  const sorted = txs.sort(sortFn);
-  if (!params.offset || !page) return sorted;
+  if (!params.offset || !page) return txs;
   const offset = Math.min(params.offset, 10000);
-  return sorted.slice(offset*(page-1), offset*page);
+  return txs.slice(offset*(page-1), offset*page);
 }
 
 /** return the list of blocks mined by an address */
@@ -94,10 +117,10 @@ export function getMinedBlocks(params: GetParams<BlockMined>) {
     .filter(block => (block.miner === address))
     .map(minedblock => {
       return { 
-        blockNumber: minedblock.number,
-        timeStamp: minedblock.timestamp,
+        blockNumber: minedblock.number.toString(),
+        timeStamp: minedblock.timestamp.toString(),
         // No reward calculation on hardHat, so blockReward = 0;
-        blockReward: 0
+        blockReward: '0'
       }
     })
   if (!offset || !page) return minedBlocks;
