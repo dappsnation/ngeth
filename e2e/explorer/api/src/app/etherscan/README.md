@@ -14,13 +14,13 @@
 
 ## Contracts
 
-- [ ] getabi : ?
-- [ ] getsourcecode: ?
+- [ ] getabi : to implement
+- [ ] getsourcecode: to implement
 
 ## Transactions
 
-- [ ] getstatus : ?
-- [ ] gettxreceiptstatus: ?
+- [ ] getstatus : to implement
+- [ ] gettxreceiptstatus: to implement
 
 ## Blocks : ?
 
@@ -41,7 +41,7 @@
 
 Won't be implemented
 
-## Tokens : ?
+## Tokens : already implement on different modules
 
 - [ ] tokensupply
 - [ ] tokenbalance
