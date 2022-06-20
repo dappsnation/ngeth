@@ -22,16 +22,16 @@
 - [ ] getstatus : to implement
 - [ ] gettxreceiptstatus: to implement
 
-## Blocks : ?
+## Blocks :
 
-- [ ] getblockreward: won't be implement
-- [ ] getblockcountdown: ?
-- [ ] getblocknobytime: ?
-- [ ] dailyacgblocksize: won't be implement
-- [ ] dailyblkcount: won't be implement
-- [ ] dailyblockrewards: won't be implement
-- [ ] dailyavgblocktime: won't be implement
-- [ ] dailyuncleblkcount: won't be implement
+- [ ] getblockreward: won't be implemented
+- [ ] getblockcountdown: won't be implemented
+- [ ] getblocknobytime: won't be implemented
+- [ ] dailyacgblocksize: won't be implemented
+- [ ] dailyblkcount: won't be implemented
+- [ ] dailyblockrewards: won't be implemented
+- [ ] dailyavgblocktime: won't be implemented
+- [ ] dailyuncleblkcount: won't be implemented
 
 ## Logs
 
@@ -47,7 +47,7 @@ Won't be implemented
 - [x] tokenbalance
 - [x] tokensupplyhistory
 - [x] tokenbalancehistory
-- [ ] tokeninfo: ?
+- [ ] tokeninfo: to implement
 
 ## Gas Tracker
 
