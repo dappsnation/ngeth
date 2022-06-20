@@ -1,0 +1,73 @@
+# Etherscan Emulator
+
+## Account
+
+- [x] balance
+- [x] balancemulti
+- [x] txlist
+- [ ] txlistinternal : to implement
+- [x] tokentx
+- [x] tokennfttx
+- [x] token1155tx
+- [x] getminedblocks
+- [x] balancehistory
+
+## Contracts
+
+- [ ] getabi : ?
+- [ ] getsourcecode: ?
+
+## Transactions
+
+- [ ] getstatus : ?
+- [ ] gettxreceiptstatus: ?
+
+## Blocks : ?
+
+- [ ] getblockreward: won't be implement
+- [ ] getblockcountdown: ?
+- [ ] getblocknobytime: ?
+- [ ] dailyacgblocksize: won't be implement
+- [ ] dailyblkcount: won't be implement
+- [ ] dailyblockrewards: won't be implement
+- [ ] dailyavgblocktime: won't be implement
+- [ ] dailyuncleblkcount: won't be implement
+
+## Logs
+
+- [x] getlogs
+
+## Geth / Parity Proxy
+
+Won't be implemented
+
+## Tokens : ?
+
+- [ ] tokensupply
+- [ ] tokenbalance
+- [ ] tokensupplyhistory
+- [ ] tokenbalancehistory
+- [ ] tokeninfo
+
+## Gas Tracker
+
+Won't be implemented
+
+## Stats
+
+- [ ] ethsupply : ?
+
+The rest of the function aren't support by hardhat
+
+- ethsupply2
+- ethprice
+- chainsize
+- nodecount
+- dailytxnfee
+- dailynewaddress
+- dailynetutilization
+- dailyavghashrate
+- dailytx
+- dailyavgnetdifficulty
+- ethdailymarketcap
+- ethdailyprice
