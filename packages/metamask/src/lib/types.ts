@@ -1,6 +1,6 @@
-import type { ERC1193Provider } from '@ngeth/ethers-angular';
+import type { NgERC1193Provider } from '@ngeth/ethers-angular';
 
-export interface MetaMaskProvider extends ERC1193Provider {
+export interface MetaMaskProvider extends NgERC1193Provider {
   chainId: string;
   networkVersion: string;
   selectedAddress?: string;

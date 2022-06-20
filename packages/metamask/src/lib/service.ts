@@ -1,6 +1,6 @@
 import { inject, Injectable, InjectionToken, Injector } from '@angular/core';
 import { MetaMaskProvider, RequestedPermissions, Web3WalletPermission } from './types';
-import { ERC1193, WalletProfile } from '@ngeth/ethers-angular';
+import { NgERC1193, WalletProfile } from '@ngeth/ethers-angular';
 import { toChainId } from '@ngeth/ethers-core';
 import { getAddress } from '@ethersproject/address';
 
@@ -31,7 +31,7 @@ function metamaskWallet() {
 
 
 @Injectable({ providedIn: 'root' })
-export class MetaMask extends ERC1193 {
+export class MetaMask extends NgERC1193 {
   wallets: WalletProfile[] = [];
   private injector = inject(Injector);
 

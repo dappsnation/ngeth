@@ -2,7 +2,7 @@ import { Inject, Injectable, InjectionToken, Optional } from "@angular/core";
 import type { ChainIcon, Chain, SupportedChains, ChainId } from "@ngeth/ethers-core";
 import { explore, toChainId, defaultCustomChains, toChainHex } from "@ngeth/ethers-core";
 import { Provider } from '@ethersproject/providers';
-import { ERC1193 } from "../erc1193";
+import { NgERC1193 } from "../erc1193";
 import { defer,  from } from "rxjs";
 import { filter, switchMap } from 'rxjs/operators';
 
@@ -52,7 +52,7 @@ export class ChainManager {
   constructor(
     private provider: Provider,
     @Inject(CUSTOM_CHAINS) private customChains: Record<string, Chain>,
-    @Optional() private erc1193?: ERC1193,
+    @Optional() private erc1193?: NgERC1193,
   ) {}
 
   private async currentChain() {

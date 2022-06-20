@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ContractsManager, ERC1155FormTransfer, ERC1193 } from '@ngeth/ethers-angular';
+import { ContractsManager, ERC1155FormTransfer, NgERC1193 } from '@ngeth/ethers-angular';
 import { combineLatest, map, pluck, switchMap, withLatestFrom } from 'rxjs';
 import { BaseContract } from '../../services/manager';
 
@@ -32,7 +32,7 @@ export class Erc1155Component {
 
   constructor(
     private contracts: ContractsManager<BaseContract>,
-    private erc1193: ERC1193,
+    private erc1193: NgERC1193,
     private route: ActivatedRoute,
   ) {}
 

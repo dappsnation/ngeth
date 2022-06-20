@@ -1,23 +1,10 @@
 import { inject, NgZone } from '@angular/core';
 import { getAddress } from '@ethersproject/address';
-import { AddChainParameter, ERC1193Events, ERC1193Param, ERC1193Provider, WalletProfile, WatchAssetParams } from './types';
-import { toChainId, toChainHex } from '@ngeth/ethers-core';
+import { NgERC1193Events, NgERC1193Param, WalletProfile } from './types';
+import { toChainId, ERC1193 } from '@ngeth/ethers-core';
 import { timer, Observable, of, combineLatest, defer, BehaviorSubject } from 'rxjs';
 import { map, shareReplay, switchMap, filter } from 'rxjs/operators';
-import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers';
 import { fromEthEvent } from '../events';
-import { getChain } from '../chain';
-import { fromChain } from './utils';
-
-
-const errorCode = {
-  4001:	'[User Rejected Request] The user rejected the request.',
-  4100:	'[Unauthorized] 	The requested method and/or account has not been authorized by the user.',
-  4200:	'[Unsupported Method]	The Provider does not support the requested method.',
-  4900:	'[Disconnected] The Provider is disconnected from all chains.',
-  4901:	'[Chain Disconnected] The Provider is not connected to the requested chain.',
-}
-
 
 
 function exist<T>(value?: T | null): value is T {
@@ -25,21 +12,11 @@ function exist<T>(value?: T | null): value is T {
 }
 
 
-export abstract class ERC1193<Wallet extends WalletProfile = WalletProfile> {
+export abstract class NgERC1193<Wallet extends WalletProfile = WalletProfile> extends ERC1193<Wallet> {
   private zone = inject(NgZone);
-  #ethersProvider?: Web3Provider;
-  #ethersSigner?: JsonRpcSigner;
   #wallet = new BehaviorSubject<Wallet | null>(null);
   #events: Record<string, Observable<unknown>> = {};
-
   walletChanges = this.#wallet.asObservable();
-  
-  protected provider?: ERC1193Provider;
-  abstract account?: string;
-  abstract chainId?: number;
-  abstract wallets: Wallet[];
-  /** Method used to ask the user which wallet to select if multiple wallet available */
-  protected abstract getWallet(): Promise<Wallet | undefined>;
 
   /** Observe if current account is connected */
   connected$ = this.walletChanges.pipe(
@@ -93,77 +70,22 @@ export abstract class ERC1193<Wallet extends WalletProfile = WalletProfile> {
     switchMap(wallet => this.fromEvent(wallet, 'message')),
   );
 
-  get ethersProvider() {
-    return this.#ethersProvider;
-  }
 
-  get ethersSigner() {
-    return this.#ethersSigner;
+  onWalletChange(wallet: Wallet) {
+    this.#wallet.next(wallet);
   }
 
   /** Listen on event from MetaMask Provider */
-  protected fromEvent<K extends keyof ERC1193Events>(
+  protected fromEvent<K extends keyof NgERC1193Events>(
     wallet: Wallet,
     event: K,
-    initial?: ERC1193Param<K>
-  ): Observable<ERC1193Param<K>> {
+    initial?: NgERC1193Param<K>
+  ): Observable<NgERC1193Param<K>> {
     if (!this.#events[event]) {
       this.#events[event] = defer(() => {
-        return fromEthEvent<ERC1193Param<K>>(wallet.provider, this.zone, event, initial);
+        return fromEthEvent<NgERC1193Param<K>>(wallet.provider, this.zone, event, initial);
       });
     }
-    return this.#events[event] as Observable<ERC1193Param<K>>;
-  }
-
-  /** Select a wallet to setup the provider & signer */
-  async selectWallet(wallet?: Wallet) {
-    if (!wallet) {
-      if (!this.wallets.length) throw new Error('No wallet provided or found');
-      wallet = await this.getWallet();
-      if (!wallet) throw new Error('No wallet selected');
-    }
-    if (wallet.provider !== this.provider) {
-      this.#ethersProvider = new Web3Provider(wallet.provider);
-      this.#ethersSigner = this.#ethersProvider.getSigner();
-      this.#wallet.next(wallet);
-      this.provider = wallet.provider;
-    }
-  }
-
-  /** Select a wallet and connect to it */
-  async enable(wallet?: Wallet): Promise<string[]> {
-    await this.selectWallet(wallet);
-    if (!this.provider) throw new Error('No provider connected to ERC1193 service');
-    return this.provider.request({ method: 'eth_requestAccounts' });
-  }
-
-  /**
-   * Request user to change chain
-   * @note If the error code (error.code) is 4902, then the requested chain has not been added by MetaMask, and you have to request to add it via addChain
-   * @param id The 0x-non zero chainId or decimal number
-   */
-  switchChain(id: string | number) {
-    const chainId = toChainHex(id);
-    return this.provider?.request<null>({
-      method: 'wallet_switchEthereumChain',
-      params: [{ chainId }]
-    });
-  }
-
-  async addChain(chain: AddChainParameter | string) {
-    const params = (typeof chain === "string")
-      ? await getChain(chain).then(fromChain)
-      : chain;
-    return this.provider?.request<null>({
-      method: 'wallet_addEthereumChain',
-      params: [params]
-    });
-  }
-
-  watchAsset(params: WatchAssetParams['options']) {
-    return this.provider?.request<boolean>({
-      method: 'wallet_watchAsset',
-      params: { type: 'ERC20', options: params }
-    });
+    return this.#events[event] as Observable<NgERC1193Param<K>>;
   }
 }

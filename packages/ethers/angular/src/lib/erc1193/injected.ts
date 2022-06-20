@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { ERC1193 } from './service';
+import { NgERC1193 } from './service';
 import { getAddress } from '@ethersproject/address';
 import { toChainId } from '@ngeth/ethers-core';
-import { ERC1193Provider, WalletProfile } from './types';
+import { NgERC1193Provider, WalletProfile } from './types';
 
 function toInjectedWallet(provider: any): WalletProfile {
   if (provider.isMetaMask) return { label: 'MetaMask', provider };
@@ -10,7 +10,7 @@ function toInjectedWallet(provider: any): WalletProfile {
   return { label: 'Unknown', provider };
 }
 
-function getInjectedProviders(): ERC1193Provider[] {
+function getInjectedProviders(): NgERC1193Provider[] {
   const ethereum = (window as any).ethereum;
   if (!ethereum) return [];
   if (Array.isArray(ethereum.providers) && ethereum.providers.length) {
@@ -20,7 +20,7 @@ function getInjectedProviders(): ERC1193Provider[] {
 }
 
 @Injectable({ providedIn: 'root' })
-export class InjectedProviders extends ERC1193 {
+export class InjectedProviders extends NgERC1193 {
   wallets = getInjectedProviders().map(toInjectedWallet);
 
   constructor() {

@@ -3,7 +3,7 @@ import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from
 import { toChainId } from '@ngeth/ethers-core';
 import { map, tap } from "rxjs";
 import { SUPPORTED_CHAINS } from "./chain";
-import { ERC1193 } from "./erc1193";
+import { NgERC1193 } from "./erc1193";
 
 @Injectable({ providedIn: 'root' })
 export class HasInjectedProviderGuard implements CanActivate {
@@ -24,7 +24,7 @@ export class HasInjectedProviderGuard implements CanActivate {
 export class HasWalletGuard implements CanActivate {
   public previous?: string;
 
-  constructor(private erc1193: ERC1193, private router: Router) {}
+  constructor(private erc1193: NgERC1193, private router: Router) {}
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     if (this.erc1193.wallets.length) return true;
@@ -40,7 +40,7 @@ export class IsSupportedChainGuard {
   public previous?: string;
   constructor(
     private router: Router,
-    private erc1193: ERC1193,
+    private erc1193: NgERC1193,
     @Inject(SUPPORTED_CHAINS) private supportedChains: '*' | number[],
   ) {}
   
@@ -62,7 +62,7 @@ export class IsConnectedGuard implements CanActivate {
 
   constructor(
     private router: Router,
-    private erc1193: ERC1193
+    private erc1193: NgERC1193
   ) {}
   
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
@@ -80,7 +80,7 @@ export class HasSignerGuard implements CanActivate {
 
   constructor(
     private router: Router,
-    private erc1193: ERC1193
+    private erc1193: NgERC1193
   ) {}
   
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {

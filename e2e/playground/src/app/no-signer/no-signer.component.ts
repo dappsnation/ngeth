@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
-import { ERC1193, HasSignerGuard } from '@ngeth/ethers-angular';
+import { NgERC1193, HasSignerGuard } from '@ngeth/ethers-angular';
 
 @Component({
   selector: 'ngeth-no-signer',
@@ -13,7 +13,7 @@ export class NoSignerComponent {
   constructor(
     private guard: HasSignerGuard,
     private router: Router,
-    private erc1193: ERC1193
+    private erc1193: NgERC1193
   ) { }
 
   async enable() {
