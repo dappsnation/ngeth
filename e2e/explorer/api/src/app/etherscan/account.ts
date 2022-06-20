@@ -25,7 +25,7 @@ function toTransferTransaction(tx: TransactionResponse, receipt: TransactionRece
     gasUsed: receipt.gasUsed.toString(),
     cumulativeGasUsed: receipt.cumulativeGasUsed.toString(),
     confirmation: tx.confirmations.toString(),
-    //todo add tokenSymbol & tokenName
+    // @todo(#1) add tokenSymbol & tokenName
   }
 }
 function toTxList(tx: TransactionResponse, receipt: TransactionReceipt): TxListResponse {

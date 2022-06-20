@@ -189,9 +189,7 @@ export interface TransferTransaction {
   contractAddress: string;
   to: string;
   value: string;
-  //todo :
-  //tokenSymbol: string;
-  //tokenName: string;
+  // @todo(#1) add tokenSymbol(string) & tokenName(string)
   transactionIndex: string;
   gas: string;
   gasPrice: string;
