@@ -1,5 +1,5 @@
 import { TransactionReceipt, TransactionResponse, Log } from "@ethersproject/abstract-provider";
-import { Balance, BalanceMulti, GetParams, TxList, BlockMined, BalanceHistory, TokenTx, TransferTransaction, TokenNftTx, ERC20TransferTransaction, ERC721TransferTransaction, Token1155Tx, ERC1155TransferTransaction, TransactionList } from "@ngeth/etherscan";
+import { Balance, BalanceMulti, GetParams, TxList, BlockMined, BalanceHistory, TokenTx, TransferTransaction, ERC1155TransferTransaction, TxListResponse } from "@ngeth/etherscan";
 import { store } from '../store';
 import { EthState } from "@explorer";
 import { BigNumber } from "@ethersproject/bignumber";
@@ -25,7 +25,7 @@ function toTransferTransaction(tx: TransactionResponse, receipt: TransactionRece
     confirmation: tx.confirmations.toString(),
   }
 }
-function toTransactionList(tx: TransactionResponse, receipt: TransactionReceipt): TransactionList {
+function toTxList(tx: TransactionResponse, receipt: TransactionReceipt): TxListResponse {
   return {
     blockNumber: tx.blockNumber.toString(),
     timeStamp: tx.timestamp.toString(),
@@ -90,16 +90,16 @@ export function txList(params: GetParams<TxList>) {
   };
   const txs = store.addresses[address].transactions
     .map(tx => store.receipts[tx])
-    .filter(tx => {
-      if (startblock && tx.blockNumber < startblock) return false;
-      if (endblock && tx.blockNumber > endblock) return false;
+    .filter(receipt => {
+      if(receipt.from !== address) return false
+      if (startblock && receipt.blockNumber < startblock) return false;
+      if (endblock && receipt.blockNumber > endblock) return false;
       return true;
     })
     .sort(sorting[sort])
-    .map(sorted => {
-      const receipt = store.receipts[sorted.transactionHash];
-      const tx = store.transactions[sorted.transactionHash];
-      return toTransactionList(tx, receipt)
+    .map(receipt => {
+      const tx = store.transactions[receipt.transactionHash];
+      return toTxList(tx, receipt)
     })
 
   if (!params.offset || !page) return txs;

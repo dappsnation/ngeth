@@ -207,7 +207,7 @@ export interface ERC1155TransferTransaction extends TransferTransaction {
   tokenId: string;
   tokenValue: string;
 }
-export interface TransactionList {
+export interface TxListResponse {
   blockNumber: string,
   timeStamp: string,
   hash: string,
