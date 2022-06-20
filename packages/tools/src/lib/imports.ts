@@ -10,7 +10,7 @@ export const getContractImport = (contractName: string, abi: ABIDescription[]) =
   
 
   return `
-  import { NgContract, FilterParam, TypedFilter } from '@ngeth/ethers';
+  import { NgContract, FilterParam, TypedFilter } from '@ngeth/ethers-angular';
   import type { Contract, BigNumber, Overrides, CallOverrides, PayableOverrides, Signer, ContractTransaction, BytesLike, BigNumberish } from "ethers";
   
   export interface ${contractName}Events {

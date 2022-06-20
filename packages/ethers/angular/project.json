@@ -1,0 +1,55 @@
+{
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "sourceRoot": "packages/ethers/angular/src",
+  "prefix": "ngeth",
+  "targets": {
+    "link": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "npm link dist/packages/ethers/angular"
+      }
+    },
+    "publish": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "npm publish --tag={args.tag} --access=public",
+        "cwd": "dist/packages/ethers/angular"
+      }
+    },
+    "build": {
+      "executor": "@nrwl/angular:package",
+      "outputs": ["dist/packages/ethers/angular"],
+      "options": {
+        "project": "packages/ethers/angular/ng-package.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "packages/ethers/angular/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "packages/ethers/angular/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/packages/ethers"],
+      "options": {
+        "jestConfig": "packages/ethers/angular/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "packages/ethers/angular/src/**/*.ts",
+          "packages/ethers/angular/src/**/*.html"
+        ]
+      }
+    }
+  },
+  "tags": []
+}

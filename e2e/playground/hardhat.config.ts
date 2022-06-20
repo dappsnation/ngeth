@@ -15,10 +15,10 @@ export default {
     type: 'angular',
     outDir: './src/app/contracts',
     withImports: false,
-    exec: ['scripts/deploy.ts'],
+    runs: ['scripts/deploy.ts'],
     explorer: {
       api: 3000,
       app: 3001
-    }
+    },
   },
 };

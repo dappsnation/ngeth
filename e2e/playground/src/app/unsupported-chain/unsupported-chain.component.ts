@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, Inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { ChainManager, IsSupportedChainGuard, SUPPORTED_CHAINS } from '@ngeth/ethers';
+import { ChainManager, IsSupportedChainGuard, SUPPORTED_CHAINS } from '@ngeth/ethers-angular';
 import { MetaMask } from '@ngeth/metamask';
 
 

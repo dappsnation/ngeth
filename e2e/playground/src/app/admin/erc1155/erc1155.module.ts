@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Erc1155Component } from './erc1155.component';
 import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
-import { EthersModule } from '@ngeth/ethers';
+import { EthersModule } from '@ngeth/ethers-angular';
 
 
 

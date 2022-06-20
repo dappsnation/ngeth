@@ -1,4 +1,4 @@
-import { NgContract } from "@ngeth/ethers";
+import { NgContract } from "@ngeth/ethers-angular";
 import type {
   Contract,
   BigNumber,

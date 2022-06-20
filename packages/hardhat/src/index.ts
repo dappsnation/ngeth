@@ -5,7 +5,7 @@ import { generate } from './lib/generate';
 import { getDefaultConfig } from './lib/config';
 import { existsSync, mkdirSync, promises as fs } from 'fs';
 import { getContractImport } from '@ngeth/tools';
-import { execute } from '@ngeth/devkit';
+import { execute } from './lib/execute';
 import { serveApp } from './lib/utils';
 
 
@@ -41,11 +41,11 @@ task('ngeth:build', 'Build the contracts and generate outputs')
 
 task('ngeth:serve')
   .setAction(async (taskArguments: any, hre) => {
+    hre.hardhatArguments.network = 'localhost';
     await hre.run('ngeth:build', taskArguments);
     return hre.run('node', taskArguments);
   });
 
-// TODO: add "exec" field with scenario for E2E
 task('node:server-ready', 'Run once the node is ready')
   .setAction(async (taskArguments: any, hre, runSuper: any) => {
     await runSuper();
@@ -98,7 +98,7 @@ task('node:server-ready', 'Run once the node is ready')
         EXPLORER_APP_PORT: app.toString(),
         EXPLORER_API_PORT: api.toString()
       };
-      execute({logger: console}, 'node explorer/api/main.js', { cwd, env });
+      execute('node explorer/api/main.js', { cwd, env });
       
       // APP
       const appPath = join(cwd, 'explorer/app');
@@ -112,14 +112,14 @@ task('node:server-ready', 'Run once the node is ready')
     }
 
     // Run exec
-    if (hre.config.ngeth.exec) {
-      const exec = Array.isArray(hre.config.ngeth.exec)
-        ? { scripts: hre.config.ngeth.exec, parallel: false }
-        : hre.config.ngeth.exec;
+    if (hre.config.ngeth.runs) {
+      const runs = Array.isArray(hre.config.ngeth.runs)
+        ? { scripts: hre.config.ngeth.runs, parallel: false }
+        : hre.config.ngeth.runs;
       
-      for (const path of exec.scripts) {
+      for (const path of runs.scripts) {
         const script = join(hre.config.paths.root, path);
-        if (exec.parallel) {
+        if (runs.parallel) {
           hre.run('run', { script, noCompile: true });
         } else {
           await hre.run('run', { script, noCompile: true });

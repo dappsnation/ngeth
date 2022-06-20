@@ -31,7 +31,7 @@ npm install @openzeppelin/contracts
 ```typescript
 import { Injectable } from '@angular/core';
 import { ERC20Contract, addresses } from './contracts';
-import { MetaMask } from '@ngeth/ethers';
+import { MetaMask } from '@ngeth/ethers-angular';
 
 @Injectable({ providedIn: 'root' })
 export class ERC20 extends ERC20Contract {

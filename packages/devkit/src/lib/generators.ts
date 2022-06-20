@@ -53,14 +53,8 @@ export function getProjectOptions(tree: Tree, projectName?: string): ProjectOpti
   const project = projectName ? names(projectName).fileName : workspace.defaultProject;
   if (!project) throw new Error('No project provided');
   const config = workspace.projects[project];
-  if (!config) {
-    const projectRoot = `${getWorkspaceLayout(tree).libsDir}/${project}`;
-    return {
-      isAngular,
-      project,
-      projectRoot,
-    }
-  }
+  const projectRoot = `${getWorkspaceLayout(tree).libsDir}/${project}`;
+  if (!config) return { isAngular, project, projectRoot };
   // project.json
   if (typeof config === 'string') {
     const projectConfigLocation = joinPathFragments(config, 'project.json');
@@ -68,11 +62,12 @@ export function getProjectOptions(tree: Tree, projectName?: string): ProjectOpti
     return {
       isAngular,
       project,
-      projectRoot: projectConfig.root,
+      projectRoot: config,
       projectConfig,
       projectConfigLocation: projectConfigLocation,
     }
   } else {
+  // workspace.json or angular.json
     return {
       isAngular,
       project,

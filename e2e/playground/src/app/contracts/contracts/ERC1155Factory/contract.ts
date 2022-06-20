@@ -1,6 +1,6 @@
 import { NgZone } from "@angular/core";
 import { FilterParam, TypedFilter } from "@ngeth/ethers-core";
-import { NgContract } from "@ngeth/ethers";
+import { NgContract } from "@ngeth/ethers-angular";
 import type {
   BigNumber,
   Overrides,

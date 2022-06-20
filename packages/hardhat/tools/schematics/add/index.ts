@@ -45,7 +45,7 @@ export async function nxGenerator(tree: Tree, baseOptions: BaseOptions) {
       "ethers": "^5.6.0",
     },
     {
-      "@ngeth/ethers": "0.0.19",
+      "@ngeth/ethers-core": "0.0.19",
       "@ngeth/hardhat": "0.0.19",
       "@nomiclabs/hardhat-ethers": "^2.0.5",
       "hardhat": "^2.9.0",

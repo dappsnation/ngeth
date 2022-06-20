@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { ERC1193 } from '@ngeth/ethers';
+import { ERC1193 } from '@ngeth/ethers-angular';
 import { map, switchMap } from 'rxjs';
 import { addresses } from '../../contracts';
 import { FactoryManager } from '../../services/factory';

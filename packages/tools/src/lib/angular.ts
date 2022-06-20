@@ -11,7 +11,7 @@ export const getNgContract = (contractName: string, abi: ABIDescription[]) => {
   return `
   import { NgZone } from '@angular/core';
   import { FilterParam, TypedFilter } from '@ngeth/ethers-core';
-  import { NgContract } from '@ngeth/ethers';
+  import { NgContract } from '@ngeth/ethers-angular';
   import type { BigNumber, Overrides, CallOverrides, PayableOverrides, Signer, ContractTransaction, BytesLike, BigNumberish } from "ethers";
   import type { Provider } from '@ethersproject/providers';
   import abi from './abi';

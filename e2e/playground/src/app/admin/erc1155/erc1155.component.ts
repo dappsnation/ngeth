@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ContractsManager, ERC1193 } from '@ngeth/ethers';
+import { ContractsManager, ERC1193 } from '@ngeth/ethers-angular';
 import { combineLatest, Observable } from 'rxjs';
 import { map, pluck, switchMap } from 'rxjs/operators';
 import { BaseContract } from '../../services/manager';

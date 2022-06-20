@@ -2,7 +2,7 @@
   "version": 2,
   "projects": {
     "devkit": "packages/devkit",
-    "ethers": "packages/ethers",
+    "ethers-angular": "packages/ethers/angular",
     "ethers-core": "packages/ethers/core",
     "etherscan": "packages/etherscan",
     "explorer": "e2e/explorer",

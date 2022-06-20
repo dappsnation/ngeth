@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { ActivatedRouteSnapshot, CanActivate, Router } from "@angular/router";
-import { ContractsManager } from "@ngeth/ethers";
+import { ContractsManager } from "@ngeth/ethers-angular";
 import { MetaMask } from '@ngeth/metamask';
 import { Contract } from '@ethersproject/contracts';
 import { getAddress } from '@ethersproject/address';

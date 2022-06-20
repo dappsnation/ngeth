@@ -1,6 +1,7 @@
 import { inject, Injectable, InjectionToken, Injector } from '@angular/core';
 import { MetaMaskProvider, RequestedPermissions, Web3WalletPermission } from './types';
-import { ERC1193, toChainIndex, WalletProfile } from '@ngeth/ethers';
+import { ERC1193, WalletProfile } from '@ngeth/ethers-angular';
+import { toChainId } from '@ngeth/ethers-core';
 import { getAddress } from '@ethersproject/address';
 
 // Reload message when "Could not establish connection." happens
@@ -54,7 +55,7 @@ export class MetaMask extends ERC1193 {
 
   get chainId() {
     if (!this.provider?.chainId) return;
-    return toChainIndex(this.provider.chainId);
+    return toChainId(this.provider.chainId);
   }
 
   // Handle "Could not establish connection."

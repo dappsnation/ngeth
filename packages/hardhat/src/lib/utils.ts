@@ -3,7 +3,6 @@ import * as parserTypeScript from "prettier/parser-typescript";
 import * as prettier from "prettier/standalone";
 import { promises as fs } from 'fs';
 import { createServer } from 'http';
-import { URL } from 'url';
 
 export function formatTs(code: string) {
   return prettier.format(code, {

@@ -15,7 +15,7 @@ export default {
     type: 'typescript',
     outDir: './contracts',
     explorer: false,
-    exec: {
+    runs: {
       scripts: ['scripts/deploy.ts'],
       parallel: true
     }

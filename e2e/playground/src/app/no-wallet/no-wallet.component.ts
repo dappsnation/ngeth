@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { HasWalletGuard } from '@ngeth/ethers';
+import { HasWalletGuard } from '@ngeth/ethers-angular';
 import { MetaMaskOnboarding } from '@ngeth/metamask';
 
 @Component({

@@ -1,7 +1,6 @@
 import { UntypedFormArray, UntypedFormControl } from '@angular/forms';
 import { ABIDescription, ABIParameter, ABITypeParameter, FunctionDescription } from '@type/solc';
 import { isWrite, isRead } from '@ngeth/tools';
-import { EthValidators } from '@ngeth/ethers';
 
 export interface AbiFormFunction {
   name?: string;
