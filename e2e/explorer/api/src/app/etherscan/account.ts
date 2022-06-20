@@ -85,19 +85,20 @@ export function txList(params: GetParams<TxList>) {
   if (!address) throw new Error('Error! Missing or invalid Action name');
 
   const sorting = {
-    asc: (a: Log, b: Log) => a.blockNumber - b.blockNumber,
-    desc: (a: Log, b: Log) => b.blockNumber - a.blockNumber
+    asc: (a: TransactionReceipt, b: TransactionReceipt) => a.blockNumber - b.blockNumber,
+    desc: (a: TransactionReceipt, b: TransactionReceipt) => b.blockNumber - a.blockNumber
   };
-  const txs = store.logs[address]
+  const txs = store.addresses[address].transactions
+    .map(tx => store.receipts[tx])
     .filter(tx => {
       if (startblock && tx.blockNumber < startblock) return false;
       if (endblock && tx.blockNumber > endblock) return false;
       return true;
     })
     .sort(sorting[sort])
-    .map(txs => {
-      const receipt = store.receipts[txs.transactionHash];
-      const tx = store.transactions[txs.transactionHash];
+    .map(sorted => {
+      const receipt = store.receipts[sorted.transactionHash];
+      const tx = store.transactions[sorted.transactionHash];
       return toTransactionList(tx, receipt)
     })
 
