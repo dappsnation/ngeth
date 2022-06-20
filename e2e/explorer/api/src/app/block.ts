@@ -43,7 +43,7 @@ async function init() {
   const artifactRoot = process.env['ARTIFACTS_ROOT'] ?? join(process.cwd(), 'e2e/explorer/hardhat/artifacts/src');
   await initFactories(artifactRoot);
   const current = await provider.getBlockNumber();
-  for (let i = 0; i < current; i++) {
+  for (let i = 0; i <= current; i++) {
     const block = await provider.getBlock(i);
     await setBlock(block);
   }
@@ -70,8 +70,11 @@ export function blockListener() {
   // Initialize the state
   const initialized = init().then(() => emit());
 
+  let lastBlock: number;
   // Listen on block changes (Hardh hat doesn't support pending transaction event)
   provider.on('block', async (blockNumber: number) => {
+    if (lastBlock === blockNumber) return; // For some reason the callback is triggered 4times
+    lastBlock = blockNumber;
     await initialized;
     const block = await provider.getBlock(blockNumber);
     await setBlock(block);

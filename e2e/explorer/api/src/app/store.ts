@@ -6,6 +6,7 @@ import { defaultAbiCoder } from '@ethersproject/abi';
 import { id } from '@ethersproject/hash';
 import { ABIDescription } from '@type/solc';
 import { provider } from './provider';
+import { Trace } from './types';
 
 function bignumberReviver(key: string, value: any) {
   if (typeof value === 'object' && value['type'] === 'BigNumber') return BigNumber.from(value);
@@ -33,7 +34,9 @@ export const store: EthStore = {
 ///////////
 
 export async function setBlock(block: Block) {
+  if (block.number in store.blocks) return;
   store.blocks[block.number] = block;
+
   const getReceipts = block.transactions.map(hash => provider.getTransactionReceipt(hash));
   const getResponses = block.transactions.map(hash => provider.getTransaction(hash));
   const [txs, receipts] = await Promise.all([
@@ -64,6 +67,7 @@ async function setBlockTransactions(txs: TransactionResponse[], receipts: Transa
   })
   await Promise.all(addReceipts);
 }
+
 
 //////////
 // LOGS //
