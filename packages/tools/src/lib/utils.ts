@@ -103,7 +103,7 @@ const getStructName = (internalType?: string) => {
   return type.split('[').shift();
 }
 const getStruct = (name: string, fields: ABIParameter[] = []) => {
-  return `interface ${name} {
+  return `export interface ${name} {
     ${fields.map(getParam).join('\n')}
   }`;
 };

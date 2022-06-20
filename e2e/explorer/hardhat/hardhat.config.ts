@@ -14,6 +14,7 @@ export default {
   ngeth: {
     outputType: 'typescript',
     outputPath: './contracts',
+    withImports: true,
     explorer: false,
     runs: {
       scripts: ['scripts/deploy.ts'],

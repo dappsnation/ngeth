@@ -6,7 +6,7 @@ import { getDefaultConfig } from './lib/config';
 import { existsSync, mkdirSync, promises as fs } from 'fs';
 import { getContractImport } from '@ngeth/tools';
 import { execute } from './lib/execute';
-import { serveApp } from './lib/utils';
+import { serveApp, formatTs } from './lib/utils';
 
 
 export * from './lib/deploy';
@@ -75,7 +75,7 @@ task('node:server-ready', 'Run once the node is ready')
         const contract = getContractImport(contractName, artifact.abi);
         const output = join(importFolder, dirname(artifact.sourceName));
         if (!existsSync(output)) mkdirSync(output, { recursive: true });
-        fs.writeFile(join(output, `${contractName}.ts`), contract);
+        fs.writeFile(join(output, `${contractName}.ts`), formatTs(contract));
       }
       const exportImports = importArtifacts
         .filter(artifact => artifact.abi.length)

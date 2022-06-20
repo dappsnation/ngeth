@@ -87,7 +87,7 @@ export default {
 - **default**: `{ api: 3000, app: 3001 }`
 
 #### `withImports`
-- **description**: Generate Typescript classes for libraries & contract imported by the exported contracts
+- **description**: Generate Typescript interfaces for libraries & contract imported by the exported contracts
 - **required**: No
 - **type**: `boolean`
 - **default**: `false`
@@ -103,7 +103,7 @@ If you use Nx or Angular, the schematics will create builders inside your worksp
 #### `hardhat ngeth:serve` (`@ngeth/hardhat:serve`): 
 - **compiles** the contracts.
 - **generates** the contract classes.
-- **starts** a node on localhost:8545, and the explorer as specified in the [config](#config)
+- **starts** a node on localhost:8545, and the explorer as specified in the [config](#explorer)
 - **runs** scripts specified under `runs`.
 
 #### `hardhat ngeth:test` (`@ngeth/hardhat:test`):
