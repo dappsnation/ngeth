@@ -5,14 +5,8 @@ import { EthState } from "@explorer";
 import { BigNumber } from "@ethersproject/bignumber";
 import { id } from "@ethersproject/hash";
 import { defaultAbiCoder } from '@ethersproject/abi';
+import { sortByBlockNumber } from './utils';
 
-interface Sortable {
-  blockNumber: number;
-}
-const sortByBlockNumber = {
-  asc: (a :Sortable, b: Sortable) => a.blockNumber - b.blockNumber,
-  desc: (a: Sortable, b: Sortable) => b.blockNumber - a.blockNumber
-}
 
 function toTransferTransaction(tx: TransactionResponse, receipt: TransactionReceipt): TransferTransaction {
   return {
@@ -31,6 +25,7 @@ function toTransferTransaction(tx: TransactionResponse, receipt: TransactionRece
     gasUsed: receipt.gasUsed.toString(),
     cumulativeGasUsed: receipt.cumulativeGasUsed.toString(),
     confirmation: tx.confirmations.toString(),
+    //todo add tokenSymbol & tokenName
   }
 }
 function toTxList(tx: TransactionResponse, receipt: TransactionReceipt): TxListResponse {
