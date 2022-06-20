@@ -43,7 +43,7 @@ import '@nomiclabs/hardhat-ethers';
 import '@ngeth/hardhat'; // <-- load @ngeth/hardhat
 
 export default {
-  solidity: '0.8.14',
+  solidity: '0.8.11',
   paths: {
     sources: './contracts',
     tests: './tests',
