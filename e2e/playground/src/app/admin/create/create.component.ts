@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, Inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ERC1193 } from '@ngeth/ethers';
+import { ERC1193 } from '@ngeth/ethers-angular';
 import { IPFS, IPFSClient } from '@ngeth/ipfs';
 import { OpenseaCollectionForm } from '@ngeth/opensea';
 import { addresses } from '../../contracts';

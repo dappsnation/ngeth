@@ -1,7 +1,7 @@
 {
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "projectType": "library",
-  "sourceRoot": "packages/ethers/src",
+  "sourceRoot": "packages/ethers/angular/src",
   "prefix": "ngeth",
   "targets": {
     "link": {
@@ -21,14 +21,14 @@
       "executor": "@nrwl/angular:package",
       "outputs": ["dist/packages/ethers/angular"],
       "options": {
-        "project": "packages/ethers/ng-package.json"
+        "project": "packages/ethers/angular/ng-package.json"
       },
       "configurations": {
         "production": {
-          "tsConfig": "packages/ethers/tsconfig.lib.prod.json"
+          "tsConfig": "packages/ethers/angular/tsconfig.lib.prod.json"
         },
         "development": {
-          "tsConfig": "packages/ethers/tsconfig.lib.json"
+          "tsConfig": "packages/ethers/angular/tsconfig.lib.json"
         }
       },
       "defaultConfiguration": "production"
@@ -37,7 +37,7 @@
       "executor": "@nrwl/jest:jest",
       "outputs": ["coverage/packages/ethers"],
       "options": {
-        "jestConfig": "packages/ethers/jest.config.ts",
+        "jestConfig": "packages/ethers/angular/jest.config.ts",
         "passWithNoTests": true
       }
     },
@@ -45,8 +45,8 @@
       "executor": "@nrwl/linter:eslint",
       "options": {
         "lintFilePatterns": [
-          "packages/ethers/src/**/*.ts",
-          "packages/ethers/src/**/*.html"
+          "packages/ethers/angular/src/**/*.ts",
+          "packages/ethers/angular/src/**/*.html"
         ]
       }
     }

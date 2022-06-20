@@ -7,9 +7,6 @@
     "save": false
   },
   "peerDependencies": {
-    "@angular/common": ">13.0.0",
-    "@angular/core": ">13.0.0",
-    "@ngeth/ethers": "0.0.19",
     "@nomiclabs/hardhat-ethers": "^2.0.0",
     "ethers": "^5.6.0",
     "hardhat": "^2.9.0",

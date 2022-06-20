@@ -1,5 +1,5 @@
 import { Injectable, NgZone } from '@angular/core';
-import { ContractsManager, ERC1193 } from '@ngeth/ethers';
+import { ContractsManager, ERC1193 } from '@ngeth/ethers-angular';
 import { Signer } from '@ethersproject/abstract-signer';
 import { BaseContract } from './manager';
 import { switchMap, map } from 'rxjs';

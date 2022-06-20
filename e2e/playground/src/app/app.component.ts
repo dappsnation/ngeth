@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { ERC1193 } from '@ngeth/ethers';
+import { ERC1193 } from '@ngeth/ethers-angular';
 
 @Component({
   selector: 'ngeth-root',

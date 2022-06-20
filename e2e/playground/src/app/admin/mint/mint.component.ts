@@ -1,7 +1,7 @@
 import { Component, ChangeDetectionStrategy, Inject } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ERC1155FormMint, ContractsManager, ERC1193 } from '@ngeth/ethers';
+import { ERC1155FormMint, ContractsManager, ERC1193 } from '@ngeth/ethers-angular';
 import { IPFS, IPFSClient } from '@ngeth/ipfs';
 import { OpenseaTokenForm } from '@ngeth/opensea';
 import { BaseContract } from '../../services/manager';

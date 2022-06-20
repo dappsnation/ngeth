@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
-import { ERC1193, HasSignerGuard } from '@ngeth/ethers';
+import { ERC1193, HasSignerGuard } from '@ngeth/ethers-angular';
 
 @Component({
   selector: 'ngeth-no-signer',

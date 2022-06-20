@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, Output, EventEmitter } from '@angular/core';
-import { ChainManager } from '@ngeth/ethers';
+import { ChainManager } from '@ngeth/ethers-angular';
 import { MetaMask } from '../../service';
 
 @Component({
