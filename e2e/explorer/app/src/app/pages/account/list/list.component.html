@@ -2,7 +2,7 @@
   <li *ngFor="let account of accounts$ | async; trackBy: trackByAddress">
     <a class="surface item" [routerLink]="['/account', account.address]">
       <header>
-        <eth-blockies [address]="account.address"></eth-blockies>
+        <eth-blocky [address]="account.address"></eth-blocky>
         <h3>{{ account.address | address:'short' }}</h3>
         <span class="tag" *ngIf="account.isContract">Contract</span>
       </header>

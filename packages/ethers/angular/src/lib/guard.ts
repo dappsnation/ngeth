@@ -1,7 +1,7 @@
 import { Inject, Injectable } from "@angular/core";
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from "@angular/router";
 import { toChainId } from '@ngeth/ethers-core';
-import { map, tap } from "rxjs";
+import { map } from "rxjs";
 import { SUPPORTED_CHAINS } from "./chain";
 import { NgERC1193 } from "./erc1193";
 
@@ -87,7 +87,6 @@ export class HasSignerGuard implements CanActivate {
     this.previous = state.url;
     const redirect = route.data['hasSignerRedirect'] ?? '/no-signer';
     return this.erc1193.account$.pipe(
-      tap(console.log),
       map(account => !!account || this.router.parseUrl(redirect))
     );
   }

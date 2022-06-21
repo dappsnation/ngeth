@@ -23,7 +23,7 @@
     </form>
   
     <button class="address" (click)="$any(selectDialog).showModal()">
-      <eth-blockies [address]="account$ | async"></eth-blockies>
+      <eth-blocky [address]="account$ | async"></eth-blocky>
     </button>
   </div>
 </header>
@@ -41,7 +41,7 @@
     <ul class="list">
       <li *ngFor="let account of accounts$ | async">
         <button class="item" (click)="select(account)">
-          <eth-blockies [address]="account"></eth-blockies>
+          <eth-blocky [address]="account"></eth-blocky>
           <span>{{ account }}</span>
         </button>
       </li>

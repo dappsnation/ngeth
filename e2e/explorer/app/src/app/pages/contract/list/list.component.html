@@ -2,7 +2,7 @@
   <li *ngFor="let contract of contracts$ | async; trackBy: trackByAddress">
     <a class="surface item" [routerLink]="['/contract', contract.address]">
       <header>
-        <eth-blockies [address]="contract.address"></eth-blockies>
+        <eth-blocky [address]="contract.address"></eth-blocky>
         <h3>{{ contract.address | address:'short' }}</h3>
       </header>
       <p>Balance: {{ contract.balance | ether }}</p>
