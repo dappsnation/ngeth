@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, Inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ERC1193 } from '@ngeth/ethers-angular';
+import { NgERC1193 } from '@ngeth/ethers-angular';
 import { IPFS, IPFSClient } from '@ngeth/ipfs';
 import { OpenseaCollectionForm } from '@ngeth/opensea';
 import { addresses } from '../../contracts';
@@ -19,7 +19,7 @@ export class CreateComponent {
     private factoryManager: FactoryManager,
     private route: ActivatedRoute,
     private router: Router,
-    private erc1193: ERC1193,
+    private erc1193: NgERC1193,
     @Inject(IPFS) private ipfs: IPFSClient
   ) {}
 

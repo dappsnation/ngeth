@@ -12,8 +12,8 @@ export default {
     artifacts: './artifacts',
   },
   ngeth: {
-    type: 'angular',
-    outDir: './src/app/contracts',
+    outputType: 'angular',
+    outputPath: './src/app/contracts',
     withImports: false,
     runs: ['scripts/deploy.ts'],
     explorer: {

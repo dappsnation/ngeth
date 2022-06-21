@@ -47,7 +47,7 @@ export async function deploy(
 
 
 /**
- * Save a record of addresses in the directory specified by `hre.ngeth.outDir`
+ * Save a record of addresses in the directory specified by `hre.ngeth.outputPath`
  * @param hre The hardhat environment
  * @param addresses A record of addresses
  * @example
@@ -60,8 +60,8 @@ export async function deploy(
  */
 export function saveAddresses(hre: HardhatRuntimeEnvironment, addresses: Record<string, string>) {
   const root = hre.config.paths.root;
-  const outDir = join(root, hre.config.ngeth.outDir);
-  if (!existsSync(outDir)) mkdirSync(outDir, { recursive: true });
+  const outputPath = join(root, hre.config.ngeth.outputPath);
+  if (!existsSync(outputPath)) mkdirSync(outputPath, { recursive: true });
   const code = formatTs(`export default ${JSON.stringify(addresses)};`);
-  return fs.writeFile(join(outDir, 'addresses.ts'), code);
+  return fs.writeFile(join(outputPath, 'addresses.ts'), code);
 }

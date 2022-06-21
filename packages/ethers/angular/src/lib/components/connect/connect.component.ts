@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, ViewChild, ElementRef } from '@angular/core';
-import { ERC1193, WalletProfile } from '../../erc1193';
+import { NgERC1193, WalletProfile } from '../../erc1193';
 
 interface DialogElement extends HTMLElement {
   showModal: () => void;  
@@ -20,7 +20,7 @@ export class EthConnectComponent {
   connected$ = this.erc1193.connected$;
 
   constructor(
-    private erc1193: ERC1193
+    private erc1193: NgERC1193
   ) { }
 
   select(wallet: WalletProfile) {

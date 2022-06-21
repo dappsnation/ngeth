@@ -5,3 +5,4 @@ export * from './lib/tokens/erc20';
 export * from './lib/tokens/utils';
 export * from './lib/chain/types';
 export * from './lib/chain/utils';
+export * from './lib/erc1193';

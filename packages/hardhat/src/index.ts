@@ -6,7 +6,7 @@ import { getDefaultConfig } from './lib/config';
 import { existsSync, mkdirSync, promises as fs } from 'fs';
 import { getContractImport } from '@ngeth/tools';
 import { execute } from './lib/execute';
-import { serveApp } from './lib/utils';
+import { serveApp, formatTs } from './lib/utils';
 
 
 export * from './lib/deploy';
@@ -31,8 +31,8 @@ task('ngeth:build', 'Build the contracts and generate outputs')
     await hre.run('compile', taskArguments);
     // Generate contracts & index.ts
     const root = hre.config.paths.root;
-    const outDir = join(root, hre.config.ngeth.outDir);
-    if (!existsSync(outDir)) mkdirSync(outDir, { recursive: true });
+    const outputPath = join(root, hre.config.ngeth.outputPath);
+    if (!existsSync(outputPath)) mkdirSync(outputPath, { recursive: true });
 
     const paths = await hre.artifacts.getAllFullyQualifiedNames();
     const artifacts = await Promise.all(paths.map(path => hre.artifacts.readArtifact(path)));
@@ -53,8 +53,8 @@ task('node:server-ready', 'Run once the node is ready')
     const paths = await hre.artifacts.getAllFullyQualifiedNames();
     const artifacts = await Promise.all(paths.map(path => hre.artifacts.readArtifact(path)));
     const root = hre.config.paths.root;
-    const outDir = join(root, hre.config.ngeth.outDir);
-    if (!existsSync(outDir)) mkdirSync(outDir, { recursive: true });
+    const outputPath = join(root, hre.config.ngeth.outputPath);
+    if (!existsSync(outputPath)) mkdirSync(outputPath, { recursive: true });
 
    
     // Generate contracts & index.ts
@@ -67,7 +67,7 @@ task('node:server-ready', 'Run once the node is ready')
       // TODO: check if bytecode === "0x" -> interface / abstract
       const src = resolve(hre.config.paths.sources);
       const importArtifacts = artifacts.filter(a => !resolve(a.sourceName).startsWith(src));
-      const importFolder = join(outDir, 'imports');
+      const importFolder = join(outputPath, 'imports');
       
       for (const artifact of importArtifacts) {
         if (!artifact.abi.length) continue; // No public API
@@ -75,7 +75,7 @@ task('node:server-ready', 'Run once the node is ready')
         const contract = getContractImport(contractName, artifact.abi);
         const output = join(importFolder, dirname(artifact.sourceName));
         if (!existsSync(output)) mkdirSync(output, { recursive: true });
-        fs.writeFile(join(output, `${contractName}.ts`), contract);
+        fs.writeFile(join(output, `${contractName}.ts`), formatTs(contract));
       }
       const exportImports = importArtifacts
         .filter(artifact => artifact.abi.length)
@@ -84,7 +84,7 @@ task('node:server-ready', 'Run once the node is ready')
       fs.writeFile(join(importFolder, 'index.ts'), exportImports);
     }
 
-    // Run explorer
+    // Explorer
     if (hre.config.ngeth.explorer) {
       const { api, app } = hre.config.ngeth.explorer;
       const artifactsSuffix = relative(root, hre.config.paths.artifacts);
@@ -111,7 +111,7 @@ task('node:server-ready', 'Run once the node is ready')
       ]);
     }
 
-    // Run exec
+    // Runs
     if (hre.config.ngeth.runs) {
       const runs = Array.isArray(hre.config.ngeth.runs)
         ? { scripts: hre.config.ngeth.runs, parallel: false }

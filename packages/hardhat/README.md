@@ -1,63 +1,112 @@
 # @ngeth/hardhat
 
-`@ngeth/hardhat` helps you **setup** hardhat for an angular project and **generates** typescript classes that you can use for your angular services.
+
+`@ngeth/hardhat` is a collection of hardhat task that comes with : 
+- Contract type generation for ethers
+- Script runner when local node boots up for better E2E tests
+- Local Block Explorer app
+- Local API endpoint to emulate common cloud services (only etherscan is supported yet)
+
+_Note: `@ngeth/hardhat` is built for **Typescript** project._
+
+**Nx support**: `@ngeth/hardhat` is built with nx and provides schematics and builders for a better nx integration.
+
 
 ## Install
 ```
-ng add @ngeth/hardhat
+npm install @ngeth/hardhat
 ```
 
-The command above might be **very** slow for some reason. Use this to go faster
+### Setup with Nx or Angular
+
+Update an existing project
 ```
-npm install @ngeth/hardhat
 ng generate @ngeth/hardhat:ng-add
 ```
+_Note: Prefer the command above over `ng add @ngeth/hardhat` which might be **very** slow._
 
-
-### Openzeppelin
-`@ngeth/hardhat` doesn't comes with openzeppelin by default.
-You can install it by doing : 
+Create a dedicated library
 ```
-npm install @openzeppelin/contracts
+ng generate @ngeth/hardhat:library contracts
 ```
 
-## How to use
-1. Under `contracts/`: Add your solidity contracts.
-2. Under `hardhat.config.ts`: Add the contracts you want to auto deploy under `ngeth.autoDeploy`.
-3. Run `ng hardhat-serve`.
-4. Under `src/app/contracts`: See the **generated** contracts and addresses.
-5. Create a service : 
+#### Options: 
+- `outputType`: `"angular" | "typescript"` (default: "typescript")
 
+
+### Setup without Nx
+Setup a hardhat project following [official documentation](https://hardhat.org/getting-started).
+
+Update `hardhat.config.ts`
 ```typescript
-import { Injectable } from '@angular/core';
-import { ERC20Contract, addresses } from './contracts';
-import { MetaMask } from '@ngeth/ethers-angular';
+import '@nomiclabs/hardhat-ethers';
+import '@ngeth/hardhat'; // <-- load @ngeth/hardhat
 
-@Injectable({ providedIn: 'root' })
-export class ERC20 extends ERC20Contract {
-  constructor(metamask: MetaMask) {
-    super(addresses.ERC20, metamask.getSigner());
-  }
-}
+export default {
+  solidity: '0.8.11',
+  paths: {
+    sources: './contracts',
+    tests: './tests',
+    artifacts: './artifacts',
+  },
+  // Config for @ngeth/hardhat
+  ngeth: {
+    outputPath: './src/contracts',
+    runs: ['scripts/deploy.ts'],
+    explorer: {
+      api: 3000,
+      app: 3001
+    },
+  },
+};
 ```
-For more details see `@ngeth/ethers`.
 
+## Config
+
+#### `outputPath`
+- **description**: Directory, relative to `hardhat.config.ts`, to put generated contracts classes
+- **required**: Yes
+- **type**: `string`
+
+#### `outputType`
+- **description**: Type of generated contracts
+- **required**: No
+- **type**: `'angular' | 'typescript'`
+- **default**: `'typescript'`
+
+#### `runs`
+- **description**: Scripts to run on `@ngeth:serve` after node has started. If array of string, parallel is `false`
+- **required**: No
+- **type**: `string[] | { scripts: string[], parallel: boolean }`
+- **default**: `[]`
+
+#### `explorer`
+- **description**: Ports used for the block explorer API and APP.
+- **required**: No
+- **type**: `false | { api: number, app: number }`
+- **default**: `{ api: 3000, app: 3001 }`
+
+#### `withImports`
+- **description**: Generate Typescript interfaces for libraries & contract imported by the exported contracts
+- **required**: No
+- **type**: `boolean`
+- **default**: `false`
 
 ## Tasks / Builder
 `@ngeth/hardhat` comes with 3 custom hardhat tasks.
-If you use `ng add`, the schematics will creates builders inside your workspace that wrap these tasks:
+If you use Nx or Angular, the schematics will create builders inside your workspace that wrap these tasks:
 
-`hardhat ngeth:build` (`@ngeth/hardhat:build`):
+#### `hardhat ngeth:build` (`@ngeth/hardhat:build`):
 - **compiles** the contracts
 - **generates** the contract classes
 
-`hardhat ngeth:serve` (`@ngeth/hardhat:serve`): 
+#### `hardhat ngeth:serve` (`@ngeth/hardhat:serve`): 
 - **compiles** the contracts.
 - **generates** the contract classes.
-- **runs** a node on localhost.
-- **deploys** the contracts under `ngeth.autoDeploy` in `hardhat.config.ts`.
+- **starts** a node on localhost:8545, and the explorer as specified in the [config](#explorer)
+- **runs** scripts specified under `runs`.
 
-`hardhat ngeth:test` (`@ngeth/hardhat:test`):
+#### `hardhat ngeth:test` (`@ngeth/hardhat:test`):
 - **compiles** the contracts.
 - **tests** with jest.
 

@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { ERC1193 } from '@ngeth/ethers-angular';
 
 @Component({
   selector: 'ngeth-root',
@@ -11,7 +10,6 @@ import { ERC1193 } from '@ngeth/ethers-angular';
 export class AppComponent {
   constructor(
     private router: Router,
-    private erc1193: ERC1193
   ) {}
 
   redirect(path: string) {

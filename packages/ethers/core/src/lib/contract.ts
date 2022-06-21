@@ -36,7 +36,7 @@ export class EthersContract<
 
   override attach!: (addressOrName: string) => this;
   override connect!: (providerOrSigner: Provider | Signer) => this;
-  deloyed?: () => Promise<this>;
+  override deployed!: () => Promise<this>;
   
   // Events
   override listenerCount!: (eventName?: EventFilter | EventKeys) => number;

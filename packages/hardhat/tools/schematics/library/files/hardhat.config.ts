@@ -12,12 +12,11 @@ export default {
     artifacts: './artifacts'
   },
   ngeth: {
-    outDir: './src',
-    // Put the contracts you want to auto deploy here
-    // - key is the name of the contract
-    // - value is the constructor arguments
-    autoDeploy: {
-      ['<%= className %>']: ['<%= className %>', '<%= constantName %>']
-    }
+    outputPath: './src',
+    runs: ['scripts/deploy.ts'],
+    explorer: {
+      api: 3000,
+      app: 3001
+    },
   }
 };

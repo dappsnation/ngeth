@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { ERC1193 } from '@ngeth/ethers-angular';
+import { NgERC1193 } from '@ngeth/ethers-angular';
 import { map, switchMap } from 'rxjs';
 import { addresses } from '../../contracts';
 import { FactoryManager } from '../../services/factory';
@@ -21,6 +21,6 @@ export class ListComponent {
   
   constructor(
     private factoryManager: FactoryManager,
-    private metamask: ERC1193
+    private metamask: NgERC1193
   ) {}
 }

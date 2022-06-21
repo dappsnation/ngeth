@@ -2,9 +2,9 @@ import 'hardhat/types/config';
 import { HardhatConfig } from 'hardhat/types';
 
 interface NgEthConfig {
-  outDir: string;
+  outputPath: string;
   /** Type of build */
-  type: 'angular' | 'typescript';
+  outputType: 'angular' | 'typescript';
   /** Constructor params used when serving the application */
   runs: string[] | { scripts: string[], parallel: boolean };
   withImports: boolean;
@@ -23,8 +23,8 @@ declare module 'hardhat/types/config' {
 }
 
 export const getDefaultConfig = (config: Partial<HardhatConfig>): NgEthConfig => ({
-  outDir: 'ngeth',
-  type: 'typescript',
+  outputPath: 'ngeth',
+  outputType: 'typescript',
   runs: [],
   withImports: false,
   explorer: {

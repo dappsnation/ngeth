@@ -12,8 +12,9 @@ export default {
     artifacts: './artifacts',
   },
   ngeth: {
-    type: 'typescript',
-    outDir: './contracts',
+    outputType: 'typescript',
+    outputPath: './contracts',
+    withImports: true,
     explorer: false,
     runs: {
       scripts: ['scripts/deploy.ts'],
