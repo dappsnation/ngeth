@@ -122,11 +122,9 @@ export interface MinedBlock extends BaseParams<'account', 'getminedblocks'> {
 //////////////
 // Params
 export type ContractParams = GetABI | VerifySourceCode;
-export interface GetABI {
-  module: 'contract';
-  action: 'getabi';
+export interface GetABI extends BaseParams<'contract', 'getabi'> {
+  /** the contract address that has a verified source code */
   address: string;
-  apiKey: string;
 }
 
 type LibraryName<T extends number> = {[key in `libraryname${T}`]: string };
