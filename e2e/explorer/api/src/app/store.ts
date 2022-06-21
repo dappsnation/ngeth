@@ -1,5 +1,5 @@
 import { Block, TransactionResponse, TransactionReceipt, Log } from '@ethersproject/abstract-provider';
-import { EthAccount, ContractArtifact, ContractAccount, EthStore, isContract } from '@explorer';
+import { EthAccount, ContractArtifact, ContractAccount, EthStore, isContract, BuildInfo } from '@explorer';
 import { AddressZero } from '@ethersproject/constants';
 import { BigNumber } from '@ethersproject/bignumber';
 import { defaultAbiCoder } from '@ethersproject/abi';
@@ -25,7 +25,8 @@ export const store: EthStore = {
   logs: {},
   accounts: [],
   contracts: [],
-  artifacts: {}
+  artifacts: {},
+  builds: {}
 }
 
 
@@ -157,13 +158,21 @@ function setState(block: Block, receipts: TransactionReceipt[]) {
 }
 
 ///////////////
+//// BUILD ////
+///////////////
+
+function setBuildInfo(buildInfo: BuildInfo) {
+  const { sourceCode, abi, contractName, compilerVersion, optimizationUsed, runs, constructorArguments, evmVersion, library, licenseType, proxy, implementation, swarmSource } = buildInfo; 
+
+}
+
+///////////////
 // ARTIFACTS //
 ///////////////
 
 function artifactKey({ contractName, sourceName }: ContractArtifact) {
   return [sourceName, contractName].join('_');
 }
-
 
 /** Register the artifact and return the key */
 export function setArtifact(artifact: ContractArtifact) {

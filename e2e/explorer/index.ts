@@ -21,6 +21,8 @@ export interface EthStore {
   contracts: string[],
   /** Artifacts */
   artifacts: Record<string, ContractArtifact>
+  /** Builds */
+  builds: Record<string, BuildInfo>
 }
 
 
@@ -40,6 +42,23 @@ export interface ContractArtifact {
   standard?: 'ERC20' | 'ERC721' | 'ERC1155';
   deployedBytecode: string; // "0x"-prefixed hex string
 }
+
+export interface BuildInfo {
+  sourceCode: string;
+  abi: ABIDescription[];
+  contractName: string;
+  compilerVersion: string;
+  optimizationUsed: string;
+  runs: string;
+  constructorArguments: string;
+  evmVersion: string;
+  library: string;
+  licenseType: string;
+  proxy: string;
+  implementation: string;
+  swarmSource: string;
+}
+
 
 
 export interface ContractAccount extends EthAccount{
