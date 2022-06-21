@@ -42,5 +42,7 @@ export function getAbi({ address }: GetParams<GetABI>) {
   const account = store.addresses[address];
   if (isContract(account)) {
     return store.artifacts[account.artifact].abi;
+  } else {
+    throw new Error('Contract source code not verified');
   }
 }
