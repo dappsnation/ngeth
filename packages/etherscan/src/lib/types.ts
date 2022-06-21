@@ -126,6 +126,10 @@ export interface GetABI extends BaseParams<'contract', 'getabi'> {
   /** the contract address that has a verified source code */
   address: string;
 }
+export interface GetSourceCode extends BaseParams<'contract', 'getsourcecode'> {
+  /** the contract address that has a verified source code */
+  address: string;
+}
 
 type LibraryName<T extends number> = {[key in `libraryname${T}`]: string };
 type LibraryAddress<T extends number> = {[key in `libraryaddress${T}`]: string };

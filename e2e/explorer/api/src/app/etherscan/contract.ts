@@ -1,9 +1,10 @@
-import { VerifySourceCode, GetParams, GetABI } from "@ngeth/etherscan";
+import { VerifySourceCode, GetParams, GetABI, GetSourceCode } from "@ngeth/etherscan";
 import solc from 'solc';
 import { CompilationInput, CompilationResult } from '@type/solc';
 import { provider } from "../provider";
 import { addArtifactToAddress, setArtifact, store } from "../store";
 import { isContract } from "@explorer";
+import { promises as fs } from 'fs';
 
 async function verifySourceCode(params: GetParams<VerifySourceCode>) {
   const code = await provider.getCode(params.contractaddress);
@@ -44,5 +45,21 @@ export function getAbi({ address }: GetParams<GetABI>) {
     return store.artifacts[account.artifact].abi;
   } else {
     throw new Error('Contract source code not verified');
+  }
+}
+
+export function getSourceCode({ address }: GetParams<GetSourceCode>) {
+  if (!address) throw new Error('Invalid Address format');
+
+  const account = store.addresses[address];
+  if(isContract(account)) {
+    return {
+      SourceCode: store.artifacts[account.artifact].sourceName,
+      ABI: store.artifacts[account.artifact].abi,
+      ContractName: store.artifacts[account.artifact].contractName,
+    }
+  } else {
+    throw new Error('Contract source code not verified');
+    
   }
 }

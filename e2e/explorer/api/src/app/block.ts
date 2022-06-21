@@ -25,11 +25,19 @@ const hardhatAccounts = [
 async function initFactories(root: string) {
   const folders = await fs.readdir(root);
   for (const folder of folders) {
-    const files = await fs.readdir(join(root, folder));
+    // Get the folder path and check its files
+    const folderPath = join(root, folder);
+    const files = await fs.readdir(folderPath);
+
     for (const file of files) {
       const path = join(root, folder, file);
-      if (path.endsWith('.dbg.json')) continue;
-      if (path.endsWith('.json')) {
+      if (path.endsWith('.dbg.json')) {
+        const res = await fs.readFile(path, 'utf8');
+        const { buildInfo } = JSON.parse(res);
+        const buildPath = join(folderPath, buildInfo);
+        const build = await fs.readFile(buildPath, 'utf8');
+        console.log(JSON.parse(build));
+      } else if (path.endsWith('.json')) {
         const res = await fs.readFile(path, 'utf8');
         const arfitact = JSON.parse(res);
         setArtifact(arfitact);

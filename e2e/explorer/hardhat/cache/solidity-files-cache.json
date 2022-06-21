@@ -1,9 +1,9 @@
 {
   "_format": "hh-sol-cache-2",
   "files": {
-    "C:\\code\\blockchain\\ngeth\\e2e\\explorer\\hardhat\\src\\BaseERC1155.sol": {
-      "lastModificationDate": 1655303370349,
-      "contentHash": "9961f6f96b04930cd0fd7019e1dc703e",
+    "C:\\Users\\cam20\\OneDrive\\Documents\\Unicorn Factory\\ngeth\\e2e\\explorer\\hardhat\\src\\BaseERC1155.sol": {
+      "lastModificationDate": 1655304119053,
+      "contentHash": "2da0657b16d38cff86776bf8aa00de4a",
       "sourceName": "src/BaseERC1155.sol",
       "solcConfig": {
         "version": "0.8.11",
@@ -39,8 +39,8 @@
         "BaseERC1155"
       ]
     },
-    "C:\\code\\blockchain\\ngeth\\node_modules\\@openzeppelin\\contracts\\token\\ERC1155\\ERC1155.sol": {
-      "lastModificationDate": 1655373951138,
+    "C:\\Users\\cam20\\OneDrive\\Documents\\Unicorn Factory\\ngeth\\node_modules\\@openzeppelin\\contracts\\token\\ERC1155\\ERC1155.sol": {
+      "lastModificationDate": 1655809183182,
       "contentHash": "1d68a32647e54f6acd6ff471d940ef4c",
       "sourceName": "@openzeppelin/contracts/token/ERC1155/ERC1155.sol",
       "solcConfig": {
@@ -81,8 +81,8 @@
         "ERC1155"
       ]
     },
-    "C:\\code\\blockchain\\ngeth\\node_modules\\@openzeppelin\\contracts\\access\\Ownable.sol": {
-      "lastModificationDate": 1655373956106,
+    "C:\\Users\\cam20\\OneDrive\\Documents\\Unicorn Factory\\ngeth\\node_modules\\@openzeppelin\\contracts\\access\\Ownable.sol": {
+      "lastModificationDate": 1655809188236,
       "contentHash": "8398972af73b4e9e5ff3b31cad86234f",
       "sourceName": "@openzeppelin/contracts/access/Ownable.sol",
       "solcConfig": {
@@ -118,8 +118,8 @@
         "Ownable"
       ]
     },
-    "C:\\code\\blockchain\\ngeth\\node_modules\\@openzeppelin\\contracts\\token\\ERC1155\\IERC1155.sol": {
-      "lastModificationDate": 1655373954911,
+    "C:\\Users\\cam20\\OneDrive\\Documents\\Unicorn Factory\\ngeth\\node_modules\\@openzeppelin\\contracts\\token\\ERC1155\\IERC1155.sol": {
+      "lastModificationDate": 1655809185947,
       "contentHash": "59e1bc5713fdebc7f821dc52f4d3e0ef",
       "sourceName": "@openzeppelin/contracts/token/ERC1155/IERC1155.sol",
       "solcConfig": {
@@ -155,8 +155,8 @@
         "IERC1155"
       ]
     },
-    "C:\\code\\blockchain\\ngeth\\node_modules\\@openzeppelin\\contracts\\token\\ERC1155\\IERC1155Receiver.sol": {
-      "lastModificationDate": 1655373955024,
+    "C:\\Users\\cam20\\OneDrive\\Documents\\Unicorn Factory\\ngeth\\node_modules\\@openzeppelin\\contracts\\token\\ERC1155\\IERC1155Receiver.sol": {
+      "lastModificationDate": 1655809186105,
       "contentHash": "90eddd06deda7317b4441f04ec26db4d",
       "sourceName": "@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol",
       "solcConfig": {
@@ -192,8 +192,8 @@
         "IERC1155Receiver"
       ]
     },
-    "C:\\code\\blockchain\\ngeth\\node_modules\\@openzeppelin\\contracts\\token\\ERC1155\\extensions\\IERC1155MetadataURI.sol": {
-      "lastModificationDate": 1655373954967,
+    "C:\\Users\\cam20\\OneDrive\\Documents\\Unicorn Factory\\ngeth\\node_modules\\@openzeppelin\\contracts\\token\\ERC1155\\extensions\\IERC1155MetadataURI.sol": {
+      "lastModificationDate": 1655809186029,
       "contentHash": "9148c2e10c4efb12c71a7f080da5559b",
       "sourceName": "@openzeppelin/contracts/token/ERC1155/extensions/IERC1155MetadataURI.sol",
       "solcConfig": {
@@ -229,8 +229,8 @@
         "IERC1155MetadataURI"
       ]
     },
-    "C:\\code\\blockchain\\ngeth\\node_modules\\@openzeppelin\\contracts\\utils\\Address.sol": {
-      "lastModificationDate": 1655373950253,
+    "C:\\Users\\cam20\\OneDrive\\Documents\\Unicorn Factory\\ngeth\\node_modules\\@openzeppelin\\contracts\\utils\\Address.sol": {
+      "lastModificationDate": 1655809182012,
       "contentHash": "4cff8b2ea0d958750786b4e3ca308445",
       "sourceName": "@openzeppelin/contracts/utils/Address.sol",
       "solcConfig": {
@@ -264,8 +264,8 @@
         "Address"
       ]
     },
-    "C:\\code\\blockchain\\ngeth\\node_modules\\@openzeppelin\\contracts\\utils\\Context.sol": {
-      "lastModificationDate": 1655373950608,
+    "C:\\Users\\cam20\\OneDrive\\Documents\\Unicorn Factory\\ngeth\\node_modules\\@openzeppelin\\contracts\\utils\\Context.sol": {
+      "lastModificationDate": 1655809182496,
       "contentHash": "5f2c5c4b6af2dd4551027144797bc8be",
       "sourceName": "@openzeppelin/contracts/utils/Context.sol",
       "solcConfig": {
@@ -299,8 +299,8 @@
         "Context"
       ]
     },
-    "C:\\code\\blockchain\\ngeth\\node_modules\\@openzeppelin\\contracts\\utils\\introspection\\ERC165.sol": {
-      "lastModificationDate": 1655373951535,
+    "C:\\Users\\cam20\\OneDrive\\Documents\\Unicorn Factory\\ngeth\\node_modules\\@openzeppelin\\contracts\\utils\\introspection\\ERC165.sol": {
+      "lastModificationDate": 1655809183621,
       "contentHash": "0e7db055ce108f9da7bb6686a00287c0",
       "sourceName": "@openzeppelin/contracts/utils/introspection/ERC165.sol",
       "solcConfig": {
@@ -336,8 +336,8 @@
         "ERC165"
       ]
     },
-    "C:\\code\\blockchain\\ngeth\\node_modules\\@openzeppelin\\contracts\\utils\\introspection\\IERC165.sol": {
-      "lastModificationDate": 1655373955162,
+    "C:\\Users\\cam20\\OneDrive\\Documents\\Unicorn Factory\\ngeth\\node_modules\\@openzeppelin\\contracts\\utils\\introspection\\IERC165.sol": {
+      "lastModificationDate": 1655809186364,
       "contentHash": "03e6768535ac4da0e9756f1d8a4a018a",
       "sourceName": "@openzeppelin/contracts/utils/introspection/IERC165.sol",
       "solcConfig": {
@@ -371,8 +371,8 @@
         "IERC165"
       ]
     },
-    "C:\\code\\blockchain\\ngeth\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol": {
-      "lastModificationDate": 1655373951727,
+    "C:\\Users\\cam20\\OneDrive\\Documents\\Unicorn Factory\\ngeth\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol": {
+      "lastModificationDate": 1655809183936,
       "contentHash": "f48de0eaae9544072b8766e2eac528a7",
       "sourceName": "@openzeppelin/contracts/token/ERC20/ERC20.sol",
       "solcConfig": {
@@ -410,8 +410,8 @@
         "ERC20"
       ]
     },
-    "C:\\code\\blockchain\\ngeth\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\IERC20.sol": {
-      "lastModificationDate": 1655373955297,
+    "C:\\Users\\cam20\\OneDrive\\Documents\\Unicorn Factory\\ngeth\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\IERC20.sol": {
+      "lastModificationDate": 1655809186584,
       "contentHash": "302d9755e46bc69d7058b0cbe7185e37",
       "sourceName": "@openzeppelin/contracts/token/ERC20/IERC20.sol",
       "solcConfig": {
@@ -445,8 +445,8 @@
         "IERC20"
       ]
     },
-    "C:\\code\\blockchain\\ngeth\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\extensions\\IERC20Metadata.sol": {
-      "lastModificationDate": 1655373955338,
+    "C:\\Users\\cam20\\OneDrive\\Documents\\Unicorn Factory\\ngeth\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\extensions\\IERC20Metadata.sol": {
+      "lastModificationDate": 1655809186661,
       "contentHash": "909ab67fc5c25033fe6cd364f8c056f9",
       "sourceName": "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol",
       "solcConfig": {
@@ -482,9 +482,9 @@
         "IERC20Metadata"
       ]
     },
-    "C:\\code\\blockchain\\ngeth\\e2e\\explorer\\hardhat\\src\\BaseERC20.sol": {
-      "lastModificationDate": 1654364307677,
-      "contentHash": "10fb8e1dea23dae1b5fabdb9a9ca272d",
+    "C:\\Users\\cam20\\OneDrive\\Documents\\Unicorn Factory\\ngeth\\e2e\\explorer\\hardhat\\src\\BaseERC20.sol": {
+      "lastModificationDate": 1654685152899,
+      "contentHash": "7b5044f04ed5b49b310cc4da98ef71e9",
       "sourceName": "src/BaseERC20.sol",
       "solcConfig": {
         "version": "0.8.11",
@@ -519,9 +519,47 @@
         "BaseERC20"
       ]
     },
-    "C:\\code\\blockchain\\ngeth\\e2e\\explorer\\hardhat\\src\\UpgradeableERC1155.sol": {
-      "lastModificationDate": 1655569945559,
-      "contentHash": "75850cd1326edcffd4375cedfaf49544",
+    "C:\\Users\\cam20\\OneDrive\\Documents\\Unicorn Factory\\ngeth\\e2e\\explorer\\hardhat\\src\\ERC1155Proxy.sol": {
+      "lastModificationDate": 1655741186353,
+      "contentHash": "676abdd4c490d57f36d2f91bbc30a312",
+      "sourceName": "src/ERC1155Proxy.sol",
+      "solcConfig": {
+        "version": "0.8.11",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./UpgradeableERC1155.sol",
+        "@openzeppelin/contracts/proxy/Clones.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.11"
+      ],
+      "artifacts": [
+        "ERC1155Proxy"
+      ]
+    },
+    "C:\\Users\\cam20\\OneDrive\\Documents\\Unicorn Factory\\ngeth\\e2e\\explorer\\hardhat\\src\\UpgradeableERC1155.sol": {
+      "lastModificationDate": 1655741186353,
+      "contentHash": "51d45f40bbaa440e9aec817a33474f55",
       "sourceName": "src/UpgradeableERC1155.sol",
       "solcConfig": {
         "version": "0.8.11",
@@ -557,8 +595,8 @@
         "UpgradeableERC1155"
       ]
     },
-    "C:\\code\\blockchain\\ngeth\\node_modules\\@openzeppelin\\contracts\\proxy\\Clones.sol": {
-      "lastModificationDate": 1655373950537,
+    "C:\\Users\\cam20\\OneDrive\\Documents\\Unicorn Factory\\ngeth\\node_modules\\@openzeppelin\\contracts\\proxy\\Clones.sol": {
+      "lastModificationDate": 1655809182379,
       "contentHash": "f741efede98f234458f02f818f80c7f3",
       "sourceName": "@openzeppelin/contracts/proxy/Clones.sol",
       "solcConfig": {
@@ -592,8 +630,8 @@
         "Clones"
       ]
     },
-    "C:\\code\\blockchain\\ngeth\\node_modules\\@openzeppelin\\contracts-upgradeable\\token\\ERC1155\\ERC1155Upgradeable.sol": {
-      "lastModificationDate": 1655373951712,
+    "C:\\Users\\cam20\\OneDrive\\Documents\\Unicorn Factory\\ngeth\\node_modules\\@openzeppelin\\contracts-upgradeable\\token\\ERC1155\\ERC1155Upgradeable.sol": {
+      "lastModificationDate": 1655809183907,
       "contentHash": "b8451cd97ec3d3dda466157b83bf38b7",
       "sourceName": "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol",
       "solcConfig": {
@@ -635,8 +673,8 @@
         "ERC1155Upgradeable"
       ]
     },
-    "C:\\code\\blockchain\\ngeth\\node_modules\\@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol": {
-      "lastModificationDate": 1655373956430,
+    "C:\\Users\\cam20\\OneDrive\\Documents\\Unicorn Factory\\ngeth\\node_modules\\@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol": {
+      "lastModificationDate": 1655809189099,
       "contentHash": "11b77de3cb69dfc6b342ec87bd09cbdd",
       "sourceName": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol",
       "solcConfig": {
@@ -673,8 +711,8 @@
         "OwnableUpgradeable"
       ]
     },
-    "C:\\code\\blockchain\\ngeth\\node_modules\\@openzeppelin\\contracts-upgradeable\\token\\ERC1155\\IERC1155Upgradeable.sol": {
-      "lastModificationDate": 1655373955336,
+    "C:\\Users\\cam20\\OneDrive\\Documents\\Unicorn Factory\\ngeth\\node_modules\\@openzeppelin\\contracts-upgradeable\\token\\ERC1155\\IERC1155Upgradeable.sol": {
+      "lastModificationDate": 1655809186664,
       "contentHash": "a51bc173c3333372b3aa9913bc21f38c",
       "sourceName": "@openzeppelin/contracts-upgradeable/token/ERC1155/IERC1155Upgradeable.sol",
       "solcConfig": {
@@ -710,8 +748,8 @@
         "IERC1155Upgradeable"
       ]
     },
-    "C:\\code\\blockchain\\ngeth\\node_modules\\@openzeppelin\\contracts-upgradeable\\token\\ERC1155\\IERC1155ReceiverUpgradeable.sol": {
-      "lastModificationDate": 1655373955295,
+    "C:\\Users\\cam20\\OneDrive\\Documents\\Unicorn Factory\\ngeth\\node_modules\\@openzeppelin\\contracts-upgradeable\\token\\ERC1155\\IERC1155ReceiverUpgradeable.sol": {
+      "lastModificationDate": 1655809186588,
       "contentHash": "eb51ed084f6f7fd2c7098715c5690285",
       "sourceName": "@openzeppelin/contracts-upgradeable/token/ERC1155/IERC1155ReceiverUpgradeable.sol",
       "solcConfig": {
@@ -747,8 +785,8 @@
         "IERC1155ReceiverUpgradeable"
       ]
     },
-    "C:\\code\\blockchain\\ngeth\\node_modules\\@openzeppelin\\contracts-upgradeable\\token\\ERC1155\\extensions\\IERC1155MetadataURIUpgradeable.sol": {
-      "lastModificationDate": 1655373955247,
+    "C:\\Users\\cam20\\OneDrive\\Documents\\Unicorn Factory\\ngeth\\node_modules\\@openzeppelin\\contracts-upgradeable\\token\\ERC1155\\extensions\\IERC1155MetadataURIUpgradeable.sol": {
+      "lastModificationDate": 1655809186512,
       "contentHash": "8b7e95c747e2dab3b5444b37410a8315",
       "sourceName": "@openzeppelin/contracts-upgradeable/token/ERC1155/extensions/IERC1155MetadataURIUpgradeable.sol",
       "solcConfig": {
@@ -784,8 +822,8 @@
         "IERC1155MetadataURIUpgradeable"
       ]
     },
-    "C:\\code\\blockchain\\ngeth\\node_modules\\@openzeppelin\\contracts-upgradeable\\utils\\AddressUpgradeable.sol": {
-      "lastModificationDate": 1655373950483,
+    "C:\\Users\\cam20\\OneDrive\\Documents\\Unicorn Factory\\ngeth\\node_modules\\@openzeppelin\\contracts-upgradeable\\utils\\AddressUpgradeable.sol": {
+      "lastModificationDate": 1655809182293,
       "contentHash": "b70d2e0552ab1f44f7e44b5f8379c358",
       "sourceName": "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol",
       "solcConfig": {
@@ -819,8 +857,8 @@
         "AddressUpgradeable"
       ]
     },
-    "C:\\code\\blockchain\\ngeth\\node_modules\\@openzeppelin\\contracts-upgradeable\\utils\\ContextUpgradeable.sol": {
-      "lastModificationDate": 1655373950771,
+    "C:\\Users\\cam20\\OneDrive\\Documents\\Unicorn Factory\\ngeth\\node_modules\\@openzeppelin\\contracts-upgradeable\\utils\\ContextUpgradeable.sol": {
+      "lastModificationDate": 1655809182679,
       "contentHash": "6200b84950eb05b4a92a39fd1d6e0f9b",
       "sourceName": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol",
       "solcConfig": {
@@ -856,8 +894,8 @@
         "ContextUpgradeable"
       ]
     },
-    "C:\\code\\blockchain\\ngeth\\node_modules\\@openzeppelin\\contracts-upgradeable\\utils\\introspection\\ERC165Upgradeable.sol": {
-      "lastModificationDate": 1655373951840,
+    "C:\\Users\\cam20\\OneDrive\\Documents\\Unicorn Factory\\ngeth\\node_modules\\@openzeppelin\\contracts-upgradeable\\utils\\introspection\\ERC165Upgradeable.sol": {
+      "lastModificationDate": 1655809184033,
       "contentHash": "5f2d8b81c0ff5bd2047b4846c20b998d",
       "sourceName": "@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol",
       "solcConfig": {
@@ -894,8 +932,8 @@
         "ERC165Upgradeable"
       ]
     },
-    "C:\\code\\blockchain\\ngeth\\node_modules\\@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol": {
-      "lastModificationDate": 1655373956297,
+    "C:\\Users\\cam20\\OneDrive\\Documents\\Unicorn Factory\\ngeth\\node_modules\\@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol": {
+      "lastModificationDate": 1655809188702,
       "contentHash": "49c8ad51a559f6dda13d35874f7dfdb9",
       "sourceName": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol",
       "solcConfig": {
@@ -931,8 +969,8 @@
         "Initializable"
       ]
     },
-    "C:\\code\\blockchain\\ngeth\\node_modules\\@openzeppelin\\contracts-upgradeable\\utils\\introspection\\IERC165Upgradeable.sol": {
-      "lastModificationDate": 1655373955471,
+    "C:\\Users\\cam20\\OneDrive\\Documents\\Unicorn Factory\\ngeth\\node_modules\\@openzeppelin\\contracts-upgradeable\\utils\\introspection\\IERC165Upgradeable.sol": {
+      "lastModificationDate": 1655809186923,
       "contentHash": "d6ecf203a5e72c845be9bbf2f304a289",
       "sourceName": "@openzeppelin/contracts-upgradeable/utils/introspection/IERC165Upgradeable.sol",
       "solcConfig": {
@@ -964,44 +1002,6 @@
       ],
       "artifacts": [
         "IERC165Upgradeable"
-      ]
-    },
-    "C:\\code\\blockchain\\ngeth\\e2e\\explorer\\hardhat\\src\\ERC1155Proxy.sol": {
-      "lastModificationDate": 1655570230046,
-      "contentHash": "5eb15f1a8557eefe40e685a631f045b8",
-      "sourceName": "src/ERC1155Proxy.sol",
-      "solcConfig": {
-        "version": "0.8.11",
-        "settings": {
-          "optimizer": {
-            "enabled": false,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "./UpgradeableERC1155.sol",
-        "@openzeppelin/contracts/proxy/Clones.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.11"
-      ],
-      "artifacts": [
-        "ERC1155Proxy"
       ]
     }
   }

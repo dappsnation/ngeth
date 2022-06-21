@@ -14,7 +14,7 @@
 
 ## Contracts
 
-- [ ] getabi : to implement
+- [x] getabi
 - [ ] getsourcecode: to implement
 
 ## Transactions
@@ -24,14 +24,7 @@
 
 ## Blocks :
 
-- [ ] getblockreward: won't be implemented
-- [ ] getblockcountdown: won't be implemented
-- [ ] getblocknobytime: won't be implemented
-- [ ] dailyacgblocksize: won't be implemented
-- [ ] dailyblkcount: won't be implemented
-- [ ] dailyblockrewards: won't be implemented
-- [ ] dailyavgblocktime: won't be implemented
-- [ ] dailyuncleblkcount: won't be implemented
+won't be implemented
 
 ## Logs
 
