@@ -1,7 +1,7 @@
 import { EvmVersion } from "@type/solc";
 import { BigNumber } from "ethers";
 
-export type EtherscanParams = AccountsParams | ContractParams | TransactionParams | StatsParams | TokenParams;
+export type EtherscanParams = AccountsParams | ContractParams | TransactionParams | StatsParams | TokenParams | LogParams;
 
 export type Tag = number | 'latest' | 'pending' | 'earliest';
 export type Sort = 'asc' | 'desc';
@@ -122,11 +122,9 @@ export interface MinedBlock extends BaseParams<'account', 'getminedblocks'> {
 //////////////
 // Params
 export type ContractParams = GetABI | VerifySourceCode;
-export interface GetABI {
-  module: 'contract';
-  action: 'getabi';
+export interface GetABI extends BaseParams<'contract', 'getabi'> {
+  /** the contract address that has a verified source code */
   address: string;
-  apiKey: string;
 }
 
 type LibraryName<T extends number> = {[key in `libraryname${T}`]: string };
@@ -162,6 +160,7 @@ export type VerifySourceCode = VerifySourceCodeParams & Library<1 | 2 | 3 | 4 | 
 // TRANSACTION //
 /////////////////
 //logs
+export type LogParams = Logs;
 export interface Logs extends BaseParams<'logs', "getLogs"> {
   fromBlock: number | "latest";
   toBlock: number | "latest";
@@ -178,7 +177,7 @@ export interface Logs extends BaseParams<'logs', "getLogs"> {
   topic2_3_opr?: 'and' | 'or';
 }
 
-export interface EtherscanTransaction {
+export interface TransferTransaction {
   blockNumber: string;
   timeStamp: string;
   hash: string;
@@ -194,6 +193,36 @@ export interface EtherscanTransaction {
   gasUsed: string;
   cumulativeGasUsed: string;
   confirmation: string;
+}
+export interface ERC20TransferTransaction extends TransferTransaction {
+  tokenDecimal: string;
+}
+export interface ERC721TransferTransaction extends TransferTransaction {
+  tokenId: string;
+  tokenDecimal: string;
+}
+export interface ERC1155TransferTransaction extends TransferTransaction {
+  tokenId: string;
+  tokenValue: string;
+}
+export interface TxListResponse {
+  blockNumber: string,
+  timeStamp: string,
+  hash: string,
+  nonce: string,
+  blockHash: string,
+  transactionIndex: string,
+  from: string,
+  to: string,
+  value: string,
+  gas:string,
+  gasPrice: string,
+  isError: string,
+  txreceipt_status: string,
+  contractAddress: string,
+  cumulativesGasUsed: string,
+  gasUsed: string,
+  confirmation: string
 }
 
 // Params
