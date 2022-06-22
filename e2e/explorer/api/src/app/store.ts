@@ -166,11 +166,13 @@ export function setBuildInfo(info: BuildInfo) {
   for (const path of Object.keys(info.input.sources)) {
     content[path] = {
       sourceCode: info.input.sources[path].content,
+      contractName: info.input.sources[path],
       compilerVersion: info.solcVersion,
       optimizationUsed: info.input.settings.optimizer.enabled,
       runs: info.input.settings.optimizer.runs
     }
   }
+  store.builds = content;
 }
 
 ///////////////
