@@ -6,7 +6,6 @@ import { defaultAbiCoder } from '@ethersproject/abi';
 import { id } from '@ethersproject/hash';
 import { ABIDescription } from '@type/solc';
 import { provider } from './provider';
-import { Trace } from './types';
 
 function bignumberReviver(key: string, value: any) {
   if (typeof value === 'object' && value['type'] === 'BigNumber') return BigNumber.from(value);

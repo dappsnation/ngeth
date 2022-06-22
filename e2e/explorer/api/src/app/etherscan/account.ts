@@ -5,6 +5,8 @@ import { EthState } from "@explorer";
 import { BigNumber } from "@ethersproject/bignumber";
 import { id } from "@ethersproject/hash";
 import { defaultAbiCoder } from '@ethersproject/abi';
+import { sortByBlockNumber } from './utils';
+
 
 function toTransferTransaction(tx: TransactionResponse, receipt: TransactionReceipt): TransferTransaction {
   return {
@@ -23,6 +25,7 @@ function toTransferTransaction(tx: TransactionResponse, receipt: TransactionRece
     gasUsed: receipt.gasUsed.toString(),
     cumulativeGasUsed: receipt.cumulativeGasUsed.toString(),
     confirmation: tx.confirmations.toString(),
+    // @todo(#1) add tokenSymbol & tokenName
   }
 }
 function toTxList(tx: TransactionResponse, receipt: TransactionReceipt): TxListResponse {
@@ -46,6 +49,7 @@ function toTxList(tx: TransactionResponse, receipt: TransactionReceipt): TxListR
     confirmation: tx.confirmations.toString()
   }
 }
+
 
 export function balance({ address, tag }: GetParams<Balance>): string {
   let state: EthState | undefined;
@@ -84,10 +88,6 @@ export function txList(params: GetParams<TxList>) {
   const {address, startblock = 0, endblock, page, sort = 'asc'} = params;  
   if (!address) throw new Error('Error! Missing or invalid Action name');
 
-  const sorting = {
-    asc: (a: TransactionReceipt, b: TransactionReceipt) => a.blockNumber - b.blockNumber,
-    desc: (a: TransactionReceipt, b: TransactionReceipt) => b.blockNumber - a.blockNumber
-  };
   const txs = store.addresses[address].transactions
     .map(tx => store.receipts[tx])
     .filter(receipt => {
@@ -96,7 +96,7 @@ export function txList(params: GetParams<TxList>) {
       if (endblock && receipt.blockNumber > endblock) return false;
       return true;
     })
-    .sort(sorting[sort])
+    .sort(sortByBlockNumber[sort])
     .map(receipt => {
       const tx = store.transactions[receipt.transactionHash];
       return toTxList(tx, receipt)
@@ -146,11 +146,6 @@ export function tokensTx(params: GetParams<TokenTx>) {
   const transferSingleId = id('TransferSingle(address, address, address, uint256, uint256)');
   const transferBatchId = id('TransferBatch(address, address, address, uint256[], uint256[])')
 
-  const sorting = {
-    asc: (a: Log, b: Log) => a.blockNumber - b.blockNumber,
-    desc: (a: Log, b: Log) => b.blockNumber - a.blockNumber
-  };
-
   const etherscanTxs = store.logs[address]
   .filter(log => {
     if(startblock && log.blockNumber < startblock) return false;
@@ -158,7 +153,7 @@ export function tokensTx(params: GetParams<TokenTx>) {
     if(log.topics[0] !== transferID || log.topics[0] !== transferSingleId || log.topics[0] !== transferBatchId) return false;  
     return true;  
   })
-  .sort(sorting[sort])
+  .sort(sortByBlockNumber[sort])
   .map(log => {
     const receipt = store.receipts[log.transactionHash];
     const tx = store.transactions[log.transactionHash];

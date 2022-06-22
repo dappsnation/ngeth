@@ -1,7 +1,8 @@
-import type { Chain } from '@ngeth/ethers-core';
+import { Chain } from '../chain/types';
 import { AddChainParameter } from './types';
 
-export function fromChain(chain: Chain): AddChainParameter {
+
+export function toAddChain(chain: Chain): AddChainParameter {
   return ({
     chainId: `0x${chain.chainId.toString(16)}`,
     chainName: chain.name,
