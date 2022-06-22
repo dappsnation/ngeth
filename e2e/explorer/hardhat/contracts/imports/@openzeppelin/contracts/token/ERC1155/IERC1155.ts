@@ -57,42 +57,31 @@ export interface IERC1155Events {
     URI: (id?: FilterParam<BigNumberish>) => TypedFilter<"URI">;
   };
   queries: {
+    /** Emitted when `account` grants or revokes permission to `operator` to transfer their tokens, according to `approved`. */
     ApprovalForAll: {
-      /** undefined */
       account: string;
-      /** undefined */
       operator: string;
-      /** undefined */
       approved: boolean;
     };
+    /** Equivalent to multiple {TransferSingle} events, where `operator`, `from` and `to` are the same for all transfers. */
     TransferBatch: {
-      /** undefined */
       operator: string;
-      /** undefined */
       from: string;
-      /** undefined */
       to: string;
-      /** undefined */
       ids: BigNumber[];
-      /** undefined */
       values: BigNumber[];
     };
+    /** Emitted when `value` tokens of token type `id` are transferred from `from` to `to` by `operator`. */
     TransferSingle: {
-      /** undefined */
       operator: string;
-      /** undefined */
       from: string;
-      /** undefined */
       to: string;
-      /** undefined */
       id: BigNumber;
-      /** undefined */
       value: BigNumber;
     };
+    /** Emitted when the URI for token type `id` changes to `value`, if it is a non-programmatic URI. If an {URI} event was emitted for `id`, the standard https://eips.ethereum.org/EIPS/eip-1155#metadata-extensions[guarantees] that `value` will equal the value returned by {IERC1155MetadataURI-uri}. */
     URI: {
-      /** undefined */
       value: string;
-      /** undefined */
       id: BigNumber;
     };
   };

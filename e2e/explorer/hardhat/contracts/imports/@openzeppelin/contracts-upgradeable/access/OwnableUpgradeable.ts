@@ -21,9 +21,7 @@ export interface OwnableUpgradeableEvents {
   };
   queries: {
     OwnershipTransferred: {
-      /** undefined */
       previousOwner: string;
-      /** undefined */
       newOwner: string;
     };
   };

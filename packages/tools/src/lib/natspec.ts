@@ -34,12 +34,10 @@ export interface Natspec {
 //   return tags;
 // }
 
-// export function toJsDoc(nodeDoc?: Record<string, string>) {
-//   if (!nodeDoc) return '';
-//   const fields = Object.entries(nodeDoc).map(jsDocTag).filter(v => !!v).join('');
-//   if (!fields.length) return '';
-//   return `/**${fields}\n\t */`;
-// }
+export function toJsDoc(text?: string) {
+  if (!text) return '';
+  return `/** ${text} */`;
+}
 
 export function toMethodJsDoc(method?: DevMethodDoc) {
   if (!method) return '';

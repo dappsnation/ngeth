@@ -1,5 +1,5 @@
 import { ABIDescription, ABIParameter, ABITypeParameter, DeveloperDocumentation, EventDescription, FunctionDescription } from "@type/solc";
-import { toMethodJsDoc } from "./natspec";
+import { toJsDoc, toMethodJsDoc } from "./natspec";
 import { ExportTypes } from './types';
 
 export interface GenerateConfig {
@@ -158,9 +158,9 @@ export const getAllStructs = (abi: ABIDescription[]) => {
 ///////////
 // READS //
 ///////////
-export function signatureName(call: FunctionDescription | EventDescription) {
-  const inputs = call.inputs || [];
-  return `${call.name}(${inputs.map((i) => i.type).join()})`;
+export function signatureName(node: FunctionDescription | EventDescription) {
+  const inputs = node.inputs || [];
+  return `${node.name}(${inputs.map((i) => i.type).join()})`;
 }
 
 const getSignatureCall = (call: FunctionDescription, config: Config) => {
@@ -341,15 +341,19 @@ const getFilterParams = (node: EventDescription) => {
 // QUERIES //
 export const getAllQueries = (nodes: EventDescription[], config: Config) => {
   if (!nodes.length) return 'never';
-  const record: Record<string, string[]> = {};
+  const record: Record<string, EventDescription[]> = {};
   for (const node of nodes) {
     // If there are no indexed events you cannot query it
     if (!node.inputs.some((input) => input.indexed)) continue;
     if (!record[node.name]) record[node.name] = [];
-    record[node.name].push(getQuery(node, config));
+    record[node.name].push(node);
   }
   const queries = Object.entries(record)
-    .map(([name, types]) => `${name}: ${getOverloadType(types)}`)
+    .map(([name, queryNodes]) => {
+      const types = queryNodes.map(node => getQuery(node, config));
+      const doc = toJsDoc(config.natspec?.events?.[signatureName(queryNodes[0])]?.details);
+      return withDoc(`${name}: ${getOverloadType(types)}`, doc);
+    })
     .join('\n');
   if (queries) return `{ ${queries} }`;
   return 'never';
@@ -358,7 +362,7 @@ export const getAllQueries = (nodes: EventDescription[], config: Config) => {
 const getQuery = (node: EventDescription, config: Config) => {
   const params = config.natspec?.events?.[signatureName(node)]?.params || {};
   const fields = node.inputs
-    .map((input) => withDoc(`${input.name}: ${getType(input, 'output')}`, `/** ${params[input.name]} */`))
+    .map((input) => withDoc(`${input.name}: ${getType(input, 'output')}`, toJsDoc(params[input.name])))
     .join(';\n');
   return `{\n${fields}\n}`;
 };

@@ -23,19 +23,13 @@ export interface BaseERC20Events {
   };
   queries: {
     Approval: {
-      /** undefined */
       owner: string;
-      /** undefined */
       spender: string;
-      /** undefined */
       value: BigNumber;
     };
     Transfer: {
-      /** undefined */
       from: string;
-      /** undefined */
       to: string;
-      /** undefined */
       value: BigNumber;
     };
   };

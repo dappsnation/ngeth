@@ -30,6 +30,7 @@ export interface ERC1155ProxyEvents {
     Clone: (from?: FilterParam<string>, clone?: FilterParam<string>) => TypedFilter<"Clone">;
   };
   queries: {
+    /** Emit when the bae contrat has been cloned */
     Clone: {
       /** account which cloned the contract */
       from: string;

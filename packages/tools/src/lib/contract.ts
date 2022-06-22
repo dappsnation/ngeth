@@ -10,8 +10,6 @@ export const getEthersContract = (contractName: string, { abi, natspec }: Genera
   const structs = getAllStructs(abi);
 
   const doc = toContractJsDoc(natspec);
-  if (natspec?.events) console.log(natspec.events);
-
 
   return `
   import { EthersContract, FilterParam, TypedFilter } from '@ngeth/ethers-core';

@@ -33,20 +33,16 @@ export interface IERC20Events {
     Transfer: (from?: FilterParam<string>, to?: FilterParam<string>) => TypedFilter<"Transfer">;
   };
   queries: {
+    /** Emitted when the allowance of a `spender` for an `owner` is set by a call to {approve}. `value` is the new allowance. */
     Approval: {
-      /** undefined */
       owner: string;
-      /** undefined */
       spender: string;
-      /** undefined */
       value: BigNumber;
     };
+    /** Emitted when `value` tokens are moved from one account (`from`) to another (`to`). Note that `value` may be zero. */
     Transfer: {
-      /** undefined */
       from: string;
-      /** undefined */
       to: string;
-      /** undefined */
       value: BigNumber;
     };
   };

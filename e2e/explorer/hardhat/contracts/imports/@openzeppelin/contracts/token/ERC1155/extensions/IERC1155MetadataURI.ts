@@ -34,41 +34,26 @@ export interface IERC1155MetadataURIEvents {
   };
   queries: {
     ApprovalForAll: {
-      /** undefined */
       account: string;
-      /** undefined */
       operator: string;
-      /** undefined */
       approved: boolean;
     };
     TransferBatch: {
-      /** undefined */
       operator: string;
-      /** undefined */
       from: string;
-      /** undefined */
       to: string;
-      /** undefined */
       ids: BigNumber[];
-      /** undefined */
       values: BigNumber[];
     };
     TransferSingle: {
-      /** undefined */
       operator: string;
-      /** undefined */
       from: string;
-      /** undefined */
       to: string;
-      /** undefined */
       id: BigNumber;
-      /** undefined */
       value: BigNumber;
     };
     URI: {
-      /** undefined */
       value: string;
-      /** undefined */
       id: BigNumber;
     };
   };
