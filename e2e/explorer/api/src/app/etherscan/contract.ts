@@ -39,22 +39,23 @@ async function verifySourceCode(params: GetParams<VerifySourceCode>) {
 
 export function getAbi({ address }: GetParams<GetABI>) {
   if (!address) throw new Error('Invalid Address format');
-
   const account = store.addresses[address];
-  if (isContract(account)) {
-    return store.artifacts[account.artifact].abi;
-  } else {
-    throw new Error('Contract source code not verified');
-  }
+  if(!isContract(account)) throw new Error('Contract source code not verified');
+
+  return store.artifacts[account.artifact].abi;
 }
 
 export function getSourceCode({ address }: GetParams<GetSourceCode>) {
   if (!address) throw new Error('Invalid Address format');
   const account = store.addresses[address];
   if (!isContract(account)) throw new Error('Contract source code not verified');
+  
   return {
-    SourceCode: store.artifacts[account.artifact].sourceName,
+    SourceCode: store.builds[account.artifact].sourceCode,
     ABI: store.artifacts[account.artifact].abi,
-    ContractName: store.artifacts[account.artifact].contractName,
+    ContractName: store.builds[account.artifact].contractName,
+    CompilerVersion: store.builds[account.artifact].compilerVersion,
+    OptimizationUsed: store.builds[account.artifact].optimizationUsed.toString(),
+    Runs: store.builds[account.artifact].runs
     }
 }
