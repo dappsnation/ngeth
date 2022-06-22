@@ -50,16 +50,11 @@ export function getAbi({ address }: GetParams<GetABI>) {
 
 export function getSourceCode({ address }: GetParams<GetSourceCode>) {
   if (!address) throw new Error('Invalid Address format');
-
   const account = store.addresses[address];
-  if(isContract(account)) {
-    return {
-      SourceCode: store.artifacts[account.artifact].sourceName,
-      ABI: store.artifacts[account.artifact].abi,
-      ContractName: store.artifacts[account.artifact].contractName,
+  if (!isContract(account)) throw new Error('Contract source code not verified');
+  return {
+    SourceCode: store.artifacts[account.artifact].sourceName,
+    ABI: store.artifacts[account.artifact].abi,
+    ContractName: store.artifacts[account.artifact].contractName,
     }
-  } else {
-    throw new Error('Contract source code not verified');
-    
-  }
 }

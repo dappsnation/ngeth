@@ -3,7 +3,8 @@ import { Socket } from 'socket.io';
 import { promises as fs } from "fs";
 import { join } from "path";
 import { provider } from "./provider";
-import { setBlock, store, setArtifact, setBalance } from "./store";
+import { setBlock, store, setArtifact, setBalance, setBuildInfo } from "./store";
+import { BuildInfo } from "hardhat/types";
 
 
 //////////
@@ -33,10 +34,11 @@ async function initFactories(root: string) {
       const path = join(root, folder, file);
       if (path.endsWith('.dbg.json')) {
         const res = await fs.readFile(path, 'utf8');
-        const { buildInfo } = JSON.parse(res);
-        const buildPath = join(folderPath, buildInfo);
+        const dgb = JSON.parse(res);
+        const buildPath = join(folderPath, dgb.buildInfo);
         const build = await fs.readFile(buildPath, 'utf8');
-        console.log(JSON.parse(build));
+        const buildInfo = JSON.parse(build) as BuildInfo;
+        setBuildInfo(buildInfo);
       } else if (path.endsWith('.json')) {
         const res = await fs.readFile(path, 'utf8');
         const arfitact = JSON.parse(res);

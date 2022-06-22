@@ -1,11 +1,12 @@
 import { Block, TransactionResponse, TransactionReceipt, Log } from '@ethersproject/abstract-provider';
-import { EthAccount, ContractArtifact, ContractAccount, EthStore, isContract, BuildInfo } from '@explorer';
+import { EthAccount, ContractArtifact, ContractAccount, EthStore, isContract, EtherscanSourceCode } from '@explorer';
 import { AddressZero } from '@ethersproject/constants';
 import { BigNumber } from '@ethersproject/bignumber';
 import { defaultAbiCoder } from '@ethersproject/abi';
 import { id } from '@ethersproject/hash';
 import { ABIDescription } from '@type/solc';
 import { provider } from './provider';
+import { BuildInfo } from 'hardhat/types'
 
 function bignumberReviver(key: string, value: any) {
   if (typeof value === 'object' && value['type'] === 'BigNumber') return BigNumber.from(value);
@@ -160,9 +161,16 @@ function setState(block: Block, receipts: TransactionReceipt[]) {
 //// BUILD ////
 ///////////////
 
-function setBuildInfo(buildInfo: BuildInfo) {
-  const { sourceCode, abi, contractName, compilerVersion, optimizationUsed, runs, constructorArguments, evmVersion, library, licenseType, proxy, implementation, swarmSource } = buildInfo; 
-
+export function setBuildInfo(info: BuildInfo) {
+  const content = {}
+  for (const path of Object.keys(info.input.sources)) {
+    content[path] = {
+      sourceCode: info.input.sources[path].content,
+      compilerVersion: info.solcVersion,
+      optimizationUsed: info.input.settings.optimizer.enabled,
+      runs: info.input.settings.optimizer.runs
+    }
+  }
 }
 
 ///////////////

@@ -22,7 +22,7 @@ export interface EthStore {
   /** Artifacts */
   artifacts: Record<string, ContractArtifact>
   /** Builds */
-  builds: Record<string, BuildInfo>
+  builds: Record<string, EtherscanSourceCode>
 }
 
 
@@ -43,23 +43,14 @@ export interface ContractArtifact {
   deployedBytecode: string; // "0x"-prefixed hex string
 }
 
-export interface BuildInfo {
+export interface EtherscanSourceCode {
   sourceCode: string;
   abi: ABIDescription[];
   contractName: string;
   compilerVersion: string;
   optimizationUsed: string;
   runs: string;
-  constructorArguments: string;
-  evmVersion: string;
-  library: string;
-  licenseType: string;
-  proxy: string;
-  implementation: string;
-  swarmSource: string;
 }
-
-
 
 export interface ContractAccount extends EthAccount{
   isContract: true;
