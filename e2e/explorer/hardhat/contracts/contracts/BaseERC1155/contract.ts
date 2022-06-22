@@ -47,6 +47,9 @@ export interface BaseERC1155Events {
   };
 }
 
+/**
+ * Implementation of the ERC1155 openzepplin class
+ */
 export class BaseERC1155 extends EthersContract<BaseERC1155Events> {
   // Read
   balanceOf!: (account: string, id: BigNumberish, overrides?: CallOverrides) => Promise<BigNumber>;
@@ -57,6 +60,14 @@ export class BaseERC1155 extends EthersContract<BaseERC1155Events> {
   uri!: (arg: BigNumberish, overrides?: CallOverrides) => Promise<string>;
 
   // Write
+  /**
+   * Mint a token
+   * @param amount the amount of tokens
+   * @example
+   * ```typescript
+   * erc1155.mint(owner, 1, 10, '0x00')
+   * ```
+   */
   mint!: (
     account: string,
     id: BigNumberish,

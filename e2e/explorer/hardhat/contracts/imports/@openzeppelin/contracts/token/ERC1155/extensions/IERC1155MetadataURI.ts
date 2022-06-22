@@ -40,11 +40,21 @@ export interface IERC1155MetadataURIEvents {
   };
 }
 
+/**
+ * Interface of the optional ERC1155MetadataExtension interface, as defined
+ * in the https://eips.ethereum.org/EIPS/eip-1155#metadata-extensions[EIP].
+ * _Available since v3.1._
+ */
 export interface IERC1155MetadataURI extends EthersContract<IERC1155MetadataURIEvents> {
   balanceOf: (account: string, id: BigNumberish, overrides?: CallOverrides) => Promise<BigNumber>;
   balanceOfBatch: (accounts: string[], ids: BigNumberish[], overrides?: CallOverrides) => Promise<BigNumber[]>;
   isApprovedForAll: (account: string, operator: string, overrides?: CallOverrides) => Promise<boolean>;
   supportsInterface: (interfaceId: BytesLike, overrides?: CallOverrides) => Promise<boolean>;
+  /**
+   * Returns the URI for token type `id`.
+   * If the `\{id\}` substring is present in the URI, it must be replaced by
+   * clients with the actual token type ID.
+   */
   uri: (id: BigNumberish, overrides?: CallOverrides) => Promise<string>;
   safeBatchTransferFrom: (
     from: string,

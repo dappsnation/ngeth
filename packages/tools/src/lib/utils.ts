@@ -1,6 +1,16 @@
 import { ABIDescription, ABIParameter, ABITypeParameter, EventDescription, FunctionDescription } from "@type/solc";
+import { Natspec, toJsDoc } from "./natspec";
 import { ExportTypes } from './types';
 
+export interface GenerateConfig {
+  natspec?: Natspec;
+  abi: ABIDescription[];
+}
+
+export interface Config {
+  exports: ExportTypes;
+  natspec?: Natspec;
+}
 
 export function isEvent(node: ABIDescription): node is EventDescription {
   return node.type === 'event';
@@ -87,6 +97,16 @@ const getOverloadType = (types: string[]) => {
 
 
 
+/////////
+// DOC //
+/////////
+function withDoc(content: string, doc?: string) {
+  if (!doc) return content;
+  return `${doc}\n${content}`;
+}
+
+
+
 ////////////
 // STRUCT //
 ////////////
@@ -138,7 +158,8 @@ export const getAllStructs = (abi: ABIDescription[]) => {
 ///////////
 // READS //
 ///////////
-const getSignatureCall = (call: FunctionDescription, exports: ExportTypes) => {
+const getSignatureCall = (call: FunctionDescription, config: Config) => {
+  const { exports } = config;
   const inputs = call.inputs || [];
   const name = `${call.name}(${inputs.map((i) => i.type).join()})`;
   const params = inputs
@@ -150,25 +171,25 @@ const getSignatureCall = (call: FunctionDescription, exports: ExportTypes) => {
   return `['${name}']: (${params}) => Promise<${output}>`;
 };
 
-const getCall = (call: FunctionDescription, exports: ExportTypes) => {
+const getCall = (call: FunctionDescription, config: Config) => {
+  const { exports } = config;
   const name = call.name!;
   const inputs = call.inputs || [];
+  const doc = toJsDoc(config.natspec?.[name]);
   const params = inputs
     .map(getParam)
     .concat('overrides?: CallOverrides')
     .join(', ');
   const output = getOutputs(call.outputs);
-  if (exports === 'class') return `${name}!: (${params}) => Promise<${output}>;`;
-  return `${name}: (${params}) => Promise<${output}>;`;
+  if (exports === 'class') return withDoc(`${name}!: (${params}) => Promise<${output}>;`, doc);
+  return withDoc(`${name}: (${params}) => Promise<${output}>;`, doc);
 };
 
 /**
- * 
  * @param nodes Thie ABI function description
  * @param exports If we plan to export to a class or an interface
- * @returns 
  */
- export const getAllCalls = (nodes: FunctionDescription[], exports: ExportTypes) => {
+ export const getAllCalls = (nodes: FunctionDescription[], config: Config) => {
   if (!nodes.length) return '';
   const record: Record<string, FunctionDescription[]> = {};
   for (const node of nodes) {
@@ -181,9 +202,9 @@ const getCall = (call: FunctionDescription, exports: ExportTypes) => {
   for (const duplicates of Object.values(record)) {
     if (duplicates.length === 1) {
       const node = duplicates[0];
-      calls.push(getCall(node, exports));
+      calls.push(getCall(node, config));
     } else {
-      duplicates.forEach((node) => calls.push(getSignatureCall(node, exports)));
+      duplicates.forEach((node) => calls.push(getSignatureCall(node, config)));
     }
   }
 
@@ -194,7 +215,8 @@ const getCall = (call: FunctionDescription, exports: ExportTypes) => {
 // WRITES //
 ////////////
 
-const getSignatureMethod = (method: FunctionDescription, exports: ExportTypes) => {
+const getSignatureMethod = (method: FunctionDescription, config: Config) => {
+  const { exports } = config;
   const inputs = method.inputs || [];
   const name = `${method.name}(${inputs.map((i) => i.type).join()})`;
   const override = method.stateMutability === 'payable' ? 'PayableOverrides' : 'Overrides';
@@ -206,19 +228,21 @@ const getSignatureMethod = (method: FunctionDescription, exports: ExportTypes) =
   return `['${name}']: (${params}) => Promise<ContractTransaction>;`;
 };
 
-const getMethod = (method: FunctionDescription, exports: ExportTypes) => {
+const getMethod = (method: FunctionDescription, config: Config) => {
+  const { exports } = config;
   const name = method.name!;
   const inputs = method.inputs || [];
+  const doc = toJsDoc(config.natspec?.[name]);
   const override = method.stateMutability === 'payable' ? 'PayableOverrides' : 'Overrides';
   const params = inputs
     .map(getParam)
     .concat(`overrides?: ${override}`)
     .join(', ');
-    if (exports === 'class') return `${name}!: (${params}) => Promise<ContractTransaction>;`;
-    return `${name}: (${params}) => Promise<ContractTransaction>;`;
+    if (exports === 'class') return withDoc(`${name}!: (${params}) => Promise<ContractTransaction>;`, doc);
+    return withDoc(`${name}: (${params}) => Promise<ContractTransaction>;`, doc);
 };
 
-export const getAllMethods = (nodes: FunctionDescription[], exports: ExportTypes) => {
+export const getAllMethods = (nodes: FunctionDescription[], config: Config) => {
   if (!nodes.length) return '';
   const record: Record<string, FunctionDescription[]> = {};
   for (const node of nodes) {
@@ -232,9 +256,9 @@ export const getAllMethods = (nodes: FunctionDescription[], exports: ExportTypes
     if (duplicates.length === 0) continue;
     if (duplicates.length === 1) {
       const node = duplicates[0];
-      methods.push(getMethod(node, exports));
+      methods.push(getMethod(node, config));
     } else {
-      duplicates.forEach((node) => methods.push(getSignatureMethod(node, exports)));
+      duplicates.forEach((node) => methods.push(getSignatureMethod(node, config)));
     }
   }
 
@@ -244,7 +268,7 @@ export const getAllMethods = (nodes: FunctionDescription[], exports: ExportTypes
 ////////////
 // EVENTS //
 ////////////
-export const getAllEvents = (nodes: EventDescription[]) => {
+export const getAllEvents = (nodes: EventDescription[], config: Config) => {
   if (!nodes.length) return 'never';
   const record: Record<string, string[]> = {};
   for (const node of nodes) {
@@ -252,7 +276,10 @@ export const getAllEvents = (nodes: EventDescription[]) => {
     record[node.name].push(getEvent(node));
   }
   const events = Object.entries(record)
-    .map(([name, type]) => `${name}: ${getOverloadType(type)}`)
+    .map(([name, type]) => {
+      const doc = toJsDoc(config.natspec?.[name]);
+      return withDoc(`${name}: ${getOverloadType(type)}`, doc);
+    })
     .join('\n');
   if (events) return `{ ${events} }`;
   return 'never';
@@ -274,7 +301,7 @@ const getEventParam = (param: ABIParameter, index: number) => {
 // FILTERS //
 /////////////
 
-export const getAllFilters = (nodes: EventDescription[]) => {
+export const getAllFilters = (nodes: EventDescription[], config: Config) => {
   if (!nodes.length) return 'never';
   const record: Record<string, string[]> = {};
   for (const node of nodes) {
@@ -284,7 +311,10 @@ export const getAllFilters = (nodes: EventDescription[]) => {
     record[node.name].push(getFilter(node));
   }
   const filters = Object.entries(record)
-    .map(([name, type]) => `${name}: ${getOverloadType(type)}`)
+    .map(([name, type]) => {
+      const doc = toJsDoc(config.natspec?.[name]);
+      return withDoc(`${name}: ${getOverloadType(type)}`, doc);
+    })
     .join('\n');
   if (filters) return `{ ${filters} }`;
   return 'never';
@@ -302,7 +332,7 @@ const getFilterParams = (node: EventDescription) => {
 };
 
 // QUERIES //
-export const getAllQueries = (nodes: EventDescription[]) => {
+export const getAllQueries = (nodes: EventDescription[], config: Config) => {
   if (!nodes.length) return 'never';
   const record: Record<string, string[]> = {};
   for (const node of nodes) {

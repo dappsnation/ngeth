@@ -13,8 +13,20 @@ import type { Provider } from "@ethersproject/providers";
 import abi from "./abi";
 
 export interface ERC1155ProxyEvents {
-  events: { Clone: (from: string, clone: string) => void };
-  filters: { Clone: (from?: FilterParam<string>, clone?: FilterParam<string>) => TypedFilter<"Clone"> };
+  events: {
+    /**
+     * Emit when the bae contrat has been cloned
+     * @param clone addresses of the cloned contract
+     */
+    Clone: (from: string, clone: string) => void;
+  };
+  filters: {
+    /**
+     * Emit when the bae contrat has been cloned
+     * @param clone addresses of the cloned contract
+     */
+    Clone: (from?: FilterParam<string>, clone?: FilterParam<string>) => TypedFilter<"Clone">;
+  };
   queries: { Clone: { from: string; clone: string } };
 }
 

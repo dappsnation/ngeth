@@ -17,8 +17,21 @@ export interface IERC1155ReceiverUpgradeableEvents {
   queries: never;
 }
 
+/**
+ * _Available since v3.1._
+ */
 export interface IERC1155ReceiverUpgradeable extends EthersContract<IERC1155ReceiverUpgradeableEvents> {
   supportsInterface: (interfaceId: BytesLike, overrides?: CallOverrides) => Promise<boolean>;
+  /**
+   * Handles the receipt of a multiple ERC1155 token types. This function
+   * is called at the end of a `safeBatchTransferFrom` after the balances have
+   * been updated.
+   * NOTE: To accept the transfer(s), this must return
+   * `bytes4(keccak256("onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)"))`
+   * (i.e. 0xbc197c81, or its own function selector).
+   * @param data Additional data with no specified format
+   * @returns `bytes4(keccak256("onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)"))` if transfer is allowed
+   */
   onERC1155BatchReceived: (
     operator: string,
     from: string,
@@ -27,6 +40,15 @@ export interface IERC1155ReceiverUpgradeable extends EthersContract<IERC1155Rece
     data: BytesLike,
     overrides?: Overrides
   ) => Promise<ContractTransaction>;
+  /**
+   * Handles the receipt of a single ERC1155 token type. This function is
+   * called at the end of a `safeTransferFrom` after the balance has been updated.
+   * NOTE: To accept the transfer, this must return
+   * `bytes4(keccak256("onERC1155Received(address,address,uint256,uint256,bytes)"))`
+   * (i.e. 0xf23a6e61, or its own function selector).
+   * @param data Additional data with no specified format
+   * @returns `bytes4(keccak256("onERC1155Received(address,address,uint256,uint256,bytes)"))` if transfer is allowed
+   */
   onERC1155Received: (
     operator: string,
     from: string,

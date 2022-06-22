@@ -11,6 +11,13 @@
       },
       "executor": "@ngeth/hardhat:serve"
     },
+    "build": {
+      "options": {
+        "config": "e2e/explorer/hardhat/hardhat.config.ts",
+        "tsconfig": "e2e/explorer/hardhat/tsconfig.app.json"
+      },
+      "executor": "@ngeth/hardhat:build"
+    },
     "test": {
       "options": {
         "config": "e2e/explorer/hardhat/hardhat.config.ts",
@@ -19,5 +26,6 @@
       "executor": "@ngeth/hardhat:test"
     }
   },
-  "tags": []
+  "tags": [],
+  "implicitDependencies": ["hardhat-tools", "explorer-api", "explorer-app"]
 }

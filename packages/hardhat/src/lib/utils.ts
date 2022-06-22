@@ -3,6 +3,12 @@ import * as parserTypeScript from "prettier/parser-typescript";
 import * as prettier from "prettier/standalone";
 import { promises as fs } from 'fs';
 import { createServer } from 'http';
+import { Artifact, BuildInfo, HardhatRuntimeEnvironment } from "hardhat/types";
+import { getNatspec, Natspec } from "@ngeth/tools";
+
+interface CompiledOutput extends Artifact {
+  natspec?: Natspec;
+}
 
 export function formatTs(code: string) {
   return prettier.format(code, {
@@ -20,6 +26,59 @@ export function getContractImportNames(allNames: string[], src: string) {
   return allNames.filter((name) => !resolve(name).startsWith(src));
 }
 
+export async function getCompiledOutput(hre: HardhatRuntimeEnvironment) {
+  const readJson = (path: string) => fs.readFile(path, 'utf-8').then(file => JSON.parse(file));
+  // const readJsonFiles = (paths: string[]) => Promise.all(paths.map(readJson));
+  // const getArtifacts = () => hre.artifacts.getArtifactPaths().then(readJsonFiles);
+  // const getBuildInfos = () => hre.artifacts.getBuildInfoPaths().then(readJsonFiles);
+  // const [artifacts, buildInfos] = await Promise.all([
+  //   getArtifacts(),
+  //   getBuildInfos(),
+  // ]);
+  const outputs: Record<string, Record<string, CompiledOutput>> = {};
+
+  const queryBuildInfos: Record<string, Promise<BuildInfo>> = {};
+  const paths = await hre.artifacts.getArtifactPaths();
+  for (const path of paths) {
+    const debugPath = path.replace('.json', '.dbg.json');
+    const getBuildInfo = readJson(debugPath).then(({ buildInfo }) => {
+      const buildInfoPath = join(path, '..', buildInfo);
+      if (!queryBuildInfos[buildInfoPath]) queryBuildInfos[buildInfoPath] = readJson(buildInfoPath);
+      return queryBuildInfos[buildInfoPath];
+    });
+    const [arfitact, buildInfo] = await Promise.all([
+      readJson(path),
+      getBuildInfo
+    ]);
+   
+    const { sourceName, contractName } = arfitact;
+    if (!outputs[sourceName]) outputs[sourceName] = {};
+    outputs[sourceName][contractName] = arfitact;
+    const doc = getNatspec(buildInfo.output.sources[sourceName].ast);
+    for (const [contractName, natspec] of Object.entries(doc)) {
+      outputs[sourceName][contractName].natspec = natspec;
+    }
+  }
+
+
+  // const outputs: Record<string, Record<string, CompiledOutput>> = {};
+  // for (const arfitact of artifacts as Artifact[]) {
+  //   const { sourceName, contractName } = arfitact;
+  //   if (!outputs[sourceName]) outputs[sourceName] = {};
+  //   outputs[sourceName][contractName] = arfitact;
+  // }
+  // for (const info of buildInfos as BuildInfo[]) {
+  //   for (const [sourceName, source] of Object.entries(info.output.sources)) {
+  //     if (!outputs[sourceName]) outputs[sourceName] = {};
+  //     const doc = getNatspec(source.ast);
+  //     for (const [contractName, natspec] of Object.entries(doc)) {
+  //       outputs[sourceName][contractName].natspec = natspec;
+  //     }
+  //   }
+  // }
+  console.log('GOT AN OUTPUT');
+  return Object.values(outputs).map(file => Object.values(file)).flat();
+}
 
 export function serveApp(directory: string, port: number) {
   const mimeTypes = {

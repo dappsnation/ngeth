@@ -26,11 +26,24 @@ export interface IERC20MetadataEvents {
   };
 }
 
+/**
+ * Interface for the optional metadata functions from the ERC20 standard.
+ * _Available since v4.1._
+ */
 export interface IERC20Metadata extends EthersContract<IERC20MetadataEvents> {
   allowance: (owner: string, spender: string, overrides?: CallOverrides) => Promise<BigNumber>;
   balanceOf: (account: string, overrides?: CallOverrides) => Promise<BigNumber>;
+  /**
+   * Returns the decimals places of the token.
+   */
   decimals: (overrides?: CallOverrides) => Promise<number>;
+  /**
+   * Returns the name of the token.
+   */
   name: (overrides?: CallOverrides) => Promise<string>;
+  /**
+   * Returns the symbol of the token.
+   */
   symbol: (overrides?: CallOverrides) => Promise<string>;
   totalSupply: (overrides?: CallOverrides) => Promise<BigNumber>;
   approve: (spender: string, amount: BigNumberish, overrides?: Overrides) => Promise<ContractTransaction>;
