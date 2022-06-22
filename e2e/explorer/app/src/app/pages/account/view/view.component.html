@@ -1,6 +1,6 @@
 <ng-container *ngIf="account$ | async as account">
   <header>
-    <eth-blockies [address]="account.address"></eth-blockies>
+    <eth-blocky [address]="account.address"></eth-blocky>
     <h1>
       Address: <small>{{ account.address }}</small>
     </h1>

@@ -1,5 +1,5 @@
-import { Directive, ElementRef, forwardRef, HostListener, Injector, OnInit, Optional, Renderer2, Self } from "@angular/core";
-import { AbstractControl, ControlValueAccessor, FormControl, NgControl, NG_VALUE_ACCESSOR } from "@angular/forms";
+import { Directive, ElementRef, forwardRef, HostListener, Injector, OnInit, Renderer2 } from "@angular/core";
+import { AbstractControl, ControlValueAccessor, NgControl, NG_VALUE_ACCESSOR } from "@angular/forms";
 import { getAddress } from "@ethersproject/address";
 import { EthValidators } from "../../form";
 

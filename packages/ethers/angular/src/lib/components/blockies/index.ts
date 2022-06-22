@@ -2,7 +2,7 @@ import { Component, ChangeDetectionStrategy, Input, ElementRef, Renderer2, HostB
 import blockies from 'blockies';
 
 @Component({
-  selector: 'eth-blockies',
+  selector: 'eth-blocky',
   template: '<ng-content></ng-content>',
   styleUrls: ['./style.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush

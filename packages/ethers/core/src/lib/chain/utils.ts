@@ -9,6 +9,7 @@ export function toChainId(id: string | number) {
   return parseInt(id);
 }
 
+
 export function explore(chain: Chain, search: string) {
   if (!chain.explorers.length) return;
   return `${chain.explorers[0].url}/search?q=${search}`;
