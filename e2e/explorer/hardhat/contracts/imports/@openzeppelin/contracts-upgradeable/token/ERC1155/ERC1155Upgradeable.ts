@@ -33,30 +33,57 @@ export interface ERC1155UpgradeableEvents {
     URI: (id?: FilterParam<BigNumberish>) => TypedFilter<"URI">;
   };
   queries: {
-    ApprovalForAll: { account: string; operator: string; approved: boolean };
-    TransferBatch: { operator: string; from: string; to: string; ids: BigNumber[]; values: BigNumber[] };
-    TransferSingle: { operator: string; from: string; to: string; id: BigNumber; value: BigNumber };
-    URI: { value: string; id: BigNumber };
+    ApprovalForAll: {
+      /** undefined */
+      account: string;
+      /** undefined */
+      operator: string;
+      /** undefined */
+      approved: boolean;
+    };
+    TransferBatch: {
+      /** undefined */
+      operator: string;
+      /** undefined */
+      from: string;
+      /** undefined */
+      to: string;
+      /** undefined */
+      ids: BigNumber[];
+      /** undefined */
+      values: BigNumber[];
+    };
+    TransferSingle: {
+      /** undefined */
+      operator: string;
+      /** undefined */
+      from: string;
+      /** undefined */
+      to: string;
+      /** undefined */
+      id: BigNumber;
+      /** undefined */
+      value: BigNumber;
+    };
+    URI: {
+      /** undefined */
+      value: string;
+      /** undefined */
+      id: BigNumber;
+    };
   };
 }
 
 /**
- * Implementation of the basic standard multi-token.
- * See https://eips.ethereum.org/EIPS/eip-1155
- * Originally based on code by Enjin: https://github.com/enjin/erc-1155
- * _Available since v3.1._
+ * Implementation of the basic standard multi-token. See https://eips.ethereum.org/EIPS/eip-1155 Originally based on code by Enjin: https://github.com/enjin/erc-1155 _Available since v3.1._
  */
 export interface ERC1155Upgradeable extends EthersContract<ERC1155UpgradeableEvents> {
   /**
-   * See {IERC1155-balanceOf}.
-   * Requirements:
-   * - `account` cannot be the zero address.
+   * See {IERC1155-balanceOf}. Requirements: - `account` cannot be the zero address.
    */
   balanceOf: (account: string, id: BigNumberish, overrides?: CallOverrides) => Promise<BigNumber>;
   /**
-   * See {IERC1155-balanceOfBatch}.
-   * Requirements:
-   * - `accounts` and `ids` must have the same length.
+   * See {IERC1155-balanceOfBatch}. Requirements: - `accounts` and `ids` must have the same length.
    */
   balanceOfBatch: (accounts: string[], ids: BigNumberish[], overrides?: CallOverrides) => Promise<BigNumber[]>;
   /**
@@ -68,12 +95,7 @@ export interface ERC1155Upgradeable extends EthersContract<ERC1155UpgradeableEve
    */
   supportsInterface: (interfaceId: BytesLike, overrides?: CallOverrides) => Promise<boolean>;
   /**
-   * See {IERC1155MetadataURI-uri}.
-   * This implementation returns the same URI for *all* token types. It relies
-   * on the token type ID substitution mechanism
-   * https://eips.ethereum.org/EIPS/eip-1155#metadata[defined in the EIP].
-   * Clients calling this function must replace the `\{id\}` substring with the
-   * actual token type ID.
+   * See {IERC1155MetadataURI-uri}. This implementation returns the same URI for *all* token types. It relies on the token type ID substitution mechanism https://eips.ethereum.org/EIPS/eip-1155#metadata[defined in the EIP]. Clients calling this function must replace the `\{id\}` substring with the actual token type ID.
    */
   uri: (arg: BigNumberish, overrides?: CallOverrides) => Promise<string>;
   /**

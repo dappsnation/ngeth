@@ -520,8 +520,8 @@
       ]
     },
     "C:\\code\\blockchain\\ngeth\\e2e\\explorer\\hardhat\\src\\ERC1155Proxy.sol": {
-      "lastModificationDate": 1655914187456,
-      "contentHash": "6325b1b9b942695e9a933cd981ec3d43",
+      "lastModificationDate": 1655914276676,
+      "contentHash": "9e83b717721a07c485c51346b4a476dc",
       "sourceName": "src/ERC1155Proxy.sol",
       "solcConfig": {
         "version": "0.8.11",

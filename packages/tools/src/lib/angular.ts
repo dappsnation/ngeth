@@ -1,6 +1,6 @@
 import { FunctionDescription } from '@type/solc';
 import { getContractEvents } from './events';
-import { toJsDoc } from './natspec';
+import { toContractJsDoc } from './natspec';
 import { Config, GenerateConfig, getAllCalls,  getAllMethods, getAllStructs, isRead, isWrite } from './utils';
 
 export const getNgContract = (contractName: string,  { abi, natspec }: GenerateConfig) => {
@@ -9,7 +9,7 @@ export const getNgContract = (contractName: string,  { abi, natspec }: GenerateC
   const methods: FunctionDescription[] = abi.filter(isWrite);
   const structs = getAllStructs(abi);
 
-  const doc = toJsDoc(natspec?.['class']);
+  const doc = toContractJsDoc(natspec);
 
   return `
   import { NgZone } from '@angular/core';

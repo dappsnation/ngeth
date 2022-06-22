@@ -27,7 +27,6 @@ export async function generate(hre: HardhatRuntimeEnvironment) {
     const folder = join(outputPath, 'contracts');
   
     const write = artifacts.map(artifact => {
-      console.log(artifact.contractName, artifact.natspec);
       const contractName = artifact.contractName;
       const contractFolder = join(folder, contractName);
       if (!existsSync(contractFolder)) mkdirSync(contractFolder, { recursive: true });

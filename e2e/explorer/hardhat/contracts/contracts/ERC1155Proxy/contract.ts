@@ -16,20 +16,31 @@ export interface ERC1155ProxyEvents {
   events: {
     /**
      * Emit when the bae contrat has been cloned
-     * @param clone addresses of the cloned contract
+     * @param clone address of the cloned contract
+     * @param from account which cloned the contract
      */
     Clone: (from: string, clone: string) => void;
   };
   filters: {
     /**
      * Emit when the bae contrat has been cloned
-     * @param clone addresses of the cloned contract
+     * @param clone address of the cloned contract
+     * @param from account which cloned the contract
      */
     Clone: (from?: FilterParam<string>, clone?: FilterParam<string>) => TypedFilter<"Clone">;
   };
-  queries: { Clone: { from: string; clone: string } };
+  queries: {
+    Clone: {
+      /** account which cloned the contract */
+      from: string;
+      /** address of the cloned contract */
+      clone: string;
+    };
+  };
 }
 
+/**
+ */
 export class ERC1155Proxy extends EthersContract<ERC1155ProxyEvents> {
   // Read
 

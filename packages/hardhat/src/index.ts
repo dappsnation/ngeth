@@ -33,7 +33,6 @@ task('ngeth:build', 'Build the contracts and generate outputs')
     const root = hre.config.paths.root;
     const outputPath = join(root, hre.config.ngeth.outputPath);
     if (!existsSync(outputPath)) mkdirSync(outputPath, { recursive: true });
-    console.log('GENERATE');
     await generate(hre);
   });
 

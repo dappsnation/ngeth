@@ -1,6 +1,6 @@
 import { FunctionDescription } from '@type/solc';
 import { getContractEvents } from './events';
-import { toJsDoc } from './natspec';
+import { toContractJsDoc } from './natspec';
 import { Config, GenerateConfig, getAllCalls, getAllMethods, getAllStructs, isRead, isWrite } from './utils';
 
 export const getContractImport = (contractName: string, { abi, natspec }: GenerateConfig) => {
@@ -8,7 +8,7 @@ export const getContractImport = (contractName: string, { abi, natspec }: Genera
   const calls: FunctionDescription[] = abi.filter(isRead);
   const methods: FunctionDescription[] = abi.filter(isWrite);
   const structs = getAllStructs(abi);
-  const doc = toJsDoc(natspec?.['class']);
+  const doc = toContractJsDoc(natspec);
 
   return `
   import { EthersContract, FilterParam, TypedFilter } from '@ngeth/ethers-core';

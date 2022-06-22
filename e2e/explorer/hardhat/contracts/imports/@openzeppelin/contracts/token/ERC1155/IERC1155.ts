@@ -14,36 +14,29 @@ import type {
 export interface IERC1155Events {
   events: {
     /**
-     * Emitted when `account` grants or revokes permission to `operator` to transfer their tokens, according to
-     * `approved`.
+     * Emitted when `account` grants or revokes permission to `operator` to transfer their tokens, according to `approved`.
      */
     ApprovalForAll: (account: string, operator: string, approved: boolean) => void;
     /**
-     * Equivalent to multiple {TransferSingle} events, where `operator`, `from` and `to` are the same for all
-     * transfers.
+     * Emitted when `account` grants or revokes permission to `operator` to transfer their tokens, according to `approved`.
      */
     TransferBatch: (operator: string, from: string, to: string, ids: BigNumber[], values: BigNumber[]) => void;
     /**
-     * Emitted when `value` tokens of token type `id` are transferred from `from` to `to` by `operator`.
+     * Emitted when `account` grants or revokes permission to `operator` to transfer their tokens, according to `approved`.
      */
     TransferSingle: (operator: string, from: string, to: string, id: BigNumber, value: BigNumber) => void;
     /**
-     * Emitted when the URI for token type `id` changes to `value`, if it is a non-programmatic URI.
-     * If an {URI} event was emitted for `id`, the standard
-     * https://eips.ethereum.org/EIPS/eip-1155#metadata-extensions[guarantees] that `value` will equal the value
-     * returned by {IERC1155MetadataURI-uri}.
+     * Emitted when `account` grants or revokes permission to `operator` to transfer their tokens, according to `approved`.
      */
     URI: (value: string, id: BigNumber) => void;
   };
   filters: {
     /**
-     * Emitted when `account` grants or revokes permission to `operator` to transfer their tokens, according to
-     * `approved`.
+     * Emitted when `account` grants or revokes permission to `operator` to transfer their tokens, according to `approved`.
      */
     ApprovalForAll: (account?: FilterParam<string>, operator?: FilterParam<string>) => TypedFilter<"ApprovalForAll">;
     /**
-     * Equivalent to multiple {TransferSingle} events, where `operator`, `from` and `to` are the same for all
-     * transfers.
+     * Emitted when `account` grants or revokes permission to `operator` to transfer their tokens, according to `approved`.
      */
     TransferBatch: (
       operator?: FilterParam<string>,
@@ -51,7 +44,7 @@ export interface IERC1155Events {
       to?: FilterParam<string>
     ) => TypedFilter<"TransferBatch">;
     /**
-     * Emitted when `value` tokens of token type `id` are transferred from `from` to `to` by `operator`.
+     * Emitted when `account` grants or revokes permission to `operator` to transfer their tokens, according to `approved`.
      */
     TransferSingle: (
       operator?: FilterParam<string>,
@@ -59,52 +52,74 @@ export interface IERC1155Events {
       to?: FilterParam<string>
     ) => TypedFilter<"TransferSingle">;
     /**
-     * Emitted when the URI for token type `id` changes to `value`, if it is a non-programmatic URI.
-     * If an {URI} event was emitted for `id`, the standard
-     * https://eips.ethereum.org/EIPS/eip-1155#metadata-extensions[guarantees] that `value` will equal the value
-     * returned by {IERC1155MetadataURI-uri}.
+     * Emitted when `account` grants or revokes permission to `operator` to transfer their tokens, according to `approved`.
      */
     URI: (id?: FilterParam<BigNumberish>) => TypedFilter<"URI">;
   };
   queries: {
-    ApprovalForAll: { account: string; operator: string; approved: boolean };
-    TransferBatch: { operator: string; from: string; to: string; ids: BigNumber[]; values: BigNumber[] };
-    TransferSingle: { operator: string; from: string; to: string; id: BigNumber; value: BigNumber };
-    URI: { value: string; id: BigNumber };
+    ApprovalForAll: {
+      /** undefined */
+      account: string;
+      /** undefined */
+      operator: string;
+      /** undefined */
+      approved: boolean;
+    };
+    TransferBatch: {
+      /** undefined */
+      operator: string;
+      /** undefined */
+      from: string;
+      /** undefined */
+      to: string;
+      /** undefined */
+      ids: BigNumber[];
+      /** undefined */
+      values: BigNumber[];
+    };
+    TransferSingle: {
+      /** undefined */
+      operator: string;
+      /** undefined */
+      from: string;
+      /** undefined */
+      to: string;
+      /** undefined */
+      id: BigNumber;
+      /** undefined */
+      value: BigNumber;
+    };
+    URI: {
+      /** undefined */
+      value: string;
+      /** undefined */
+      id: BigNumber;
+    };
   };
 }
 
 /**
- * Required interface of an ERC1155 compliant contract, as defined in the
- * https://eips.ethereum.org/EIPS/eip-1155[EIP].
- * _Available since v3.1._
+ * Required interface of an ERC1155 compliant contract, as defined in the https://eips.ethereum.org/EIPS/eip-1155[EIP]. _Available since v3.1._
  */
 export interface IERC1155 extends EthersContract<IERC1155Events> {
   /**
-   * Returns the amount of tokens of token type `id` owned by `account`.
-   * Requirements:
-   * - `account` cannot be the zero address.
+   * Returns the amount of tokens of token type `id` owned by `account`. Requirements: - `account` cannot be the zero address.
    */
   balanceOf: (account: string, id: BigNumberish, overrides?: CallOverrides) => Promise<BigNumber>;
   /**
-   * xref:ROOT:erc1155.adoc#batch-operations[Batched] version of {balanceOf}.
-   * Requirements:
-   * - `accounts` and `ids` must have the same length.
+   * xref:ROOT:erc1155.adoc#batch-operations[Batched] version of {balanceOf}. Requirements: - `accounts` and `ids` must have the same length.
    */
   balanceOfBatch: (accounts: string[], ids: BigNumberish[], overrides?: CallOverrides) => Promise<BigNumber[]>;
   /**
-   * Returns true if `operator` is approved to transfer ``account``'s tokens.
-   * See {setApprovalForAll}.
+   * Returns true if `operator` is approved to transfer ``account``'s tokens. See {setApprovalForAll}.
    */
   isApprovedForAll: (account: string, operator: string, overrides?: CallOverrides) => Promise<boolean>;
+  /**
+   * Returns true if this contract implements the interface defined by `interfaceId`. See the corresponding https://eips.ethereum.org/EIPS/eip-165#how-interfaces-are-identified[EIP section] to learn more about how these ids are created. This function call must use less than 30 000 gas.
+   */
   supportsInterface: (interfaceId: BytesLike, overrides?: CallOverrides) => Promise<boolean>;
   /**
-   * xref:ROOT:erc1155.adoc#batch-operations[Batched] version of {safeTransferFrom}.
-   * Emits a {TransferBatch} event.
-   * Requirements:
-   * - `ids` and `amounts` must have the same length.
-   * - If `to` refers to a smart contract, it must implement {IERC1155Receiver-onERC1155BatchReceived} and return the
-   * acceptance magic value.
+   * xref:ROOT:erc1155.adoc#batch-operations[Batched] version of {safeTransferFrom}. Emits a {TransferBatch} event. Requirements: - `ids` and `amounts` must have the same length. - If `to` refers to a smart contract, it must implement {IERC1155Receiver-onERC1155BatchReceived} and return the acceptance magic value.
    */
   safeBatchTransferFrom: (
     from: string,
@@ -115,14 +130,7 @@ export interface IERC1155 extends EthersContract<IERC1155Events> {
     overrides?: Overrides
   ) => Promise<ContractTransaction>;
   /**
-   * Transfers `amount` tokens of token type `id` from `from` to `to`.
-   * Emits a {TransferSingle} event.
-   * Requirements:
-   * - `to` cannot be the zero address.
-   * - If the caller is not `from`, it must be have been approved to spend ``from``'s tokens via {setApprovalForAll}.
-   * - `from` must have a balance of tokens of type `id` of at least `amount`.
-   * - If `to` refers to a smart contract, it must implement {IERC1155Receiver-onERC1155Received} and return the
-   * acceptance magic value.
+   * Transfers `amount` tokens of token type `id` from `from` to `to`. Emits a {TransferSingle} event. Requirements: - `to` cannot be the zero address. - If the caller is not `from`, it must be have been approved to spend ``from``'s tokens via {setApprovalForAll}. - `from` must have a balance of tokens of type `id` of at least `amount`. - If `to` refers to a smart contract, it must implement {IERC1155Receiver-onERC1155Received} and return the acceptance magic value.
    */
   safeTransferFrom: (
     from: string,
@@ -133,10 +141,7 @@ export interface IERC1155 extends EthersContract<IERC1155Events> {
     overrides?: Overrides
   ) => Promise<ContractTransaction>;
   /**
-   * Grants or revokes permission to `operator` to transfer the caller's tokens, according to `approved`,
-   * Emits an {ApprovalForAll} event.
-   * Requirements:
-   * - `operator` cannot be the caller.
+   * Grants or revokes permission to `operator` to transfer the caller's tokens, according to `approved`, Emits an {ApprovalForAll} event. Requirements: - `operator` cannot be the caller.
    */
   setApprovalForAll: (operator: string, approved: boolean, overrides?: Overrides) => Promise<ContractTransaction>;
 }

@@ -1,10 +1,11 @@
-import { toJsDoc } from "./natspec";
+import { toMethodJsDoc } from "./natspec";
 import { GenerateConfig, getDeploy, isConstrutor } from "./utils";
 
 
 export const getFactory = (contractName: string, { abi, natspec }: GenerateConfig) => {
-  const deploy = getDeploy(contractName, abi.find(isConstrutor)?.inputs);
-  const doc = toJsDoc(natspec?.['constructor']);
+  const node = abi.find(isConstrutor);
+  const deploy = getDeploy(contractName, node?.inputs);
+  const doc = node ? toMethodJsDoc(natspec?.methods?.['constructor']) : '';
 
   return `
   import { ContractFactory } from '@ethersproject/contracts';

@@ -1,15 +1,15 @@
-import { ABIDescription, ABIParameter, ABITypeParameter, EventDescription, FunctionDescription } from "@type/solc";
-import { Natspec, toJsDoc } from "./natspec";
+import { ABIDescription, ABIParameter, ABITypeParameter, DeveloperDocumentation, EventDescription, FunctionDescription } from "@type/solc";
+import { toMethodJsDoc } from "./natspec";
 import { ExportTypes } from './types';
 
 export interface GenerateConfig {
-  natspec?: Natspec;
+  natspec?: DeveloperDocumentation;
   abi: ABIDescription[];
 }
 
 export interface Config {
   exports: ExportTypes;
-  natspec?: Natspec;
+  natspec?: DeveloperDocumentation;
 }
 
 export function isEvent(node: ABIDescription): node is EventDescription {
@@ -158,10 +158,15 @@ export const getAllStructs = (abi: ABIDescription[]) => {
 ///////////
 // READS //
 ///////////
+export function signatureName(call: FunctionDescription | EventDescription) {
+  const inputs = call.inputs || [];
+  return `${call.name}(${inputs.map((i) => i.type).join()})`;
+}
+
 const getSignatureCall = (call: FunctionDescription, config: Config) => {
   const { exports } = config;
   const inputs = call.inputs || [];
-  const name = `${call.name}(${inputs.map((i) => i.type).join()})`;
+  const name = signatureName(call);
   const params = inputs
     .map(getParam)
     .concat('overrides?: CallOverrides')
@@ -175,7 +180,7 @@ const getCall = (call: FunctionDescription, config: Config) => {
   const { exports } = config;
   const name = call.name!;
   const inputs = call.inputs || [];
-  const doc = toJsDoc(config.natspec?.[name]);
+  const doc = toMethodJsDoc(config.natspec?.methods?.[signatureName(call)]);
   const params = inputs
     .map(getParam)
     .concat('overrides?: CallOverrides')
@@ -232,7 +237,7 @@ const getMethod = (method: FunctionDescription, config: Config) => {
   const { exports } = config;
   const name = method.name!;
   const inputs = method.inputs || [];
-  const doc = toJsDoc(config.natspec?.[name]);
+  const doc = toMethodJsDoc(config.natspec?.methods?.[signatureName(method)]);
   const override = method.stateMutability === 'payable' ? 'PayableOverrides' : 'Overrides';
   const params = inputs
     .map(getParam)
@@ -270,15 +275,16 @@ export const getAllMethods = (nodes: FunctionDescription[], config: Config) => {
 ////////////
 export const getAllEvents = (nodes: EventDescription[], config: Config) => {
   if (!nodes.length) return 'never';
-  const record: Record<string, string[]> = {};
+  const record: Record<string, EventDescription[]> = {};
   for (const node of nodes) {
     if (!record[node.name]) record[node.name] = [];
-    record[node.name].push(getEvent(node));
+    record[node.name].push(node);
   }
   const events = Object.entries(record)
-    .map(([name, type]) => {
-      const doc = toJsDoc(config.natspec?.[name]);
-      return withDoc(`${name}: ${getOverloadType(type)}`, doc);
+    .map(([name, eventNodes]) => {
+      const types = eventNodes.map(getEvent);
+      const doc = toMethodJsDoc(config.natspec?.events?.[signatureName(nodes[0])]);
+      return withDoc(`${name}: ${getOverloadType(types)}`, doc);
     })
     .join('\n');
   if (events) return `{ ${events} }`;
@@ -303,17 +309,18 @@ const getEventParam = (param: ABIParameter, index: number) => {
 
 export const getAllFilters = (nodes: EventDescription[], config: Config) => {
   if (!nodes.length) return 'never';
-  const record: Record<string, string[]> = {};
+  const record: Record<string, EventDescription[]> = {};
   for (const node of nodes) {
     // Only gets indexed events
     if (!node.inputs.some((input) => input.indexed)) continue;
     if (!record[node.name]) record[node.name] = [];
-    record[node.name].push(getFilter(node));
+    record[node.name].push(node);
   }
   const filters = Object.entries(record)
-    .map(([name, type]) => {
-      const doc = toJsDoc(config.natspec?.[name]);
-      return withDoc(`${name}: ${getOverloadType(type)}`, doc);
+    .map(([name, fitlerNodes]) => {
+      const types = fitlerNodes.map(getFilter);
+      const doc = toMethodJsDoc(config.natspec?.events?.[signatureName(nodes[0])]);
+      return withDoc(`${name}: ${getOverloadType(types)}`, doc);
     })
     .join('\n');
   if (filters) return `{ ${filters} }`;
@@ -339,20 +346,21 @@ export const getAllQueries = (nodes: EventDescription[], config: Config) => {
     // If there are no indexed events you cannot query it
     if (!node.inputs.some((input) => input.indexed)) continue;
     if (!record[node.name]) record[node.name] = [];
-    record[node.name].push(getQuery(node));
+    record[node.name].push(getQuery(node, config));
   }
   const queries = Object.entries(record)
-    .map(([name, type]) => `${name}: ${getOverloadType(type)}`)
+    .map(([name, types]) => `${name}: ${getOverloadType(types)}`)
     .join('\n');
   if (queries) return `{ ${queries} }`;
   return 'never';
 };
 
-const getQuery = (node: EventDescription) => {
+const getQuery = (node: EventDescription, config: Config) => {
+  const params = config.natspec?.events?.[signatureName(node)]?.params || {};
   const fields = node.inputs
-    .map((input) => `${input.name}: ${getType(input, 'output')}`)
-    .join(', ');
-  return `{ ${fields} }`;
+    .map((input) => withDoc(`${input.name}: ${getType(input, 'output')}`, `/** ${params[input.name]} */`))
+    .join(';\n');
+  return `{\n${fields}\n}`;
 };
 
 

@@ -5,6 +5,8 @@ import abi from "./abi";
 import bytecode from "./bytecode";
 
 export class ERC1155ProxyFactory extends ContractFactory {
+  /**
+   */
   override deploy!: (overrides?: PayableOverrides) => Promise<ERC1155Proxy>;
 
   constructor(signer?: Signer) {
