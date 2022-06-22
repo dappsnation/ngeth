@@ -50,12 +50,16 @@ export function getSourceCode({ address }: GetParams<GetSourceCode>) {
   const account = store.addresses[address];
   if (!isContract(account)) throw new Error('Contract source code not verified');
   
+  let optimization: "0" | "1"
+  if (store.builds[account.artifact].optimizationUsed === "false") optimization = "0"
+  optimization = "1";
+
   return {
     SourceCode: store.builds[account.artifact].sourceCode,
-    ABI: store.artifacts[account.artifact].abi,
+    ABI: store.artifacts[account.address].abi,
     ContractName: store.builds[account.artifact].contractName,
     CompilerVersion: store.builds[account.artifact].compilerVersion,
-    OptimizationUsed: store.builds[account.artifact].optimizationUsed.toString(),
+    OptimizationUsed: optimization,
     Runs: store.builds[account.artifact].runs
     }
 }
