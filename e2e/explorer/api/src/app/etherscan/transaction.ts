@@ -4,10 +4,10 @@ import { store } from '../store';
 export function getStatus({ txhash }: GetParams<GetStatus>): ExecutionStatusResult {
   if (!store.receipts[txhash]) return { isError: 1, errDescription: 'Transaction not found' };
   const isError = store.receipts[txhash].status;
-  if (isError === 0) return { isError: 0 };
+  if (isError === 0) return { isError: 0, errDescription: '' };
   return {
     isError: 1,
-    errDescription: '' // TODO
+    errDescription: 'Bad jump destination'
   };
 }
 
