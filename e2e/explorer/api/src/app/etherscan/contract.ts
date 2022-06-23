@@ -50,9 +50,7 @@ export function getSourceCode({ address }: GetParams<GetSourceCode>) {
   const account = store.addresses[address];
   if (!isContract(account)) throw new Error('Contract source code not verified');
   
-  let optimization: "0" | "1"
-  if (store.builds[account.artifact].optimizationUsed === "false") optimization = "0"
-  optimization = "1";
+  const optimization = store.builds[account.artifact].optimizationUsed ? "1" : "0";
 
   return {
     SourceCode: store.builds[account.artifact].sourceCode,

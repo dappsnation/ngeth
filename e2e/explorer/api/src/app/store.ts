@@ -171,8 +171,8 @@ export function setBuildInfo(info: BuildInfo) {
       optimizationUsed: info.input.settings.optimizer.enabled,
       runs: info.input.settings.optimizer.runs
     }
+    store.builds[path] = content[path]
   }
-  store.builds = content;
 }
 
 ///////////////
