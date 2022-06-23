@@ -18,7 +18,7 @@ export interface IERC20Events {
      */
     Approval: (owner: string, spender: string, value: BigNumber) => void;
     /**
-     * Emitted when the allowance of a `spender` for an `owner` is set by a call to {approve}. `value` is the new allowance.
+     * Emitted when `value` tokens are moved from one account (`from`) to another (`to`). Note that `value` may be zero.
      */
     Transfer: (from: string, to: string, value: BigNumber) => void;
   };
@@ -28,7 +28,7 @@ export interface IERC20Events {
      */
     Approval: (owner?: FilterParam<string>, spender?: FilterParam<string>) => TypedFilter<"Approval">;
     /**
-     * Emitted when the allowance of a `spender` for an `owner` is set by a call to {approve}. `value` is the new allowance.
+     * Emitted when `value` tokens are moved from one account (`from`) to another (`to`). Note that `value` may be zero.
      */
     Transfer: (from?: FilterParam<string>, to?: FilterParam<string>) => TypedFilter<"Transfer">;
   };

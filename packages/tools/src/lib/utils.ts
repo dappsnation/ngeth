@@ -283,7 +283,7 @@ export const getAllEvents = (nodes: EventDescription[], config: Config) => {
   const events = Object.entries(record)
     .map(([name, eventNodes]) => {
       const types = eventNodes.map(getEvent);
-      const doc = toMethodJsDoc(config.natspec?.events?.[signatureName(nodes[0])]);
+      const doc = toMethodJsDoc(config.natspec?.events?.[signatureName(eventNodes[0])]);
       return withDoc(`${name}: ${getOverloadType(types)}`, doc);
     })
     .join('\n');
@@ -319,7 +319,7 @@ export const getAllFilters = (nodes: EventDescription[], config: Config) => {
   const filters = Object.entries(record)
     .map(([name, fitlerNodes]) => {
       const types = fitlerNodes.map(getFilter);
-      const doc = toMethodJsDoc(config.natspec?.events?.[signatureName(nodes[0])]);
+      const doc = toMethodJsDoc(config.natspec?.events?.[signatureName(fitlerNodes[0])]);
       return withDoc(`${name}: ${getOverloadType(types)}`, doc);
     })
     .join('\n');

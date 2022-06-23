@@ -1,5 +1,10 @@
 # DevX for Web3 developers
 
+ngeth is a monorepo to improve devX for web3 :
+- Typescript Contract Generator
+- Local Block Explorer
+- Local Etherscan API Emulator
+
 ---------
 ## Quick start
 ```
@@ -18,12 +23,12 @@ Run :
 ```
 npx hardhat ngeth:serve
 ```
-Open http://localhost:3001 to see the local block explorer
 
-Open folder `ngeth` to see the generated contracts
+- **Typescript Contract** are generated in folder `ngeth`
+- **Local Block Explorer** is accessible on http://localhost:3001 
+- **Local Etherscan API Emulator** is accessible on http://localhost:3000/etherscan
 ---------
 
-Explorer Packages :
+## Explorer Packages :
 - [`@ngeth/hardhat`](./packages/hardhat): Hardhat toolkit
 - [`@ngeth/ethers-*`](./packages/ethers): Common pattern built on top of ethers.js
-- [`@ngeth/etherscan`](./packages/etherscan): Etherscan SDK

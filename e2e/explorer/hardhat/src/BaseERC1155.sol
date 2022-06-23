@@ -6,6 +6,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 /// @dev Implementation of the ERC1155 openzepplin class
 contract BaseERC1155 is ERC1155, Ownable {
+
     constructor(string memory _uri) ERC1155(_uri) {}
 
     function setURI(string memory newuri) public onlyOwner {

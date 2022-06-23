@@ -18,15 +18,15 @@ export interface IERC1155Events {
      */
     ApprovalForAll: (account: string, operator: string, approved: boolean) => void;
     /**
-     * Emitted when `account` grants or revokes permission to `operator` to transfer their tokens, according to `approved`.
+     * Equivalent to multiple {TransferSingle} events, where `operator`, `from` and `to` are the same for all transfers.
      */
     TransferBatch: (operator: string, from: string, to: string, ids: BigNumber[], values: BigNumber[]) => void;
     /**
-     * Emitted when `account` grants or revokes permission to `operator` to transfer their tokens, according to `approved`.
+     * Emitted when `value` tokens of token type `id` are transferred from `from` to `to` by `operator`.
      */
     TransferSingle: (operator: string, from: string, to: string, id: BigNumber, value: BigNumber) => void;
     /**
-     * Emitted when `account` grants or revokes permission to `operator` to transfer their tokens, according to `approved`.
+     * Emitted when the URI for token type `id` changes to `value`, if it is a non-programmatic URI. If an {URI} event was emitted for `id`, the standard https://eips.ethereum.org/EIPS/eip-1155#metadata-extensions[guarantees] that `value` will equal the value returned by {IERC1155MetadataURI-uri}.
      */
     URI: (value: string, id: BigNumber) => void;
   };
@@ -36,7 +36,7 @@ export interface IERC1155Events {
      */
     ApprovalForAll: (account?: FilterParam<string>, operator?: FilterParam<string>) => TypedFilter<"ApprovalForAll">;
     /**
-     * Emitted when `account` grants or revokes permission to `operator` to transfer their tokens, according to `approved`.
+     * Equivalent to multiple {TransferSingle} events, where `operator`, `from` and `to` are the same for all transfers.
      */
     TransferBatch: (
       operator?: FilterParam<string>,
@@ -44,7 +44,7 @@ export interface IERC1155Events {
       to?: FilterParam<string>
     ) => TypedFilter<"TransferBatch">;
     /**
-     * Emitted when `account` grants or revokes permission to `operator` to transfer their tokens, according to `approved`.
+     * Emitted when `value` tokens of token type `id` are transferred from `from` to `to` by `operator`.
      */
     TransferSingle: (
       operator?: FilterParam<string>,
@@ -52,7 +52,7 @@ export interface IERC1155Events {
       to?: FilterParam<string>
     ) => TypedFilter<"TransferSingle">;
     /**
-     * Emitted when `account` grants or revokes permission to `operator` to transfer their tokens, according to `approved`.
+     * Emitted when the URI for token type `id` changes to `value`, if it is a non-programmatic URI. If an {URI} event was emitted for `id`, the standard https://eips.ethereum.org/EIPS/eip-1155#metadata-extensions[guarantees] that `value` will equal the value returned by {IERC1155MetadataURI-uri}.
      */
     URI: (id?: FilterParam<BigNumberish>) => TypedFilter<"URI">;
   };
