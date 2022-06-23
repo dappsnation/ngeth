@@ -37,6 +37,7 @@ async function verifySourceCode(params: GetParams<VerifySourceCode>) {
   addArtifactToAddress(params.contractaddress, artifact);
 }
 
+/** Returns the Contract Application Binary Interface ( ABI ) of a verified smart contract. */
 export function getAbi({ address }: GetParams<GetABI>) {
   if (!address) throw new Error('Invalid Address format');
   const account = store.addresses[address];
@@ -45,6 +46,7 @@ export function getAbi({ address }: GetParams<GetABI>) {
   return store.artifacts[account.artifact].abi;
 }
 
+/** Returns the Solidity source code of a verified smart contract. */
 export function getSourceCode({ address }: GetParams<GetSourceCode>) {
   if (!address) throw new Error('Invalid Address format');
   const account = store.addresses[address];

@@ -162,16 +162,18 @@ function setState(block: Block, receipts: TransactionReceipt[]) {
 ///////////////
 
 export function setBuildInfo(info: BuildInfo) {
-  const content = {}
-  for (const path of Object.keys(info.input.sources)) {
-    content[path] = {
-      sourceCode: info.input.sources[path].content,
-      contractName: info.input.sources[path],
-      compilerVersion: info.solcVersion,
-      optimizationUsed: info.input.settings.optimizer.enabled,
-      runs: info.input.settings.optimizer.runs
+  for (const sourceName in info.output.contracts) {
+    const sourceCode = info.input.sources[sourceName].content;
+    for (const contractName in info.output.contracts[sourceName]) {
+      store.builds[artifactKey( {contractName, sourceName })] = {
+        sourceCode: sourceCode,
+        contractName: contractName,
+        abi: ,
+        compilerVersion: info.solcVersion,
+        optimizationUsed: info.input.settings.optimizer.enabled.toString(),
+        runs: info.input.settings.optimizer.runs.toString()
+      }
     }
-    store.builds[path] = content[path]
   }
 }
 
@@ -179,7 +181,7 @@ export function setBuildInfo(info: BuildInfo) {
 // ARTIFACTS //
 ///////////////
 
-function artifactKey({ contractName, sourceName }: ContractArtifact) {
+function artifactKey({ contractName, sourceName }: {contractName: string, sourceName: string}) {
   return [sourceName, contractName].join('_');
 }
 

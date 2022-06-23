@@ -19,8 +19,8 @@
 
 ## Transactions
 
-- [ ] getstatus : to implement
-- [ ] gettxreceiptstatus: to implement
+- [x] getstatus
+- [x] gettxreceiptstatus
 
 ## Blocks :
 
