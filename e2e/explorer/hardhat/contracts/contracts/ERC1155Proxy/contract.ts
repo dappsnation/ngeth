@@ -13,11 +13,35 @@ import type { Provider } from "@ethersproject/providers";
 import abi from "./abi";
 
 export interface ERC1155ProxyEvents {
-  events: { Clone: (from: string, clone: string) => void };
-  filters: { Clone: (from?: FilterParam<string>, clone?: FilterParam<string>) => TypedFilter<"Clone"> };
-  queries: { Clone: { from: string; clone: string } };
+  events: {
+    /**
+     * Emit when the bae contrat has been cloned
+     * @param clone address of the cloned contract
+     * @param from account which cloned the contract
+     */
+    Clone: (from: string, clone: string) => void;
+  };
+  filters: {
+    /**
+     * Emit when the bae contrat has been cloned
+     * @param clone address of the cloned contract
+     * @param from account which cloned the contract
+     */
+    Clone: (from?: FilterParam<string>, clone?: FilterParam<string>) => TypedFilter<"Clone">;
+  };
+  queries: {
+    /** Emit when the bae contrat has been cloned */
+    Clone: {
+      /** account which cloned the contract */
+      from: string;
+      /** address of the cloned contract */
+      clone: string;
+    };
+  };
 }
 
+/**
+ */
 export class ERC1155Proxy extends EthersContract<ERC1155ProxyEvents> {
   // Read
 

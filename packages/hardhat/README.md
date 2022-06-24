@@ -11,27 +11,6 @@ _Note: `@ngeth/hardhat` is built for **Typescript** project._
 
 **Nx support**: `@ngeth/hardhat` is built with nx and provides schematics and builders for a better nx integration.
 
----------
-## Quick start
-```
-npm install --save-dev hardhat
-npx hardhat
-```
-Select typescript project and **install the deps display on the terminal**
-```
-npm install --save-dev @ngeth/hardhat
-```
-Import `@ngeth/hardhat` in `hardhat.config.ts` : 
-```typescript
-import "@ngeth/hardhat";
-```
-Run :
-```
-npx hardhat ngeth:serve
-```
-Open http://localhost:3001 to see the local block explorer
-
----------
 
 ## Install
 ```
