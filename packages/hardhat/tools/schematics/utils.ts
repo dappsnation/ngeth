@@ -8,15 +8,15 @@ export interface HardhatOptions extends BaseOptions {
 export function installHardhatDeps(tree: Tree, options: HardhatOptions) {
   const deps: Record<string, string> = {
     "ethers": "^5.6.0",
-    "@ngeth/ethers-core": "0.0.20"
+    "@ngeth/ethers-core": "0.0.21"
   };
 
   if (options.outputType === 'angular') {
-    deps["@ngeth/ethers-angular"] = "0.0.20";
+    deps["@ngeth/ethers-angular"] = "0.0.21";
   }
 
   const devDeps: Record<string, string> = {
-    "@ngeth/hardhat": "0.0.20",
+    "@ngeth/hardhat": "0.0.21",
     "@nomiclabs/hardhat-ethers": "^2.0.5",
     "hardhat": "^2.9.0",
     "prettier": "^2.6.0",
