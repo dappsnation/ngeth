@@ -63,7 +63,7 @@ export interface ERC20 extends EthersContract<ERC20Events> {
    */
   totalSupply: (overrides?: CallOverrides) => Promise<BigNumber>;
   /**
-   * See {IERC20-approve}. Requirements: - `spender` cannot be the zero address.
+   * Requirements: - `spender` cannot be the zero address.
    */
   approve: (spender: string, amount: BigNumberish, overrides?: Overrides) => Promise<ContractTransaction>;
   /**

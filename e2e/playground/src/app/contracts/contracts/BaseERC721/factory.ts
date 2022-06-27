@@ -5,6 +5,8 @@ import abi from "./abi";
 import bytecode from "./bytecode";
 
 export class BaseERC721Factory extends ContractFactory {
+  /**
+   */
   override deploy!: (overrides?: PayableOverrides) => Promise<BaseERC721>;
 
   constructor(signer?: Signer) {

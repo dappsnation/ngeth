@@ -66,7 +66,7 @@ export class BaseERC20 extends EthersContract<BaseERC20Events> {
 
   // Write
   /**
-   * See {IERC20-approve}. Requirements: - `spender` cannot be the zero address.
+   * Requirements: - `spender` cannot be the zero address.
    */
   approve!: (spender: string, amount: BigNumberish, overrides?: Overrides) => Promise<ContractTransaction>;
   /**

@@ -3,8 +3,9 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 
-import { ContractsManager, SUPPORTED_CHAINS, IsSupportedChainGuard, HasSignerGuard, ethersProviders, InjectedProviders, EthersModule, HasWalletGuard } from '@ngeth/ethers-angular';
-import { MetaMask, MetaMaskModule, METAMASK_RELOAD } from '@ngeth/metamask';
+import { ContractsManager, SUPPORTED_CHAINS, IsSupportedChainGuard, HasSignerGuard, EthersModule, HasWalletGuard, ngEthersProviders } from '@ngeth/ethers-angular';
+import { InjectedProviders } from '@ngeth/ethers-core';
+import { MetaMaskModule, METAMASK_RELOAD } from '@ngeth/metamask';
 import { FIREBASE_CONFIG } from 'ngfire';
 import { environment } from '../environments/environment';
 
@@ -43,8 +44,7 @@ const metamaskReload = () => {
     EthersModule
   ],
   providers: [
-    ...ethersProviders(MetaMask),
-    { provide: FIREBASE_CONFIG, useValue: environment.firebase },
+    ...ngEthersProviders(InjectedProviders),
     { provide: SUPPORTED_CHAINS, useValue: '*' },
     { provide: METAMASK_RELOAD, useValue: metamaskReload },
     { provide: ContractsManager, useClass: BaseContractsManager },
