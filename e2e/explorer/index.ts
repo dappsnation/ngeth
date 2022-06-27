@@ -1,7 +1,6 @@
 import { TransactionReceipt, TransactionResponse, Block, Log } from '@ethersproject/abstract-provider';
 import { ABIDescription } from '@type/solc';
 import { BigNumber } from '@ethersproject/bignumber';
-import { string } from 'hardhat/internal/core/params/argumentTypes';
 
 export interface EthStore {
   /** block indexed by block height */
