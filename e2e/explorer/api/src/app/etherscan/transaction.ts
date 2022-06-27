@@ -7,7 +7,7 @@ export function getStatus({ txhash }: GetParams<GetStatus>): ExecutionStatusResu
   if (isError === 0) return { isError: 0 };
   return {
     isError: 1,
-    errDescription: '' //TODO
+    errDescription: '' // TODO
   };
 }
 
