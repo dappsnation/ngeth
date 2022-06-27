@@ -1,11 +1,12 @@
 import { Block, TransactionResponse, TransactionReceipt, Log } from '@ethersproject/abstract-provider';
-import { EthAccount, ContractArtifact, ContractAccount, EthStore, isContract } from '@explorer';
+import { EthAccount, ContractArtifact, ContractAccount, EthStore, isContract, EtherscanSourceCode } from '@explorer';
 import { AddressZero } from '@ethersproject/constants';
 import { BigNumber } from '@ethersproject/bignumber';
 import { defaultAbiCoder } from '@ethersproject/abi';
 import { id } from '@ethersproject/hash';
 import { ABIDescription } from '@type/solc';
 import { provider } from './provider';
+import { BuildInfo } from 'hardhat/types'
 
 function bignumberReviver(key: string, value: any) {
   if (typeof value === 'object' && value['type'] === 'BigNumber') return BigNumber.from(value);
@@ -24,7 +25,8 @@ export const store: EthStore = {
   logs: {},
   accounts: [],
   contracts: [],
-  artifacts: {}
+  artifacts: {},
+  builds: {}
 }
 
 
@@ -156,13 +158,32 @@ function setState(block: Block, receipts: TransactionReceipt[]) {
 }
 
 ///////////////
+//// BUILD ////
+///////////////
+
+export function setBuildInfo(info: BuildInfo) {
+  for (const sourceName in info.output.contracts) {
+    const sourceCode = info.input.sources[sourceName].content;
+    for (const contractName in info.output.contracts[sourceName]) {
+      store.builds[artifactKey( {contractName, sourceName })] = {
+        sourceCode: sourceCode,
+        contractName: contractName,
+        abi: info.output.contracts[sourceName].contractName.abi as ABIDescription[],
+        compilerVersion: info.solcVersion,
+        optimizationUsed: info.input.settings.optimizer.enabled.toString(),
+        runs: info.input.settings.optimizer.runs.toString()
+      }
+    }
+  }
+}
+
+///////////////
 // ARTIFACTS //
 ///////////////
 
-function artifactKey({ contractName, sourceName }: ContractArtifact) {
+function artifactKey({ contractName, sourceName }: {contractName: string, sourceName: string}) {
   return [sourceName, contractName].join('_');
 }
-
 
 /** Register the artifact and return the key */
 export function setArtifact(artifact: ContractArtifact) {
