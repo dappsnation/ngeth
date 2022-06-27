@@ -1,9 +1,10 @@
-import { VerifySourceCode, GetParams, GetABI } from "@ngeth/etherscan";
+import { VerifySourceCode, GetParams, GetABI, GetSourceCode } from "@ngeth/etherscan";
 import solc from 'solc';
 import { CompilationInput, CompilationResult } from '@type/solc';
 import { provider } from "../provider";
 import { addArtifactToAddress, setArtifact, store } from "../store";
 import { isContract } from "@explorer";
+import { promises as fs } from 'fs';
 
 async function verifySourceCode(params: GetParams<VerifySourceCode>) {
   const code = await provider.getCode(params.contractaddress);
@@ -36,13 +37,29 @@ async function verifySourceCode(params: GetParams<VerifySourceCode>) {
   addArtifactToAddress(params.contractaddress, artifact);
 }
 
+/** Returns the Contract Application Binary Interface ( ABI ) of a verified smart contract. */
 export function getAbi({ address }: GetParams<GetABI>) {
   if (!address) throw new Error('Invalid Address format');
-
   const account = store.addresses[address];
-  if (isContract(account)) {
-    return store.artifacts[account.artifact].abi;
-  } else {
-    throw new Error('Contract source code not verified');
-  }
+  if(!isContract(account)) throw new Error('Contract source code not verified');
+
+  return store.artifacts[account.artifact].abi;
+}
+
+/** Returns the Solidity source code of a verified smart contract. */
+export function getSourceCode({ address }: GetParams<GetSourceCode>) {
+  if (!address) throw new Error('Invalid Address format');
+  const account = store.addresses[address];
+  if (!isContract(account)) throw new Error('Contract source code not verified');
+  
+  const optimization = store.builds[account.artifact].optimizationUsed ? "1" : "0";
+
+  return {
+    SourceCode: store.builds[account.artifact].sourceCode,
+    ABI: store.artifacts[account.address].abi,
+    ContractName: store.builds[account.artifact].contractName,
+    CompilerVersion: store.builds[account.artifact].compilerVersion,
+    OptimizationUsed: optimization,
+    Runs: store.builds[account.artifact].runs
+    }
 }

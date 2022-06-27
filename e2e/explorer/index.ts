@@ -21,6 +21,8 @@ export interface EthStore {
   contracts: string[],
   /** Artifacts */
   artifacts: Record<string, ContractArtifact>
+  /** Builds */
+  builds: Record<string, EtherscanSourceCode>
 }
 
 
@@ -41,6 +43,14 @@ export interface ContractArtifact {
   deployedBytecode: string; // "0x"-prefixed hex string
 }
 
+export interface EtherscanSourceCode {
+  sourceCode: string;
+  abi: ABIDescription[];
+  contractName: string;
+  compilerVersion: string;
+  optimizationUsed: string;
+  runs: string;
+}
 
 export interface ContractAccount extends EthAccount{
   isContract: true;
