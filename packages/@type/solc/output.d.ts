@@ -247,7 +247,8 @@ export interface DeveloperDocumentation {
   author: string
   title: string
   details: string
-  methods: DevMethodList
+  methods?: DevMethodList
+  events?: DevMethodList
 }
 
 export interface DevMethodList {

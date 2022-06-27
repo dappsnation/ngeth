@@ -33,10 +33,7 @@ task('ngeth:build', 'Build the contracts and generate outputs')
     const root = hre.config.paths.root;
     const outputPath = join(root, hre.config.ngeth.outputPath);
     if (!existsSync(outputPath)) mkdirSync(outputPath, { recursive: true });
-
-    const paths = await hre.artifacts.getAllFullyQualifiedNames();
-    const artifacts = await Promise.all(paths.map(path => hre.artifacts.readArtifact(path)));
-    await generate(hre, artifacts);
+    await generate(hre);
   });
 
 task('ngeth:serve')
@@ -50,39 +47,13 @@ task('node:server-ready', 'Run once the node is ready')
   .setAction(async (taskArguments: any, hre, runSuper: any) => {
     await runSuper();
 
-    const paths = await hre.artifacts.getAllFullyQualifiedNames();
-    const artifacts = await Promise.all(paths.map(path => hre.artifacts.readArtifact(path)));
     const root = hre.config.paths.root;
     const outputPath = join(root, hre.config.ngeth.outputPath);
     if (!existsSync(outputPath)) mkdirSync(outputPath, { recursive: true });
 
    
     // Generate contracts & index.ts
-    generate(hre, artifacts);
-
-
-    // Generate imports
-    if (hre.config.ngeth.withImports) {
-      // Generate imports
-      // TODO: check if bytecode === "0x" -> interface / abstract
-      const src = resolve(hre.config.paths.sources);
-      const importArtifacts = artifacts.filter(a => !resolve(a.sourceName).startsWith(src));
-      const importFolder = join(outputPath, 'imports');
-      
-      for (const artifact of importArtifacts) {
-        if (!artifact.abi.length) continue; // No public API
-        const contractName = artifact.contractName;
-        const contract = getContractImport(contractName, artifact.abi);
-        const output = join(importFolder, dirname(artifact.sourceName));
-        if (!existsSync(output)) mkdirSync(output, { recursive: true });
-        fs.writeFile(join(output, `${contractName}.ts`), formatTs(contract));
-      }
-      const exportImports = importArtifacts
-        .filter(artifact => artifact.abi.length)
-        .map(artifact => `export * from "./${dirname(artifact.sourceName)}/${artifact.contractName}";`)
-        .join('\n');
-      fs.writeFile(join(importFolder, 'index.ts'), exportImports);
-    }
+    generate(hre);
 
     // Explorer
     if (hre.config.ngeth.explorer) {

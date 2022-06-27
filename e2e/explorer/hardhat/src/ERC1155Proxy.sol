@@ -7,6 +7,9 @@ import "@openzeppelin/contracts/proxy/Clones.sol";
 contract ERC1155Proxy {
   address implementation; // Do not use "immutable" because
 
+  /// @dev Emit when the bae contrat has been cloned
+  /// @param from account which cloned the contract
+  /// @param clone address of the cloned contract
   event Clone(address indexed from, address indexed clone);
 
   constructor() {

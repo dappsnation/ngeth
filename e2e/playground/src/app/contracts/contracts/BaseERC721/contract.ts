@@ -34,24 +34,65 @@ export interface BaseERC721Events {
     ) => TypedFilter<"Transfer">;
   };
   queries: {
-    Approval: { owner: string; approved: string; tokenId: BigNumber };
-    ApprovalForAll: { owner: string; operator: string; approved: boolean };
-    Transfer: { from: string; to: string; tokenId: BigNumber };
+    Approval: {
+      owner: string;
+      approved: string;
+      tokenId: BigNumber;
+    };
+    ApprovalForAll: {
+      owner: string;
+      operator: string;
+      approved: boolean;
+    };
+    Transfer: {
+      from: string;
+      to: string;
+      tokenId: BigNumber;
+    };
   };
 }
 
+/**
+ */
 export class BaseERC721 extends NgContract<BaseERC721Events> {
   // Read
+  /**
+   * See {IERC721-balanceOf}.
+   */
   balanceOf!: (owner: string, overrides?: CallOverrides) => Promise<BigNumber>;
+  /**
+   * See {IERC721-getApproved}.
+   */
   getApproved!: (tokenId: BigNumberish, overrides?: CallOverrides) => Promise<string>;
+  /**
+   * See {IERC721-isApprovedForAll}.
+   */
   isApprovedForAll!: (owner: string, operator: string, overrides?: CallOverrides) => Promise<boolean>;
+  /**
+   * See {IERC721Metadata-name}.
+   */
   name!: (overrides?: CallOverrides) => Promise<string>;
+  /**
+   * See {IERC721-ownerOf}.
+   */
   ownerOf!: (tokenId: BigNumberish, overrides?: CallOverrides) => Promise<string>;
+  /**
+   * See {IERC165-supportsInterface}.
+   */
   supportsInterface!: (interfaceId: BytesLike, overrides?: CallOverrides) => Promise<boolean>;
+  /**
+   * See {IERC721Metadata-symbol}.
+   */
   symbol!: (overrides?: CallOverrides) => Promise<string>;
+  /**
+   * See {IERC721Metadata-tokenURI}.
+   */
   tokenURI!: (tokenId: BigNumberish, overrides?: CallOverrides) => Promise<string>;
 
   // Write
+  /**
+   * See {IERC721-approve}.
+   */
   approve!: (to: string, tokenId: BigNumberish, overrides?: Overrides) => Promise<ContractTransaction>;
   ["safeTransferFrom(address,address,uint256)"]!: (
     from: string,
@@ -66,7 +107,13 @@ export class BaseERC721 extends NgContract<BaseERC721Events> {
     _data: BytesLike,
     overrides?: Overrides
   ) => Promise<ContractTransaction>;
+  /**
+   * See {IERC721-setApprovalForAll}.
+   */
   setApprovalForAll!: (operator: string, approved: boolean, overrides?: Overrides) => Promise<ContractTransaction>;
+  /**
+   * See {IERC721-transferFrom}.
+   */
   transferFrom!: (
     from: string,
     to: string,

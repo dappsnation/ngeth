@@ -22,6 +22,8 @@ export abstract class ERC1193<Wallet extends WalletProfile = WalletProfile> {
   /** Method used to ask the user which wallet to select if multiple wallet available */
   protected abstract getWallet(): Promise<Wallet | undefined>;
   protected abstract onWalletChange(wallet: Wallet): void;
+  /** Used to run AFTER constructor from the mixins like ngErc1193 */
+  protected onInit?(): void;
 
   get ethersProvider() {
     return this.#ethersProvider;

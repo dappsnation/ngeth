@@ -1,8 +1,6 @@
 import { Component, ChangeDetectionStrategy, Inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { ChainManager, IsSupportedChainGuard, SUPPORTED_CHAINS } from '@ngeth/ethers-angular';
-import { MetaMask } from '@ngeth/metamask';
-
+import { ChainManager, IsSupportedChainGuard, NgERC1193, SUPPORTED_CHAINS } from '@ngeth/ethers-angular';
 
 function retry(amount: number, delay: number, condition: () => boolean) {
   return new Promise<void>((res) => {
@@ -28,16 +26,16 @@ export class UnsupportedChainComponent {
   constructor(
     @Inject(SUPPORTED_CHAINS) private supportedChains: number[],
     private chains: ChainManager,
-    private metamask: MetaMask,
+    private erc1193: NgERC1193,
     private router: Router,
     private guard: IsSupportedChainGuard
   ) { }
 
   async switch(chainId: string | number) {
-    const current = this.metamask.chainId;
-    await this.metamask.switchChain(chainId);
+    const current = this.erc1193.chainId;
+    await this.erc1193.switchChain(chainId);
     // Give time to metamask to update
-    await retry(5, 200, () => current !== this.metamask.chainId);
+    await retry(5, 200, () => current !== this.erc1193.chainId);
     const url = this.previous || '/';
     this.router.navigateByUrl(url);
   }

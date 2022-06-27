@@ -17,9 +17,16 @@ import abi from "./abi";
 export interface ERC1155FactoryEvents {
   events: { Clone: (from: string, clone: string) => void };
   filters: { Clone: (from?: FilterParam<string>, clone?: FilterParam<string>) => TypedFilter<"Clone"> };
-  queries: { Clone: { from: string; clone: string } };
+  queries: {
+    Clone: {
+      from: string;
+      clone: string;
+    };
+  };
 }
 
+/**
+ */
 export class ERC1155Factory extends NgContract<ERC1155FactoryEvents> {
   // Read
 
