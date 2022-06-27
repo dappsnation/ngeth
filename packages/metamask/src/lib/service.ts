@@ -1,7 +1,7 @@
-import { inject, Injectable, InjectionToken, Injector } from '@angular/core';
+import { Inject, inject, Injectable, InjectFlags, InjectionToken, Injector, Optional } from '@angular/core';
 import { MetaMaskProvider, RequestedPermissions, Web3WalletPermission } from './types';
-import { NgERC1193, WalletProfile } from '@ngeth/ethers-angular';
-import { toChainId } from '@ngeth/ethers-core';
+import { ngErc1193, NgERC1193 } from '@ngeth/ethers-angular';
+import { ERC1193, toChainId, WalletProfile } from '@ngeth/ethers-core';
 import { getAddress } from '@ethersproject/address';
 
 // Reload message when "Could not establish connection." happens
@@ -30,18 +30,24 @@ function metamaskWallet() {
 }
 
 
-@Injectable({ providedIn: 'root' })
-export class MetaMask extends NgERC1193 {
+export class MetaMask extends ERC1193 {
+  wallet?: WalletProfile;
   wallets: WalletProfile[] = [];
-  private injector = inject(Injector);
 
-  constructor() {
+  constructor(private reloadWarning?: (() => void) | null) {
     super();
+  }
+
+  protected override onInit() {
     const metamask = metamaskWallet();
     if (metamask) {
       this.wallets.push(metamask);
       super.selectWallet(); // Use super to avoid notInitializedError warning at loadtime
     }
+  }
+
+  protected onWalletChange(wallet: WalletProfile): void {
+    this.wallet = wallet;
   }
 
   protected async getWallet(): Promise<WalletProfile | undefined> {
@@ -61,9 +67,8 @@ export class MetaMask extends NgERC1193 {
   // Handle "Could not establish connection."
   // https://github.com/MetaMask/metamask-extension/issues/13465
   private notInitializedError() {
-    const reload = this.injector.get(METAMASK_RELOAD, null);
-    if (reload) {
-      reload();
+    if (this.reloadWarning) {
+      this.reloadWarning();
     } else {
       console.error(getNotInitializedError());
     }
