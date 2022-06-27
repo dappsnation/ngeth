@@ -1,6 +1,7 @@
 import { TransactionReceipt, TransactionResponse, Block, Log } from '@ethersproject/abstract-provider';
 import { ABIDescription } from '@type/solc';
 import { BigNumber } from '@ethersproject/bignumber';
+import { string } from 'hardhat/internal/core/params/argumentTypes';
 
 export interface EthStore {
   /** block indexed by block height */
@@ -56,6 +57,14 @@ export interface ContractAccount extends EthAccount{
   isContract: true;
   /** Key of the artifact in the artifact record */
   artifact: string;
+}
+export interface ERC20Account extends ContractAccount {
+  metadata: {
+    name: string;
+    symbol: string;
+    decimals: number;
+    totalSupply: BigNumber;
+  }
 }
 
 export interface EthState {
