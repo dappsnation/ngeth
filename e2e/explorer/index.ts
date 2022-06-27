@@ -57,6 +57,14 @@ export interface ContractAccount extends EthAccount{
   /** Key of the artifact in the artifact record */
   artifact: string;
 }
+export interface ERC20Account extends ContractAccount {
+  metadata: {
+    name: string;
+    symbol: string;
+    decimals: number;
+    totalSupply: BigNumber;
+  }
+}
 
 export interface EthState {
   balances: Record<string, BigNumber>;

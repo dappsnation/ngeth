@@ -1,5 +1,5 @@
 import { Block, TransactionResponse, TransactionReceipt, Log } from '@ethersproject/abstract-provider';
-import { EthAccount, ContractArtifact, ContractAccount, EthStore, isContract, EtherscanSourceCode } from '@explorer';
+import { EthAccount, ContractArtifact, ContractAccount, EthStore, isContract, ERC20Account } from '@explorer';
 import { AddressZero } from '@ethersproject/constants';
 import { BigNumber } from '@ethersproject/bignumber';
 import { defaultAbiCoder } from '@ethersproject/abi';
@@ -7,6 +7,7 @@ import { id } from '@ethersproject/hash';
 import { ABIDescription } from '@type/solc';
 import { provider } from './provider';
 import { BuildInfo } from 'hardhat/types'
+import { Contract } from 'ethers';
 
 function bignumberReviver(key: string, value: any) {
   if (typeof value === 'object' && value['type'] === 'BigNumber') return BigNumber.from(value);
@@ -116,6 +117,20 @@ export async function setBalance({ address, isContract }: CreateEthAccount) {
 export async function addArtifactToAddress(address: string, artifact: ContractArtifact) {
   if (!store.addresses[address]) await createEthAccount({ address, isContract: true });
   (store.addresses[address] as ContractAccount).artifact = artifactKey(artifact);
+  if (artifact.standard === "ERC20") {
+    (store.addresses[address] as ERC20Account).metadata = await getERC20Metadatas(address, artifact);
+  }
+}
+
+async function getERC20Metadatas(address: string, artifact: ContractArtifact) {
+  const contract = new Contract(address, artifact.abi, provider);
+  const [name, symbol, decimals, totalSupply] = await Promise.all([
+    (contract.callStatic.name() as Promise<string>),
+    (contract.callStatic.symbol() as Promise<string>),
+    (contract.callStatic.decimals() as Promise<number>),
+    (contract.callStatic.totalSupply() as Promise<BigNumber>),    
+  ])
+  return { name, symbol, decimals, totalSupply };
 }
 
 /** Store the transaction hash to the addresses involved in the transaction */
