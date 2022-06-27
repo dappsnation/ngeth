@@ -10,7 +10,8 @@ contract BaseERC1155 is ERC1155, Ownable {
     function setURI(string memory newuri) public onlyOwner {
         _setURI(newuri);
     }
-
+    
+    /// @notice Mint a token
     function mint(address account, uint256 id, uint256 amount, bytes memory data)
         public
         onlyOwner

@@ -6,3 +6,4 @@ export * from './lib/events';
 export * from './lib/types';
 export * from './lib/manager';
 export * from './lib/utils';
+export * from './lib/natspec';

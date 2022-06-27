@@ -1,12 +1,15 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { ABIDescription, FunctionDescription } from '@type/solc';
+import { FunctionDescription } from '@type/solc';
 import { getContractEvents } from './events';
-import { getAllCalls, getAllMethods, getAllStructs, isRead, isWrite } from './utils';
+import { toContractJsDoc } from './natspec';
+import { Config, GenerateConfig, getAllCalls, getAllMethods, getAllStructs, isRead, isWrite } from './utils';
 
-export const getEthersContract = (contractName: string, abi: ABIDescription[]) => {
+export const getEthersContract = (contractName: string, { abi, natspec }: GenerateConfig) => {
+  const config: Config = { exports: 'class', natspec };
   const calls: FunctionDescription[] = abi.filter(isRead);
   const methods: FunctionDescription[] = abi.filter(isWrite);
   const structs = getAllStructs(abi);
+
+  const doc = toContractJsDoc(natspec);
 
   return `
   import { EthersContract, FilterParam, TypedFilter } from '@ngeth/ethers-core';
@@ -14,16 +17,17 @@ export const getEthersContract = (contractName: string, abi: ABIDescription[]) =
   import type { Provider } from '@ethersproject/providers';
   import abi from './abi';
   
-  ${getContractEvents(contractName, abi)}
+  ${getContractEvents(contractName, abi, config)}
   
   ${structs}
   
+  ${doc}
   export class ${contractName} extends EthersContract<${contractName}Events> {
     // Read
-    ${getAllCalls(calls, 'class')}
+    ${getAllCalls(calls, config)}
 
     // Write
-    ${getAllMethods(methods, 'class')}
+    ${getAllMethods(methods, config)}
 
     constructor(address: string, signer?: Signer | Provider) {
       super(address, abi, signer);

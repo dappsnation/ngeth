@@ -22,13 +22,18 @@ export class InjectedProviders extends ERC1193 {
   wallet?: WalletProfile;
   wallets = getInjectedProviders().map(toInjectedWallet);
 
-  constructor() {
-    super();
+  protected override onInit() {
     if (this.wallets.length === 1) this.selectWallet(this.wallets[0]);
+    const label = localStorage.getItem('ngeth:erc1193');
+    if (label) {
+      const wallet = this.wallets.find(wallet => wallet.label === label);
+      if (wallet) this.selectWallet(wallet);
+    }
   }
 
   protected onWalletChange(wallet: WalletProfile) {
     this.wallet = wallet;
+    localStorage.setItem('ngeth:erc1193', wallet.label);
   }
 
   protected async getWallet() {

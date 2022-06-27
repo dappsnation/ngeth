@@ -33,19 +33,59 @@ export interface ERC1155Events {
     URI: (id?: FilterParam<BigNumberish>) => TypedFilter<"URI">;
   };
   queries: {
-    ApprovalForAll: { account: string; operator: string; approved: boolean };
-    TransferBatch: { operator: string; from: string; to: string; ids: BigNumber[]; values: BigNumber[] };
-    TransferSingle: { operator: string; from: string; to: string; id: BigNumber; value: BigNumber };
-    URI: { value: string; id: BigNumber };
+    ApprovalForAll: {
+      account: string;
+      operator: string;
+      approved: boolean;
+    };
+    TransferBatch: {
+      operator: string;
+      from: string;
+      to: string;
+      ids: BigNumber[];
+      values: BigNumber[];
+    };
+    TransferSingle: {
+      operator: string;
+      from: string;
+      to: string;
+      id: BigNumber;
+      value: BigNumber;
+    };
+    URI: {
+      value: string;
+      id: BigNumber;
+    };
   };
 }
 
+/**
+ * Implementation of the basic standard multi-token. See https://eips.ethereum.org/EIPS/eip-1155 Originally based on code by Enjin: https://github.com/enjin/erc-1155 _Available since v3.1._
+ */
 export interface ERC1155 extends EthersContract<ERC1155Events> {
+  /**
+   * Returns the amount of tokens of token type `id` owned by `account`. Requirements: - `account` cannot be the zero address.
+   */
   balanceOf: (account: string, id: BigNumberish, overrides?: CallOverrides) => Promise<BigNumber>;
+  /**
+   * See {IERC1155-balanceOfBatch}. Requirements: - `accounts` and `ids` must have the same length.
+   */
   balanceOfBatch: (accounts: string[], ids: BigNumberish[], overrides?: CallOverrides) => Promise<BigNumber[]>;
+  /**
+   * Returns true if `operator` is approved to transfer ``account``'s tokens. See {setApprovalForAll}.
+   */
   isApprovedForAll: (account: string, operator: string, overrides?: CallOverrides) => Promise<boolean>;
+  /**
+   * See {IERC165-supportsInterface}.
+   */
   supportsInterface: (interfaceId: BytesLike, overrides?: CallOverrides) => Promise<boolean>;
+  /**
+   * See {IERC1155MetadataURI-uri}. This implementation returns the same URI for *all* token types. It relies on the token type ID substitution mechanism https://eips.ethereum.org/EIPS/eip-1155#metadata[defined in the EIP]. Clients calling this function must replace the `\{id\}` substring with the actual token type ID.
+   */
   uri: (arg: BigNumberish, overrides?: CallOverrides) => Promise<string>;
+  /**
+   * See {IERC1155-safeBatchTransferFrom}.
+   */
   safeBatchTransferFrom: (
     from: string,
     to: string,
@@ -54,6 +94,9 @@ export interface ERC1155 extends EthersContract<ERC1155Events> {
     data: BytesLike,
     overrides?: Overrides
   ) => Promise<ContractTransaction>;
+  /**
+   * See {IERC1155-safeTransferFrom}.
+   */
   safeTransferFrom: (
     from: string,
     to: string,
@@ -62,6 +105,9 @@ export interface ERC1155 extends EthersContract<ERC1155Events> {
     data: BytesLike,
     overrides?: Overrides
   ) => Promise<ContractTransaction>;
+  /**
+   * Grants or revokes permission to `operator` to transfer the caller's tokens, according to `approved`, Emits an {ApprovalForAll} event. Requirements: - `operator` cannot be the caller.
+   */
   setApprovalForAll: (operator: string, approved: boolean, overrides?: Overrides) => Promise<ContractTransaction>;
 }
 

@@ -33,19 +33,59 @@ export interface IERC1155MetadataURIEvents {
     URI: (id?: FilterParam<BigNumberish>) => TypedFilter<"URI">;
   };
   queries: {
-    ApprovalForAll: { account: string; operator: string; approved: boolean };
-    TransferBatch: { operator: string; from: string; to: string; ids: BigNumber[]; values: BigNumber[] };
-    TransferSingle: { operator: string; from: string; to: string; id: BigNumber; value: BigNumber };
-    URI: { value: string; id: BigNumber };
+    ApprovalForAll: {
+      account: string;
+      operator: string;
+      approved: boolean;
+    };
+    TransferBatch: {
+      operator: string;
+      from: string;
+      to: string;
+      ids: BigNumber[];
+      values: BigNumber[];
+    };
+    TransferSingle: {
+      operator: string;
+      from: string;
+      to: string;
+      id: BigNumber;
+      value: BigNumber;
+    };
+    URI: {
+      value: string;
+      id: BigNumber;
+    };
   };
 }
 
+/**
+ * Interface of the optional ERC1155MetadataExtension interface, as defined in the https://eips.ethereum.org/EIPS/eip-1155#metadata-extensions[EIP]. _Available since v3.1._
+ */
 export interface IERC1155MetadataURI extends EthersContract<IERC1155MetadataURIEvents> {
+  /**
+   * Returns the amount of tokens of token type `id` owned by `account`. Requirements: - `account` cannot be the zero address.
+   */
   balanceOf: (account: string, id: BigNumberish, overrides?: CallOverrides) => Promise<BigNumber>;
+  /**
+   * xref:ROOT:erc1155.adoc#batch-operations[Batched] version of {balanceOf}. Requirements: - `accounts` and `ids` must have the same length.
+   */
   balanceOfBatch: (accounts: string[], ids: BigNumberish[], overrides?: CallOverrides) => Promise<BigNumber[]>;
+  /**
+   * Returns true if `operator` is approved to transfer ``account``'s tokens. See {setApprovalForAll}.
+   */
   isApprovedForAll: (account: string, operator: string, overrides?: CallOverrides) => Promise<boolean>;
+  /**
+   * Returns true if this contract implements the interface defined by `interfaceId`. See the corresponding https://eips.ethereum.org/EIPS/eip-165#how-interfaces-are-identified[EIP section] to learn more about how these ids are created. This function call must use less than 30 000 gas.
+   */
   supportsInterface: (interfaceId: BytesLike, overrides?: CallOverrides) => Promise<boolean>;
+  /**
+   * Returns the URI for token type `id`. If the `\{id\}` substring is present in the URI, it must be replaced by clients with the actual token type ID.
+   */
   uri: (id: BigNumberish, overrides?: CallOverrides) => Promise<string>;
+  /**
+   * xref:ROOT:erc1155.adoc#batch-operations[Batched] version of {safeTransferFrom}. Emits a {TransferBatch} event. Requirements: - `ids` and `amounts` must have the same length. - If `to` refers to a smart contract, it must implement {IERC1155Receiver-onERC1155BatchReceived} and return the acceptance magic value.
+   */
   safeBatchTransferFrom: (
     from: string,
     to: string,
@@ -54,6 +94,9 @@ export interface IERC1155MetadataURI extends EthersContract<IERC1155MetadataURIE
     data: BytesLike,
     overrides?: Overrides
   ) => Promise<ContractTransaction>;
+  /**
+   * Transfers `amount` tokens of token type `id` from `from` to `to`. Emits a {TransferSingle} event. Requirements: - `to` cannot be the zero address. - If the caller is not `from`, it must be have been approved to spend ``from``'s tokens via {setApprovalForAll}. - `from` must have a balance of tokens of type `id` of at least `amount`. - If `to` refers to a smart contract, it must implement {IERC1155Receiver-onERC1155Received} and return the acceptance magic value.
+   */
   safeTransferFrom: (
     from: string,
     to: string,
@@ -62,6 +105,9 @@ export interface IERC1155MetadataURI extends EthersContract<IERC1155MetadataURIE
     data: BytesLike,
     overrides?: Overrides
   ) => Promise<ContractTransaction>;
+  /**
+   * Grants or revokes permission to `operator` to transfer the caller's tokens, according to `approved`, Emits an {ApprovalForAll} event. Requirements: - `operator` cannot be the caller.
+   */
   setApprovalForAll: (operator: string, approved: boolean, overrides?: Overrides) => Promise<ContractTransaction>;
 }
 

@@ -1,6 +1,6 @@
 {
   "name": "@ngeth/ethers-core",
-  "version": "0.0.20",
+  "version": "0.0.22",
   "type": "commonjs",
   "peerDependencies": {
     "ethers": "^5.6.0"
