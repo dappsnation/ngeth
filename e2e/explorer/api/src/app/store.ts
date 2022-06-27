@@ -168,7 +168,7 @@ export function setBuildInfo(info: BuildInfo) {
       store.builds[artifactKey( {contractName, sourceName })] = {
         sourceCode: sourceCode,
         contractName: contractName,
-        abi: ,
+        abi: info.output.contracts[sourceName].contractName.abi as ABIDescription[],
         compilerVersion: info.solcVersion,
         optimizationUsed: info.input.settings.optimizer.enabled.toString(),
         runs: info.input.settings.optimizer.runs.toString()
