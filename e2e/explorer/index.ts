@@ -65,6 +65,12 @@ export interface ERC20Account extends ContractAccount {
     totalSupply: BigNumber;
   }
 }
+export interface ERC721Account extends ContractAccount {
+  metadata: {
+    name: string;
+    symbol: string;
+  }
+}
 
 export interface EthState {
   balances: Record<string, BigNumber>;
