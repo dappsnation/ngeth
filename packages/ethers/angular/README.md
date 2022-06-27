@@ -1,5 +1,43 @@
 # Angular toolkit for ethers
 
+## Getting Started
+```
+npm install @ngeth/ethers-core @ngeth/ethers-angular ethers
+```
+
+In the `app.module.ts` add the providers: 
+```typescript
+import { ngEthersProviders, EthersModule } from '@ngeth/ethers-angular';
+import { InjectedProviders } form '@ngeth/ethers-core';
+
+@NgModule({
+  // Use EthersModule only for the pipes, directive or components
+  imports: [BrowserModule, EthersModule],
+  providers: [ngEthersProviders(InjectedProviders)]
+})
+```
+This will exposes the `NgERC1193` provider
+
+Use it in a component: 
+```typescript
+import { NgERC1193 } from '@ngeth/ethers-angular';
+@Component({
+  template: `
+    <p *ngIf="account$ | async as account; else noAccount">{{ account | address }}</p>
+    <ng-template #noAccount>
+      <button (click)="connect()">Connect your wallet</button>
+    </ng-template>
+  `
+})
+export class AppComponent {
+  account$ = this
+  constructor(private erc1193: NgERC1193) {}
+  connect() {
+    this.erc1193.enable();
+  }
+}
+```
+
 ## Install
 
 Standalone
@@ -27,16 +65,18 @@ Add a list of custom chains for the `ChainManager`. Useful for local development
 ```
 
 #### rpcProvider
-Utils function to set `Provider` as injectable dependancy
+Utils function to set the ethers.js's `Provider` as injectable dependancy
 ```
 providers: [rpcProvider()]
 ```
 
-#### ethersProviders
+#### ngEthersProviders
 Utils function to bind the `Provider` & `Signer` to the `NgERC1193` wallet manager
 ```
+import { InjectedProviders } form '@ngeth/ethers-core';
+...
 providers: [
-  ethersProviders(InjectedProviders)
+  ngEthersProviders(InjectedProviders)
 ]
 ```
 
