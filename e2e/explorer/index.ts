@@ -75,8 +75,9 @@ export interface ERC721Account extends ContractAccount {
 
 export interface ERC1155Account extends ContractAccount {
   metadata: {
-    name: string;
+    name: string;    
     symbol: string;
+    decimals: number;
   }
 }
 

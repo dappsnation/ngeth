@@ -273,6 +273,28 @@ export type TokenParams = TokenInfo;
 
 export interface TokenInfo extends BaseParams<'token', 'tokeninfo'> {
   contractaddress: string;
+  tokenName: string;
+  symbol: string;
+  divisor: string;
+  tokenType: "ERC20" | "ERC721" | "ERC1155";
+  totalSupply: string;
+  blueCheckmark: "";
+  description:"";
+  website:"";
+  email:"";
+  blog:"";
+  reddit:"";
+  slack:"";
+  facebook:"";
+  twitter:"";
+  bitcointalk:"";
+  github:"";
+  telegram:"";
+  wechat:"";
+  linkedin:"";
+  discord:"";
+  whitepaper:"";
+  tokenPriceUSD:"";
 }
 
 export interface TokenBalance extends BaseParams<'account', 'tokenbalance'> {
