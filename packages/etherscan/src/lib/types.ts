@@ -198,18 +198,18 @@ export interface TransferTransaction {
   cumulativeGasUsed: string;
   confirmation: string;
 }
-export interface ERC20TransferTransaction extends TransferTransaction {
+export interface ERC20TxResponse extends TransferTransaction {
   tokenSymbol:string;
   tokenName: string;
   tokenDecimal: string;
 }
-export interface ERC721TransferTransaction extends TransferTransaction {
+export interface ERC721TxResponse extends TransferTransaction {
   tokenId: string;
   tokenSymbol:string;
   tokenName: string;
   tokenDecimal: string;
 }
-export interface ERC1155TransferTransaction extends TransferTransaction {
+export interface ERC1155TxResponse extends TransferTransaction {
   tokenId: string;
   tokenSymbol:string;
   tokenName: string;

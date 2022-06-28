@@ -1,5 +1,5 @@
 import { TransactionReceipt, TransactionResponse, Log } from "@ethersproject/abstract-provider";
-import { Balance, BalanceMulti, GetParams, TxList, BlockMined, BalanceHistory, TokenTx, TransferTransaction, ERC1155TransferTransaction, TxListResponse } from "@ngeth/etherscan";
+import { Balance, BalanceMulti, GetParams, TxList, BlockMined, BalanceHistory, TokenTx, TransferTransaction, ERC1155TxResponse, TxListResponse, ERC20TxResponse, ERC721TxResponse } from "@ngeth/etherscan";
 import { store } from '../store';
 import { ERC1155Account, ERC20Account, ERC721Account, EthState } from "@explorer";
 import { BigNumber } from "@ethersproject/bignumber";
@@ -137,7 +137,7 @@ export function balanceHistory(params: GetParams<BalanceHistory>) {
   return balance.toString();
 }
 
-export function tokensTx(params: GetParams<TokenTx>) {
+export function tokensTx(params: GetParams<TokenTx>): ERC20TxResponse[] | ERC721TxResponse[] | ERC1155TxResponse[] {
   const {address, contractaddress, startblock = 0, endblock, page, sort='asc', offset} = params;
   if (!address || !contractaddress) throw new Error('Error! Missing address or contract address');
   
@@ -180,7 +180,7 @@ export function tokensTx(params: GetParams<TokenTx>) {
       };
     }
     //ERC1155
-    const toERC1155tx = (id: BigNumber, value: BigNumber): ERC1155TransferTransaction => ({
+    const toERC1155tx = (id: BigNumber, value: BigNumber): ERC1155TxResponse => ({
       ...txTransfer,
       tokenId: id.toString(),
       tokenValue: value.toString(),
