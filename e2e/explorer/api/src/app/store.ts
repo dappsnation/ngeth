@@ -1,5 +1,5 @@
 import { Block, TransactionResponse, TransactionReceipt, Log } from '@ethersproject/abstract-provider';
-import { EthAccount, ContractArtifact, ContractAccount, EthStore, isContract, ERC20Account, ERC721Account } from '@explorer';
+import { EthAccount, ContractArtifact, ContractAccount, EthStore, isContract, ERC20Account, ERC721Account, ERC1155Account } from '@explorer';
 import { AddressZero } from '@ethersproject/constants';
 import { BigNumber } from '@ethersproject/bignumber';
 import { defaultAbiCoder } from '@ethersproject/abi';
@@ -121,6 +121,8 @@ export async function addArtifactToAddress(address: string, artifact: ContractAr
     (store.addresses[address] as ERC20Account).metadata = await getERC20Metadatas(address, artifact);
   } else if (artifact.standard === "ERC721") {
     (store.addresses[address] as ERC721Account).metadata = await getERC721Metadatas(address, artifact);
+  } else if (artifact.standard === "ERC1155") {
+    (store.addresses[address] as ERC1155Account).metadata = await getERC1155Metadatas(address, artifact);
   }
 }
 
@@ -141,6 +143,14 @@ async function getERC721Metadatas(address: string, artifact: ContractArtifact) {
     'symbol' in contract.callStatic ? contract.callStatic.symbol() as Promise<string> : Promise.resolve(''),
   ])
   return { name, symbol }
+}
+async function getERC1155Metadatas(address: string, artifact: ContractArtifact) {
+  const contract = new Contract(address, artifact.abi, provider);
+  const [name, decimals] = await Promise.all([
+    'name' in contract.callStatic ? contract.callStatic.name() as Promise<string> : Promise.resolve(''),
+    'decimals' in contract.callStatic ? contract.callStatic.decimals() as Promise<number> : Promise.resolve(''), 
+  ])
+  return { name, decimals }
 }
 
 /** Store the transaction hash to the addresses involved in the transaction */
