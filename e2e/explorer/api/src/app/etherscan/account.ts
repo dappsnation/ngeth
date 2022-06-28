@@ -163,7 +163,7 @@ export function tokensTx(params: GetParams<TokenTx>) {
       return { 
         ...txTransfer,
         tokenName: metadatas.name,
-        tokenDecimal: metadatas.decimals,
+        tokenDecimal: metadatas.decimals.toString(),
         tokenSymbol: metadatas.symbol 
       };
     }
@@ -174,9 +174,10 @@ export function tokensTx(params: GetParams<TokenTx>) {
       return {
         ...txTransfer, 
         tokenId: id.toString(), 
-        tokenDecimal: metadatas.decimals,
+        tokenDecimal: metadatas.decimals.toString(),
         tokenName: metadatas.name,
-        tokenSymbol: metadatas.symbol };
+        tokenSymbol: metadatas.symbol 
+      };
     }
     //ERC1155
     const toERC1155tx = (id: BigNumber, value: BigNumber): ERC1155TransferTransaction => ({
