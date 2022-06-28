@@ -15,7 +15,7 @@
 ## Contracts
 
 - [x] getabi
-- [ ] getsourcecode: to implement
+- [x] getsourcecode
 
 ## Transactions
 
