@@ -1,7 +1,7 @@
 import { TransactionReceipt, TransactionResponse, Log } from "@ethersproject/abstract-provider";
-import { Balance, BalanceMulti, GetParams, TxList, BlockMined, BalanceHistory, TokenTx, TransferTransaction, ERC1155TransferTransaction, TxListResponse } from "@ngeth/etherscan";
+import { Balance, BalanceMulti, GetParams, TxList, BlockMined, BalanceHistory, TokenTx, TransferTransaction, ERC1155TxResponse, TxListResponse, ERC20TxResponse, ERC721TxResponse } from "@ngeth/etherscan";
 import { store } from '../store';
-import { EthState } from "@explorer";
+import { ERC1155Account, ERC20Account, ERC721Account, EthState } from "@explorer";
 import { BigNumber } from "@ethersproject/bignumber";
 import { id } from "@ethersproject/hash";
 import { defaultAbiCoder } from '@ethersproject/abi';
@@ -25,7 +25,6 @@ function toTransferTransaction(tx: TransactionResponse, receipt: TransactionRece
     gasUsed: receipt.gasUsed.toString(),
     cumulativeGasUsed: receipt.cumulativeGasUsed.toString(),
     confirmation: tx.confirmations.toString(),
-    // @todo(#1) add tokenSymbol & tokenName
   }
 }
 function toTxList(tx: TransactionResponse, receipt: TransactionReceipt): TxListResponse {
@@ -138,7 +137,7 @@ export function balanceHistory(params: GetParams<BalanceHistory>) {
   return balance.toString();
 }
 
-export function tokensTx(params: GetParams<TokenTx>) {
+export function tokensTx(params: GetParams<TokenTx>): ERC20TxResponse[] | ERC721TxResponse[] | ERC1155TxResponse[] {
   const {address, contractaddress, startblock = 0, endblock, page, sort='asc', offset} = params;
   if (!address || !contractaddress) throw new Error('Error! Missing address or contract address');
   
@@ -160,18 +159,33 @@ export function tokensTx(params: GetParams<TokenTx>) {
     const txTransfer = toTransferTransaction(tx, receipt);
     //ERC20
     if (log.topics[0] === transferID && !log.topics[3]) {
-      return { ...txTransfer, tokenDecimal: '0' };
+      const metadatas = (store.addresses[address] as ERC20Account).metadata;
+      return { 
+        ...txTransfer,
+        tokenName: metadatas.name,
+        tokenDecimal: metadatas.decimals.toString(),
+        tokenSymbol: metadatas.symbol 
+      } as ERC20TxResponse;
     }
     //ERC721
     if (log.topics[0] === transferID && log.topics[3]) {
+      const metadatas = (store.addresses[address] as ERC721Account).metadata;
       const [id] = defaultAbiCoder.decode(['uint256'], log.topics[3]);
-      return { ...txTransfer, tokenId: id.toString(), tokenDecimal: '0' };
+      return {
+        ...txTransfer, 
+        tokenId: id.toString(), 
+        tokenDecimal: metadatas.decimals.toString(),
+        tokenName: metadatas.name,
+        tokenSymbol: metadatas.symbol 
+      } as ERC721TxResponse;
     }
     //ERC1155
-    const toERC1155tx = (id: BigNumber, value: BigNumber): ERC1155TransferTransaction => ({
+    const toERC1155tx = (id: BigNumber, value: BigNumber): ERC1155TxResponse => ({
       ...txTransfer,
       tokenId: id.toString(),
-      tokenValue: value.toString()
+      tokenValue: value.toString(),
+      tokenName: (store.addresses[address] as ERC1155Account).metadata.name,
+      tokenSymbol: (store.addresses[address] as ERC1155Account).metadata.symbol
     });
     if (log.topics[0] === transferSingleId) {
       const [id, value] = defaultAbiCoder.decode(['uint256', 'uint256' ], log.data);
