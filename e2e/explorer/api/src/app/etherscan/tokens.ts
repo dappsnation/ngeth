@@ -5,7 +5,6 @@ import { provider } from "../provider";
 import { TokenBalance, TokenSupply, TokenSupplyHistory, TokenBalanceHistory, TokenInfo, GetParams } from "@ngeth/etherscan";
 import { store } from "../store";
 import { ERC1155Account, ERC20Account, ERC721Account } from "@explorer";
-import { Artifact } from "hardhat/types";
 
 const ERC20 = new Interface([
   "function totalSupply() view returns (uint)",

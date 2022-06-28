@@ -278,23 +278,23 @@ export interface TokenInfo extends BaseParams<'token', 'tokeninfo'> {
   divisor: string;
   tokenType: "ERC20" | "ERC721" | "ERC1155";
   totalSupply: string;
-  blueCheckmark: "";
-  description:"";
-  website:"";
-  email:"";
-  blog:"";
-  reddit:"";
-  slack:"";
-  facebook:"";
-  twitter:"";
-  bitcointalk:"";
-  github:"";
-  telegram:"";
-  wechat:"";
-  linkedin:"";
-  discord:"";
-  whitepaper:"";
-  tokenPriceUSD:"";
+  blueCheckmark: string;
+  description: string;
+  website: string;
+  email: string;
+  blog: string;
+  reddit: string;
+  slack: string;
+  facebook: string;
+  twitter: string;
+  bitcointalk: string;
+  github: string;
+  telegram: string;
+  wechat: string;
+  linkedin: string;
+  discord: string;
+  whitepaper: string;
+  tokenPriceUSD: string;
 }
 
 export interface TokenBalance extends BaseParams<'account', 'tokenbalance'> {
