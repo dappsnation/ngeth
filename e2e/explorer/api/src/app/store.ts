@@ -138,19 +138,20 @@ async function getERC20Metadatas(address: string, artifact: ContractArtifact) {
 }
 async function getERC721Metadatas(address: string, artifact: ContractArtifact) {
   const contract = new Contract(address, artifact.abi, provider);
-  const [name, symbol] = await Promise.all([
+  const [name, decimals, symbol] = await Promise.all([
     'name' in contract.callStatic ? contract.callStatic.name() as Promise<string> : Promise.resolve(''),
+    'decimals' in contract.callStatic ? contract.callStatic.decimals() as Promise<number> : Promise.resolve(0),
     'symbol' in contract.callStatic ? contract.callStatic.symbol() as Promise<string> : Promise.resolve(''),
   ])
-  return { name, symbol }
+  return { name, decimals, symbol }
 }
 async function getERC1155Metadatas(address: string, artifact: ContractArtifact) {
   const contract = new Contract(address, artifact.abi, provider);
-  const [name, decimals] = await Promise.all([
+  const [name, symbol] = await Promise.all([
     'name' in contract.callStatic ? contract.callStatic.name() as Promise<string> : Promise.resolve(''),
-    'decimals' in contract.callStatic ? contract.callStatic.decimals() as Promise<number> : Promise.resolve(0), 
+    'symbol' in contract.callStatic ? contract.callStatic.symbol() as Promise<string> : Promise.resolve(''), 
   ])
-  return { name, decimals }
+  return { name, symbol }
 }
 
 /** Store the transaction hash to the addresses involved in the transaction */

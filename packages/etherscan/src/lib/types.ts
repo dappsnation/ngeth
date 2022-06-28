@@ -100,11 +100,11 @@ export interface BaseTokenTx<action extends string> extends BaseParams<'account'
   sort?: Sort;
 }
 
-export interface TokenTx extends BaseTokenTx<'tokentx'> {};
+export type TokenTx = BaseTokenTx<'tokentx'>;
 
-export interface TokenNftTx extends BaseTokenTx<'tokennfttx'> {};
+export type TokenNftTx = BaseTokenTx<'tokennfttx'>;
 
-export interface Token1155Tx extends BaseTokenTx<'token1155tx'> {};
+export type Token1155Tx = BaseTokenTx<'token1155tx'>;
 
 export interface MinedBlock extends BaseParams<'account', 'getminedblocks'> {
   /** the string representing the address to check for balance */
@@ -191,7 +191,6 @@ export interface TransferTransaction {
   contractAddress: string;
   to: string;
   value: string;
-  // @todo(#1) add tokenSymbol(string) & tokenName(string)
   transactionIndex: string;
   gas: string;
   gasPrice: string;
@@ -200,14 +199,20 @@ export interface TransferTransaction {
   confirmation: string;
 }
 export interface ERC20TransferTransaction extends TransferTransaction {
+  tokenSymbol:string;
+  tokenName: string;
   tokenDecimal: string;
 }
 export interface ERC721TransferTransaction extends TransferTransaction {
   tokenId: string;
+  tokenSymbol:string;
+  tokenName: string;
   tokenDecimal: string;
 }
 export interface ERC1155TransferTransaction extends TransferTransaction {
   tokenId: string;
+  tokenSymbol:string;
+  tokenName: string;
   tokenValue: string;
 }
 export interface TxListResponse {
@@ -258,7 +263,7 @@ export interface StatusResult {
 
 export type StatsParams = TokenSupply | TokenSupplyHistory | EthSupply;
 
-export interface EthSupply extends BaseParams<'stats', 'ethsupply'> { };
+export type EthSupply = BaseParams<'stats', 'ethsupply'>;
 
 /////////
 //Token//
