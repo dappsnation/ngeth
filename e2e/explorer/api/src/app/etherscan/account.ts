@@ -165,7 +165,7 @@ export function tokensTx(params: GetParams<TokenTx>): ERC20TxResponse[] | ERC721
         tokenName: metadatas.name,
         tokenDecimal: metadatas.decimals.toString(),
         tokenSymbol: metadatas.symbol 
-      };
+      } as ERC20TxResponse;
     }
     //ERC721
     if (log.topics[0] === transferID && log.topics[3]) {
@@ -177,7 +177,7 @@ export function tokensTx(params: GetParams<TokenTx>): ERC20TxResponse[] | ERC721
         tokenDecimal: metadatas.decimals.toString(),
         tokenName: metadatas.name,
         tokenSymbol: metadatas.symbol 
-      };
+      } as ERC721TxResponse;
     }
     //ERC1155
     const toERC1155tx = (id: BigNumber, value: BigNumber): ERC1155TxResponse => ({
