@@ -2,8 +2,10 @@ import { Contract } from "@ethersproject/contracts";
 import { Interface } from "@ethersproject/abi";
 import { BigNumber } from "@ethersproject/bignumber";
 import { provider } from "../provider";
-import { TokenBalance, TokenSupply, TokenSupplyHistory, TokenBalanceHistory, TokenInfo } from "@ngeth/etherscan";
+import { TokenBalance, TokenSupply, TokenSupplyHistory, TokenBalanceHistory, TokenInfo, GetParams } from "@ngeth/etherscan";
 import { store } from "../store";
+import { isContract } from "@explorer";
+import { TokenInfoResponse } from "@ngeth/etherscan";
 
 const ERC20 = new Interface([
   "function totalSupply() view returns (uint)",
@@ -43,6 +45,35 @@ export function tokenBalanceHistoy({ contractaddress, address, blockno }: TokenB
   return balance.toString();
 }
 
-export async function tokenInfo(params: TokenInfo) {
-  throw { message: 'API not supported by Hardhat node', params };
+export async function tokenInfo(params: GetParams<TokenInfo>): Promise<TokenInfoResponse> {
+  if(!params.contractaddress) throw new Error("Error! Missing Contract Address");
+  const contract = store.addresses[params.contractaddress];
+  if(!isContract(contract)) throw new Error(`Address ${params.contractaddress} is not a contract`); 
+  const metadata = contract.metadata;
+
+  return {
+    contractAddress: params.contractaddress,
+    tokenName: metadata['name'] ?? '',
+    symbol: metadata['symbol'] ?? '',
+    divisor: metadata['decimals']?.toString() ?? '0',
+    tokenType: store.artifacts[params.contractaddress].standard ?? '',
+    totalSupply: metadata['totalSupply']?.toString() ?? '0',
+    blueCheckmark: "",
+    description:"",
+    website:"",
+    email:"",
+    blog:"",
+    reddit:"",
+    slack:"",
+    facebook:"",
+    twitter:"",
+    bitcointalk:"",
+    github:"",
+    telegram:"",
+    wechat:"",
+    linkedin:"",
+    discord:"",
+    whitepaper:"",
+    tokenPriceUSD:"",
+  }
 }

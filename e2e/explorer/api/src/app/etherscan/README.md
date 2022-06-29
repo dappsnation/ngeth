@@ -5,7 +5,7 @@
 - [x] balance
 - [x] balancemulti
 - [x] txlist
-- [ ] txlistinternal : to implement
+- [ ] txinternal: Blocked by https://github.com/NomicFoundation/hardhat/issues/1668
 - [x] tokentx
 - [x] tokennfttx
 - [x] token1155tx
