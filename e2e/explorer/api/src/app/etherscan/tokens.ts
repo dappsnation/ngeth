@@ -53,10 +53,10 @@ export async function tokenInfo(params: GetParams<TokenInfo>): Promise<TokenInfo
 
   return {
     contractAddress: params.contractaddress,
-    tokenName: metadata['name'],
-    symbol: metadata['symbol'],
+    tokenName: metadata['name'] ?? '',
+    symbol: metadata['symbol'] ?? '',
     divisor: metadata['decimals']?.toString() ?? '0',
-    tokenType: store.artifacts[params.contractaddress].standard,
+    tokenType: store.artifacts[params.contractaddress].standard ?? '',
     totalSupply: metadata['totalSupply']?.toString() ?? '0',
     blueCheckmark: "",
     description:"",
