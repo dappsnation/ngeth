@@ -56,6 +56,7 @@ export interface ContractAccount extends EthAccount{
   isContract: true;
   /** Key of the artifact in the artifact record */
   artifact: string;
+  metadata?: unknown;
 }
 export interface ERC20Account extends ContractAccount {
   metadata: {

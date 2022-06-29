@@ -4,7 +4,7 @@ import { BigNumber } from "@ethersproject/bignumber";
 import { provider } from "../provider";
 import { TokenBalance, TokenSupply, TokenSupplyHistory, TokenBalanceHistory, TokenInfo, GetParams } from "@ngeth/etherscan";
 import { store } from "../store";
-import { ERC1155Account, ERC20Account, ERC721Account } from "@explorer";
+import { ERC1155Account, ERC20Account, ERC721Account, isContract } from "@explorer";
 
 const ERC20 = new Interface([
   "function totalSupply() view returns (uint)",
@@ -46,7 +46,17 @@ export function tokenBalanceHistoy({ contractaddress, address, blockno }: TokenB
 
 export async function tokenInfo(params: GetParams<TokenInfo>) {
   if(!params.contractaddress) throw new Error("Error! Missing Contract Address");
-  const tokenMedias = {
+  const contract = store.addresses[params.contractaddress];
+  if(!isContract(contract)) throw new Error(`Address ${params.contractaddress} is not a contract`); 
+  const metadata = contract.metadata;
+
+  return {
+    contractAddress: params.contractaddress,
+    tokenName: metadata['name'],
+    symbol: metadata['symbol'] ?? '',
+    divisor: metadata['decimals']?.toString() ?? '0',
+    tokenType: store.artifacts[params.contractaddress].standard,
+    totalSupply: metadata['totalSupply']?.toString() ?? '0',
     blueCheckmark: "",
     description:"",
     website:"",
@@ -64,40 +74,5 @@ export async function tokenInfo(params: GetParams<TokenInfo>) {
     discord:"",
     whitepaper:"",
     tokenPriceUSD:"",
-  }
-
-  if(store.artifacts[params.contractaddress].standard === "ERC20") {
-    const metadatas = (store.addresses[params.contractaddress] as ERC20Account).metadata;
-    return {
-      contractAddress: params.contractaddress,
-      tokenName: metadatas.name,
-      symbol: metadatas.symbol,
-      divisor: metadatas.decimals.toString(),
-      tokenType: "ERC20",
-      totalSupply: metadatas.totalSupply.toString(),
-      ...tokenMedias,
-    }
-  } else if (store.artifacts[params.contractaddress].standard === "ERC721") {
-    const metadatas = (store.addresses[params.contractaddress] as ERC721Account).metadata;
-    return {
-      contractAddress: params.contractaddress,
-      tokenName: metadatas.name,
-      symbol: metadatas.symbol,
-      divisor: metadatas.decimals.toString(),
-      tokenType: "ERC721",
-      totalSupply: "0",
-      ...tokenMedias,
-    }
-  } else if (store.artifacts[params.contractaddress].standard === "ERC1155") {
-    const metadatas = (store.addresses[params.contractaddress] as ERC1155Account).metadata;
-    return {
-      contractAddress: params.contractaddress,
-      tokenName: metadatas.name,
-      symbol: metadatas.symbol,
-      divisor: metadatas.decimals.toString(),
-      tokenType: "ERC1155",
-      totalSupply: "0",
-      ...tokenMedias,
-    }
   }
 }
