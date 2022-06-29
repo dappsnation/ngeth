@@ -235,6 +235,32 @@ export interface TxListResponse {
   confirmation: string
 }
 
+export interface TokenInfoResponse {
+  contractAddress: string,
+  tokenName: string,
+  symbol: string,
+  divisor: string,
+  tokenType: string,
+  totalSupply: string,
+  blueCheckmark: string,
+  description: string,
+  website: string,
+  email: string,
+  blog: string,
+  reddit: string,
+  slack: string,
+  facebook: string,
+  twitter: string,
+  bitcointalk: string,
+  github: string,
+  telegram: string,
+  wechat: string,
+  linkedin: string,
+  discord: string,
+  whitepaper: string,
+  tokenPriceUSD: string,
+};
+
 // Params
 export type TransactionParams = GetStatus | GetTxReceiptStatus;
 export interface GetStatus extends BaseParams<'transaction', 'getstatus'> {
@@ -273,28 +299,6 @@ export type TokenParams = TokenInfo;
 
 export interface TokenInfo extends BaseParams<'token', 'tokeninfo'> {
   contractaddress: string;
-  tokenName: string;
-  symbol: string;
-  divisor: string;
-  tokenType: "ERC20" | "ERC721" | "ERC1155";
-  totalSupply: string;
-  blueCheckmark: string;
-  description: string;
-  website: string;
-  email: string;
-  blog: string;
-  reddit: string;
-  slack: string;
-  facebook: string;
-  twitter: string;
-  bitcointalk: string;
-  github: string;
-  telegram: string;
-  wechat: string;
-  linkedin: string;
-  discord: string;
-  whitepaper: string;
-  tokenPriceUSD: string;
 }
 
 export interface TokenBalance extends BaseParams<'account', 'tokenbalance'> {

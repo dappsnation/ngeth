@@ -4,7 +4,8 @@ import { BigNumber } from "@ethersproject/bignumber";
 import { provider } from "../provider";
 import { TokenBalance, TokenSupply, TokenSupplyHistory, TokenBalanceHistory, TokenInfo, GetParams } from "@ngeth/etherscan";
 import { store } from "../store";
-import { ERC1155Account, ERC20Account, ERC721Account, isContract } from "@explorer";
+import { isContract } from "@explorer";
+import { TokenInfoResponse } from "@ngeth/etherscan";
 
 const ERC20 = new Interface([
   "function totalSupply() view returns (uint)",
@@ -44,7 +45,7 @@ export function tokenBalanceHistoy({ contractaddress, address, blockno }: TokenB
   return balance.toString();
 }
 
-export async function tokenInfo(params: GetParams<TokenInfo>) {
+export async function tokenInfo(params: GetParams<TokenInfo>): Promise<TokenInfoResponse> {
   if(!params.contractaddress) throw new Error("Error! Missing Contract Address");
   const contract = store.addresses[params.contractaddress];
   if(!isContract(contract)) throw new Error(`Address ${params.contractaddress} is not a contract`); 
