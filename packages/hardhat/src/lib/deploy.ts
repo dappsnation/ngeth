@@ -58,10 +58,15 @@ export async function deploy(
  * });
  * ```
  */
-export function saveAddresses(hre: HardhatRuntimeEnvironment, addresses: Record<string, string>) {
+export async function saveAddresses(hre: HardhatRuntimeEnvironment, addresses: Record<string, string>) {
   const root = hre.config.paths.root;
   const outputPath = join(root, hre.config.ngeth.outputPath);
   if (!existsSync(outputPath)) mkdirSync(outputPath, { recursive: true });
   const code = formatTs(`export default ${JSON.stringify(addresses)};`);
-  return fs.writeFile(join(outputPath, 'addresses.ts'), code);
+  await fs.writeFile(join(outputPath, 'addresses.ts'), code);
+  const importTxt = `export { default as addresses } from './addresses';`;
+  const index = await fs.readFile(join(outputPath, 'index.ts'), 'utf-8');
+  if (!index.includes(importTxt)) {
+    await fs.writeFile(join(outputPath, 'index.ts'), [index, importTxt].join('\n'));
+  }
 }

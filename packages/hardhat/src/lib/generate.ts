@@ -68,7 +68,6 @@ export async function generate(hre: HardhatRuntimeEnvironment) {
     await Promise.all(write);
     const exportContracts = artifacts
       .map(artifact => `export * from "./contracts/${artifact.contractName}";`)
-      .concat(`export { default as addresses } from './addresses';`)
       .join('\n');
     await fs.writeFile(join(outputPath, 'index.ts'), exportContracts);
   }
