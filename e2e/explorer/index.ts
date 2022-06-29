@@ -78,7 +78,6 @@ export interface ERC1155Account extends ContractAccount {
   metadata: {
     name: string;    
     symbol: string;
-    decimals: number;
   }
 }
 
