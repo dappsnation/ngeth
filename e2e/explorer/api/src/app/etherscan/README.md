@@ -40,7 +40,7 @@ Won't be implemented
 - [x] tokenbalance
 - [x] tokensupplyhistory
 - [x] tokenbalancehistory
-- [ ] tokeninfo: to implement
+- [x] tokeninfo
 
 ## Gas Tracker
 

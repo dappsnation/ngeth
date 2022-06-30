@@ -1,5 +1,4 @@
 import { EvmVersion } from "@type/solc";
-import { BigNumber } from "ethers";
 
 export type EtherscanParams = AccountsParams | ContractParams | TransactionParams | StatsParams | TokenParams | LogParams;
 
@@ -16,31 +15,31 @@ interface BaseParams<M extends Module, Action> {
 
 export type GetParams<T> = Omit<T, 'module' | 'action' | 'apiKey'>
 
-
 /////////////
 // ACCOUNT //
 /////////////
 // Params
-export type AccountsParams = Balance | BalanceMulti | BalanceHistory | TxList | TxListInternal | BlockMined | TokenBalance | TokenBalanceHistory | TokenTx | TokenNftTx | Token1155Tx | MinedBlock;
-export interface Balance extends BaseParams<'account', 'balance'> {
+export type AccountsParams = BalanceRequest | BalanceMultiRequest | BalanceHistoryRequest | TxListRequest | TxListInternalRequest | MinedBlockRequest | TokenBalanceRequest | TokenBalanceHistoryRequest | TokenTxRequest | TokenNftTxRequest | Token1155TxRequest;
+
+export interface BalanceRequest extends BaseParams<'account', 'balance'> {
   /** the string representing the address to check for balance   */
   address: string;
   /** The integer pre-defined block parameter, either earliest, pending or latest */
   tag: Tag;
 }
-export interface BalanceMulti extends BaseParams<'account', 'balancemulti'> {
+export interface BalanceMultiRequest extends BaseParams<'account', 'balancemulti'> {
   /** the strings representing the addresses to check for balance, separated by , up to 20 addresses per call */
   address: string;
   /** The integer pre-defined block parameter, either earliest, pending or latest */
   tag: Tag;
 }
-export interface BalanceHistory extends BaseParams<'account', 'balancehistory'> {
+export interface BalanceHistoryRequest extends BaseParams<'account', 'balancehistory'> {
   /** the string representing the address to check for balance */
   address: string;
   /** the integer block number to check balance for eg. 12697906 */
   blockno: number;
 }
-export interface TxList extends BaseParams<'account', 'txlist'> {
+export interface TxListRequest extends BaseParams<'account', 'txlist'> {
   /** the strings representing the addresses to check for balance, separated by , up to 20 addresses per call */
   address: string;
   /** the integer block number to start searching for transactions */
@@ -54,7 +53,7 @@ export interface TxList extends BaseParams<'account', 'txlist'> {
   /** the sorting preference, use asc to sort by ascending and desc to sort by descendin Tip: Specify a smaller startblock and endblock range for faster search results. */
   sort?: Sort;
 }
-export interface TxListInternal extends BaseParams<'account', 'txlistinternal'> {
+export interface TxListInternalRequest extends BaseParams<'account', 'txlistinternal'> {
   /** the strings representing the addresses to check for balance, separated by , up to 20 addresses per call */
   address: string;
   /** the integer block number to start searching for transactions */
@@ -71,19 +70,18 @@ export interface TxListInternal extends BaseParams<'account', 'txlistinternal'> 
   txhash?: string;
 
 }
-export interface BlockMined extends BaseParams<'account', 'getminedblocks'> {
+export interface MinedBlockRequest extends BaseParams<'account', 'getminedblocks'> {
   /** the string representing the address to check for balance */
   address: string;
   /** the string pre-defined block type, either blocks for canonical blocks or uncles for uncle blocks only */
-  blocktype?: 'blocks' | 'uncles';
+  blocktype?: Block;
   /** the integer page number, if pagination is enabled */
   page?: number;
   /** the number of transactions displayed per page */
   offset?: number;
 }
-
 /** Same interface used for TokenNftTx & Token1155Tx */
-export interface BaseTokenTx<action extends string> extends BaseParams<'account', action> {
+export interface BaseTokenTxRequest<action extends string> extends BaseParams<'account', action> {
   /** the string representing the token contract address to check for balance */
   contractaddress: string;
   /** the string representing the address to check for balance */
@@ -100,33 +98,22 @@ export interface BaseTokenTx<action extends string> extends BaseParams<'account'
   sort?: Sort;
 }
 
-export type TokenTx = BaseTokenTx<'tokentx'>;
+export type TokenTxRequest = BaseTokenTxRequest<'tokentx'>;
 
-export type TokenNftTx = BaseTokenTx<'tokennfttx'>;
+export type TokenNftTxRequest = BaseTokenTxRequest<'tokennfttx'>;
 
-export type Token1155Tx = BaseTokenTx<'token1155tx'>;
-
-export interface MinedBlock extends BaseParams<'account', 'getminedblocks'> {
-  /** the string representing the address to check for balance */
-  address: string;
-  /** the string pre-defined block type, either blocks for canonical blocks or uncles for uncle blocks only */
-  blocktype?: Block;
-  /** the integer page number, if pagination is enabled */
-  page?: number;
-  /** the number of transactions displayed per page */
-  offset?: number;
-}
+export type Token1155TxRequest = BaseTokenTxRequest<'token1155tx'>;
 
 //////////////
 // CONTRACT //
 //////////////
 // Params
-export type ContractParams = GetABI | VerifySourceCode;
-export interface GetABI extends BaseParams<'contract', 'getabi'> {
+export type ContractParams = GetABIRequest | VerifySourceCode | GetSourceCodeRequest ;
+export interface GetABIRequest extends BaseParams<'contract', 'getabi'> {
   /** the contract address that has a verified source code */
   address: string;
 }
-export interface GetSourceCode extends BaseParams<'contract', 'getsourcecode'> {
+export interface GetSourceCodeRequest extends BaseParams<'contract', 'getsourcecode'> {
   /** the contract address that has a verified source code */
   address: string;
 }
@@ -164,8 +151,8 @@ export type VerifySourceCode = VerifySourceCodeParams & Library<1 | 2 | 3 | 4 | 
 // TRANSACTION //
 /////////////////
 //logs
-export type LogParams = Logs;
-export interface Logs extends BaseParams<'logs', "getLogs"> {
+export type LogParams = LogsRequest;
+export interface LogsRequest extends BaseParams<'logs', "getLogs"> {
   fromBlock: number | "latest";
   toBlock: number | "latest";
   address: string;
@@ -181,113 +168,22 @@ export interface Logs extends BaseParams<'logs', "getLogs"> {
   topic2_3_opr?: 'and' | 'or';
 }
 
-export interface TransferTransaction {
-  blockNumber: string;
-  timeStamp: string;
-  hash: string;
-  nonce: string;
-  blockHash: string;
-  from: string;
-  contractAddress: string;
-  to: string;
-  value: string;
-  transactionIndex: string;
-  gas: string;
-  gasPrice: string;
-  gasUsed: string;
-  cumulativeGasUsed: string;
-  confirmation: string;
-}
-export interface ERC20TxResponse extends TransferTransaction {
-  tokenSymbol:string;
-  tokenName: string;
-  tokenDecimal: string;
-}
-export interface ERC721TxResponse extends TransferTransaction {
-  tokenId: string;
-  tokenSymbol:string;
-  tokenName: string;
-  tokenDecimal: string;
-}
-export interface ERC1155TxResponse extends TransferTransaction {
-  tokenId: string;
-  tokenSymbol:string;
-  tokenName: string;
-  tokenValue: string;
-}
-export interface TxListResponse {
-  blockNumber: string,
-  timeStamp: string,
-  hash: string,
-  nonce: string,
-  blockHash: string,
-  transactionIndex: string,
-  from: string,
-  to: string,
-  value: string,
-  gas:string,
-  gasPrice: string,
-  isError: string,
-  txreceipt_status: string,
-  contractAddress: string,
-  cumulativesGasUsed: string,
-  gasUsed: string,
-  confirmation: string
-}
-
-export interface TokenInfoResponse {
-  contractAddress: string,
-  tokenName: string,
-  symbol: string,
-  divisor: string,
-  tokenType: string,
-  totalSupply: string,
-  blueCheckmark: string,
-  description: string,
-  website: string,
-  email: string,
-  blog: string,
-  reddit: string,
-  slack: string,
-  facebook: string,
-  twitter: string,
-  bitcointalk: string,
-  github: string,
-  telegram: string,
-  wechat: string,
-  linkedin: string,
-  discord: string,
-  whitepaper: string,
-  tokenPriceUSD: string,
-};
-
 // Params
-export type TransactionParams = GetStatus | GetTxReceiptStatus;
-export interface GetStatus extends BaseParams<'transaction', 'getstatus'> {
+export type TransactionParams = GetStatusRequest | GetTxReceiptStatusRequest;
+export interface GetStatusRequest extends BaseParams<'transaction', 'getstatus'> {
   /** the string representing the transaction hash to check the execution status */
   txhash: string;
 }
-export interface GetTxReceiptStatus extends BaseParams<'transaction', 'gettxreceiptstatus'> {
+export interface GetTxReceiptStatusRequest extends BaseParams<'transaction', 'gettxreceiptstatus'> {
   /** the string representing the transaction hash to check the execution status */
   txhash: string;
-}
-
-// Result
-export interface ExecutionStatusResult {
-  /** 0: Succeed, 1: Failed */
-  isError: 0 | 1;
-  errDescription?: string;
-}
-export interface StatusResult {
-  /** 0: Succeed, 1: Failed */
-  status: 0 | 1;
 }
 
 /////////
 //Stats//
 /////////
 
-export type StatsParams = TokenSupply | TokenSupplyHistory | EthSupply;
+export type StatsParams = TokenSupplyRequest | TokenSupplyHistoryRequest | EthSupply;
 
 export type EthSupply = BaseParams<'stats', 'ethsupply'>;
 
@@ -295,32 +191,30 @@ export type EthSupply = BaseParams<'stats', 'ethsupply'>;
 //Token//
 /////////
 
-export type TokenParams = TokenInfo;
+export type TokenParams = TokenInfoRequest;
 
-export interface TokenInfo extends BaseParams<'token', 'tokeninfo'> {
+export interface TokenInfoRequest extends BaseParams<'token', 'tokeninfo'> {
   contractaddress: string;
 }
 
-export interface TokenBalance extends BaseParams<'account', 'tokenbalance'> {
+export interface TokenBalanceRequest extends BaseParams<'account', 'tokenbalance'> {
   contractaddress: string;
   address: string;
   /** Either the blocknumber in hexadecimal or latest / earliest */
   tag?: string | 'latest' | 'earliest';
 }
 
-export interface TokenBalanceHistory extends BaseParams<'account', 'tokenbalancehistory'> {
+export interface TokenBalanceHistoryRequest extends BaseParams<'account', 'tokenbalancehistory'> {
   contractaddress: string;
   address: string;
   blockno: string;
 }
 
-export interface TokenSupply extends BaseParams<'stats', 'tokensupply'> {
+export interface TokenSupplyRequest extends BaseParams<'stats', 'tokensupply'> {
   contractaddress: string;
 }
 
-export interface TokenSupplyHistory extends BaseParams<'stats', 'tokensupplyhistory'> {
+export interface TokenSupplyHistoryRequest extends BaseParams<'stats', 'tokensupplyhistory'> {
   contractaddress: string;
   blockno: string;
 }
-
-

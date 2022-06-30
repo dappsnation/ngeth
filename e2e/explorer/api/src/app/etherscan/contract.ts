@@ -1,4 +1,4 @@
-import { VerifySourceCode, GetParams, GetABI, GetSourceCode } from "@ngeth/etherscan";
+import { VerifySourceCode, GetParams, GetABIRequest, GetSourceCodeRequest } from "@ngeth/etherscan";
 import solc from 'solc';
 import { CompilationInput, CompilationResult } from '@type/solc';
 import { provider } from "../provider";
@@ -38,7 +38,7 @@ async function verifySourceCode(params: GetParams<VerifySourceCode>) {
 }
 
 /** Returns the Contract Application Binary Interface ( ABI ) of a verified smart contract. */
-export function getAbi({ address }: GetParams<GetABI>) {
+export function getAbi({ address }: GetParams<GetABIRequest>) {
   if (!address) throw new Error('Invalid Address format');
   const account = store.addresses[address];
   if(!isContract(account)) throw new Error('Contract source code not verified');
@@ -47,7 +47,7 @@ export function getAbi({ address }: GetParams<GetABI>) {
 }
 
 /** Returns the Solidity source code of a verified smart contract. */
-export function getSourceCode({ address }: GetParams<GetSourceCode>) {
+export function getSourceCode({ address }: GetParams<GetSourceCodeRequest>) {
   if (!address) throw new Error('Invalid Address format');
   const account = store.addresses[address];
   if (!isContract(account)) throw new Error('Contract source code not verified');

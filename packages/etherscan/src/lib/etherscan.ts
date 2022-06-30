@@ -1,33 +1,7 @@
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 import { ABIDescription } from '@type/solc';
-import { Tag, TxList, TokenTx, TokenNftTx, Token1155Tx, MinedBlock } from "./types";
-
-interface BalanceMultiResponse {
-  account: string;
-  balance: string;
-}
-
-interface MinedBlockResponse {
-  blockNumber: string;
-  timeStamp: string;
-  blockReward: string;
-}
-
-interface ContractSourceCode {
-  SourceCode: string;
-  ABI: ABIDescription[];
-  ContractName: string;
-  CompilerVersion: string;
-  OptimizationUsed: string;
-  Runs: string;
-  ConstructorArguments: string;
-  EVMVersion: string;
-  Library: string;
-  LicenseType: string;
-  Proxy: string;
-  Implementation: string;
-  SwarmSource: string;
-}
+import { Tag, TxListRequest, TokenTxRequest, TokenNftTxRequest, Token1155TxRequest, MinedBlockRequest } from "./type/request";
+import { BalanceMultiResponse, ContractSourceCodeResponse, MinedBlockResponse } from "./type/response";
 
 type Etherscan = ReturnType<typeof initEtherscan>;
 
@@ -63,7 +37,7 @@ function balanceMulti(call: Etherscan, addresses: string[], tag: Tag) {
   return call<BalanceMultiResponse[]>({ module: 'account', action: 'balancemulti', address, tag });
 }
 
-function txList(call: Etherscan, address: string, params: Optional<TxList> = {}) {
+function txList(call: Etherscan, address: string, params: Optional<TxListRequest> = {}) {
   return call<TransactionResponse[]>({ module: 'account', action: 'txlist', address, ...params });
 }
 
@@ -92,19 +66,19 @@ function txList(call: Etherscan, address: string, params: Optional<TxList> = {})
 // txListInternal(etherscan, 10, 30)
 
 
-function tokenTx(call: Etherscan, contractaddress: string, params: Optional<TokenTx>) {
+function tokenTx(call: Etherscan, contractaddress: string, params: Optional<TokenTxRequest>) {
   return call<TransactionResponse[]>({ module: 'account', action: 'tokentx', contractaddress, ...params });
 }
 
-function tokenNftTx(call: Etherscan, contractaddress: string, params: Optional<TokenNftTx>) {
+function tokenNftTx(call: Etherscan, contractaddress: string, params: Optional<TokenNftTxRequest>) {
   return call<TransactionResponse[]>({ module: 'account', action: 'tokennfttx', contractaddress, ...params });
 }
 
-function token1155Tx(call: Etherscan, contractaddress: string, params: Optional<Token1155Tx>) {
+function token1155Tx(call: Etherscan, contractaddress: string, params: Optional<Token1155TxRequest>) {
   return call<TransactionResponse[]>({ module: 'account', action: 'token1155tx', contractaddress, ...params });
 }
 
-function getMinedBlocks(call: Etherscan, address: string, params: Optional<MinedBlock>) {
+function getMinedBlocks(call: Etherscan, address: string, params: Optional<MinedBlockRequest>) {
   return call<MinedBlockResponse[]>({ module: 'account', action: 'getminedblocks', address, ...params });
 }
 
@@ -126,7 +100,7 @@ async function getSourceCode(call: Etherscan, address: string) {
   const data = await call<any[]>({ module: 'contract', action: 'getsourcecode', address });
   return data.map(res => {
     res.ABI = JSON.parse(res.ABI);
-    return res as ContractSourceCode
+    return res as ContractSourceCodeResponse;
   });
 }
 
