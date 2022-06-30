@@ -3,7 +3,7 @@ import { existsSync, mkdirSync, promises as fs } from 'fs';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { getEthersContract, getNgContract, getContractManager, getFactory, getContractImport } from '@ngeth/tools';
 import { formatTs, getCompiledOutput } from './utils';
-
+import { exportAddress } from './deploy';
 
 const contractIndex = (contractName: string, type: 'angular' | 'typescript') => formatTs(`
   export * from './contract';
@@ -18,6 +18,7 @@ export async function generate(hre: HardhatRuntimeEnvironment) {
   const root = hre.config.paths.root;
   const src = resolve(hre.config.paths.sources);
   const outputPath = resolve(root, hre.config.ngeth.outputPath);
+  const hasAddresses = existsSync(join(outputPath, 'addresses.json'));
 
   // Generate local contracts
   localContracts: {
@@ -66,10 +67,11 @@ export async function generate(hre: HardhatRuntimeEnvironment) {
       ]);
     })
     await Promise.all(write);
-    const exportContracts = artifacts
-      .map(artifact => `export * from "./contracts/${artifact.contractName}";`)
-      .join('\n');
-    await fs.writeFile(join(outputPath, 'index.ts'), exportContracts);
+    const exportContracts = artifacts.map(artifact => `export * from "./contracts/${artifact.contractName}";`);
+    const code = hasAddresses
+      ? exportContracts.concat(exportAddress).join('\n')
+      : exportContracts.join('\n');
+    await fs.writeFile(join(outputPath, 'index.ts'), code);
   }
 
   // Generate imports

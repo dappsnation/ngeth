@@ -9,6 +9,7 @@ import { serveApp } from './lib/utils';
 
 
 export * from './lib/deploy';
+export { formatJson, formatTs } from './lib/utils';
 
 extendConfig((config) => {
   config.ngeth = getDefaultConfig(config)
