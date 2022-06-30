@@ -1,5 +1,5 @@
-import { TransactionReceipt, TransactionResponse, Log } from "@ethersproject/abstract-provider";
-import { Balance, BalanceMulti, GetParams, TxList, BlockMined, BalanceHistory, TokenTx, TransferTransaction, ERC1155TxResponse, TxListResponse, ERC20TxResponse, ERC721TxResponse } from "@ngeth/etherscan";
+import { TransactionReceipt, TransactionResponse } from "@ethersproject/abstract-provider";
+import { BalanceRequest, BalanceMultiRequest, GetParams, TxListRequest, MinedBlockRequest, BalanceHistoryRequest, TokenTxRequest, TransferTransactionResponse, ERC1155TxResponse, TxListResponse, ERC20TxResponse, ERC721TxResponse } from "@ngeth/etherscan";
 import { store } from '../store';
 import { ERC1155Account, ERC20Account, ERC721Account, EthState } from "@explorer";
 import { BigNumber } from "@ethersproject/bignumber";
@@ -8,7 +8,7 @@ import { defaultAbiCoder } from '@ethersproject/abi';
 import { sortByBlockNumber } from './utils';
 
 
-function toTransferTransaction(tx: TransactionResponse, receipt: TransactionReceipt): TransferTransaction {
+function toTransferTransaction(tx: TransactionResponse, receipt: TransactionReceipt): TransferTransactionResponse {
   return {
     blockNumber: tx.blockNumber.toString(),
     timeStamp: tx.timestamp.toString(),
@@ -50,7 +50,7 @@ function toTxList(tx: TransactionResponse, receipt: TransactionReceipt): TxListR
 }
 
 
-export function balance({ address, tag }: GetParams<Balance>): string {
+export function balance({ address, tag }: GetParams<BalanceRequest>): string {
   let state: EthState | undefined;
   if (tag === 'latest') {
     state = store.states[store.states.length - 1];
@@ -75,7 +75,7 @@ export function balance({ address, tag }: GetParams<Balance>): string {
   return balance.toString();
 }
 
-export function balanceMulti({ address, tag }: GetParams<BalanceMulti>): {account: string, balance: string}[] {
+export function balanceMulti({ address, tag }: GetParams<BalanceMultiRequest>): {account: string, balance: string}[] {
   const addresses = address.split(',');
   return addresses.map(account => ({
     account,
@@ -83,7 +83,7 @@ export function balanceMulti({ address, tag }: GetParams<BalanceMulti>): {accoun
   }));
 }
 
-export function txList(params: GetParams<TxList>) {  
+export function txList(params: GetParams<TxListRequest>) {  
   const {address, startblock = 0, endblock, page, sort = 'asc'} = params;  
   if (!address) throw new Error('Error! Missing or invalid Action name');
 
@@ -107,7 +107,7 @@ export function txList(params: GetParams<TxList>) {
 }
 
 /** return the list of blocks mined by an address */
-export function getMinedBlocks(params: GetParams<BlockMined>) {
+export function getMinedBlocks(params: GetParams<MinedBlockRequest>) {
   const { address, blocktype, page, offset } = params;
   if (!address) throw new Error('Error! Missing or invalid Action name');
 
@@ -128,7 +128,7 @@ export function getMinedBlocks(params: GetParams<BlockMined>) {
 }
 
 /** returns the balance of an address at a certain block height */
-export function balanceHistory(params: GetParams<BalanceHistory>) {
+export function balanceHistory(params: GetParams<BalanceHistoryRequest>) {
   const { address, blockno } = params;
   if (!address || ! blockno) throw new Error('Error! Missing or invalid Action name');
 
@@ -137,7 +137,7 @@ export function balanceHistory(params: GetParams<BalanceHistory>) {
   return balance.toString();
 }
 
-export function tokensTx(params: GetParams<TokenTx>): ERC20TxResponse[] | ERC721TxResponse[] | ERC1155TxResponse[] {
+export function tokensTx(params: GetParams<TokenTxRequest>): ERC20TxResponse[] | ERC721TxResponse[] | ERC1155TxResponse[] {
   const {address, contractaddress, startblock = 0, endblock, page, sort='asc', offset} = params;
   if (!address || !contractaddress) throw new Error('Error! Missing address or contract address');
   

@@ -1,2 +1,3 @@
 export * from './lib/etherscan';
-export * from './lib/types';
+export * from './lib/type/request';
+export * from './lib/type/response';
