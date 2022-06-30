@@ -14,7 +14,7 @@ import { FactoryManager } from '../../services/factory';
 export class ListComponent {
 
   contracts$ = this.metamask.chainId$.pipe(
-    map(chainId => this.factoryManager.get(addresses.ERC1155Factory, chainId)),
+    map(chainId => this.factoryManager.get(addresses.hardhat.ERC1155Factory, chainId)),
     switchMap(factory => factory.clones$),
     switchMap(contracts => Promise.all(contracts.map(c => c.toJSON())))
   );

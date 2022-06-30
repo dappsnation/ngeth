@@ -91,5 +91,5 @@
     }
   },
   "tags": [],
-  "implicitDependencies": ["hardhat"]
+  "implicitDependencies": ["explorer-api"]
 }

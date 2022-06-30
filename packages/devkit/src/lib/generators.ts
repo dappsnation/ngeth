@@ -130,6 +130,7 @@ export function setProjectBuilders(tree: Tree, options: ProjectOptions, builders
 interface TsConfig {
   compilerOptions?: {
     skipLibCheck?: boolean;
+    resolveJsonModule?: boolean;
   },
   references?: { path: string }[];
 }

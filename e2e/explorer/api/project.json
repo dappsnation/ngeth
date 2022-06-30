@@ -49,5 +49,5 @@
     }
   },
   "tags": [],
-  "implicitDependencies": ["hardhat"]
+  "implicitDependencies": ["hardhat-tools"]
 }
