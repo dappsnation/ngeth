@@ -1,5 +1,5 @@
-import { VerifySourceCode, GetParams, GetABI, GetSourceCode } from "@ngeth/etherscan";
-import * as solc from 'solc';
+import { VerifySourceCode, GetParams, GetABIRequest, GetSourceCodeRequest, ContractSourceCodeResponse } from "@ngeth/etherscan";
+import solc from 'solc';
 import { CompilationInput, CompilationResult } from '@type/solc';
 import { provider } from "../provider";
 import { addArtifactToAddress, getArtifact, setArtifact, store } from "../store";
@@ -73,7 +73,7 @@ export async function verifySourceCode(params: GetParams<VerifySourceCode>) {
 }
 
 /** Returns the Contract Application Binary Interface ( ABI ) of a verified smart contract. */
-export function getAbi({ address }: GetParams<GetABI>) {
+export function getAbi({ address }: GetParams<GetABIRequest>) {
   if (!address) throw new Error('Invalid Address format');
   const account = store.addresses[address];
   if(!isContract(account)) throw new Error('Contract source code not verified');
@@ -82,7 +82,7 @@ export function getAbi({ address }: GetParams<GetABI>) {
 }
 
 /** Returns the Solidity source code of a verified smart contract. */
-export function getSourceCode({ address }: GetParams<GetSourceCode>) {
+export function getSourceCode({ address }: GetParams<GetSourceCodeRequest>): ContractSourceCodeResponse {
   if (!address) throw new Error('Invalid Address format');
   const account = store.addresses[address];
   if (!isContract(account)) throw new Error('Contract source code not verified');
@@ -91,10 +91,17 @@ export function getSourceCode({ address }: GetParams<GetSourceCode>) {
 
   return {
     SourceCode: store.builds[account.artifact].sourceCode,
-    ABI: store.artifacts[account.address].abi,
+    ABI: store.artifacts[account.address].abi.toString(),
     ContractName: store.builds[account.artifact].contractName,
     CompilerVersion: store.builds[account.artifact].compilerVersion,
     OptimizationUsed: optimization,
-    Runs: store.builds[account.artifact].runs
+    Runs: store.builds[account.artifact].runs,
+    ConstructorArguments: "",
+    EVMVersion:  "",
+    Library:  "",
+    LicenseType:  "",
+    Proxy:  "",
+    Implementation:  "",
+    SwarmSource:  "",
   };
 }

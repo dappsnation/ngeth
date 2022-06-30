@@ -150,7 +150,7 @@ async function getERC1155Metadatas(address: string, artifact: ContractArtifact) 
   const contract = new Contract(address, artifact.abi, provider);
   const [name, symbol] = await Promise.all([
     'name' in contract.callStatic ? contract.callStatic.name() as Promise<string> : Promise.resolve(''),
-    'symbol' in contract.callStatic ? contract.callStatic.symbol() as Promise<string> : Promise.resolve(''), 
+    'symbol' in contract.callStatic ? contract.callStatic.symbol() as Promise<string> : Promise.resolve(''),
   ])
   return { name, symbol }
 }
