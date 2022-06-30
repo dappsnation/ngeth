@@ -5,6 +5,7 @@ export type EtherscanParams = AccountsParams | ContractParams | TransactionParam
 export type Tag = number | 'latest' | 'pending' | 'earliest';
 export type Sort = 'asc' | 'desc';
 export type Block = 'blocks' | 'uncles';
+export type Closest = 'before' | 'after';
 type Module = 'account' | 'contract' | 'transaction' | 'stats' | 'token' | 'logs';
 
 interface BaseParams<M extends Module, Action> {
@@ -118,8 +119,8 @@ export interface GetSourceCodeRequest extends BaseParams<'contract', 'getsourcec
   address: string;
 }
 
-type LibraryName<T extends number> = {[key in `libraryname${T}`]: string };
-type LibraryAddress<T extends number> = {[key in `libraryaddress${T}`]: string };
+type LibraryName<T extends number> = { [key in `libraryname${T}`]: string };
+type LibraryAddress<T extends number> = { [key in `libraryaddress${T}`]: string };
 type Library<T extends number> = Partial<LibraryName<T>> & Partial<LibraryAddress<T>>;
 
 interface VerifySourceCodeParams extends BaseParams<'contract', 'verifysourcecode'> {
@@ -153,8 +154,8 @@ export type VerifySourceCode = VerifySourceCodeParams & Library<1 | 2 | 3 | 4 | 
 //logs
 export type LogParams = LogsRequest;
 export interface LogsRequest extends BaseParams<'logs', "getLogs"> {
-  fromBlock: number | "latest";
-  toBlock: number | "latest";
+  fromBlock?: number | "latest";
+  toBlock?: number | "latest";
   address: string;
   topic0?: string;
   topic1?: string;
@@ -217,4 +218,55 @@ export interface TokenSupplyRequest extends BaseParams<'stats', 'tokensupply'> {
 export interface TokenSupplyHistoryRequest extends BaseParams<'stats', 'tokensupplyhistory'> {
   contractaddress: string;
   blockno: string;
+}
+
+////////////
+// BLOCKS //
+////////////
+
+export interface BaseBlock<action extends string> extends BaseParams<'stats', action> {
+  /** the starting date in yyyy-MM-dd format, eg. 2019-02-01 */
+  startdate: Date; // TODO : Verify if Date is the correct type
+  /** the ending date in yyyy-MM-dd format, eg. 2019-02-28 */
+  enddate: Date; // TODO : Verify if Date is the correct type
+  /** the sorting preference, use asc to sort by ascending and desc to sort by descending */
+  sort?: Sort
+}
+
+export type DailyAvgBlocksize = BaseBlock<'dailyavgblocksize'>;
+
+export type DailyBlockCountAndReward = BaseBlock<'dailyblkcount'>;
+
+export type DailyBlockReward = BaseBlock<'dailyblockrewards'>;
+
+export type DailyBlockTime = BaseBlock<'dailyavgblocktime'>;
+
+export type DailyUncleBlockCount = BaseBlock<'dailyuncleblkcount'>;
+
+///////////
+// PROXY //
+///////////
+
+export interface BlockByNumber {
+  /** the block number, in hex  */
+  tag: string;
+  /** the boolean value to show full transaction objects */
+  boolean: boolean;
+}
+
+export interface UncleByBlockNumberAndIndex {
+  /** the block number, in hex  */
+  tag: string;
+  /** the position of the uncle's index in the block, in hex  */
+  index?: string;
+}
+
+/** the block number, in hex  */
+export type ProxyTag = string;
+/** the position of the uncle's index in the block, in hex */
+export type ProxyIndex = string;
+
+export interface BlockTransactionCountByNumber {
+  /** the block number, in hex */
+  tag?: string;
 }
