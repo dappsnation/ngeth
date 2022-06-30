@@ -1,15 +1,15 @@
 import './lib/config';
 import { extendConfig, task } from 'hardhat/config';
-import { dirname, join, relative, resolve } from 'path';
+import { join, relative } from 'path';
 import { generate } from './lib/generate';
 import { getDefaultConfig } from './lib/config';
 import { existsSync, mkdirSync, promises as fs } from 'fs';
-import { getContractImport } from '@ngeth/tools';
 import { execute } from './lib/execute';
-import { serveApp, formatTs } from './lib/utils';
+import { serveApp } from './lib/utils';
 
 
 export * from './lib/deploy';
+export { formatJson, formatTs } from './lib/utils';
 
 extendConfig((config) => {
   config.ngeth = getDefaultConfig(config)

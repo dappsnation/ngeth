@@ -14,6 +14,7 @@
     "prettier": "^2.6.0"
   },
   "dependencies": {
+    "@ngeth/ethers-core": "0.0.22",
     "@ngeth/devkit": "0.0.22",
     "socket.io": "^4.5.0"
   }

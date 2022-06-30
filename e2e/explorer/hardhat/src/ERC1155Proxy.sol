@@ -5,7 +5,7 @@ import "./UpgradeableERC1155.sol";
 import "@openzeppelin/contracts/proxy/Clones.sol";
 
 contract ERC1155Proxy {
-  address implementation; // Do not use "immutable" because
+  address immutable implementation; // Do not use "immutable" because
 
   /// @dev Emit when the bae contrat has been cloned
   /// @param from account which cloned the contract

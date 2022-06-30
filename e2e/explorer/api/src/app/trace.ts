@@ -2,7 +2,7 @@ import { Block } from '@ethersproject/abstract-provider'
 import { BigNumber } from '@ethersproject/bignumber';
 import { hexlify, hexZeroPad, hexStripZeros, arrayify } from '@ethersproject/bytes';
 import { provider } from './provider';
-import { StructLogs, Trace } from './types';
+import { Trace } from './types';
 
 // TODO: implement tracer based on : https://github.com/zemse/hardhat-tracer/blob/master/src/trace/print-trace.ts#L166
 

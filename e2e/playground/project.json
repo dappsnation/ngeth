@@ -10,7 +10,8 @@
         "commands": [
           "nx run playground:hardhat-build",
           "nx run playground:build-app"
-        ]
+        ],
+        "parallel": false
       }
     },
     "build-app": {

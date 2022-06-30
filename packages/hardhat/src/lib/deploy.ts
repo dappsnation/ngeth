@@ -1,7 +1,9 @@
 import { existsSync, mkdirSync, promises as fs } from "fs";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { formatTs } from './utils';
 import { join } from "path";
+import { formatJson } from "./utils";
+
+export const exportAddress = 'export { default as addresses } from "./addresses.json";';
 
 /**
  * Deploy a list of contract with their constructor arguments
@@ -58,10 +60,28 @@ export async function deploy(
  * });
  * ```
  */
-export function saveAddresses(hre: HardhatRuntimeEnvironment, addresses: Record<string, string>) {
+export async function saveAddresses(hre: HardhatRuntimeEnvironment, addresses: Record<string, string>) {
   const root = hre.config.paths.root;
   const outputPath = join(root, hre.config.ngeth.outputPath);
-  if (!existsSync(outputPath)) mkdirSync(outputPath, { recursive: true });
-  const code = formatTs(`export default ${JSON.stringify(addresses)};`);
-  return fs.writeFile(join(outputPath, 'addresses.ts'), code);
+  // Create the addresses content
+  const addressPath = join(outputPath, 'addresses.json');
+  if (existsSync(addressPath)) {
+    const result = await fs.readFile(addressPath, 'utf-8');
+    const file = JSON.parse(result);
+    file.hardhat = addresses;
+    const code = JSON.stringify(file);
+    await fs.writeFile(addressPath, formatJson(code));
+  } else {
+    mkdirSync(outputPath, { recursive: true });
+    const code = JSON.stringify({ hardhat: addresses });
+    await fs.writeFile(addressPath, formatJson(code));
+  }
+  // Update any index.ts files at the same level
+  const indexPath = join(outputPath, 'index.ts');
+  if (existsSync(indexPath)) {
+    const index = await fs.readFile(indexPath, 'utf-8');
+    if (!index.includes(exportAddress)) {
+      await fs.writeFile(indexPath, [index, exportAddress].join('\n'));
+    }
+  }
 }

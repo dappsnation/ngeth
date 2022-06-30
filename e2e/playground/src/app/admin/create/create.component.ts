@@ -36,7 +36,7 @@ export class CreateComponent {
     try {
       const content = JSON.stringify({ name, image });
       const res = await this.ipfs.add({ content });
-      const factory = this.factoryManager.get(addresses.ERC1155Factory, this.erc1193.chainId);
+      const factory = this.factoryManager.get(addresses.hardhat.ERC1155Factory, this.erc1193.chainId);
       await factory.create(`ipfs://${res.path}`, '');
       this.router.navigate(['..'], { relativeTo: this.route });
     } catch(err) {

@@ -36,7 +36,7 @@ export interface CompilationError {
   type: CompilationErrorType
   /** Component where the error originated, such as "general", "ewasm", etc. */
   component: 'general' | 'ewasm' | string
-  severity: 'error' | 'warning' | 'info'
+  severity: 'error' | 'Warning' | 'info'
   /** unique code for the cause of the error */
   errorCode?: string
   message: string
