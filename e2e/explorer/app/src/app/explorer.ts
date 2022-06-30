@@ -18,7 +18,9 @@ export class BlockExplorer {
     logs: {},
     accounts: [],
     contracts: [],
-    artifacts: {}
+    artifacts: {},
+    buildInfos: [],
+    builds: {}
   };
   blocks$ = this.#sourceChanges.pipe(map(() => this.source.blocks));
   txs$ = this.#sourceChanges.pipe(map(() => this.source.transactions));

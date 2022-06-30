@@ -25,6 +25,8 @@ export async function nxGenerator(tree: Tree, baseOptions: HardhatOptions) {
   await addFiles(tree, options, __dirname);
   setProjectBuilders(tree, options, hardhatBuilder(['build', 'serve', 'test'], options));
   updateTsConfig(tree, options, (config) => {
+    if (!config.compilerOptions) config.compilerOptions = {};
+    config.compilerOptions.resolveJsonModule = true;
     // update references only there is one already ??? (nx project)
     if (!config.references) return config;
     config.references.push({ path: './tsconfig.hardhat.json' });

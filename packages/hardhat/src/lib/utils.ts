@@ -1,5 +1,6 @@
 import { resolve, join, parse as parsePath } from "path";
 import * as parserTypeScript from "prettier/parser-typescript";
+import * as parserBabel from "prettier/parser-babel";
 import * as prettier from "prettier/standalone";
 import { promises as fs } from 'fs';
 import { createServer } from 'http';
@@ -14,6 +15,14 @@ export function formatTs(code: string) {
   return prettier.format(code, {
     parser: 'typescript',
     plugins: [parserTypeScript],
+    printWidth: 120,
+  });
+}
+
+export function formatJson(code: string) {
+  return prettier.format(code, {
+    parser: 'json',
+    plugins: [parserBabel],
     printWidth: 120,
   });
 }

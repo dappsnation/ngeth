@@ -5,6 +5,7 @@ import { getStatus, getTxReceiptStatus } from './transaction';
 import { tokenBalance, tokenBalanceHistoy, tokenSupply, tokenSupplyHistory, tokenInfo } from './tokens';
 import { getLogs } from './logs';
 import { ethSupply } from './stats';
+import { verifySourceCode } from './contract';
 
 export function etherscanApi(params: EtherscanParams) {
   switch (params.module) {
@@ -35,6 +36,7 @@ function account(params: AccountsParams) {
 
 function contract(params: ContractParams) {
   switch (params.action) {
+    case 'verifysourcecode': return verifySourceCode(params)
     default: return {};
   }
 }

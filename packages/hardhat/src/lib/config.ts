@@ -2,6 +2,7 @@ import 'hardhat/types/config';
 import { HardhatConfig } from 'hardhat/types';
 
 interface NgEthConfig {
+  /** Path of the build output */
   outputPath: string;
   /** Type of build */
   outputType: 'angular' | 'typescript';
