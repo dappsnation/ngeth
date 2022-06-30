@@ -3,8 +3,9 @@ import { Socket } from 'socket.io';
 import { promises as fs } from "fs";
 import { join } from "path";
 import { provider } from "./provider";
-import { setBlock, store, setArtifact, setBalance, setBuildInfo } from "./store";
+import { setBlock, setArtifact, setBalance, setBuildInfo } from "./store";
 import { BuildInfo } from "hardhat/types";
+import { emit, sockets } from "./socket";
 
 
 //////////
@@ -32,17 +33,21 @@ async function initFactories(root: string) {
 
     for (const file of files) {
       const path = join(root, folder, file);
+      const buildPaths: string[] = [];
       if (path.endsWith('.dbg.json')) {
         const res = await fs.readFile(path, 'utf8');
         const dgb = JSON.parse(res);
         const buildPath = join(folderPath, dgb.buildInfo);
-        const build = await fs.readFile(buildPath, 'utf8');
-        const buildInfo = JSON.parse(build) as BuildInfo;
-        setBuildInfo(buildInfo);
+        if (!buildPaths.includes(buildPath)) buildPaths.push(buildPath);
       } else if (path.endsWith('.json')) {
         const res = await fs.readFile(path, 'utf8');
         const arfitact = JSON.parse(res);
         setArtifact(arfitact);
+      }
+      for (const buildPath of buildPaths) {
+        const build = await fs.readFile(buildPath, 'utf8');
+        const buildInfo = JSON.parse(build) as BuildInfo;
+        setBuildInfo(buildInfo);
       }
     }
   }
@@ -68,10 +73,6 @@ async function init() {
 ////////////////////
 
 export function blockListener() {
-  const sockets: Record<string, Socket> = {};
-  const emit = () => {
-    Object.values(sockets).forEach(socket => socket.emit('block', store));
-  }
 
   // Start Listening on the node
   console.log('Start listening on Ethereum Network');

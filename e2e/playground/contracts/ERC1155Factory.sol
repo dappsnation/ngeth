@@ -5,7 +5,7 @@ import "./OpenseaERC1155.sol";
 import "@openzeppelin/contracts/proxy/Clones.sol";
 
 contract ERC1155Factory {
-  address implementation;
+  address immutable implementation;
 
   event Clone(address indexed from, address indexed clone);
 

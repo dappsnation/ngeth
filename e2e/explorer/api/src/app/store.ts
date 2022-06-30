@@ -27,6 +27,7 @@ export const store: EthStore = {
   accounts: [],
   contracts: [],
   artifacts: {},
+  buildInfos: [],
   builds: {}
 }
 
@@ -198,6 +199,7 @@ function setState(block: Block, receipts: TransactionReceipt[]) {
 ///////////////
 
 export function setBuildInfo(info: BuildInfo) {
+  store.buildInfos.push(info);
   for (const sourceName in info.output.contracts) {
     const sourceCode = info.input.sources[sourceName].content;
     for (const contractName in info.output.contracts[sourceName]) {
@@ -233,13 +235,36 @@ export function setArtifact(artifact: ContractArtifact) {
 
 // If some variables are immutable they would be in the deployed bytecode but not the artifact...
 export function getArtifact(code: string): ContractArtifact {
-  return Object.values(store.artifacts).find(artifact => artifact.deployedBytecode === code);
+  const found = Object.values(store.artifacts).find(artifact => artifact.deployedBytecode === code);
+  if (found) return found;
+  // Check immutable refs
+  for (const info of Object.values(store.buildInfos)) {
+    for (const sourceName in info.output.contracts) {
+      for (const contractName in info.output.contracts[sourceName]) {
+        const output = info.output.contracts[sourceName][contractName];
+        const refs = output.evm.deployedBytecode.immutableReferences;
+        if (!refs || !Object.values(refs).length) continue;
+        let replaced = code;
+        for (const ref of Object.values(refs)) {
+          for (const { start, length } of ref) {
+            // length is in bytes -> 2 chars
+            const from = (start + 1) * 2;
+            const size = length * 2;
+            replaced = `${code.substring(0, from)}${''.padEnd(size, '0')}${code.substring(from + size)}`;
+          }
+        }
+        if (`0x${output.evm.deployedBytecode.object}` === replaced) {
+          return store.artifacts[artifactKey({ sourceName, contractName })];
+        }
+      }
+    }
+  }
+  // TODO: check proxy
 }
 
 async function linkArtifactToContract(address: string) {
   const code = await provider.getCode(address);
   const artifact = getArtifact(code);
-  // TODO: if no artifact, try to recompile 
   if (!artifact) return;
   await addArtifactToAddress(address, artifact);
 }

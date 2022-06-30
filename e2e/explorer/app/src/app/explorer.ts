@@ -19,6 +19,7 @@ export class BlockExplorer {
     accounts: [],
     contracts: [],
     artifacts: {},
+    buildInfos: [],
     builds: {}
   };
   blocks$ = this.#sourceChanges.pipe(map(() => this.source.blocks));

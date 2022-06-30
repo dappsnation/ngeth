@@ -1,6 +1,7 @@
 import { TransactionReceipt, TransactionResponse, Block, Log } from '@ethersproject/abstract-provider';
 import { ABIDescription } from '@type/solc';
 import { BigNumber } from '@ethersproject/bignumber';
+import { BuildInfo } from 'hardhat/types';
 
 export interface EthStore {
   /** block indexed by block height */
@@ -21,7 +22,9 @@ export interface EthStore {
   contracts: string[],
   /** Artifacts */
   artifacts: Record<string, ContractArtifact>
-  /** Builds */
+  /** Build Info */
+  buildInfos: BuildInfo[]
+  /** Builds: TO REMOVE FOR BuildInfo */
   builds: Record<string, EtherscanSourceCode>
 }
 
