@@ -2,18 +2,18 @@ import { ExecutionStatusResult, GetParams, GetStatusRequest, GetTxReceiptStatusR
 import { store } from '../store';
 
 export function getStatus({ txhash }: GetParams<GetStatusRequest>): ExecutionStatusResult {
-  if (!store.receipts[txhash]) return { isError: 1, errDescription: 'Transaction not found' };
+  if (!store.receipts[txhash]) return { isError: "1", errDescription: 'Transaction not found' };
   const isError = store.receipts[txhash].status;
-  if (isError === 0) return { isError: 0 };
+  if (isError === 0) return { isError: "0" };
   return {
-    isError: 1,
+    isError: "1",
     errDescription: '' // TODO
   };
 }
 
 export function getTxReceiptStatus({ txhash }: GetParams<GetTxReceiptStatusRequest>): StatusResult | undefined {
   if (!store.receipts[txhash]) return;
-  const status = store.receipts[txhash].status as 0 | 1;
+  const status = store.receipts[txhash].status.toString() as "0" | "1";
   return { status };
 }
 

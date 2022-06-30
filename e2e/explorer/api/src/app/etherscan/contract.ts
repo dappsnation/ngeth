@@ -1,4 +1,4 @@
-import { VerifySourceCode, GetParams, GetABIRequest, GetSourceCodeRequest } from "@ngeth/etherscan";
+import { VerifySourceCode, GetParams, GetABIRequest, GetSourceCodeRequest, ContractSourceCodeResponse } from "@ngeth/etherscan";
 import solc from 'solc';
 import { CompilationInput, CompilationResult } from '@type/solc';
 import { provider } from "../provider";
@@ -47,7 +47,7 @@ export function getAbi({ address }: GetParams<GetABIRequest>) {
 }
 
 /** Returns the Solidity source code of a verified smart contract. */
-export function getSourceCode({ address }: GetParams<GetSourceCodeRequest>) {
+export function getSourceCode({ address }: GetParams<GetSourceCodeRequest>): ContractSourceCodeResponse {
   if (!address) throw new Error('Invalid Address format');
   const account = store.addresses[address];
   if (!isContract(account)) throw new Error('Contract source code not verified');
@@ -56,10 +56,17 @@ export function getSourceCode({ address }: GetParams<GetSourceCodeRequest>) {
 
   return {
     SourceCode: store.builds[account.artifact].sourceCode,
-    ABI: store.artifacts[account.address].abi,
+    ABI: store.artifacts[account.address].abi.toString(),
     ContractName: store.builds[account.artifact].contractName,
     CompilerVersion: store.builds[account.artifact].compilerVersion,
     OptimizationUsed: optimization,
-    Runs: store.builds[account.artifact].runs
+    Runs: store.builds[account.artifact].runs,
+    ConstructorArguments: "",
+    EVMVersion:  "",
+    Library:  "",
+    LicenseType:  "",
+    Proxy:  "",
+    Implementation:  "",
+    SwarmSource:  "",
     }
 }

@@ -1,5 +1,3 @@
-import { ABIDescription } from '@type/solc';
-
 export interface TransferTransactionResponse {
   blockNumber: string;
   timeStamp: string;
@@ -93,7 +91,7 @@ export interface MinedBlockResponse {
 
 export interface ContractSourceCodeResponse {
   SourceCode: string;
-  ABI: ABIDescription[];
+  ABI: string;
   ContractName: string;
   CompilerVersion: string;
   OptimizationUsed: string;
@@ -110,10 +108,10 @@ export interface ContractSourceCodeResponse {
 // Result
 export interface ExecutionStatusResult {
   /** 0: Succeed, 1: Failed */
-  isError: 0 | 1;
+  isError: "0" | "1";
   errDescription?: string;
 }
 export interface StatusResult {
   /** 0: Succeed, 1: Failed */
-  status: 0 | 1;
+  status: "0" | "1";
 }
