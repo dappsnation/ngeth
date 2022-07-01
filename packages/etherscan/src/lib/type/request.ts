@@ -154,8 +154,8 @@ export type VerifySourceCode = VerifySourceCodeParams & Library<1 | 2 | 3 | 4 | 
 //logs
 export type LogParams = LogsRequest;
 export interface LogsRequest extends BaseParams<'logs', "getLogs"> {
-  fromBlock?: number | "latest";
-  toBlock?: number | "latest";
+  fromBlock: number | "latest";
+  toBlock: number | "latest";
   address: string;
   topic0?: string;
   topic1?: string;
