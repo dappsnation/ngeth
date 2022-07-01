@@ -12,7 +12,6 @@ export default {
     artifacts: './artifacts',
   },
   ngeth: {
-    outputType: 'typescript',
     outputPath: './contracts',
     withImports: true,
     explorer: false,

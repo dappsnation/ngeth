@@ -33,7 +33,6 @@ ng generate @ngeth/hardhat:library contracts
 #### Options: 
 - `outputType`: `"angular" | "typescript"` (default: "typescript")
 
-
 ### Setup without Nx
 Setup a hardhat project following [official documentation](https://hardhat.org/getting-started).
 
@@ -105,12 +104,6 @@ The addresses output will be a json file with the addresses by chain. This forma
 - **description**: Directory, relative to `hardhat.config.ts`, to put generated contracts classes
 - **required**: Yes
 - **type**: `string`
-
-#### `outputType`
-- **description**: Type of generated contracts
-- **required**: No
-- **type**: `'angular' | 'typescript'`
-- **default**: `'typescript'`
 
 #### `runs`
 - **description**: Scripts to run on `@ngeth:serve` after node has started. If array of string, parallel is `false`
