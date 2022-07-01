@@ -154,8 +154,8 @@ export type VerifySourceCode = VerifySourceCodeParams & Library<1 | 2 | 3 | 4 | 
 //logs
 export type LogParams = LogsRequest;
 export interface LogsRequest extends BaseParams<'logs', "getLogs"> {
-  fromBlock?: number | "latest";
-  toBlock?: number | "latest";
+  fromBlock: number | "latest";
+  toBlock: number | "latest";
   address: string;
   topic0?: string;
   topic1?: string;
@@ -226,22 +226,22 @@ export interface TokenSupplyHistoryRequest extends BaseParams<'stats', 'tokensup
 
 export interface BaseBlock<action extends string> extends BaseParams<'stats', action> {
   /** the starting date in yyyy-MM-dd format, eg. 2019-02-01 */
-  startdate: Date; // TODO : Verify if Date is the correct type
+  startDate: Date; 
   /** the ending date in yyyy-MM-dd format, eg. 2019-02-28 */
-  enddate: Date; // TODO : Verify if Date is the correct type
+  endDate: Date; 
   /** the sorting preference, use asc to sort by ascending and desc to sort by descending */
   sort?: Sort
 }
 
-export type DailyAvgBlocksize = BaseBlock<'dailyavgblocksize'>;
+export type DailyAvgBlocksizeRequest = BaseBlock<'dailyavgblocksize'>;
 
-export type DailyBlockCountAndReward = BaseBlock<'dailyblkcount'>;
+export type DailyBlockCountAndRewardRequest = BaseBlock<'dailyblkcount'>;
 
-export type DailyBlockReward = BaseBlock<'dailyblockrewards'>;
+export type DailyBlockRewardRequest = BaseBlock<'dailyblockrewards'>;
 
-export type DailyBlockTime = BaseBlock<'dailyavgblocktime'>;
+export type DailyBlockTimeRequest = BaseBlock<'dailyavgblocktime'>;
 
-export type DailyUncleBlockCount = BaseBlock<'dailyuncleblkcount'>;
+export type DailyUncleBlockCountRequest = BaseBlock<'dailyuncleblkcount'>;
 
 ///////////
 // PROXY //
@@ -254,7 +254,7 @@ export interface BlockByNumber {
   boolean: boolean;
 }
 
-export interface UncleByBlockNumberAndIndex {
+export interface UncleByBlockNumberAndIndexRequest {
   /** the block number, in hex  */
   tag: string;
   /** the position of the uncle's index in the block, in hex  */
@@ -266,7 +266,7 @@ export type ProxyTag = string;
 /** the position of the uncle's index in the block, in hex */
 export type ProxyIndex = string;
 
-export interface BlockTransactionCountByNumber {
+export interface BlockTransactionCountByNumberRequest {
   /** the block number, in hex */
   tag?: string;
 }
