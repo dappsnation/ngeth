@@ -14,7 +14,7 @@ describe('HARDHAT', () => {
   })
 
   describe('--add', () => {
-    it('should create contract in the specified directory', async () => {
+    it('should add hardhat config in the specified directory', async () => {
       await runNxCommandAsync(`generate @nrwl/node:application ${project}`);
       await runNxCommandAsync(`generate @ngeth/hardhat:ng-add --project ${project}`);
       const checkFile = (path: string) => {
@@ -24,4 +24,5 @@ describe('HARDHAT', () => {
       checkFile(`apps/${project}/hardhat.config.ts`);
     }, 120000);
   });
+  
 });

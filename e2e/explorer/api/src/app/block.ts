@@ -3,7 +3,9 @@ import { Socket } from 'socket.io';
 import { promises as fs } from "fs";
 import { join } from "path";
 import { provider } from "./provider";
-import { setBlock, store, setArtifact, setBalance } from "./store";
+import { setBlock, setArtifact, setBalance, setBuildInfo } from "./store";
+import { BuildInfo } from "hardhat/types";
+import { emit, sockets } from "./socket";
 
 
 //////////
@@ -25,14 +27,27 @@ const hardhatAccounts = [
 async function initFactories(root: string) {
   const folders = await fs.readdir(root);
   for (const folder of folders) {
-    const files = await fs.readdir(join(root, folder));
+    // Get the folder path and check its files
+    const folderPath = join(root, folder);
+    const files = await fs.readdir(folderPath);
+
     for (const file of files) {
       const path = join(root, folder, file);
-      if (path.endsWith('.dbg.json')) continue;
-      if (path.endsWith('.json')) {
+      const buildPaths: string[] = [];
+      if (path.endsWith('.dbg.json')) {
+        const res = await fs.readFile(path, 'utf8');
+        const dgb = JSON.parse(res);
+        const buildPath = join(folderPath, dgb.buildInfo);
+        if (!buildPaths.includes(buildPath)) buildPaths.push(buildPath);
+      } else if (path.endsWith('.json')) {
         const res = await fs.readFile(path, 'utf8');
         const arfitact = JSON.parse(res);
         setArtifact(arfitact);
+      }
+      for (const buildPath of buildPaths) {
+        const build = await fs.readFile(buildPath, 'utf8');
+        const buildInfo = JSON.parse(build) as BuildInfo;
+        setBuildInfo(buildInfo);
       }
     }
   }
@@ -43,7 +58,7 @@ async function init() {
   const artifactRoot = process.env['ARTIFACTS_ROOT'] ?? join(process.cwd(), 'e2e/explorer/hardhat/artifacts/src');
   await initFactories(artifactRoot);
   const current = await provider.getBlockNumber();
-  for (let i = 0; i < current; i++) {
+  for (let i = 0; i <= current; i++) {
     const block = await provider.getBlock(i);
     await setBlock(block);
   }
@@ -58,10 +73,6 @@ async function init() {
 ////////////////////
 
 export function blockListener() {
-  const sockets: Record<string, Socket> = {};
-  const emit = () => {
-    Object.values(sockets).forEach(socket => socket.emit('block', store));
-  }
 
   // Start Listening on the node
   console.log('Start listening on Ethereum Network');
@@ -70,8 +81,11 @@ export function blockListener() {
   // Initialize the state
   const initialized = init().then(() => emit());
 
+  let lastBlock: number;
   // Listen on block changes (Hardh hat doesn't support pending transaction event)
   provider.on('block', async (blockNumber: number) => {
+    if (lastBlock === blockNumber) return; // For some reason the callback is triggered 4times
+    lastBlock = blockNumber;
     await initialized;
     const block = await provider.getBlock(blockNumber);
     await setBlock(block);

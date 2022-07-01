@@ -36,7 +36,7 @@ export interface CompilationError {
   type: CompilationErrorType
   /** Component where the error originated, such as "general", "ewasm", etc. */
   component: 'general' | 'ewasm' | string
-  severity: 'error' | 'warning' | 'info'
+  severity: 'error' | 'Warning' | 'info'
   /** unique code for the cause of the error */
   errorCode?: string
   message: string
@@ -247,7 +247,8 @@ export interface DeveloperDocumentation {
   author: string
   title: string
   details: string
-  methods: DevMethodList
+  methods?: DevMethodList
+  events?: DevMethodList
 }
 
 export interface DevMethodList {

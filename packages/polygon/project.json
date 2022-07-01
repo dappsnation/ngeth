@@ -1,14 +1,12 @@
 {
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "library",
-  "root": "packages/polygon",
   "sourceRoot": "packages/polygon/src",
   "prefix": "ngeth",
   "targets": {
     "build": {
       "executor": "@nrwl/angular:package",
-      "outputs": [
-        "dist/packages/polygon"
-      ],
+      "outputs": ["dist/packages/polygon"],
       "options": {
         "project": "packages/polygon/ng-package.json"
       },
@@ -24,11 +22,9 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": [
-        "coverage/packages/polygon"
-      ],
+      "outputs": ["coverage/packages/polygon"],
       "options": {
-        "jestConfig": "packages/polygon/jest.config.js",
+        "jestConfig": "packages/polygon/jest.config.ts",
         "passWithNoTests": true
       }
     },

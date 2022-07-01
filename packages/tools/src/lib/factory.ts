@@ -1,11 +1,12 @@
-import { ABIDescription } from "@type/solc";
-import { getDeploy, isConstrutor } from "./utils";
+import { toMethodJsDoc } from "./natspec";
+import { GenerateConfig, getDeploy, isConstrutor } from "./utils";
 
 
+export const getFactory = (contractName: string, { abi, natspec }: GenerateConfig) => {
+  const node = abi.find(isConstrutor);
+  const deploy = getDeploy(contractName, node?.inputs);
+  const doc = node ? toMethodJsDoc(natspec?.methods?.['constructor']) : '';
 
-
-export const getFactory = (contractName: string, abi: ABIDescription[]) => {
-  const deploy = getDeploy(contractName, abi.find(isConstrutor)?.inputs);
   return `
   import { ContractFactory } from '@ethersproject/contracts';
   import type { ${contractName} } from './contract';
@@ -14,6 +15,7 @@ export const getFactory = (contractName: string, abi: ABIDescription[]) => {
   import bytecode from './bytecode';
 
   export class ${contractName}Factory extends ContractFactory {
+    ${doc}
     override ${deploy};
 
     constructor(signer?: Signer) {

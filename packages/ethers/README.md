@@ -1,7 +1,6 @@
-# Ethers
+# @ngeth/ethers-*
 
-## Install
+These libs provides common utils around ethers.js for different frameworks.
 
-```
-npm install @ngeth/ethers ethers
-```
+- [`@ngeth/ethers-core`](./core): pure typescript lib used as base for other framework implementation
+- [`@ngeth/ethers-angular`](./angular): Angular toolkit for ethers

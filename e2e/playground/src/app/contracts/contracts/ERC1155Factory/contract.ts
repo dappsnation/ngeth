@@ -1,5 +1,6 @@
 import { NgZone } from "@angular/core";
-import { NgContract, FilterParam, TypedFilter } from "@ngeth/ethers";
+import { FilterParam, TypedFilter } from "@ngeth/ethers-core";
+import { NgContract } from "@ngeth/ethers-angular";
 import type {
   BigNumber,
   Overrides,
@@ -16,9 +17,16 @@ import abi from "./abi";
 export interface ERC1155FactoryEvents {
   events: { Clone: (from: string, clone: string) => void };
   filters: { Clone: (from?: FilterParam<string>, clone?: FilterParam<string>) => TypedFilter<"Clone"> };
-  queries: { Clone: { from: string; clone: string } };
+  queries: {
+    Clone: {
+      from: string;
+      clone: string;
+    };
+  };
 }
 
+/**
+ */
 export class ERC1155Factory extends NgContract<ERC1155FactoryEvents> {
   // Read
 

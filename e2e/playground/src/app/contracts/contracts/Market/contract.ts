@@ -1,5 +1,6 @@
 import { NgZone } from "@angular/core";
-import { NgContract, FilterParam, TypedFilter } from "@ngeth/ethers";
+import { FilterParam, TypedFilter } from "@ngeth/ethers-core";
+import { NgContract } from "@ngeth/ethers-angular";
 import type {
   BigNumber,
   Overrides,
@@ -61,7 +62,11 @@ export interface MarketEvents {
       price: BigNumber;
       data: BytesLike;
     };
-    CancelOffer: { contractAddress: string; from: string; tokenId: BigNumber };
+    CancelOffer: {
+      contractAddress: string;
+      from: string;
+      tokenId: BigNumber;
+    };
     UpsertOffer: {
       contractAddress: string;
       from: string;
@@ -73,6 +78,8 @@ export interface MarketEvents {
   };
 }
 
+/**
+ */
 export class Market extends NgContract<MarketEvents> {
   // Read
   offers!: (
@@ -83,6 +90,13 @@ export class Market extends NgContract<MarketEvents> {
   ) => Promise<[BigNumber, BigNumber, BytesLike]>;
 
   // Write
+  /**
+   * @param amount The amount of token to transfer
+   * @param contractAddress The address of the ERC1155
+   * @param from The address that created the offer
+   * @param to The address to send the tokens to (usually same as msg.sender)
+   * @param tokenId The id of the token
+   */
   acceptOffer!: (
     contractAddress: string,
     from: string,

@@ -1,7 +1,7 @@
-<ng-container *ngIf="contract$ | async as contract">
+<ng-container *ngIf="contract$ | async as contract; else empty">
   <header>
     <div class="profile">
-      <eth-blockies [address]="contract.address"></eth-blockies>
+      <eth-blocky [address]="contract.address"></eth-blocky>
       <h1>{{ contract.artifact.contractName }}</h1>
       <p>{{ contract.address }}</p>
     </div>
@@ -30,3 +30,28 @@
     </section>
   </article>
 </ng-container>
+
+<ng-template #empty>
+  <article>
+    <h2>No ABI found</h2>
+    <p>
+      Sorry, we couldn't find the ABI associated with this contract.<br/>
+      This usually happens when the contract has an immutable property.
+    </p>
+    <form [formGroup]="verifyForm" (ngSubmit)="verify()">
+      <div class="field">
+        <label for="contract-name">Contract Name</label>
+        <input id="contract-name" type="text" formControlName="contractname" />
+      </div>
+      <div class="field">
+        <label for="constructor-arguements">Constructor Arguements</label>
+        <textarea id="constructor-arguements" formControlName="constructorArguements"></textarea>
+      </div>
+      <div class="field">
+        <label for="source-code">Source Code</label>
+        <textarea id="source-code" formControlName="sourceCode"></textarea>
+      </div>
+      <button type="submit">Verify Contract</button>
+    </form>
+  </article>
+</ng-template>

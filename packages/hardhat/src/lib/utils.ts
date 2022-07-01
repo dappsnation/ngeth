@@ -1,14 +1,28 @@
 import { resolve, join, parse as parsePath } from "path";
 import * as parserTypeScript from "prettier/parser-typescript";
+import * as parserBabel from "prettier/parser-babel";
 import * as prettier from "prettier/standalone";
 import { promises as fs } from 'fs';
 import { createServer } from 'http';
-import { URL } from 'url';
+import { Artifact, BuildInfo, HardhatRuntimeEnvironment } from "hardhat/types";
+import { DeveloperDocumentation } from "@type/solc";
+
+interface CompiledOutput extends Artifact {
+  natspec?: DeveloperDocumentation;
+}
 
 export function formatTs(code: string) {
   return prettier.format(code, {
     parser: 'typescript',
     plugins: [parserTypeScript],
+    printWidth: 120,
+  });
+}
+
+export function formatJson(code: string) {
+  return prettier.format(code, {
+    parser: 'json',
+    plugins: [parserBabel],
     printWidth: 120,
   });
 }
@@ -21,6 +35,33 @@ export function getContractImportNames(allNames: string[], src: string) {
   return allNames.filter((name) => !resolve(name).startsWith(src));
 }
 
+export async function getCompiledOutput(hre: HardhatRuntimeEnvironment) {
+  const readJson = (path: string) => fs.readFile(path, 'utf-8').then(file => JSON.parse(file));
+  const outputs: Record<string, Record<string, CompiledOutput>> = {};
+
+  // Keep track of query of BuildInfo to avoid duplicated calls
+  const queryBuildInfos: Record<string, Promise<BuildInfo>> = {};
+  
+  const paths = await hre.artifacts.getArtifactPaths();
+  const readContracts = paths.map(async path => {
+    const debugPath = path.replace('.json', '.dbg.json');
+    const getBuildInfo = readJson(debugPath).then(({ buildInfo }) => {
+      const buildInfoPath = join(path, '..', buildInfo);
+      if (!queryBuildInfos[buildInfoPath]) queryBuildInfos[buildInfoPath] = readJson(buildInfoPath);
+      return queryBuildInfos[buildInfoPath];
+    });
+    const [arfitact, buildInfo] = await Promise.all([ readJson(path), getBuildInfo ]);
+   
+    const { sourceName, contractName } = arfitact;
+    if (!outputs[sourceName]) outputs[sourceName] = {};
+    outputs[sourceName][contractName] = arfitact;
+
+    const metadata = (buildInfo.output.contracts[sourceName][contractName] as any).metadata;
+    outputs[sourceName][contractName].natspec = JSON.parse(metadata)?.output.devdoc;
+  });
+  await Promise.all(readContracts);
+  return Object.values(outputs).map(file => Object.values(file)).flat();
+}
 
 export function serveApp(directory: string, port: number) {
   const mimeTypes = {

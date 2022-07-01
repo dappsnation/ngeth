@@ -1,6 +1,6 @@
 {
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "library",
-  "root": "packages/ipfs",
   "sourceRoot": "packages/ipfs/src",
   "prefix": "ngeth",
   "targets": {
@@ -19,9 +19,7 @@
     },
     "build": {
       "executor": "@nrwl/angular:package",
-      "outputs": [
-        "dist/packages/ipfs"
-      ],
+      "outputs": ["dist/packages/ipfs"],
       "options": {
         "project": "packages/ipfs/ng-package.json"
       },
@@ -37,11 +35,9 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": [
-        "coverage/packages/ipfs"
-      ],
+      "outputs": ["coverage/packages/ipfs"],
       "options": {
-        "jestConfig": "packages/ipfs/jest.config.js",
+        "jestConfig": "packages/ipfs/jest.config.ts",
         "passWithNoTests": true
       }
     },
@@ -55,7 +51,5 @@
       }
     }
   },
-  "tags": [
-    "ipfs"
-  ]
+  "tags": ["ipfs"]
 }

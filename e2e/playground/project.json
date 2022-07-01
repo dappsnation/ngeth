@@ -1,6 +1,6 @@
 {
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
-  "root": "e2e/playground",
   "sourceRoot": "e2e/playground/src",
   "prefix": "ngeth",
   "targets": {
@@ -10,14 +10,13 @@
         "commands": [
           "nx run playground:hardhat-build",
           "nx run playground:build-app"
-        ]
+        ],
+        "parallel": false
       }
     },
     "build-app": {
       "executor": "@angular-devkit/build-angular:browser",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/e2e/playground",
         "index": "e2e/playground/src/index.html",
@@ -29,9 +28,7 @@
           "e2e/playground/src/favicon.ico",
           "e2e/playground/src/assets"
         ],
-        "styles": [
-          "e2e/playground/src/styles.scss"
-        ],
+        "styles": ["e2e/playground/src/styles.scss"],
         "scripts": []
       },
       "configurations": {
@@ -108,11 +105,9 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": [
-        "coverage/e2e/playground"
-      ],
+      "outputs": ["coverage/e2e/playground"],
       "options": {
-        "jestConfig": "e2e/playground/jest.config.js",
+        "jestConfig": "e2e/playground/jest.config.ts",
         "passWithNoTests": true
       }
     },
@@ -152,7 +147,5 @@
     }
   },
   "tags": [],
-  "implicitDependencies": [
-    "hardhat-tools"
-  ]
+  "implicitDependencies": ["hardhat-tools"]
 }

@@ -1,6 +1,6 @@
 {
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "library",
-  "root": "e2e/explorer",
   "sourceRoot": "e2e/explorer",
   "prefix": "eth",
   "targets": {

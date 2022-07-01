@@ -12,11 +12,13 @@ export default {
     artifacts: './artifacts',
   },
   ngeth: {
-    outDir: './contracts',
-    autoDeploy: {
-      BaseERC20: ["Name"],
-      BaseERC1155: ["uri"],
-    },
-    explorer: false
+    outputType: 'typescript',
+    outputPath: './contracts',
+    withImports: true,
+    explorer: false,
+    runs: {
+      scripts: ['scripts/deploy.ts'],
+      parallel: true
+    }
   },
 };

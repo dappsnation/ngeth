@@ -4,7 +4,7 @@ import { CreateComponent } from './create.component';
 import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
 import { IpfsModule } from '@ngeth/ipfs';
-import { EthersModule } from '@ngeth/ethers';
+import { EthersModule } from '@ngeth/ethers-angular';
 
 
 

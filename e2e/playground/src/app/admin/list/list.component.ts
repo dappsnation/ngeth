@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { ERC1193 } from '@ngeth/ethers';
+import { NgERC1193 } from '@ngeth/ethers-angular';
 import { map, switchMap } from 'rxjs';
 import { addresses } from '../../contracts';
 import { FactoryManager } from '../../services/factory';
@@ -14,13 +14,13 @@ import { FactoryManager } from '../../services/factory';
 export class ListComponent {
 
   contracts$ = this.metamask.chainId$.pipe(
-    map(chainId => this.factoryManager.get(addresses.ERC1155Factory, chainId)),
+    map(chainId => this.factoryManager.get(addresses.hardhat.ERC1155Factory, chainId)),
     switchMap(factory => factory.clones$),
     switchMap(contracts => Promise.all(contracts.map(c => c.toJSON())))
   );
   
   constructor(
     private factoryManager: FactoryManager,
-    private metamask: ERC1193
+    private metamask: NgERC1193
   ) {}
 }

@@ -1,5 +1,5 @@
 import { Injectable, NgZone } from '@angular/core';
-import { ContractsManager, ERC1193 } from '@ngeth/ethers';
+import { ContractsManager, NgERC1193 } from '@ngeth/ethers-angular';
 import { Signer } from '@ethersproject/abstract-signer';
 import { BaseContract } from './manager';
 import { switchMap, map } from 'rxjs';
@@ -16,7 +16,7 @@ export class Factory extends ERC1155Factory {
     address: string,
     signer: Signer,
     zone: NgZone,
-    private erc1193: ERC1193,
+    private erc1193: NgERC1193,
     private manager: ContractsManager<BaseContract>,
   ) {
     super(address, signer, zone);
@@ -35,7 +35,7 @@ export class FactoryManager extends ContractsManager<Factory> {
 
   constructor(
     private contractManager: ContractsManager<BaseContract>,
-    private erc1193: ERC1193,
+    private erc1193: NgERC1193,
   ) {
     super();
   }

@@ -1,5 +1,5 @@
 {
-  "root": "packages/devkit",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/devkit/src",
   "targets": {
     "link": {
@@ -17,16 +17,12 @@
     },
     "build": {
       "executor": "@nrwl/js:tsc",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/packages/devkit",
         "main": "packages/devkit/src/index.ts",
         "tsConfig": "packages/devkit/tsconfig.lib.json",
-        "assets": [
-          "packages/devkit/*.md"
-        ],
+        "assets": ["packages/devkit/*.md"],
         "buildableProjectDepsInPackageJsonType": "dependencies",
         "updateBuildableProjectDepsInPackageJson": true
       }

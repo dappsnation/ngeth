@@ -8,5 +8,5 @@ import { addresses } from '../contracts';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearchComponent {
-  erc1155 = addresses.BaseERC1155;
+  erc1155 = addresses.hardhat.BaseERC1155;
 }

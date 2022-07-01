@@ -1,7 +1,7 @@
-import { GetParams, Logs } from "@ngeth/etherscan";
+import { GetParams, LogsRequest } from "@ngeth/etherscan";
 import { store } from '../store';
 
-export function getLogs(params: GetParams<Logs>) {
+export function getLogs(params: GetParams<LogsRequest>) {
   let {fromBlock, toBlock} = params;  
   if (!fromBlock || !toBlock || !params.address) throw new Error('Error! Missing or invalid Action name');
   if (typeof fromBlock === "string" && fromBlock !== "latest") {

@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
-import { EthersModule, rpcProvider } from '@ngeth/ethers';
+import { EthersModule, rpcProvider } from '@ngeth/ethers-angular';
 import { RedirectAddress } from './address.guard';
 
 import { AppComponent } from './app.component';

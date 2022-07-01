@@ -1,6 +1,7 @@
 import { TransactionReceipt, TransactionResponse, Block, Log } from '@ethersproject/abstract-provider';
 import { ABIDescription } from '@type/solc';
 import { BigNumber } from '@ethersproject/bignumber';
+import { BuildInfo } from 'hardhat/types';
 
 export interface EthStore {
   /** block indexed by block height */
@@ -21,6 +22,10 @@ export interface EthStore {
   contracts: string[],
   /** Artifacts */
   artifacts: Record<string, ContractArtifact>
+  /** Build Info */
+  buildInfos: BuildInfo[]
+  /** Builds: TO REMOVE FOR BuildInfo */
+  builds: Record<string, EtherscanSourceCode>
 }
 
 
@@ -41,11 +46,42 @@ export interface ContractArtifact {
   deployedBytecode: string; // "0x"-prefixed hex string
 }
 
+export interface EtherscanSourceCode {
+  sourceCode: string;
+  abi: ABIDescription[];
+  contractName: string;
+  compilerVersion: string;
+  optimizationUsed: string;
+  runs: string;
+}
 
 export interface ContractAccount extends EthAccount{
   isContract: true;
   /** Key of the artifact in the artifact record */
   artifact: string;
+  metadata?: unknown;
+}
+export interface ERC20Account extends ContractAccount {
+  metadata: {
+    name: string;
+    symbol: string;
+    decimals: number;
+    totalSupply: BigNumber;
+  }
+}
+export interface ERC721Account extends ContractAccount {
+  metadata: {
+    name: string;
+    decimals: number;
+    symbol: string;
+  }
+}
+
+export interface ERC1155Account extends ContractAccount {
+  metadata: {
+    name: string;    
+    symbol: string;
+  }
 }
 
 export interface EthState {

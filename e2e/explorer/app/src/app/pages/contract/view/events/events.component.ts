@@ -4,7 +4,8 @@ import { ViewComponent } from '../view.component';
 import { Log } from '@ethersproject/abstract-provider';
 import { Interface } from '@ethersproject/abi';
 import { combineLatest } from 'rxjs';
-import { map, distinctUntilChanged } from 'rxjs/operators';
+import { map, distinctUntilChanged, filter } from 'rxjs/operators';
+import { exist } from '../../../../utils';
 
 @Component({
   selector: 'explorer-contract-events',
@@ -22,6 +23,7 @@ export class EventsComponent {
   );
 
   interface$ = this.shell.contract$.pipe(
+    filter(exist),
     map(contract => contract.artifact.abi),
     distinctUntilChanged((prev, next) => prev.length !== next.length),
     map(abi => new Interface(abi)),

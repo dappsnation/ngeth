@@ -1,9 +1,10 @@
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { ViewComponent } from '../view.component';
-import { FormArray } from '@angular/forms';
+import { UntypedFormArray } from '@angular/forms';
 import { AbiFormFunction, formABI } from './utils';
-import { map } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { WalletManager } from '../../../../wallet';
+import { exist } from '../../../../utils';
 
 @Component({
   selector: 'explorer-contract-abi',
@@ -14,6 +15,7 @@ import { WalletManager } from '../../../../wallet';
 export class AbiComponent {
   account$ = this.walletManager.account$;
   forms$ = this.shell.contract$.pipe(
+    filter(exist),
     map(contract => formABI(contract.artifact.abi))
   );
 
@@ -25,7 +27,7 @@ export class AbiComponent {
     private cdr: ChangeDetectorRef,
   ) { }
 
-  private onError(form: FormArray, error: Error) {
+  private onError(form: UntypedFormArray, error: Error) {
     const err = error.message.length < 300 ? error.message : 'An error occured. Check your console';
     form.addValidators(() => ({ err }));
     form.updateValueAndValidity();
@@ -53,7 +55,6 @@ export class AbiComponent {
     } catch(error) {
       this.onError(read.form, error as Error);
     }
-    console.log(read.result);
     this.cdr.markForCheck();
   }
 

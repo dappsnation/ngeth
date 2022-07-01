@@ -1,34 +1,26 @@
 {
-  "root": "packages/plugin",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/plugin/src",
   "projectType": "library",
   "targets": {
     "lint": {
       "executor": "@nrwl/linter:eslint",
-      "outputs": [
-        "{options.outputFile}"
-      ],
+      "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": [
-          "packages/plugin/**/*.ts"
-        ]
+        "lintFilePatterns": ["packages/plugin/**/*.ts"]
       }
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": [
-        "coverage/packages/plugin"
-      ],
+      "outputs": ["coverage/packages/plugin"],
       "options": {
-        "jestConfig": "packages/plugin/jest.config.js",
+        "jestConfig": "packages/plugin/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "build": {
-      "executor": "@nrwl/node:package",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "executor": "@nrwl/js:tsc",
+      "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/packages/plugin",
         "tsConfig": "packages/plugin/tsconfig.lib.json",

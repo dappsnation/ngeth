@@ -3,8 +3,10 @@
   "compilerOptions": {
     "outDir": "<%= offset %>dist/out-tsc",
     "module": "commonjs",
-    "types": ["node"]
+    "types": ["node"],
+    "resolveJsonModule": true
   },
   "exclude": ["**/*.spec.ts", "**/*.test.ts"],
+  "include": ["scripts"],
   "files": ["./hardhat.config.ts"]
 }

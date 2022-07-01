@@ -1,4 +1,4 @@
-import { BuilderOutput } from '@angular-devkit/architect';
+import type { BuilderOutput } from '@angular-devkit/architect';
 import { spawn } from 'child_process';
 
 interface ExecContext {

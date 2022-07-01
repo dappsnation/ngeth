@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ContractsManager, ERC1193 } from '@ngeth/ethers';
+import { ContractsManager, NgERC1193 } from '@ngeth/ethers-angular';
 import { combineLatest, Observable } from 'rxjs';
 import { map, pluck, switchMap } from 'rxjs/operators';
 import { BaseContract } from '../../services/manager';
@@ -39,7 +39,7 @@ export class Erc1155Component {
   );
 
   constructor(
-    private metamask: ERC1193,
+    private metamask: NgERC1193,
     private manager: ContractsManager<BaseContract>,
     private route: ActivatedRoute,
   ) {}

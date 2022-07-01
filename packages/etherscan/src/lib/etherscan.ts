@@ -1,42 +1,41 @@
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 import { ABIDescription } from '@type/solc';
-import {
-  Tag,
-  TxList,
-  TokenTx,
-  TokenNftTx,
-  Token1155Tx,
-  MinedBlock,
-  ExecutionStatusResult,
-  StatusResult,
+import { 
+  Tag, 
+  TxListRequest, 
+  TokenTxRequest, 
+  TokenNftTxRequest, 
+  Token1155TxRequest, 
+  MinedBlockRequest,
   Closest,
   DailyAvgBlocksize,
   DailyBlockCountAndReward,
   DailyBlockReward,
   DailyBlockTime,
   DailyUncleBlockCount,
-  Logs,
+  LogsRequest,
   UncleByBlockNumberAndIndex,
   ProxyTag,
   BlockTransactionCountByNumber
-} from "./types";
+} from "./type/request";
 import {
-  BalanceMultiResponse,
-  MinedBlockResponse,
-  ContractSourceCode,
-  BlockReward,
-  BlockCountdown,
-  DailyAvgBlocksizeResponse,
-  DailyBlockCountAndRewardResponse,
-  DailyBlockRewardResponse,
-  DailyBlockTimeResponse,
-  DailyUncleBlockCountReponse,
-  LogsResponse,
-  Block,
-  UncleBlock,
-  TransactionInfos
-} from "./response-types";
-
+   BalanceMultiResponse, 
+   ContractSourceCodeResponse, 
+   MinedBlockResponse,
+   BlockReward,
+   BlockCountdown,
+   DailyAvgBlocksizeResponse,
+   DailyBlockCountAndRewardResponse,
+   DailyBlockRewardResponse,
+   DailyBlockTimeResponse,
+   DailyUncleBlockCountReponse,
+   LogsResponse,
+   Block,
+   UncleBlock,
+   TransactionInfos,
+   ExecutionStatusResult,
+   StatusResult,
+  } from "./type/response";
 
 type Etherscan = ReturnType<typeof initEtherscan>;
 
@@ -72,7 +71,7 @@ function balanceMulti(call: Etherscan, addresses: string[], tag: Tag) {
   return call<BalanceMultiResponse[]>({ module: 'account', action: 'balancemulti', address, tag });
 }
 
-function txList(call: Etherscan, address: string, params: Optional<TxList> = {}) {
+function txList(call: Etherscan, address: string, params: Optional<TxListRequest> = {}) {
   return call<TransactionResponse[]>({ module: 'account', action: 'txlist', address, ...params });
 }
 
@@ -101,19 +100,19 @@ function txList(call: Etherscan, address: string, params: Optional<TxList> = {})
 // txListInternal(etherscan, 10, 30)
 
 
-function tokenTx(call: Etherscan, contractaddress: string, params: Optional<TokenTx>) {
+function tokenTx(call: Etherscan, contractaddress: string, params: Optional<TokenTxRequest>) {
   return call<TransactionResponse[]>({ module: 'account', action: 'tokentx', contractaddress, ...params });
 }
 
-function tokenNftTx(call: Etherscan, contractaddress: string, params: Optional<TokenNftTx>) {
+function tokenNftTx(call: Etherscan, contractaddress: string, params: Optional<TokenNftTxRequest>) {
   return call<TransactionResponse[]>({ module: 'account', action: 'tokennfttx', contractaddress, ...params });
 }
 
-function token1155Tx(call: Etherscan, contractaddress: string, params: Optional<Token1155Tx>) {
+function token1155Tx(call: Etherscan, contractaddress: string, params: Optional<Token1155TxRequest>) {
   return call<TransactionResponse[]>({ module: 'account', action: 'token1155tx', contractaddress, ...params });
 }
 
-function getMinedBlocks(call: Etherscan, address: string, params: Optional<MinedBlock>) {
+function getMinedBlocks(call: Etherscan, address: string, params: Optional<MinedBlockRequest>) {
   return call<MinedBlockResponse[]>({ module: 'account', action: 'getminedblocks', address, ...params });
 }
 
@@ -137,7 +136,7 @@ async function getSourceCode(call: Etherscan, address: string) {
   const data = await call<any[]>({ module: 'contract', action: 'getsourcecode', address });
   return data.map(res => {
     res.ABI = JSON.parse(res.ABI);
-    return res as ContractSourceCode
+    return res as ContractSourceCodeResponse;
   });
 }
 
@@ -229,7 +228,7 @@ function dailyUncleBlkCount(call: Etherscan, startdate: Date, enddate: Date, par
 // LOGS //
 //////////
 
-function getLogs(call: Etherscan, address: string, params: Optional<Logs>) {
+function getLogs(call: Etherscan, address: string, params: Optional<LogsRequest>) {
   return call<LogsResponse[]>({ module: 'logs', action: 'getLogs', address, ...params });
 }
 

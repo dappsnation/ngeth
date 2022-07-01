@@ -1,35 +1,27 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { ABIDescription, EventDescription, FunctionDescription } from '@type/solc';
-import { getAllCalls, getAllEvents, getAllFilters, getAllMethods, getAllQueries, getAllStructs, isRead, isEvent, isWrite } from './utils';
+import { FunctionDescription } from '@type/solc';
+import { getContractEvents } from './events';
+import { toContractJsDoc } from './natspec';
+import { Config, GenerateConfig, getAllCalls, getAllMethods, getAllStructs, isRead, isWrite } from './utils';
 
-export const getContractImport = (contractName: string, abi: ABIDescription[]) => {
+export const getContractImport = (contractName: string, { abi, natspec }: GenerateConfig) => {
+  const config: Config = { exports: 'interface', natspec };
   const calls: FunctionDescription[] = abi.filter(isRead);
   const methods: FunctionDescription[] = abi.filter(isWrite);
-  const events: EventDescription[] = abi.filter(isEvent);
   const structs = getAllStructs(abi);
-  
+  const doc = toContractJsDoc(natspec);
 
   return `
-  import { NgContract, FilterParam, TypedFilter } from '@ngeth/ethers';
+  import { EthersContract, FilterParam, TypedFilter } from '@ngeth/ethers-core';
   import type { Contract, BigNumber, Overrides, CallOverrides, PayableOverrides, Signer, ContractTransaction, BytesLike, BigNumberish } from "ethers";
   
-  export interface ${contractName}Events {
-    events: ${getAllEvents(events)},
-    filters: ${getAllFilters(events)},
-    queries: ${getAllQueries(events)}
-  }
+  ${getContractEvents(contractName, abi, config)}
   
   ${structs}
   
-  export interface ${contractName} extends NgContract<${contractName}Events> {
-    ${getAllCalls(calls, 'interface')}
-    ${getAllMethods(methods, 'interface')}
-  }
-
-  export function is${contractName}(contract: Contract): contract is ${contractName} {
-    return ${contractName}Abi
-      .filter(def => def.type === 'function')
-      .every(def => def.name && def.name in contract.functions);
+  ${doc}
+  export interface ${contractName} extends EthersContract<${contractName}Events> {
+    ${getAllCalls(calls, config)}
+    ${getAllMethods(methods, config)}
   }
 
   export const ${contractName}Abi = ${JSON.stringify(abi)};`;

@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { ContractsManager } from "@ngeth/ethers";
+import { ContractsManager } from "@ngeth/ethers-angular";
 import { Market } from "./contract";
 
 @Injectable({ providedIn: "root" })

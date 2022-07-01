@@ -1,6 +1,6 @@
 import { Inject, Injectable, InjectionToken, Optional } from "@angular/core";
 import { Router } from "@angular/router";
-import { HasWalletGuard } from "@ngeth/ethers";
+import { HasWalletGuard } from "@ngeth/ethers-angular";
 
 const downloadUrls = {
   chrome: 'https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn',

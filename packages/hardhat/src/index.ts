@@ -1,14 +1,15 @@
 import './lib/config';
-// import '@nomiclabs/hardhat-ethers';
 import { extendConfig, task } from 'hardhat/config';
-import { dirname, join, relative, resolve } from 'path';
+import { join, relative } from 'path';
 import { generate } from './lib/generate';
 import { getDefaultConfig } from './lib/config';
-import { deploy } from './lib/deploy';
 import { existsSync, mkdirSync, promises as fs } from 'fs';
-import { getContractImport } from '@ngeth/tools';
-import { execute } from '@ngeth/devkit';
+import { execute } from './lib/execute';
 import { serveApp } from './lib/utils';
+
+
+export * from './lib/deploy';
+export { formatJson, formatTs } from './lib/utils';
 
 extendConfig((config) => {
   config.ngeth = getDefaultConfig(config)
@@ -25,73 +26,36 @@ task('ngeth:test', 'Run test with jest')
     process.exitCode = failures.results.success ? 0 : 1;
   });
 
-task(
-  'ngeth:build',
-  'Build the contracts and generate outputs',
-  async (taskArguments: any, hre) => {
+task('ngeth:build', 'Build the contracts and generate outputs')
+  .setAction(async (taskArguments: any, hre) => {
     await hre.run('compile', taskArguments);
     // Generate contracts & index.ts
     const root = hre.config.paths.root;
-    const outDir = join(root, hre.config.ngeth.outDir);
-    if (!existsSync(outDir)) mkdirSync(outDir, { recursive: true });
+    const outputPath = join(root, hre.config.ngeth.outputPath);
+    if (!existsSync(outputPath)) mkdirSync(outputPath, { recursive: true });
+    await generate(hre);
+  });
 
-    const paths = await hre.artifacts.getAllFullyQualifiedNames();
-    const artifacts = await Promise.all(paths.map(path => hre.artifacts.readArtifact(path)));
-    await generate(hre, artifacts);
-  }
-);
-
-task(
-  'ngeth:serve',
-  '',
-  async (taskArguments: any, hre) => {
+task('ngeth:serve')
+  .setAction(async (taskArguments: any, hre) => {
+    hre.hardhatArguments.network = 'localhost';
     await hre.run('ngeth:build', taskArguments);
     return hre.run('node', taskArguments);
-  }
-);
+  });
 
-task(
-  'node:server-ready',
-  'Run once the node is ready',
-  async (taskArguments: any, hre, runSuper: any) => {
+task('node:server-ready', 'Run once the node is ready')
+  .setAction(async (taskArguments: any, hre, runSuper: any) => {
     await runSuper();
 
-    const paths = await hre.artifacts.getAllFullyQualifiedNames();
-    const artifacts = await Promise.all(paths.map(path => hre.artifacts.readArtifact(path)));
     const root = hre.config.paths.root;
-    const outDir = join(root, hre.config.ngeth.outDir);
-    if (!existsSync(outDir)) mkdirSync(outDir, { recursive: true });
+    const outputPath = join(root, hre.config.ngeth.outputPath);
+    if (!existsSync(outputPath)) mkdirSync(outputPath, { recursive: true });
 
-
-    await deploy(hre, artifacts);
+   
     // Generate contracts & index.ts
-    generate(hre, artifacts);
+    generate(hre);
 
-
-    // Generate imports
-    if (hre.config.ngeth.withImports) {
-      // Generate imports
-      // TODO: check if bytecode === "0x" -> interface / abstract
-      const src = resolve(hre.config.paths.sources);
-      const importArtifacts = artifacts.filter(a => !resolve(a.sourceName).startsWith(src));
-      const importFolder = join(outDir, 'imports');
-      
-      for (const artifact of importArtifacts) {
-        if (!artifact.abi.length) continue; // No public API
-        const contractName = artifact.contractName;
-        const contract = getContractImport(contractName, artifact.abi);
-        const output = join(importFolder, dirname(artifact.sourceName));
-        if (!existsSync(output)) mkdirSync(output, { recursive: true });
-        fs.writeFile(join(output, `${contractName}.ts`), contract);
-      }
-      const exportImports = importArtifacts
-        .filter(artifact => artifact.abi.length)
-        .map(artifact => `export * from "./${dirname(artifact.sourceName)}/${artifact.contractName}";`)
-        .join('\n');
-      fs.writeFile(join(importFolder, 'index.ts'), exportImports);
-    }
-
-    // Run explorer
+    // Explorer
     if (hre.config.ngeth.explorer) {
       const { api, app } = hre.config.ngeth.explorer;
       const artifactsSuffix = relative(root, hre.config.paths.artifacts);
@@ -105,13 +69,32 @@ task(
         EXPLORER_APP_PORT: app.toString(),
         EXPLORER_API_PORT: api.toString()
       };
-      execute({logger: console}, 'node explorer/api/main.js', { cwd, env });
+      execute('node explorer/api/main.js', { cwd, env });
       
       // APP
       const appPath = join(cwd, 'explorer/app');
       const appConfig = JSON.stringify({ api: `http://localhost:${api}` });
       await fs.writeFile(join(appPath, 'assets/config.json'), appConfig);
       serveApp(appPath, app);
+
+      console.table([
+        { 'Explorer API': `http://localhost:${api}`, 'Explorer APP:': `http://localhost:${app}` }, 
+      ]);
     }
-  }
-);
+
+    // Runs
+    if (hre.config.ngeth.runs) {
+      const runs = Array.isArray(hre.config.ngeth.runs)
+        ? { scripts: hre.config.ngeth.runs, parallel: false }
+        : hre.config.ngeth.runs;
+      
+      for (const path of runs.scripts) {
+        const script = join(hre.config.paths.root, path);
+        if (runs.parallel) {
+          hre.run('run', { script, noCompile: true });
+        } else {
+          await hre.run('run', { script, noCompile: true });
+        }
+      }
+    }
+  });

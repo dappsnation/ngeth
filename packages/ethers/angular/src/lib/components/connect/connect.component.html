@@ -1,0 +1,26 @@
+<ng-container *ngIf="wallets.length; else noProvider">
+  <ng-container *ngIf="account$ | async as account; else connect">
+    {{ account }}
+  </ng-container>
+</ng-container>
+
+<ng-template #noProvider>
+  <a href="https://metamask.io" target="_blank">Create an account</a>
+</ng-template>
+<ng-template #connect>
+  <button (click)="enable()">Select Wallet</button>
+</ng-template>
+
+<dialog #selectDialog>
+  <form method="dialog">
+    <header>
+      <h2>Providers</h2>
+      <button>close</button>
+    </header>
+    <ul>
+      <li *ngFor="let wallet of wallets">
+        <button (click)="select(wallet)">{{ wallet.label }}</button>
+      </li>
+    </ul>
+  </form>
+</dialog>

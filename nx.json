@@ -3,9 +3,6 @@
   "affected": {
     "defaultBase": "main"
   },
-  "cli": {
-    "defaultCollection": "@nrwl/angular"
-  },
   "implicitDependencies": {
     "package.json": {
       "dependencies": "*",
@@ -15,7 +12,7 @@
   },
   "tasksRunnerOptions": {
     "default": {
-      "runner": "@nrwl/workspace/tasks-runners/default",
+      "runner": "nx/tasks-runners/default",
       "options": {
         "cacheableOperations": [
           "build",
@@ -25,14 +22,6 @@
         ]
       }
     }
-  },
-  "targetDependencies": {
-    "build": [
-      {
-        "target": "build",
-        "projects": "dependencies"
-      }
-    ]
   },
   "workspaceLayout": {
     "appsDir": "e2e",
@@ -55,5 +44,13 @@
       "skipTests": true
     }
   },
-  "defaultProject": "playground"
+  "defaultProject": "playground",
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "targetDefaults": {
+    "build": {
+      "dependsOn": [
+        "^build"
+      ]
+    }
+  }
 }

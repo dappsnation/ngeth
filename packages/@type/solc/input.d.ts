@@ -101,7 +101,7 @@ export interface CompilerSettings {
 
 export interface CompilerOptimizer {
   /** disabled by default */
-  enable: boolean
+  enabled: boolean
   /**
    * Optimize for how many times you intend to run the code.
    * Lower values will optimize more for initial deployment cost, higher values will optimize more for high-frequency usage.
@@ -194,7 +194,9 @@ export interface CompilerLibraries {
 // OUTPUT SELECTION //
 //////////////////////
 export type OutputType =
+  | '*'
   | 'abi'
+  | 'ast'
   | 'devdoc'
   | 'userdoc'
   | 'metadata'
@@ -203,6 +205,7 @@ export type OutputType =
   | 'storageLayout'
   | 'evm.assembly'
   | 'evm.legacyAssembly'
+  | 'evm.bytecode'
   | 'evm.bytecode.functionDebugData'
   | 'evm.bytecode.object'
   | 'evm.bytecode.opcodes'

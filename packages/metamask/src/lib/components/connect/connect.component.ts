@@ -1,6 +1,5 @@
 import { Component, ChangeDetectionStrategy, Output, EventEmitter } from '@angular/core';
-import { ChainManager } from '@ngeth/ethers';
-import { MetaMask } from '../../service';
+import { ChainManager, NgERC1193 } from '@ngeth/ethers-angular';
 
 @Component({
   selector: 'metamask-connect',
@@ -12,16 +11,16 @@ export class ConnectComponent {
 
   @Output() connect = new EventEmitter();
 
-  account$ = this.metamask.account$;
+  account$ = this.erc1193.account$;
   chain$ = this.chain.chain$;
 
   constructor(
     private chain: ChainManager,
-    private metamask: MetaMask,
+    private erc1193: NgERC1193,
   ) {}
 
   async enable() {
-    const accounts = await this.metamask.enable();
+    const accounts = await this.erc1193.enable();
     if (accounts.length) this.connect.emit(accounts[0]);
   }
 }

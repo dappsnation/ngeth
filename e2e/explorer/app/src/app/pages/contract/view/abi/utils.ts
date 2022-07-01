@@ -1,19 +1,18 @@
-import { FormArray, FormControl } from '@angular/forms';
+import { UntypedFormArray, UntypedFormControl } from '@angular/forms';
 import { ABIDescription, ABIParameter, ABITypeParameter, FunctionDescription } from '@type/solc';
 import { isWrite, isRead } from '@ngeth/tools';
-import { EthValidators } from '@ngeth/ethers';
 
 export interface AbiFormFunction {
   name?: string;
   inputs: AbiForm[];
   outputs?: any[];
-  form: FormArray;
+  form: UntypedFormArray;
   result?: any;
 }
 
 type AbiForm = {
   name: string;
-  control: FormControl;
+  control: UntypedFormControl;
   type: 'boolean' | 'number' | 'text' | 'address' | 'object';
   paramType: ABITypeParameter;
   isArray: boolean;
@@ -42,17 +41,17 @@ const getAbiControl = (param: ABIParameter): AbiForm => {
   // TODO: Find out how to manage that
   const type = param.type;
   if (type.endsWith(']')) {
-    return abiForm('object', new FormControl());
+    return abiForm('object', new UntypedFormControl());
     // const [type] = splitArray(param.type);
     // return abiForm(type, getFormArray(param), true);
   }
-  if (type === 'tuple') return abiForm('object', new FormControl());
-  if (type === 'string') return abiForm('text', new FormControl());
-  if (type === 'address') return abiForm('address', new FormControl());
-  if (type === 'bool') return abiForm('boolean', new FormControl());
-  if (type.startsWith('bytes')) return abiForm('text', new FormControl());
-  if (type.includes('int')) return abiForm('number', new FormControl());
-  return abiForm('text', new FormControl());
+  if (type === 'tuple') return abiForm('object', new UntypedFormControl());
+  if (type === 'string') return abiForm('text', new UntypedFormControl());
+  if (type === 'address') return abiForm('address', new UntypedFormControl());
+  if (type === 'bool') return abiForm('boolean', new UntypedFormControl());
+  if (type.startsWith('bytes')) return abiForm('text', new UntypedFormControl());
+  if (type.includes('int')) return abiForm('number', new UntypedFormControl());
+  return abiForm('text', new UntypedFormControl());
 };
 
 ////////////////
@@ -80,17 +79,17 @@ const getFormArray = (param: ABIParameter) => {
   const control = getAbiControl({ ...param, type });
   if (!isNaN(amount)) {
     const controls = new Array(amount).fill(control);
-    return new FormArray(controls);
+    return new UntypedFormArray(controls);
   } else {
-    return new FormArray([]);
+    return new UntypedFormArray([]);
   }
 };
 
 
 
 function createAbiForm(description: FunctionDescription): AbiFormFunction {
-  if (!description.inputs?.length) return { name: description.name, inputs: [], form: new FormArray([]) };
+  if (!description.inputs?.length) return { name: description.name, inputs: [], form: new UntypedFormArray([]) };
   const inputs = description.inputs.map(getAbiControl);
   const controls = inputs.map(input => input.control);
-  return  { name: description.name, inputs, form: new FormArray(controls) };
+  return  { name: description.name, inputs, form: new UntypedFormArray(controls) };
 }

@@ -1,11 +1,13 @@
 import { Block, TransactionResponse, TransactionReceipt, Log } from '@ethersproject/abstract-provider';
-import { EthAccount, ContractArtifact, ContractAccount, EthStore, isContract } from '@explorer';
+import { EthAccount, ContractArtifact, ContractAccount, EthStore, isContract, ERC20Account, ERC721Account, ERC1155Account } from '@explorer';
 import { AddressZero } from '@ethersproject/constants';
 import { BigNumber } from '@ethersproject/bignumber';
 import { defaultAbiCoder } from '@ethersproject/abi';
 import { id } from '@ethersproject/hash';
 import { ABIDescription } from '@type/solc';
 import { provider } from './provider';
+import { BuildInfo } from 'hardhat/types'
+import { Contract } from 'ethers';
 
 function bignumberReviver(key: string, value: any) {
   if (typeof value === 'object' && value['type'] === 'BigNumber') return BigNumber.from(value);
@@ -24,7 +26,9 @@ export const store: EthStore = {
   logs: {},
   accounts: [],
   contracts: [],
-  artifacts: {}
+  artifacts: {},
+  buildInfos: [],
+  builds: {}
 }
 
 
@@ -33,7 +37,9 @@ export const store: EthStore = {
 ///////////
 
 export async function setBlock(block: Block) {
+  if (block.number in store.blocks) return;
   store.blocks[block.number] = block;
+
   const getReceipts = block.transactions.map(hash => provider.getTransactionReceipt(hash));
   const getResponses = block.transactions.map(hash => provider.getTransaction(hash));
   const [txs, receipts] = await Promise.all([
@@ -64,6 +70,7 @@ async function setBlockTransactions(txs: TransactionResponse[], receipts: Transa
   })
   await Promise.all(addReceipts);
 }
+
 
 //////////
 // LOGS //
@@ -111,6 +118,41 @@ export async function setBalance({ address, isContract }: CreateEthAccount) {
 export async function addArtifactToAddress(address: string, artifact: ContractArtifact) {
   if (!store.addresses[address]) await createEthAccount({ address, isContract: true });
   (store.addresses[address] as ContractAccount).artifact = artifactKey(artifact);
+  if (artifact.standard === "ERC20") {
+    (store.addresses[address] as ERC20Account).metadata = await getERC20Metadatas(address, artifact);
+  } else if (artifact.standard === "ERC721") {
+    (store.addresses[address] as ERC721Account).metadata = await getERC721Metadatas(address, artifact);
+  } else if (artifact.standard === "ERC1155") {
+    (store.addresses[address] as ERC1155Account).metadata = await getERC1155Metadatas(address, artifact);
+  }
+}
+
+async function getERC20Metadatas(address: string, artifact: ContractArtifact) {
+  const contract = new Contract(address, artifact.abi, provider);
+  const [name, symbol, decimals, totalSupply] = await Promise.all([
+    (contract.callStatic.name() as Promise<string>),
+    (contract.callStatic.symbol() as Promise<string>),
+    (contract.callStatic.decimals() as Promise<number>),
+    (contract.callStatic.totalSupply() as Promise<BigNumber>),    
+  ])
+  return { name, symbol, decimals, totalSupply };
+}
+async function getERC721Metadatas(address: string, artifact: ContractArtifact) {
+  const contract = new Contract(address, artifact.abi, provider);
+  const [name, decimals, symbol] = await Promise.all([
+    'name' in contract.callStatic ? contract.callStatic.name() as Promise<string> : Promise.resolve(''),
+    'decimals' in contract.callStatic ? contract.callStatic.decimals() as Promise<number> : Promise.resolve(0),
+    'symbol' in contract.callStatic ? contract.callStatic.symbol() as Promise<string> : Promise.resolve(''),
+  ])
+  return { name, decimals, symbol }
+}
+async function getERC1155Metadatas(address: string, artifact: ContractArtifact) {
+  const contract = new Contract(address, artifact.abi, provider);
+  const [name, symbol] = await Promise.all([
+    'name' in contract.callStatic ? contract.callStatic.name() as Promise<string> : Promise.resolve(''),
+    'symbol' in contract.callStatic ? contract.callStatic.symbol() as Promise<string> : Promise.resolve(''),
+  ])
+  return { name, symbol }
 }
 
 /** Store the transaction hash to the addresses involved in the transaction */
@@ -153,13 +195,33 @@ function setState(block: Block, receipts: TransactionReceipt[]) {
 }
 
 ///////////////
+//// BUILD ////
+///////////////
+
+export function setBuildInfo(info: BuildInfo) {
+  store.buildInfos.push(info);
+  for (const sourceName in info.output.contracts) {
+    const sourceCode = info.input.sources[sourceName].content;
+    for (const contractName in info.output.contracts[sourceName]) {
+      store.builds[artifactKey( {contractName, sourceName })] = {
+        sourceCode: sourceCode,
+        contractName: contractName,
+        abi: info.output.contracts[sourceName][contractName].abi as ABIDescription[],
+        compilerVersion: info.solcVersion,
+        optimizationUsed: info.input.settings.optimizer.enabled.toString(),
+        runs: info.input.settings.optimizer.runs.toString()
+      }
+    }
+  }
+}
+
+///////////////
 // ARTIFACTS //
 ///////////////
 
-function artifactKey({ contractName, sourceName }: ContractArtifact) {
+function artifactKey({ contractName, sourceName }: {contractName: string, sourceName: string}) {
   return [sourceName, contractName].join('_');
 }
-
 
 /** Register the artifact and return the key */
 export function setArtifact(artifact: ContractArtifact) {
@@ -173,13 +235,36 @@ export function setArtifact(artifact: ContractArtifact) {
 
 // If some variables are immutable they would be in the deployed bytecode but not the artifact...
 export function getArtifact(code: string): ContractArtifact {
-  return Object.values(store.artifacts).find(artifact => artifact.deployedBytecode === code);
+  const found = Object.values(store.artifacts).find(artifact => artifact.deployedBytecode === code);
+  if (found) return found;
+  // Check immutable refs
+  for (const info of Object.values(store.buildInfos)) {
+    for (const sourceName in info.output.contracts) {
+      for (const contractName in info.output.contracts[sourceName]) {
+        const output = info.output.contracts[sourceName][contractName];
+        const refs = output.evm.deployedBytecode.immutableReferences;
+        if (!refs || !Object.values(refs).length) continue;
+        let replaced = code;
+        for (const ref of Object.values(refs)) {
+          for (const { start, length } of ref) {
+            // length is in bytes -> 2 chars
+            const from = (start + 1) * 2;
+            const size = length * 2;
+            replaced = `${code.substring(0, from)}${''.padEnd(size, '0')}${code.substring(from + size)}`;
+          }
+        }
+        if (`0x${output.evm.deployedBytecode.object}` === replaced) {
+          return store.artifacts[artifactKey({ sourceName, contractName })];
+        }
+      }
+    }
+  }
+  // TODO: check proxy
 }
 
 async function linkArtifactToContract(address: string) {
   const code = await provider.getCode(address);
   const artifact = getArtifact(code);
-  // TODO: if no artifact, try to recompile 
   if (!artifact) return;
   await addArtifactToAddress(address, artifact);
 }

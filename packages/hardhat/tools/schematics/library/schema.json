@@ -1,8 +1,8 @@
 {
   "$schema": "http://json-schema.org/schema",
   "cli": "nx",
-  "$id": "Plugin",
-  "title": "",
+  "$id": "hardhat-library",
+  "title": "Hardhat Library",
   "type": "object",
   "properties": {
     "name": {
@@ -13,6 +13,11 @@
         "index": 0
       },
       "x-prompt": "What name would you like to use?"
+    },
+    "outputType": {
+      "type": "string",
+      "description": "Type of output. Either 'typescript' or 'angular' for now. Default: 'typescript'",
+      "default": "typescript"
     },
     "tags": {
       "type": "string",

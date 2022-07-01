@@ -1,15 +1,6 @@
-import {
-  Tree,
-  convertNxGenerator,
-  addDependenciesToPackageJson,
-} from '@nrwl/devkit';
+import { Tree, convertNxGenerator } from '@nrwl/devkit';
 import { addFiles, BuilderConfiguration, getProjectOptions, ProjectOptions, setProjectBuilders, updateTsConfig } from '@ngeth/devkit';
-
-interface BaseOptions {
-  project?: string;
-}
-
-
+import { HardhatOptions, installHardhatDeps } from '../utils';
 
 function hardhatBuilder(tasks: string[], options: ProjectOptions) {
   const builders: Record<string, BuilderConfiguration> = {};
@@ -29,33 +20,19 @@ function hardhatBuilder(tasks: string[], options: ProjectOptions) {
   return builders;
 }
 
-export async function nxGenerator(tree: Tree, baseOptions: BaseOptions) {
+export async function nxGenerator(tree: Tree, baseOptions: HardhatOptions) {
   const options = getProjectOptions(tree, baseOptions.project);
   await addFiles(tree, options, __dirname);
   setProjectBuilders(tree, options, hardhatBuilder(['build', 'serve', 'test'], options));
   updateTsConfig(tree, options, (config) => {
+    if (!config.compilerOptions) config.compilerOptions = {};
+    config.compilerOptions.resolveJsonModule = true;
     // update references only there is one already ??? (nx project)
     if (!config.references) return config;
     config.references.push({ path: './tsconfig.hardhat.json' });
     return config;
   });
-  const installTask = addDependenciesToPackageJson(
-    tree,
-    {
-      "ethers": "^5.6.0",
-    },
-    {
-      "@ngeth/ethers": "0.0.19",
-      "@ngeth/hardhat": "0.0.19",
-      "@nomiclabs/hardhat-ethers": "^2.0.5",
-      "hardhat": "^2.9.0",
-      "prettier": "^2.6.0",
-      "ts-node": "^10.7.0",
-      "socket.io": "^4.5.0"
-    }
-  );
-
-  return () => installTask();
+  return installHardhatDeps(tree, baseOptions);
 }
 
 export const ngSchematic = convertNxGenerator(nxGenerator);

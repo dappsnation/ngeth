@@ -1,5 +1,5 @@
 {
-  "root": "packages/tools",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/tools/src",
   "targets": {
     "link": {
@@ -17,36 +17,26 @@
     },
     "build": {
       "executor": "@nrwl/js:tsc",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/packages/tools",
         "main": "packages/tools/src/index.ts",
         "tsConfig": "packages/tools/tsconfig.lib.json",
-        "assets": [
-          "packages/tools/*.md"
-        ]
+        "assets": ["packages/tools/*.md"]
       }
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",
-      "outputs": [
-        "{options.outputFile}"
-      ],
+      "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": [
-          "packages/tools/**/*.ts"
-        ]
+        "lintFilePatterns": ["packages/tools/**/*.ts"]
       }
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": [
-        "coverage/packages/tools"
-      ],
+      "outputs": ["coverage/packages/tools"],
       "options": {
-        "jestConfig": "packages/tools/jest.config.js",
+        "jestConfig": "packages/tools/jest.config.ts",
         "passWithNoTests": true
       }
     }

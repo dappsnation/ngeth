@@ -1,12 +1,6 @@
-import { getProjectOptions } from '@ngeth/devkit';
-import {
-  addProjectConfiguration,
-  addDependenciesToPackageJson,
-  formatFiles,
-  Tree,
-} from '@nrwl/devkit';
-import { BaseOptions, addFiles } from '@ngeth/devkit';
-
+import { getProjectOptions, addFiles } from '@ngeth/devkit';
+import { Tree, addProjectConfiguration, formatFiles } from '@nrwl/devkit';
+import { HardhatOptions, installHardhatDeps } from '../utils';
 
 function hardhatTarget(root: string, task: 'build' | 'serve' | 'test') {
   const tsconfig = task === 'test'
@@ -21,7 +15,8 @@ function hardhatTarget(root: string, task: 'build' | 'serve' | 'test') {
   }
 }
 
-export default async function (tree: Tree, baseOptions: BaseOptions) {
+
+export default async function (tree: Tree, baseOptions: HardhatOptions) {
   const options = getProjectOptions(tree, baseOptions.project);
   addProjectConfiguration(tree, options.project, {
     root: options.projectRoot,
@@ -36,16 +31,5 @@ export default async function (tree: Tree, baseOptions: BaseOptions) {
   });
   addFiles(tree, options, __dirname);
   await formatFiles(tree);
-  const installTask = addDependenciesToPackageJson(tree, {
-    "ethers": "^5.6.0"
-  },     {
-    "@ngeth/ethers": "0.0.19",
-    "@ngeth/hardhat": "0.0.19",
-    "@nomiclabs/hardhat-ethers": "^2.0.5",
-    "hardhat": "^2.9.0",
-    "prettier": "^2.6.0",
-    "ts-node": "^10.7.0",
-    "socket.io": "^4.5.0"
-  });
-  return () => installTask();
+  return installHardhatDeps(tree, baseOptions);
 }
