@@ -226,9 +226,9 @@ export interface TokenSupplyHistoryRequest extends BaseParams<'stats', 'tokensup
 
 export interface BaseBlock<action extends string> extends BaseParams<'stats', action> {
   /** the starting date in yyyy-MM-dd format, eg. 2019-02-01 */
-  startdate: Date; // TODO : Verify if Date is the correct type
+  startDate: Date; 
   /** the ending date in yyyy-MM-dd format, eg. 2019-02-28 */
-  enddate: Date; // TODO : Verify if Date is the correct type
+  endDate: Date; 
   /** the sorting preference, use asc to sort by ascending and desc to sort by descending */
   sort?: Sort
 }
