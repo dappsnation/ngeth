@@ -1,24 +1,30 @@
-<ul class="list">
-  <li class="item" *ngFor="let event of events$ | async">
-    <header>
-      <h4>{{ event.name }}</h4>
-      <p>Block: <a [routerLink]="['/block', event.blockNumber]">{{ event.blockNumber }}</a></p>
-    </header>
-    <ol>
-      <li *ngFor="let result of event.results">
-        <strong>{{ result.name }}</strong>: 
-        <ng-container [ngSwitch]="result.type">
-          <ng-container *ngSwitchCase="'address'">
-            <a [routerLink]="['/address', result.value]">{{ result.value }}</a>
+<ng-container *ngIf="events$ | async as events">
+  <ul class="list" *ngIf="events.length else empty">
+    <li class="item" *ngFor="let event of events$ | async">
+      <header>
+        <h4>{{ event.name }}</h4>
+        <p>Block: <a [routerLink]="['/block', event.blockNumber]">{{ event.blockNumber }}</a></p>
+      </header>
+      <ol>
+        <li *ngFor="let result of event.results">
+          <strong>{{ result.name }}</strong>: 
+          <ng-container [ngSwitch]="result.type">
+            <ng-container *ngSwitchCase="'address'">
+              <a [routerLink]="['/address', result.value]">{{ result.value }}</a>
+            </ng-container>
+            <ng-container *ngSwitchCase="'string'">
+              <span>{{ result.value }}</span>
+            </ng-container>
+            <ng-container *ngSwitchDefault>
+              <span>{{ result.value | bignumber }}</span>
+            </ng-container>
           </ng-container>
-          <ng-container *ngSwitchCase="'string'">
-            <span>{{ result.value }}</span>
-          </ng-container>
-          <ng-container *ngSwitchDefault>
-            <span>{{ result.value | bignumber }}</span>
-          </ng-container>
-        </ng-container>
-      </li>
-    </ol>
-  </li>
-</ul>
+        </li>
+      </ol>
+    </li>
+  </ul>
+</ng-container>
+
+<ng-template #empty>
+  <p class="empty">There are no event for this contract yet</p>
+</ng-template>

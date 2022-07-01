@@ -2,16 +2,17 @@ import { VerifySourceCode, GetParams, GetABIRequest, GetSourceCodeRequest, Contr
 import solc from 'solc';
 import { CompilationInput, CompilationResult } from '@type/solc';
 import { provider } from "../provider";
-import { addArtifactToAddress, getArtifact, setArtifact, store } from "../store";
+import { addArtifactToAddress, compareWithEvmOutput, getArtifact, setArtifact, store } from "../store";
 import { isContract } from "@explorer";
 import { emit } from "../socket";
+
+
 export async function verifySourceCode(params: GetParams<VerifySourceCode>) {
   const code = await provider.getCode(params.contractaddress);
   const { contractname, sourceCode, optimizationUsed, runs, evmversion, constructorArguements } = params;
 
   let artifact = getArtifact(code);
   if (artifact) return artifact;
-
 
   const input: CompilationInput = {
     language: 'Solidity',
@@ -58,10 +59,10 @@ export async function verifySourceCode(params: GetParams<VerifySourceCode>) {
     const contract = result.contracts[sourceName][contractname];
     const deployedBytecode = contract.evm.deployedBytecode.object;
     // TODO: check immutableReference (extract code from getArtifact(code) method)
-    if (deployedBytecode !== code) {
+    if (deployedBytecode !== code || compareWithEvmOutput(code, contract.evm as any)) {
       throw new Error('Bytecode is not the same');
     }
-    artifact = { deployedBytecode, contractName: contractname, sourceName: '', abi: contract.abi };
+    artifact = { deployedBytecode, contractName: contractname, sourceName, abi: contract.abi };
     setArtifact(artifact);
     await addArtifactToAddress(params.contractaddress, artifact);
     emit();

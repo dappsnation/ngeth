@@ -271,8 +271,8 @@ export interface DevMethodDoc {
 // EVM OUTPUT //
 ////////////////
 export interface EvmOutputs {
-  assembly: string
-  legacyAssembly: Record<string, unknown>
+  assembly?: string
+  legacyAssembly?: Record<string, unknown>
   /** Bytecode and related details. */
   bytecode: BytecodeObject
   deployedBytecode: BytecodeObject
@@ -281,7 +281,7 @@ export interface EvmOutputs {
     [functionIdentifier: string]: string
   }
   /** Function gas estimates */
-  gasEstimates: GasEstimates
+  gasEstimates?: GasEstimates
 }
 
 export interface BytecodeObject {
@@ -306,6 +306,10 @@ export interface BytecodeObject {
       /** Byte offsets into the bytecode. */
       [library: string]: { start: number; length: number }[]
     }
+  }
+  immutableReferences?: {
+    /** Byte offsets into the bytecode. */
+    [nodeId: string]: { start: number; length: number }[]
   }
 }
 
