@@ -1,6 +1,4 @@
-import { NgZone } from "@angular/core";
-import { FilterParam, TypedFilter } from "@ngeth/ethers-core";
-import { NgContract } from "@ngeth/ethers-angular";
+import { EthersContract, FilterParam, TypedFilter } from "@ngeth/ethers-core";
 import type {
   BigNumber,
   Overrides,
@@ -37,9 +35,7 @@ export interface BaseERC20Events {
   };
 }
 
-/**
- */
-export class BaseERC20 extends NgContract<BaseERC20Events> {
+export class BaseERC20 extends EthersContract<BaseERC20Events> {
   // Read
   /**
    * See {IERC20-allowance}.
@@ -101,7 +97,7 @@ export class BaseERC20 extends NgContract<BaseERC20Events> {
     overrides?: Overrides
   ) => Promise<ContractTransaction>;
 
-  constructor(address: string, signer?: Signer | Provider, zone?: NgZone) {
-    super(address, abi, signer, zone);
+  constructor(address: string, signer?: Signer | Provider) {
+    super(address, abi, signer);
   }
 }

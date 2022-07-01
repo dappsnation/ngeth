@@ -1,6 +1,4 @@
-import { NgZone } from "@angular/core";
-import { FilterParam, TypedFilter } from "@ngeth/ethers-core";
-import { NgContract } from "@ngeth/ethers-angular";
+import { EthersContract, FilterParam, TypedFilter } from "@ngeth/ethers-core";
 import type {
   BigNumber,
   Overrides,
@@ -71,9 +69,7 @@ export interface OpenseaERC1155Events {
   };
 }
 
-/**
- */
-export class OpenseaERC1155 extends NgContract<OpenseaERC1155Events> {
+export class OpenseaERC1155 extends EthersContract<OpenseaERC1155Events> {
   // Read
   /**
    * See {IERC1155-balanceOf}. Requirements: - `account` cannot be the zero address.
@@ -154,7 +150,7 @@ export class OpenseaERC1155 extends NgContract<OpenseaERC1155Events> {
    */
   transferOwnership!: (newOwner: string, overrides?: Overrides) => Promise<ContractTransaction>;
 
-  constructor(address: string, signer?: Signer | Provider, zone?: NgZone) {
-    super(address, abi, signer, zone);
+  constructor(address: string, signer?: Signer | Provider) {
+    super(address, abi, signer);
   }
 }

@@ -1,6 +1,6 @@
 import type { Signer } from 'ethers';
 import { Injectable, NgZone } from '@angular/core';
-import { ContractsManager } from '@ngeth/ethers-angular';
+import { ContractsManager, NgContract, ngContract } from '@ngeth/ethers-angular';
 import { erc1155Tokens } from '@ngeth/ethers-core';
 import { Opensea, OpenseaCollectionMetadata } from '@ngeth/opensea';
 import { OpenseaERC1155 } from '../contracts';
@@ -13,7 +13,7 @@ interface OpenseaERC1155Interface {
   collection: OpenseaCollectionMetadata;
 }
 
-export class BaseContract extends OpenseaERC1155 {
+export class BaseContract extends ngContract(OpenseaERC1155) {
   private json?: OpenseaERC1155Interface;
 
   constructor(
@@ -72,7 +72,7 @@ export class BaseContractsManager extends ContractsManager<BaseContract> {
     super();
   }
 
-  protected createInstance(address: string): BaseContract {
+  protected createInstance(address: string) {
     return new BaseContract(address, this.signer, this.zone, this.opensea);
   }
 }

@@ -1,7 +1,7 @@
 import { dirname, join, resolve } from 'path';
 import { existsSync, mkdirSync, promises as fs } from 'fs';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
-import { getEthersContract, getNgContract, getContractManager, getFactory, getContractImport } from '@ngeth/tools';
+import { getEthersContract, getContractManager, getFactory, getContractImport } from '@ngeth/tools';
 import { formatTs, getCompiledOutput } from './utils';
 import { exportAddress } from './deploy';
 
@@ -37,33 +37,28 @@ export async function generate(hre: HardhatRuntimeEnvironment) {
       }
   
       const type = hre.config.ngeth.outputType;
-      const actions = [];
+      // const actions = [];
   
-      if (type === 'angular') {
-        const contract = getNgContract(contractName, artifact);
-        const manager = getContractManager(contractName);
-        actions.push(
-          writeFile('contract.ts', formatTs(contract)),
-          writeFile('manager.ts', formatTs(manager)),
-        );
-      }
-  
-      if (type === 'typescript') {
-        const contract = getEthersContract(contractName, artifact);
-        actions.push(writeFile('contract.ts', formatTs(contract)));
-      }
-    
+      // if (type === 'angular') {
+      //   const manager = getContractManager(contractName);
+      //   actions.push(
+      //     writeFile('manager.ts', formatTs(manager)),
+      //   );
+      // }
+      
+      const contract = getEthersContract(contractName, artifact);
       const factory = getFactory(contractName, artifact);
       const abi = `export default ${JSON.stringify(artifact.abi)}`;
       const bytecode = `export default "${artifact.bytecode}"`;
       const index = contractIndex(contractName, type);
     
       return Promise.all([
+        writeFile('contract.ts', formatTs(contract)),
         writeFile('abi.ts', abi),
         writeFile('bytecode.ts', bytecode),
         writeFile('factory.ts', formatTs(factory)),
         writeFile('index.ts', index),
-        ...actions
+        // ...actions
       ]);
     })
     await Promise.all(write);

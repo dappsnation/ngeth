@@ -1,11 +1,11 @@
 import { Injectable, NgZone } from '@angular/core';
-import { ContractsManager, NgERC1193 } from '@ngeth/ethers-angular';
+import { ContractsManager, ngContract, NgERC1193 } from '@ngeth/ethers-angular';
 import { Signer } from '@ethersproject/abstract-signer';
 import { BaseContract } from './manager';
 import { switchMap, map } from 'rxjs';
 import { ERC1155Factory } from "../contracts";
 
-export class Factory extends ERC1155Factory {
+export class Factory extends ngContract(ERC1155Factory) {
   clones$ = this.erc1193.currentAccount$.pipe(
     switchMap(account => this.clonesFromAccount(account)),
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

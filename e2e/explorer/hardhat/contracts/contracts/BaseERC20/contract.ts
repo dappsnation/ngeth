@@ -35,8 +35,6 @@ export interface BaseERC20Events {
   };
 }
 
-/**
- */
 export class BaseERC20 extends EthersContract<BaseERC20Events> {
   // Read
   /**
