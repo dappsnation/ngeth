@@ -150,7 +150,7 @@ export interface DailyUncleBlockCountReponse {
   uncleBlockRewards_Eth: string;
 }
 
-export interface BlockReward {
+export interface BlockRewardResponse {
   blockNumber: string;
   timeStamp: string;
   blockMiner: string;
@@ -165,7 +165,7 @@ export interface Uncles {
   blockreward: string;
 }
 
-export interface BlockCountdown {
+export interface BlockCountdownResponse {
   CurrentBlock: string;
   CountdownBlock: string;
   RemainingBlock: string;
@@ -187,7 +187,7 @@ export interface LogsResponse {
 
 type Transaction = string[] | TransactionResponse[];
 
-export interface Block<T extends Transaction> {
+export interface BlockResponse<T extends Transaction> {
   difficulty: string;
   baseFeePerGas: string;
   extraData: string;
@@ -211,7 +211,7 @@ export interface Block<T extends Transaction> {
   uncles: string[];
 }
 
-export interface UncleBlock {
+export interface UncleBlockResponse {
   baseFeePerGas: string;
   difficulty: string;
   extraData: string;
@@ -233,7 +233,7 @@ export interface UncleBlock {
   uncles: string[];
 }
 
-export interface TransactionInfos {
+export interface TransactionInfosResponse {
   blockHash: string;
   blockNumber: string;
   from: string;

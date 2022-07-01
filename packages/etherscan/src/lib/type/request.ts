@@ -233,15 +233,15 @@ export interface BaseBlock<action extends string> extends BaseParams<'stats', ac
   sort?: Sort
 }
 
-export type DailyAvgBlocksize = BaseBlock<'dailyavgblocksize'>;
+export type DailyAvgBlocksizeRequest = BaseBlock<'dailyavgblocksize'>;
 
-export type DailyBlockCountAndReward = BaseBlock<'dailyblkcount'>;
+export type DailyBlockCountAndRewardRequest = BaseBlock<'dailyblkcount'>;
 
-export type DailyBlockReward = BaseBlock<'dailyblockrewards'>;
+export type DailyBlockRewardRequest = BaseBlock<'dailyblockrewards'>;
 
-export type DailyBlockTime = BaseBlock<'dailyavgblocktime'>;
+export type DailyBlockTimeRequest = BaseBlock<'dailyavgblocktime'>;
 
-export type DailyUncleBlockCount = BaseBlock<'dailyuncleblkcount'>;
+export type DailyUncleBlockCountRequest = BaseBlock<'dailyuncleblkcount'>;
 
 ///////////
 // PROXY //
@@ -254,7 +254,7 @@ export interface BlockByNumber {
   boolean: boolean;
 }
 
-export interface UncleByBlockNumberAndIndex {
+export interface UncleByBlockNumberAndIndexRequest {
   /** the block number, in hex  */
   tag: string;
   /** the position of the uncle's index in the block, in hex  */
@@ -266,7 +266,7 @@ export type ProxyTag = string;
 /** the position of the uncle's index in the block, in hex */
 export type ProxyIndex = string;
 
-export interface BlockTransactionCountByNumber {
+export interface BlockTransactionCountByNumberRequest {
   /** the block number, in hex */
   tag?: string;
 }
