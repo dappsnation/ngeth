@@ -61,6 +61,44 @@ export default {
 };
 ```
 
+### Run Scripts
+The field `runs` let you run scripts before `ngeth:serve`. This is very handy to create an initial state for your local app development. Let's see how to deploy a contract and save its address in the `outputPath` directory: 
+
+`scripts/deploy.ts`
+```typescript
+import * as hre from 'hardhat';
+import { deploy, saveAddresses } from '@ngeth/hardhat';
+
+async function main() {
+  // Deploy contract from the artifacts by their names & constructor arguments
+  const addresses = await deploy(hre, {
+    BaseERC721: [],
+    BaseERC20: ['SYB', 'Name'],
+  });
+  // Save the addresses of the contracts in the outputPath directory
+  await saveAddresses(hre, addresses);
+}
+
+main()
+  .then(() => process.exit(0))
+  .catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });
+```
+
+The addresses output will be a json file with the addresses by chain. This format is useful to manage addresses for contract from different chains.
+
+`addresses.json`
+```json
+{
+  "hardhat": {
+    "BaseERC721": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+    "BaseERC20": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
+  }
+}
+```
+
 ## Config
 
 #### `outputPath`
