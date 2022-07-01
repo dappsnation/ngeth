@@ -16,7 +16,6 @@
     "ipfs-tools": "packages/ipfs/tools",
     "metamask": "packages/metamask",
     "opensea": "packages/opensea",
-    "openzeppelin": "packages/openzeppelin",
     "playground": "e2e/playground",
     "plugin": "packages/plugin",
     "plugin-e2e": "e2e/plugin-e2e",
