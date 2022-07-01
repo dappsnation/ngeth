@@ -58,6 +58,10 @@ function initEtherscan(apiKey: string, baseUrl: string) {
   }
 }
 
+function formatDate(date: Date) {
+  return date.toISOString().split('T')[0];
+}
+
 //////////////
 // ACCOUNTS //
 //////////////
@@ -174,52 +178,62 @@ function getBlocknoByTime(call: Etherscan, timestamp: number, closest: Closest) 
 
 // TODO : Verify if Date is the correct type
 function dailyAvgBlockSize(call: Etherscan, startdate: Date, enddate: Date, params: Optional<DailyAvgBlocksize>) {
+  const convertStartDate = formatDate(startdate);
+  const convertEndDate = formatDate(enddate);
   return call<DailyAvgBlocksizeResponse[]>({
     module: 'stats',
     action: 'dailyavgblocksize',
-    startdate,
-    enddate,
+    convertStartDate,
+    convertEndDate,
     ...params
   });
 }
 
 // TODO : Verify if Date is the correct type
 function dailyBlkCount(call: Etherscan, startdate: Date, enddate: Date, params: Optional<DailyBlockCountAndReward>) {
+  const convertStartDate = formatDate(startdate);
+  const convertEndDate = formatDate(enddate);
   return call<DailyBlockCountAndRewardResponse[]>({
     module: 'stats',
     action: 'dailyblkcount',
-    startdate,
-    enddate,
+    convertStartDate,
+    convertEndDate,
     ...params
   });
-}
+} 
 
 function dailyBlockRewards(call: Etherscan, startdate: Date, enddate: Date, params: Optional<DailyBlockReward>) {
+  const convertStartDate = formatDate(startdate);
+  const convertEndDate = formatDate(enddate);
   return call<DailyBlockRewardResponse[]>({
     module: 'stats',
     action: 'dailyblockrewards',
-    startdate,
-    enddate,
+    convertStartDate,
+    convertEndDate,
     ...params
-  });
+  });  
 }
 
 function dailyBlockTime(call: Etherscan, startdate: Date, enddate: Date, params: Optional<DailyBlockTime>) {
+  const convertStartDate = formatDate(startdate);
+  const convertEndDate = formatDate(enddate);
   return call<DailyBlockTimeResponse[]>({
     module: 'stats',
     action: 'dailyavgblocktime',
-    startdate,
-    enddate,
+    convertStartDate,
+    convertEndDate,
     ...params
   });
 }
 
 function dailyUncleBlkCount(call: Etherscan, startdate: Date, enddate: Date, params: Optional<DailyUncleBlockCount>) {
+  const convertStartDate = formatDate(startdate);
+  const convertEndDate = formatDate(enddate);
   return call<DailyUncleBlockCountReponse[]>({
     module: 'stats',
     action: 'dailyuncleblkcount',
-    startdate,
-    enddate,
+    convertStartDate,
+    convertEndDate,
     ...params
   });
 }
