@@ -1,5 +1,6 @@
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 import { ABIDescription } from '@type/solc';
+import { BigNumber } from "ethers";
 import { 
   Tag, 
   TxListRequest, 
@@ -61,6 +62,19 @@ function initEtherscan(apiKey: string, baseUrl: string) {
 /** Transform a Date into a YYYY-MM-DD string */
 function formatDate(date: Date) {
   return date.toISOString().split('T')[0];
+}
+/** Transform a bigNumber into a string */
+function formatBigNumber(bigNumber: BigNumber) {
+  return bigNumber.toString();
+}
+/** Transform a boolean into string; "1": true, "0": false*/
+function formatBoolean(bool: boolean) {
+ if(bool === true) return "1"
+ return "0" 
+}
+/** Transform a number into a string */
+function formatNumber(num: number) {
+  return num.toString();
 }
 
 //////////////
