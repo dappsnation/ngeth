@@ -54,6 +54,67 @@ export interface TxListResponse {
   confirmation: string
 }
 
+export interface TokenTxResponse {
+  blockNumber: string,
+  timeStamp: string,
+  hash: string,
+  nonce: string,
+  blockHash: string,
+  from: string,
+  contractAddress: string,
+  to: string,
+  value: string,
+  tokenName: string,
+  tokenSymbol: string,
+  tokenDecimal: string,
+  transactionIndex: string,
+  gas: string,
+  gasPrice: string,
+  gasUsed: string,
+  cumulativeGasUsed: string,
+  confirmations: string,
+}
+export interface TokenNftTxResponse {
+  blockNumber: string,
+  timeStamp: string,
+  hash: string,
+  nonce: string,
+  blockHash: string,
+  from: string,
+  contractAddress: string,
+  to: string,
+  tokenID: string,
+  tokenName: string,
+  tokenSymbol: string,
+  tokenDecimal: string,
+  transactionIndex: string,
+  gas: string,
+  gasPrice: string,
+  gasUsed: string,
+  cumulativeGasUsed: string,
+  confirmations: string,
+}
+export interface Token1155TxResponse {
+  blockNumber: string,
+  timeStamp: string,
+  hash: string,
+  nonce: string,
+  blockHash: string,
+  transactionIndex: string,
+  gas: string,
+  gasPrice: string,
+  gasUsed: string,
+  cumulativeGasUsed: string,
+  contractAddress: string,
+  from: string,
+  to: string,
+  tokenID: string,
+  tokenValue: string,
+  tokenName: string,
+  tokenSymbol: string,
+  confirmations: string
+}
+
 export interface TokenInfoResponse {
   contractAddress: string,
   tokenName: string,
@@ -281,7 +342,7 @@ export interface TxByBlockNumberAndIndexResponse {
     value: string;
 }
 
-export interface TxReceipt {
+export interface TxReceiptResponse {
   blockHash: string;
   blockNumber: string;
   contractAddress: string;

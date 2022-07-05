@@ -1,6 +1,7 @@
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 import { ABIDescription } from '@type/solc';
 import { BigNumber } from "ethers";
+import { string } from "hardhat/internal/core/params/argumentTypes";
 import { 
   Tag, 
   TxListRequest, 
@@ -44,6 +45,10 @@ import {
    StatusResult,
    TxByBlockNumberAndIndexResponse,
    TxReceiptResponse,
+   TxListResponse,
+   TokenTxResponse,
+   TokenNftTxResponse,
+   Token1155TxResponse,
   } from "./type/response";
 
 type Etherscan = ReturnType<typeof initEtherscan>;
@@ -71,7 +76,16 @@ function initEtherscan(apiKey: string, baseUrl: string) {
 function formatDate(date: Date) {
   return date.toISOString().split('T')[0];
 }
-
+/** Transform a YYYY-MM-DD string into a Date */
+function toDate(date: string) {
+  const unixDate = Date.parse(date);
+  return new Date(unixDate);
+}
+/** Transform an Unix timeStamp into a Date */
+function unixToDate(timeStamp: string) {
+  const sec = parseInt(timeStamp);
+  return new Date(sec * 1000);
+}
 /** Transform a string into a bigNumber */
 function toBigNumber(value: string): BigNumber {
   return BigNumber.from(value);
@@ -84,6 +98,7 @@ function toBoolean(bool: '0' | '1'): boolean {
 function toNumber(value: string): number {
   return parseInt(value);
 }
+/** Transform a hexString into a number */
 function hexToNumber(value: string): number {
   return parseInt(value, 16)
 }
@@ -99,19 +114,15 @@ async function balance(call: Etherscan, address: string, tag: Tag) {
 
 async function balanceMulti(call: Etherscan, addresses: string[], tag: Tag) {
   const address = addresses.join(',');
-  const data = await call<BalanceMultiResponse[]>({ module: 'account', action: 'balancemulti', address, tag });
-  const res = [];
-  for (let i =0; i < data.length; i++) {
-    res.push({
-      account: data[i].account,
-      balance: toBigNumber(data[i].balance),
-    })
-  }
-  return res;
+  const res = await call<BalanceMultiResponse[]>({ module: 'account', action: 'balancemulti', address, tag });
+  return res.map(data => ({
+    account: data.account,
+    balance: toBigNumber(data.balance),
+  }))
 }
 
 function txList(call: Etherscan, address: string, params: Optional<TxListRequest> = {}) {
-  return call<TransactionResponse[]>({ module: 'account', action: 'txlist', address, ...params });
+  return call<TxListResponse[]>({ module: 'account', action: 'txlist', address, ...params });
 }
 
 //TODO: Finish the implementation of the 3 `txlistinternal` functions
@@ -139,29 +150,66 @@ function txList(call: Etherscan, address: string, params: Optional<TxListRequest
 // txListInternal(etherscan, 10, 30)
 
 
-function tokenTx(call: Etherscan, contractaddress: string, params: Optional<TokenTxRequest>) {
-  return call<TransactionResponse[]>({ module: 'account', action: 'tokentx', contractaddress, ...params });
+async function tokenTx(call: Etherscan, contractaddress: string, params: Optional<TokenTxRequest>) {
+  const res = await call<TokenTxResponse[]>({ module: 'account', action: 'tokentx', contractaddress, ...params });
+  return res.map(data => ({
+    ...data,
+    blockNumber: toNumber(data.blockNumber),
+    timeStamp: unixToDate(data.timeStamp),
+    nonce: toNumber(data.nonce),
+    value: toNumber(data.value),
+    tokenDecimal: toNumber(data.tokenDecimal),
+    transactionIndex: toNumber(data.transactionIndex),
+    gas: toBigNumber(data.gas),
+    gasPrice: toBigNumber(data.gasPrice),
+    gasUsed: toBigNumber(data.gasUsed),
+    cumulativeGasUsed: toBigNumber(data.cumulativeGasUsed),
+    confirmations: toNumber(data.confirmations),
+  }))
 }
 
-function tokenNftTx(call: Etherscan, contractaddress: string, params: Optional<TokenNftTxRequest>) {
-  return call<TransactionResponse[]>({ module: 'account', action: 'tokennfttx', contractaddress, ...params });
+async function tokenNftTx(call: Etherscan, contractaddress: string, params: Optional<TokenNftTxRequest>) {
+  const res = await call<TokenNftTxResponse[]>({ module: 'account', action: 'tokennfttx', contractaddress, ...params });
+  return res.map(data => ({
+    ...data,
+    blockNumber: toNumber(data.blockNumber),
+    timeStamp: unixToDate(data.timeStamp),
+    nonce: toNumber(data.nonce),
+    tokenID: toNumber(data.tokenID),
+    tokenDecimal: toNumber(data.tokenDecimal),
+    transactionIndex: toNumber(data.transactionIndex),
+    gas: toBigNumber(data.gas),
+    gasPrice: toBigNumber(data.gasPrice),
+    gasUsed: toBigNumber(data.gasUsed),
+    cumulativeGasUsed: toBigNumber(data.cumulativeGasUsed),
+    confirmations: toNumber(data.confirmations),
+  }))
 }
 
-function token1155Tx(call: Etherscan, contractaddress: string, params: Optional<Token1155TxRequest>) {
-  return call<TransactionResponse[]>({ module: 'account', action: 'token1155tx', contractaddress, ...params });
+async function token1155Tx(call: Etherscan, contractaddress: string, params: Optional<Token1155TxRequest>) {
+  const res = await call<Token1155TxResponse[]>({ module: 'account', action: 'token1155tx', contractaddress, ...params });
+  return res.map(data => ({
+    ...data,
+    blockNumber: toNumber(data.blockNumber),
+    timeStamp: unixToDate(data.timeStamp),
+    nonce: toNumber(data.nonce),
+    tokenID: toNumber(data.tokenID),
+    transactionIndex: toNumber(data.transactionIndex),
+    gas: toBigNumber(data.gas),
+    gasPrice: toBigNumber(data.gasPrice),
+    gasUsed: toBigNumber(data.gasUsed),
+    cumulativeGasUsed: toBigNumber(data.cumulativeGasUsed),
+    confirmations: toNumber(data.confirmations),
+  }))
 }
 
 async function getMinedBlocks(call: Etherscan, address: string, params: Optional<MinedBlockRequest>) {
-  const data = await call<MinedBlockResponse[]>({ module: 'account', action: 'getminedblocks', address, ...params });
-  const res = [];
-  for (let i =0; i<data.length; i++) {
-    res.push({
-      blockNumber: toNumber(data[i].blockNumber),
-      timeStamp: data[i].timeStamp,
-      blockReward: toBigNumber(data[i].blockReward)
-    })
-  }
-  return res;
+  const res = await call<MinedBlockResponse[]>({ module: 'account', action: 'getminedblocks', address, ...params });
+  return res.map(data => ({
+    blockNumber: toNumber(data.blockNumber),
+    timeStamp: unixToDate(data.timeStamp),
+    blockReward: toBigNumber(data.blockReward)
+  }))
 }
 
 //block no might be optionnal but no testing available since it requires API pro
@@ -215,11 +263,9 @@ async function getTxReceiptStatus(call: Etherscan, txhash: string) {
 async function getBlockReward(call: Etherscan, blockno: number) {
   const res = await call<BlockRewardResponse>({ module: 'block', action: 'getblockreward', blockno });
   return {
+    ...res,
     blockNumber: toNumber(res.blockNumber),
-    timeStamp: res.timeStamp,
-    blockMiner: res.blockMiner,
     blockReward: toBigNumber(res.blockReward),
-    uncles: res.uncles,
     uncleInclusionReward: toNumber(res.uncleInclusionReward)
   }
 }
@@ -244,100 +290,80 @@ async function getBlocknoByTime(call: Etherscan, timestamp: number, closest: Clo
 //////////////////////////
 
 async function dailyAvgBlockSize(call: Etherscan, startDate: Date, endDate: Date, params: Optional<DailyAvgBlocksizeRequest>) {
-  const data = await call<DailyAvgBlocksizeResponse[]>({
+  const res = await call<DailyAvgBlocksizeResponse[]>({
     module: 'stats',
     action: 'dailyavgblocksize',
     startdate : formatDate(startDate),
     enddate: formatDate(endDate),
     ...params
   });
-  const res= [];
-  for (let i = 0; i< data.length; i++) {
-    res.push({
-      URCDate: data[i].UTCDate,
-      unixTimeStamp: data[i].unixTimeStamp,
-      blockSize_bytes: toNumber(data[i].blockSize_bytes)
-    })
-  }
-  return res;
+  return res.map(data => ({
+    UTCDate: toDate(data.UTCDate),
+    unixTimeStamp: toNumber(data.unixTimeStamp),
+    blockSize_bytes: toNumber(data.blockSize_bytes)
+  }))
 }
 
 async function dailyBlkCount(call: Etherscan, startDate: Date, endDate: Date, params: Optional<DailyBlockCountAndRewardRequest>) {
-  const data = await call<DailyBlockCountAndRewardResponse[]>({
+  const res = await call<DailyBlockCountAndRewardResponse[]>({
     module: 'stats',
     action: 'dailyblkcount',
     startdate : formatDate(startDate),
     enddate: formatDate(endDate),
     ...params
   });
-  const res= [];
-  for(let i =0; i<data.length; i++) {
-    res.push({
-      UTCDate: data[i].UTCDate,
-      unixTimeStamp: data[i].unixTimeStamp,
-      blockCount: toNumber(data[i].blockCount),
-      blockRewards_Eth: toBigNumber(data[i].blockRewards_Eth)
-    })
-  }
-  return res;
+  return res.map(data => ({
+    UTCDate: toDate(data.UTCDate),
+    unixTimeStamp: toNumber(data.unixTimeStamp),
+    blockCount: toNumber(data.blockCount),
+    blockRewards_Eth: toBigNumber(data.blockRewards_Eth)
+  }))
 } 
 
 async function dailyBlockRewards(call: Etherscan, startDate: Date, endDate: Date, params: Optional<DailyBlockRewardRequest>) {
-  const data = await call<DailyBlockRewardResponse[]>({
+  const res = await call<DailyBlockRewardResponse[]>({
     module: 'stats',
     action: 'dailyblockrewards',
     startdate : formatDate(startDate),
     enddate: formatDate(endDate),
     ...params
   });
-  const res = [];
-  for (let i = 0; i< data.length; i++) {
-    res.push({
-      URCDate: data[i].UTCDate,
-      unixTimeStamp: data[i].unixTimeStamp,
-      blockRewards_Eth: toBigNumber(data[i].blockRewards_Eth)
-    })
-  }
-  return res;
+  return res.map(data => ({
+    UTCDate: toDate(data.UTCDate),
+    unixTimeStamp: toNumber(data.unixTimeStamp),
+    blockRewards_Eth: toBigNumber(data.blockRewards_Eth)
+  }))
 }
 
 async function dailyBlockTime(call: Etherscan, startDate: Date, endDate: Date, params: Optional<DailyBlockTimeRequest>) {
-  const data = await call<DailyBlockTimeResponse[]>({
+  const res = await call<DailyBlockTimeResponse[]>({
     module: 'stats',
     action: 'dailyavgblocktime',
     startdate : formatDate(startDate),
     enddate: formatDate(endDate),
     ...params
   });
-  const res= [];
-  for (let i = 0; i< data.length; i++) {
-    res.push({
-      URCDate: data[i].UTCDate,
-      unixTimeStamp: data[i].unixTimeStamp,
-      blockTime_sec: data[i].blockTime_sec
-    })
-  }
-  return res;
+  return res.map(data => ({
+    UTCDate: toDate(data.UTCDate),
+    unixTimeStamp: toNumber(data.unixTimeStamp),
+    blockTime_sec: toNumber(data.blockTime_sec)
+  }))
 }
 
 async function dailyUncleBlkCount(call: Etherscan, startDate: Date, endDate: Date, params: Optional<DailyUncleBlockCountRequest>) {
-  const data = await call<DailyUncleBlockCountReponse[]>({
+  const res = await call<DailyUncleBlockCountReponse[]>({
     module: 'stats',
     action: 'dailyuncleblkcount',
     startdate : formatDate(startDate),
     enddate: formatDate(endDate),
     ...params
   });
-  const res= [];
-  for(let i =0; i< data.length; i++) {
-    res.push({
-      UTCDate: data[i].UTCDate,
-      unixTimeStamp: data[i].unixTimeStamp,
-      uncleBlockCount: toNumber(data[i].uncleBlockCount),
-      uncleBlockRewards_Eth: toBigNumber(data[i].uncleBlockRewards_Eth)
-    })
-  } 
-  return res;
+  return res.map(data => ({
+    UTCDate: toDate(data.UTCDate),
+    unixTimeStamp: toNumber(data.unixTimeStamp),
+    uncleBlockCount: toNumber(data.uncleBlockCount),
+    uncleBlockRewards_Eth: toBigNumber(data.uncleBlockRewards_Eth)
+  }))
 }
 
 //////////
@@ -345,23 +371,16 @@ async function dailyUncleBlkCount(call: Etherscan, startDate: Date, endDate: Dat
 //////////
 
 async function getLogs(call: Etherscan, address: string, params: Optional<LogsRequest>) {
-  const data = await call<LogsResponse[]>({ module: 'logs', action: 'getLogs', address, ...params });
-  const res = [];
-  for (let i = 0; i < data.length; i++) {
-    res.push({
-      address: data[i].address,
-      topics: data[i].topics,
-      data: data[i],
-      blockNumber: hexToNumber(data[i].blockNumber),
-      timeStamp: hexToNumber(data[i].timeStamp),
-      gasPrice: hexToNumber(data[i].gasPrice),
-      gasUsed: hexToNumber(data[i].gasUsed),
-      logIndex: data[i].logIndex,
-      transactionHash: data[i].transactionHash,
-      transactionIndex: data[i].transactionIndex,
-    })
-  }
-  return res;
+  const res = await call<LogsResponse[]>({ module: 'logs', action: 'getLogs', address, ...params });
+  return res.map(data => ({
+    ...data,
+    blockNumber: hexToNumber(data.blockNumber),
+    timeStamp: unixToDate(data.timeStamp),
+    gasPrice: hexToNumber(data.gasPrice),
+    gasUsed: hexToNumber(data.gasUsed),
+    logIndex: hexToNumber(data.logIndex),
+    transactionIndex: hexToNumber(data.transactionIndex),
+  }))
 }
 
 ///////////
@@ -372,36 +391,50 @@ async function blockNumber(call: Etherscan) {
   return await call<string>({ module: 'proxy', action: 'eth_blockNumber' });
 }
 
-function getBlockByNumber(call: Etherscan, tag: ProxyTag, boolean: boolean) {
+async function getBlockByNumber(call: Etherscan, tag: ProxyTag, boolean: boolean) {
   if (boolean === true) {
-    return call<BlockResponse<TransactionResponse[]>>({ module: 'proxy', action: 'eth_getBlockByNumber', tag, boolean });
+    const res = await call<BlockResponse<TransactionResponse[]>>({ module: 'proxy', action: 'eth_getBlockByNumber', tag, boolean });
+    return{
+      ...res,
+      difficulty: hexToNumber(res.difficulty),
+      baseFeePerGas: toBigNumber(res.baseFeePerGas),
+      gasLimit: toBigNumber(res.gasLimit),
+      gasUsed: toBigNumber(res.gasUsed),
+      nonce: hexToNumber(res.nonce),
+      number: hexToNumber(res.number),
+      size: hexToNumber(res.size),
+      timestamp: unixToDate(res.timestamp),
+      totalDifficulty: hexToNumber(res.totalDifficulty),
+    }
   } else {
-    return call<BlockResponse<string[]>>({ module: 'proxy', action: 'eth_getBlockByNumber', tag, boolean });
+    const res = await call<BlockResponse<string[]>>({ module: 'proxy', action: 'eth_getBlockByNumber', tag, boolean });
+    return{
+      ...res,
+      difficulty: hexToNumber(res.difficulty),
+      baseFeePerGas: toBigNumber(res.baseFeePerGas),
+      gasLimit: toBigNumber(res.gasLimit),
+      gasUsed: toBigNumber(res.gasUsed),
+      nonce: hexToNumber(res.nonce),
+      number: hexToNumber(res.number),
+      size: hexToNumber(res.size),
+      timestamp: unixToDate(res.timestamp),
+      totalDifficulty: hexToNumber(res.totalDifficulty),
+    }
   }
 }
 
 async function getUncleByBlockNumberAndIndex(call: Etherscan, tag: ProxyTag, params: Optional<UncleByBlockNumberAndIndexRequest>) {
   const res = await call<UncleBlockResponse>({ module: 'proxy', action: 'eth_getUncleByBlockNumberAndIndex', tag, ...params });
   return {
+    ...res,
     baseFeePerGas: toBigNumber(res.baseFeePerGas),
     difficulty: hexToNumber(res.difficulty),
-    extraData: res.extraData,
     gasLimit: toBigNumber(res.gasLimit),
     gasUsed: toBigNumber(res.gasUsed),
-    hash: res.hash,
-    logsBloom: res.logsBloom,
-    miner: res.miner,
-    mixHash: res.mixHash,
     nonce: hexToNumber(res.nonce),
     number: hexToNumber(res.number),
-    parentHash: res.parentHash,
-    receiptsRoot: res.receiptsRoot,
-    sha3Uncles: res.sha3Uncles,
     size: hexToNumber(res.size),
-    stateRoot: res.stateRoot,
-    timestamp: hexToNumber(res.timestamp),
-    transactionsRoot: res.transactionsRoot,
-    uncles: res.uncles,
+    timestamp: unixToDate(res.timestamp),
   }
 }
 
@@ -412,50 +445,32 @@ async function getBlockTransactionCountByNumber(call: Etherscan, params: Optiona
 async function getTransactionByHash(call: Etherscan, txhash: string) {
   const res = await call<TransactionInfosResponse>({ module: 'proxy', action: 'eth_getTransactionByHash', txhash });
   return {
-    blockHash: res.blockHash,
+    ...res,
     blockNumber: hexToNumber(res.blockNumber),
-    from: res.from,
     gas: toBigNumber(res.gas),
     gasPrice: toBigNumber(res.gasPrice),
     maxFeePerGas: toBigNumber(res.maxFeePerGas),
     maxPriorityFeePerGas: toBigNumber(res.maxPriorityFeePerGas),
-    hash: res.hash,
-    input: res.input,
     nonce: toNumber(res.nonce),
-    to: res.to,
     transactionIndex: hexToNumber(res.transactionIndex),
     value: toBigNumber(res.value),
     type: hexToNumber(res.type),
-    accessList: res.accessList,
     chainId: toNumber(res.chainId),
     v: toNumber(res.v),
-    r: res.r,
-    s: res.s,
   }
 }
 
 async function getTransactionByBlockNumberAndIndex(call: Etherscan, tag: ProxyTag, params: Optional<TransactionByBlockNumberAndIndex>) {
   const res = await call<TxByBlockNumberAndIndexResponse>({ module: 'proxy', action: 'eth_getTransactionByBlockNumberAndIndex',tag , ...params});
   return {
-    accessList: res.accessList,
-    blockHash: res.blockHash,
+    ...res,
     blockNumber: hexToNumber(res.blockNumber),
     chainId: hexToNumber(res.chainId),
-    condition: res.condition,
-    creates: res.creates,
-    from: res.from,
     gas: toBigNumber(res.gas),
     gasPrice: toBigNumber(res.gasPrice),
-    hash: res.hash,
-    input: res.input,
     maxFeePerGas: toBigNumber(res.maxFeePerGas),
     maxPriorityFeePerGas: toBigNumber(res.maxPriorityFeePerGas),
     nonce: hexToNumber(res.nonce),
-    publicKey: res.publicKey,
-    r: res.r,
-    raw: res.raw,
-    s: res.s,
-    to: res.to,
     transactionIndex: hexToNumber(res.transactionIndex),
     type: hexToNumber(res.type),
     v: hexToNumber(res.v),
@@ -475,18 +490,13 @@ async function sendRawTransaction(call: Etherscan, params: RawTransaction) {
 async function getTransactionReceipt(call: Etherscan, txHash: string) {
   const res = await call<TxReceiptResponse>({ module: 'proxy', action: 'eth_getTransactionReceipt', txHash});
   return {
-    blockHash: res.blockHash,
+    ...res,
     blockNumber: hexToNumber(res.blockNumber),
     contractAddress: res.contractAddress,
     cumulativeGasUsed: toBigNumber(res.cumulativeGasUsed),
     effectiveGasPrice: toBigNumber(res.effectiveGasPrice),
-    from: res.from,
     gasUsed: toBigNumber(res.gasUsed),
-    logs: res.logs,
-    logsBloom: res.logsBloom,
     status: hexToNumber(res.status),
-    to: res.to,
-    transactionHash: res.transactionHash,
     transactionIndex: hexToNumber(res.transactionIndex),
     type: hexToNumber(res.type),
   }
