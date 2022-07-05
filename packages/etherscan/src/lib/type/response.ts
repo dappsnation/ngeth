@@ -1,4 +1,4 @@
-import { TransactionResponse } from "@ethersproject/abstract-provider";
+import { TransactionResponse, Log } from "@ethersproject/abstract-provider";
 
 export interface TransferTransactionResponse {
   blockNumber: string;
@@ -105,73 +105,6 @@ export interface ContractSourceCodeResponse {
   Proxy: string;
   Implementation: string;
   SwarmSource: string;
-}
-
-export interface DailyAvgBlocksizeResponse {
-  UTCDate: string;
-  unixTimeStamp: string;
-  blockSize_bytes: string;
-}
-
-export interface DailyBlockCountAndRewardResponse {
-  UTCDate: string;
-  unixTimeStamp: string;
-  blockCount: string;
-  blockRewards_Eth: string;
-}
-
-export interface DailyBlockRewardResponse {
-  UTCDate: string;
-  unixTimeStamp: string;
-  blockRewards_Eth: string;
-}
-
-export interface DailyBlockTimeResponse {
-  UTCDate: string;
-  unixTimeStamp: string;
-  blockTime_sec: string;
-}
-
-export interface DailyUncleBlockCountReponse {
-  UTCDate: string;
-  unixTimeStamp: string;
-  uncleBlockCount: string;
-  uncleBlockRewards_Eth: string;
-}
-
-export interface BlockReward {
-  blockNumber: string;
-  timeStamp: string;
-  blockMiner: string;
-  blockReward: string;
-  uncles: Uncles[];
-  uncleInclusionReward: string;
-}
-
-export interface Uncles {
-  miner: string;
-  unclePosition: string;
-  blockreward: string;
-}
-
-export interface BlockCountdown {
-  CurrentBlock: string;
-  CountdownBlock: string;
-  RemainingBlock: string;
-  EstimateTimeInSec: string;
-}
-
-export interface LogsResponse {
-  address: string;
-  topics: string[];
-  data: string;
-  blockNumber: string;
-  timeStamp: string;
-  gasPrice: string;
-  gasUsed: string;
-  logIndex: string;
-  transactionHash: string;
-  transactionIndex: string;
 }
 
 // Result
@@ -320,4 +253,47 @@ export interface TransactionInfosResponse {
   v: string;
   r: string;
   s: string;
+}
+
+export interface TxByBlockNumberAndIndexResponse {
+    accessList: string[];
+    blockHash: string;
+    blockNumber: string;
+    chainId: string;
+    condition: string;
+    creates: string;
+    from: string;
+    gas: string;
+    gasPrice: string;
+    hash: string;
+    input: string;
+    maxFeePerGas: string;
+    maxPriorityFeePerGas: string;
+    nonce: string;
+    publicKey: string;
+    r: string;
+    raw: string;
+    s: string;
+    to: string;
+    transactionIndex: string;
+    type: string;
+    v: string;
+    value: string;
+}
+
+export interface TxReceipt {
+  blockHash: string;
+  blockNumber: string;
+  contractAddress: string;
+  cumulativeGasUsed: string;
+  effectiveGasPrice: string;
+  from: string;
+  gasUsed: string;
+  logs: Log[];
+  logsBloom: string;
+  status:string;
+  to: string;
+  transactionHash: string;
+  transactionIndex: string;
+  type: string;
 }

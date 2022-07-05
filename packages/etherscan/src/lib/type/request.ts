@@ -270,3 +270,42 @@ export interface BlockTransactionCountByNumberRequest {
   /** the block number, in hex */
   tag?: string;
 }
+
+export interface TransactionByBlockNumberAndIndex {
+  tag?: string;
+  index?: string;
+}
+
+/** Returns the number of transactions performed by an address. */
+export interface TransactionCount {
+  address: string;
+  tag?: string;
+}
+
+/** Submits a pre-signed transaction for broadcast to the Ethereum network. */
+export interface RawTransaction {
+  hex: string;
+}
+
+export interface TxReceipt {
+  txHash: string;
+}
+
+export interface Call {
+  to: string;
+  data?: string;
+  tag?: string;
+}
+
+export interface Code {
+  address: string;
+  tag?: string;
+}
+
+export interface EstimateGas {
+  data: string;
+  to: string;
+  value?: string;
+  gasPrice?: string;
+  gas?: string;
+}
