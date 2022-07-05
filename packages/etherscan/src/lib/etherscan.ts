@@ -1,7 +1,6 @@
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 import { ABIDescription } from '@type/solc';
 import { BigNumber } from "ethers";
-import { string } from "hardhat/internal/core/params/argumentTypes";
 import { 
   Tag, 
   TxListRequest, 
@@ -19,12 +18,12 @@ import {
   UncleByBlockNumberAndIndexRequest,
   ProxyTag,
   BlockTransactionCountByNumberRequest,
-  TransactionCount,
-  TransactionByBlockNumberAndIndex,
-  RawTransaction,
-  Call,
-  Code,
-  EstimateGas,
+  TransactionCountRequest,
+  TransactionByBlockNumberAndIndexRequest,
+  RawTransactionRequest,
+  CallRequest,
+  CodeRequest,
+  EstimateGasRequest,
 } from "./type/request";
 import {
    BalanceMultiResponse, 
@@ -461,7 +460,7 @@ async function getTransactionByHash(call: Etherscan, txhash: string) {
   }
 }
 
-async function getTransactionByBlockNumberAndIndex(call: Etherscan, tag: ProxyTag, params: Optional<TransactionByBlockNumberAndIndex>) {
+async function getTransactionByBlockNumberAndIndex(call: Etherscan, tag: ProxyTag, params: Optional<TransactionByBlockNumberAndIndexRequest>) {
   const res = await call<TxByBlockNumberAndIndexResponse>({ module: 'proxy', action: 'eth_getTransactionByBlockNumberAndIndex',tag , ...params});
   return {
     ...res,
@@ -478,12 +477,12 @@ async function getTransactionByBlockNumberAndIndex(call: Etherscan, tag: ProxyTa
   }
 }
 
-async function getTransactionCount(call: Etherscan, address: string, params: Optional<TransactionCount>) {
+async function getTransactionCount(call: Etherscan, address: string, params: Optional<TransactionCountRequest>) {
   const res = await call<string>({ module: 'proxy', action: 'eth_getTransactionCount', address, ...params });
   return hexToNumber(res);
 }
 
-function sendRawTransaction(call: Etherscan, params: RawTransaction) {
+function sendRawTransaction(call: Etherscan, params: RawTransactionRequest) {
   return  call<string>({ module: 'proxy', action: 'eth_sendRawTransaction', ...params});
 }
 
@@ -503,11 +502,11 @@ async function getTransactionReceipt(call: Etherscan, txHash: string) {
 
 }
 
-function call(call: Etherscan, to: string, params: Optional<Call>) {
+function call(call: Etherscan, to: string, params: Optional<CallRequest>) {
   return call<string>({ module: 'proxy', action: 'eth_call', to, ...params});
 }
 
-function getCode(call: Etherscan, address: string, params: Optional<Code>) {
+function getCode(call: Etherscan, address: string, params: Optional<CodeRequest>) {
   return call<string>({ module: 'proxy', action: 'eth_getCode', address, ...params});
 }
 
@@ -516,7 +515,7 @@ async function gasPrice(call: Etherscan) {
   return toBigNumber(res);
 }
 
-async function estimateGas(call: Etherscan, to: string, data: string, params: Optional<EstimateGas>) {
+async function estimateGas(call: Etherscan, to: string, data: string, params: Optional<EstimateGasRequest>) {
   const res = await call<string>({ module: 'proxy', action: 'eth_estimateGas', to, data, ...params});
   return toBigNumber(res);
 }
