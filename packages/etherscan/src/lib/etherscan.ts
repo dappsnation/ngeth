@@ -77,7 +77,7 @@ function formatDate(date: Date) {
   return date.toISOString().split('T')[0];
 }
 /** Transform a YYYY-MM-DD string into a Date */
-function toDate(date: string) {
+function utcToDate(date: string) {
   const unixDate = Date.parse(date);
   return new Date(unixDate);
 }
@@ -298,7 +298,7 @@ async function dailyAvgBlockSize(call: Etherscan, startDate: Date, endDate: Date
     ...params
   });
   return res.map(data => ({
-    UTCDate: toDate(data.UTCDate),
+    UTCDate: utcToDate(data.UTCDate),
     unixTimeStamp: toNumber(data.unixTimeStamp),
     blockSize_bytes: toNumber(data.blockSize_bytes)
   }))
@@ -313,7 +313,7 @@ async function dailyBlkCount(call: Etherscan, startDate: Date, endDate: Date, pa
     ...params
   });
   return res.map(data => ({
-    UTCDate: toDate(data.UTCDate),
+    UTCDate: utcToDate(data.UTCDate),
     unixTimeStamp: toNumber(data.unixTimeStamp),
     blockCount: toNumber(data.blockCount),
     blockRewards_Eth: toBigNumber(data.blockRewards_Eth)
@@ -329,7 +329,7 @@ async function dailyBlockRewards(call: Etherscan, startDate: Date, endDate: Date
     ...params
   });
   return res.map(data => ({
-    UTCDate: toDate(data.UTCDate),
+    UTCDate: utcToDate(data.UTCDate),
     unixTimeStamp: toNumber(data.unixTimeStamp),
     blockRewards_Eth: toBigNumber(data.blockRewards_Eth)
   }))
@@ -344,7 +344,7 @@ async function dailyBlockTime(call: Etherscan, startDate: Date, endDate: Date, p
     ...params
   });
   return res.map(data => ({
-    UTCDate: toDate(data.UTCDate),
+    UTCDate: utcToDate(data.UTCDate),
     unixTimeStamp: toNumber(data.unixTimeStamp),
     blockTime_sec: toNumber(data.blockTime_sec)
   }))
@@ -359,7 +359,7 @@ async function dailyUncleBlkCount(call: Etherscan, startDate: Date, endDate: Dat
     ...params
   });
   return res.map(data => ({
-    UTCDate: toDate(data.UTCDate),
+    UTCDate: utcToDate(data.UTCDate),
     unixTimeStamp: toNumber(data.unixTimeStamp),
     uncleBlockCount: toNumber(data.uncleBlockCount),
     uncleBlockRewards_Eth: toBigNumber(data.uncleBlockRewards_Eth)
@@ -376,8 +376,8 @@ async function getLogs(call: Etherscan, address: string, params: Optional<LogsRe
     ...data,
     blockNumber: hexToNumber(data.blockNumber),
     timeStamp: unixToDate(data.timeStamp),
-    gasPrice: hexToNumber(data.gasPrice),
-    gasUsed: hexToNumber(data.gasUsed),
+    gasPrice: toBigNumber(data.gasPrice),
+    gasUsed: toBigNumber(data.gasUsed),
     logIndex: hexToNumber(data.logIndex),
     transactionIndex: hexToNumber(data.transactionIndex),
   }))
@@ -388,7 +388,8 @@ async function getLogs(call: Etherscan, address: string, params: Optional<LogsRe
 ///////////
 
 async function blockNumber(call: Etherscan) {
-  return await call<string>({ module: 'proxy', action: 'eth_blockNumber' });
+  const res = await call<string>({ module: 'proxy', action: 'eth_blockNumber' });
+  return hexToNumber(res);
 }
 
 async function getBlockByNumber(call: Etherscan, tag: ProxyTag, boolean: boolean) {
@@ -439,7 +440,8 @@ async function getUncleByBlockNumberAndIndex(call: Etherscan, tag: ProxyTag, par
 }
 
 async function getBlockTransactionCountByNumber(call: Etherscan, params: Optional<BlockTransactionCountByNumberRequest>) {
-  return await call<string>({ module: 'proxy', action: 'eth_getBlockTransactionCountByNumber', ...params });
+  const res = await call<string>({ module: 'proxy', action: 'eth_getBlockTransactionCountByNumber', ...params });
+  return hexToNumber(res);
 }
 
 async function getTransactionByHash(call: Etherscan, txhash: string) {
@@ -456,7 +458,6 @@ async function getTransactionByHash(call: Etherscan, txhash: string) {
     value: toBigNumber(res.value),
     type: hexToNumber(res.type),
     chainId: toNumber(res.chainId),
-    v: toNumber(res.v),
   }
 }
 
@@ -473,18 +474,17 @@ async function getTransactionByBlockNumberAndIndex(call: Etherscan, tag: ProxyTa
     nonce: hexToNumber(res.nonce),
     transactionIndex: hexToNumber(res.transactionIndex),
     type: hexToNumber(res.type),
-    v: hexToNumber(res.v),
     value: toBigNumber(res.value)
   }
 }
 
 async function getTransactionCount(call: Etherscan, address: string, params: Optional<TransactionCount>) {
   const res = await call<string>({ module: 'proxy', action: 'eth_getTransactionCount', address, ...params });
-  return toNumber(res);
+  return hexToNumber(res);
 }
 
-async function sendRawTransaction(call: Etherscan, params: RawTransaction) {
-  return  await call<string>({ module: 'proxy', action: 'eth_sendRawTransaction', ...params});
+function sendRawTransaction(call: Etherscan, params: RawTransaction) {
+  return  call<string>({ module: 'proxy', action: 'eth_sendRawTransaction', ...params});
 }
 
 async function getTransactionReceipt(call: Etherscan, txHash: string) {
@@ -503,12 +503,12 @@ async function getTransactionReceipt(call: Etherscan, txHash: string) {
 
 }
 
-async function call(call: Etherscan, to: string, params: Optional<Call>) {
-  return await call<string>({ module: 'proxy', action: 'eth_call', to, ...params});
+function call(call: Etherscan, to: string, params: Optional<Call>) {
+  return call<string>({ module: 'proxy', action: 'eth_call', to, ...params});
 }
 
-async function getCode(call: Etherscan, address: string, params: Optional<Code>) {
-  return await call<string>({ module: 'proxy', action: 'eth_getCode', address, ...params});
+function getCode(call: Etherscan, address: string, params: Optional<Code>) {
+  return call<string>({ module: 'proxy', action: 'eth_getCode', address, ...params});
 }
 
 async function gasPrice(call: Etherscan) {
