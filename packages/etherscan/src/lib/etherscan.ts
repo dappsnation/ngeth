@@ -88,13 +88,15 @@ async function balance(call: Etherscan, address: string, tag: Tag) {
 
 async function balanceMulti(call: Etherscan, addresses: string[], tag: Tag) {
   const address = addresses.join(',');
-  const res = await call<BalanceMultiResponse[]>({ module: 'account', action: 'balancemulti', address, tag });
-  for (let i =0; i<res.length; i++) {
-    return {
-      account: res[i].account,
-      balance: toBigNumber(res[i].balance),
-    }
+  const data = await call<BalanceMultiResponse[]>({ module: 'account', action: 'balancemulti', address, tag });
+  const res = [];
+  for (let i =0; i < data.length; i++) {
+    res.push({
+      account: data[i].account,
+      balance: toBigNumber(data[i].balance),
+    })
   }
+  return res;
 }
 
 function txList(call: Etherscan, address: string, params: Optional<TxListRequest> = {}) {
@@ -139,14 +141,16 @@ function token1155Tx(call: Etherscan, contractaddress: string, params: Optional<
 }
 
 async function getMinedBlocks(call: Etherscan, address: string, params: Optional<MinedBlockRequest>) {
-  const res = await call<MinedBlockResponse[]>({ module: 'account', action: 'getminedblocks', address, ...params });
-  for (let i =0; i<res.length; i++) {
-    return {
-      blockNumber: toNumber(res[i].blockNumber),
-      timeStamp: res[i].timeStamp,
-      blockReward: toBigNumber(res[i].blockReward)
-    }
+  const data = await call<MinedBlockResponse[]>({ module: 'account', action: 'getminedblocks', address, ...params });
+  const res = [];
+  for (let i =0; i<data.length; i++) {
+    res.push({
+      blockNumber: toNumber(data[i].blockNumber),
+      timeStamp: data[i].timeStamp,
+      blockReward: toBigNumber(data[i].blockReward)
+    })
   }
+  return res;
 }
 
 //block no might be optionnal but no testing available since it requires API pro
@@ -229,90 +233,100 @@ async function getBlocknoByTime(call: Etherscan, timestamp: number, closest: Clo
 //////////////////////////
 
 async function dailyAvgBlockSize(call: Etherscan, startDate: Date, endDate: Date, params: Optional<DailyAvgBlocksizeRequest>) {
-  const res = await call<DailyAvgBlocksizeResponse[]>({
+  const data = await call<DailyAvgBlocksizeResponse[]>({
     module: 'stats',
     action: 'dailyavgblocksize',
     startdate : formatDate(startDate),
     enddate: formatDate(endDate),
     ...params
   });
-  for (let i = 0; i< res.length; i++) {
-    return {
-      URCDate: res[i].UTCDate,
-      unixTimeStamp: res[i].unixTimeStamp,
-      blockSize_bytes: toNumber(res[i].blockSize_bytes)
-    }
+  const res= [];
+  for (let i = 0; i< data.length; i++) {
+    res.push({
+      URCDate: data[i].UTCDate,
+      unixTimeStamp: data[i].unixTimeStamp,
+      blockSize_bytes: toNumber(data[i].blockSize_bytes)
+    })
   }
+  return res;
 }
 
 async function dailyBlkCount(call: Etherscan, startDate: Date, endDate: Date, params: Optional<DailyBlockCountAndRewardRequest>) {
-  const res = await call<DailyBlockCountAndRewardResponse[]>({
+  const data = await call<DailyBlockCountAndRewardResponse[]>({
     module: 'stats',
     action: 'dailyblkcount',
     startdate : formatDate(startDate),
     enddate: formatDate(endDate),
     ...params
   });
-  for(let i =0; i<res.length; i++) {
-    return {
-      UTCDate: res[i].UTCDate,
-      unixTimeStamp: res[i].unixTimeStamp,
-      blockCount: toNumber(res[i].blockCount),
-      blockRewards_Eth: toBigNumber(res[i].blockRewards_Eth)
-    }
-  } 
+  const res= [];
+  for(let i =0; i<data.length; i++) {
+    res.push({
+      UTCDate: data[i].UTCDate,
+      unixTimeStamp: data[i].unixTimeStamp,
+      blockCount: toNumber(data[i].blockCount),
+      blockRewards_Eth: toBigNumber(data[i].blockRewards_Eth)
+    })
+  }
+  return res;
 } 
 
 async function dailyBlockRewards(call: Etherscan, startDate: Date, endDate: Date, params: Optional<DailyBlockRewardRequest>) {
-  const res = await call<DailyBlockRewardResponse[]>({
+  const data = await call<DailyBlockRewardResponse[]>({
     module: 'stats',
     action: 'dailyblockrewards',
     startdate : formatDate(startDate),
     enddate: formatDate(endDate),
     ...params
-  }); 
-  for (let i = 0; i< res.length; i++) {
-    return {
-      URCDate: res[i].UTCDate,
-      unixTimeStamp: res[i].unixTimeStamp,
-      blockRewards_Eth: toBigNumber(res[i].blockRewards_Eth)
-    }
-  } 
+  });
+  const res = [];
+  for (let i = 0; i< data.length; i++) {
+    res.push({
+      URCDate: data[i].UTCDate,
+      unixTimeStamp: data[i].unixTimeStamp,
+      blockRewards_Eth: toBigNumber(data[i].blockRewards_Eth)
+    })
+  }
+  return res;
 }
 
 async function dailyBlockTime(call: Etherscan, startDate: Date, endDate: Date, params: Optional<DailyBlockTimeRequest>) {
-  const res = await call<DailyBlockTimeResponse[]>({
+  const data = await call<DailyBlockTimeResponse[]>({
     module: 'stats',
     action: 'dailyavgblocktime',
     startdate : formatDate(startDate),
     enddate: formatDate(endDate),
     ...params
   });
-  for (let i = 0; i< res.length; i++) {
-    return {
-      URCDate: res[i].UTCDate,
-      unixTimeStamp: res[i].unixTimeStamp,
-      blockTime_sec: res[i].blockTime_sec
-    }
-  } 
+  const res= [];
+  for (let i = 0; i< data.length; i++) {
+    res.push({
+      URCDate: data[i].UTCDate,
+      unixTimeStamp: data[i].unixTimeStamp,
+      blockTime_sec: data[i].blockTime_sec
+    })
+  }
+  return res;
 }
 
 async function dailyUncleBlkCount(call: Etherscan, startDate: Date, endDate: Date, params: Optional<DailyUncleBlockCountRequest>) {
-  const res = await call<DailyUncleBlockCountReponse[]>({
+  const data = await call<DailyUncleBlockCountReponse[]>({
     module: 'stats',
     action: 'dailyuncleblkcount',
     startdate : formatDate(startDate),
     enddate: formatDate(endDate),
     ...params
   });
-  for(let i =0; i<res.length; i++) {
-    return {
-      UTCDate: res[i].UTCDate,
-      unixTimeStamp: res[i].unixTimeStamp,
-      uncleBlockCount: toNumber(res[i].uncleBlockCount),
-      uncleBlockRewards_Eth: toBigNumber(res[i].uncleBlockRewards_Eth)
-    }
+  const res= [];
+  for(let i =0; i< data.length; i++) {
+    res.push({
+      UTCDate: data[i].UTCDate,
+      unixTimeStamp: data[i].unixTimeStamp,
+      uncleBlockCount: toNumber(data[i].uncleBlockCount),
+      uncleBlockRewards_Eth: toBigNumber(data[i].uncleBlockRewards_Eth)
+    })
   } 
+  return res;
 }
 
 //////////
