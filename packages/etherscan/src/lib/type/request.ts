@@ -152,11 +152,32 @@ export type VerifySourceCode = VerifySourceCodeParams & Library<1 | 2 | 3 | 4 | 
 // TRANSACTION //
 /////////////////
 //logs
-export type LogParams = LogsRequest;
-export interface LogsRequest extends BaseParams<'logs', "getLogs"> {
+export type LogParams = LogsByAddressRequest | LogsByTopicsRequest | LogsRequest;
+export interface LogsByAddressRequest extends BaseParams<'logs', "getLogs"> {
+  fromBlock?: number | "latest";
+  toBlock?: number | "latest";
+  address: string;
+}
+
+export interface LogsByTopicsRequest extends BaseParams<'logs', "getLogs"> {
   fromBlock: number | "latest";
   toBlock: number | "latest";
+  topic0?: string;
+  topic1?: string;
+  topic2?: string;
+  topic3?: string;
+  topic0_1_opr?: 'and' | 'or';
+  topic0_2_opr?: 'and' | 'or';
+  topic0_3_opr?: 'and' | 'or';
+  topic1_2_opr?: 'and' | 'or';
+  topic1_3_opr?: 'and' | 'or';
+  topic2_3_opr?: 'and' | 'or';
+}
+
+export interface LogsRequest extends BaseParams <'logs', "getLogs"> {
   address: string;
+  fromBlock: number | "latest";
+  toBlock: number | "latest";
   topic0?: string;
   topic1?: string;
   topic2?: string;

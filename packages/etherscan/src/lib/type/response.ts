@@ -358,3 +358,35 @@ export interface TxReceiptResponse {
   transactionIndex: string;
   type: string;
 }
+
+/////////////////
+// GAS TRACKER //
+/////////////////
+
+export interface GasOracleResponse {
+  LastBlock: string;
+  SafeGasPrice:string;
+  ProposeGasPrice: string;
+  FastGasPrice: string;
+  suggestBaseFee: string;
+  gasUsedRatio: string;
+}
+
+export interface DailyAvgGasLimitResponse {
+  UTCDate: string;
+  unixTimeStamp: string;
+  gasLimit: string;
+}
+export interface DailyGasUsedResponse {
+  UTCDate: string;
+  unixTimeStamp: string;
+  gasUsed: string;
+}
+
+export interface DailyAvgGasPriceResponse {
+  UTCDate: string;
+  unixTimeStamp: string;
+  maxGasPrice_Wei: string;
+  minGasPrice_Wei: string;
+  avgGasPrice_Wei: string;
+}

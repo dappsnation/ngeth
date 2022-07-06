@@ -14,7 +14,6 @@ import {
   DailyBlockRewardRequest,
   DailyBlockTimeRequest,
   DailyUncleBlockCountRequest,
-  LogsRequest,
   UncleByBlockNumberAndIndexRequest,
   ProxyTag,
   BlockTransactionCountByNumberRequest,
@@ -24,6 +23,10 @@ import {
   CallRequest,
   CodeRequest,
   EstimateGasRequest,
+  TokenBalanceRequest,
+  LogsByAddressRequest,
+  LogsByTopicsRequest,
+  LogsRequest,
 } from "./type/request";
 import {
    BalanceMultiResponse, 
@@ -48,6 +51,11 @@ import {
    TokenTxResponse,
    TokenNftTxResponse,
    Token1155TxResponse,
+   TokenInfoResponse,
+   GasOracleResponse,
+   DailyAvgGasLimitResponse,
+   DailyGasUsedResponse,
+   DailyAvgGasPriceResponse,
   } from "./type/response";
 
 type Etherscan = ReturnType<typeof initEtherscan>;
@@ -106,11 +114,13 @@ function hexToNumber(value: string): number {
 // ACCOUNTS //
 //////////////
 
+/** Returns the Ether balance of a given address */
 async function balance(call: Etherscan, address: string, tag: Tag) {
   const res = await call<string>({ module: 'account', action: 'balance', address, tag });
   return toBigNumber(res);
 }
 
+/** Returns the balance of the accounts from a list of addresses. */
 async function balanceMulti(call: Etherscan, addresses: string[], tag: Tag) {
   const address = addresses.join(',');
   const res = await call<BalanceMultiResponse[]>({ module: 'account', action: 'balancemulti', address, tag });
@@ -120,6 +130,7 @@ async function balanceMulti(call: Etherscan, addresses: string[], tag: Tag) {
   }))
 }
 
+/** Returns the list of transactions performed by an address, with optional pagination. */
 async function txList(call: Etherscan, address: string, params: Optional<TxListRequest> = {}) {
   const res = await call<TxListResponse[]>({ module: 'account', action: 'txlist', address, ...params });
   return res.map(data => ({
@@ -163,7 +174,7 @@ async function txList(call: Etherscan, address: string, params: Optional<TxListR
 // const etherscan = initEtherscan('sup', 'sup');
 // txListInternal(etherscan, 10, 30)
 
-
+/** Returns the list of ERC-20 tokens transferred by an address, with optional filtering by token contract. */
 async function tokenTx(call: Etherscan, contractaddress: string, params: Optional<TokenTxRequest>) {
   const res = await call<TokenTxResponse[]>({ module: 'account', action: 'tokentx', contractaddress, ...params });
   return res.map(data => ({
@@ -182,6 +193,7 @@ async function tokenTx(call: Etherscan, contractaddress: string, params: Optiona
   }))
 }
 
+/** Returns the list of ERC-721 ( NFT ) tokens transferred by an address, with optional filtering by token contract. */
 async function tokenNftTx(call: Etherscan, contractaddress: string, params: Optional<TokenNftTxRequest>) {
   const res = await call<TokenNftTxResponse[]>({ module: 'account', action: 'tokennfttx', contractaddress, ...params });
   return res.map(data => ({
@@ -200,6 +212,7 @@ async function tokenNftTx(call: Etherscan, contractaddress: string, params: Opti
   }))
 }
 
+/** Returns the list of ERC-1155 ( Multi Token Standard ) tokens transferred by an address, with optional filtering by token contract. */
 async function token1155Tx(call: Etherscan, contractaddress: string, params: Optional<Token1155TxRequest>) {
   const res = await call<Token1155TxResponse[]>({ module: 'account', action: 'token1155tx', contractaddress, ...params });
   return res.map(data => ({
@@ -217,6 +230,7 @@ async function token1155Tx(call: Etherscan, contractaddress: string, params: Opt
   }))
 }
 
+/** Returns the list of blocks mined by an address. */
 async function getMinedBlocks(call: Etherscan, address: string, params: Optional<MinedBlockRequest>) {
   const res = await call<MinedBlockResponse[]>({ module: 'account', action: 'getminedblocks', address, ...params });
   return res.map(data => ({
@@ -226,7 +240,8 @@ async function getMinedBlocks(call: Etherscan, address: string, params: Optional
   }))
 }
 
-//block no might be optionnal but no testing available since it requires API pro
+/** Returns the balance of an address at a certain block height. */
+// block no might be optionnal but no testing available since it requires API pro
 async function balanceHistory(call: Etherscan, address: string, blockno: number) {
   const res = await call<string>({ module: 'account', action: 'balancehistory', address, blockno });
   return toBigNumber(res)
@@ -238,11 +253,13 @@ async function balanceHistory(call: Etherscan, address: string, blockno: number)
 
 //TODO : add `verifysourcecode`, `checkverifystatus`, `verifyproxycontract`, `checkproxyverification`
 
+/** Returns the Contract Application Binary Interface ( ABI ) of a verified smart contract. */
 async function getAbi(call: Etherscan, address: string) {
   const abi = await call<string>({ module: 'contract', action: 'getabi', address });
   return JSON.parse(abi) as ABIDescription[];
 }
 
+/** Returns the Solidity source code of a verified smart contract. */
 async function getSourceCode(call: Etherscan, address: string) {
   const data = await call<any[]>({ module: 'contract', action: 'getsourcecode', address });
   return data.map(res => {
@@ -255,6 +272,7 @@ async function getSourceCode(call: Etherscan, address: string) {
 // TRANSACTIONS //
 //////////////////
 
+/** Returns the status code of a contract execution. */
 async function getStatus(call: Etherscan, txhash: string) {
   const res = await call<ExecutionStatusResult>({ module: 'transaction', action: 'getstatus', txhash });
   return {
@@ -263,6 +281,7 @@ async function getStatus(call: Etherscan, txhash: string) {
   }
 }
 
+/** Returns the status code of a transaction execution. */
 async function getTxReceiptStatus(call: Etherscan, txhash: string) {
   const res = await call<StatusResult>({ module: 'transaction', action: 'gettxreceiptstatus', txhash });
   return {
@@ -274,6 +293,7 @@ async function getTxReceiptStatus(call: Etherscan, txhash: string) {
 // BLOCKS //
 ////////////
 
+/** Returns the block reward and 'Uncle' block rewards. */
 async function getBlockReward(call: Etherscan, blockno: number) {
   const res = await call<BlockRewardResponse>({ module: 'block', action: 'getblockreward', blockno });
   return {
@@ -284,6 +304,7 @@ async function getBlockReward(call: Etherscan, blockno: number) {
   }
 }
 
+/** Returns the estimated time remaining, in seconds, until a certain block is mined. */
 async function getBlockCountdown(call: Etherscan, blockno: number) {
   const res = await call<BlockCountdownResponse>({ module: 'block', action: 'getblockcountdown', blockno });
   return {
@@ -294,6 +315,7 @@ async function getBlockCountdown(call: Etherscan, blockno: number) {
   }
 }
 
+/** Returns the block number that was mined at a certain timestamp. */
 async function getBlocknoByTime(call: Etherscan, timestamp: number, closest: Closest) {
   const res = await call<string>({ module: 'block', action: 'getblocknobytime', timestamp, closest }); 
   return toNumber(res);
@@ -303,6 +325,7 @@ async function getBlocknoByTime(call: Etherscan, timestamp: number, closest: Clo
 // BLOCKS: STATS MODULE //
 //////////////////////////
 
+/** Returns the daily average block size within a date range. */
 async function dailyAvgBlockSize(call: Etherscan, startDate: Date, endDate: Date, params: Optional<DailyAvgBlocksizeRequest>) {
   const res = await call<DailyAvgBlocksizeResponse[]>({
     module: 'stats',
@@ -318,6 +341,7 @@ async function dailyAvgBlockSize(call: Etherscan, startDate: Date, endDate: Date
   }))
 }
 
+/** Returns the number of blocks mined daily and the amount of block rewards. */
 async function dailyBlkCount(call: Etherscan, startDate: Date, endDate: Date, params: Optional<DailyBlockCountAndRewardRequest>) {
   const res = await call<DailyBlockCountAndRewardResponse[]>({
     module: 'stats',
@@ -334,6 +358,7 @@ async function dailyBlkCount(call: Etherscan, startDate: Date, endDate: Date, pa
   }))
 } 
 
+/** Returns the amount of block rewards distributed to miners daily. */
 async function dailyBlockRewards(call: Etherscan, startDate: Date, endDate: Date, params: Optional<DailyBlockRewardRequest>) {
   const res = await call<DailyBlockRewardResponse[]>({
     module: 'stats',
@@ -349,6 +374,7 @@ async function dailyBlockRewards(call: Etherscan, startDate: Date, endDate: Date
   }))
 }
 
+/** Returns the daily average of time needed for a block to be successfully mined. */
 async function dailyBlockTime(call: Etherscan, startDate: Date, endDate: Date, params: Optional<DailyBlockTimeRequest>) {
   const res = await call<DailyBlockTimeResponse[]>({
     module: 'stats',
@@ -364,6 +390,7 @@ async function dailyBlockTime(call: Etherscan, startDate: Date, endDate: Date, p
   }))
 }
 
+/** Returns the number of 'Uncle' blocks mined daily and the amount of 'Uncle' block rewards. */
 async function dailyUncleBlkCount(call: Etherscan, startDate: Date, endDate: Date, params: Optional<DailyUncleBlockCountRequest>) {
   const res = await call<DailyUncleBlockCountReponse[]>({
     module: 'stats',
@@ -384,8 +411,37 @@ async function dailyUncleBlkCount(call: Etherscan, startDate: Date, endDate: Dat
 // LOGS //
 //////////
 
-async function getLogs(call: Etherscan, address: string, params: Optional<LogsRequest>) {
+/** Returns the event logs from an address, with optional filtering by block range. */
+async function getLogsByAddress(call: Etherscan, address: string, params: Optional<LogsByAddressRequest>) {
   const res = await call<LogsResponse[]>({ module: 'logs', action: 'getLogs', address, ...params });
+  return res.map(data => ({
+    ...data,
+    blockNumber: hexToNumber(data.blockNumber),
+    timeStamp: unixToDate(data.timeStamp),
+    gasPrice: toBigNumber(data.gasPrice),
+    gasUsed: toBigNumber(data.gasUsed),
+    logIndex: hexToNumber(data.logIndex),
+    transactionIndex: hexToNumber(data.transactionIndex),
+  }))
+}
+
+/** Returns the events log in a block range, filtered by topics.  */
+async function getLogsByTopics(call: Etherscan, fromBlock: string, toBlock: string, params: Optional<LogsByTopicsRequest>) {
+  const res = await call<LogsResponse[]>({ module: 'logs', action: 'getLogs', fromBlock, toBlock, ...params });
+  return res.map(data => ({
+    ...data,
+    blockNumber: hexToNumber(data.blockNumber),
+    timeStamp: unixToDate(data.timeStamp),
+    gasPrice: toBigNumber(data.gasPrice),
+    gasUsed: toBigNumber(data.gasUsed),
+    logIndex: hexToNumber(data.logIndex),
+    transactionIndex: hexToNumber(data.transactionIndex),
+  }))
+}
+
+/** Returns the event logs from an address, filtered by topics and block range. */
+async function getLogs(call: Etherscan, fromBlock: string, toBlock: string, address: string, params: Optional<LogsRequest>) {
+  const res = await call<LogsResponse[]>({ module: 'logs', action: 'getLogs', fromBlock, toBlock, address, ...params });
   return res.map(data => ({
     ...data,
     blockNumber: hexToNumber(data.blockNumber),
@@ -401,11 +457,13 @@ async function getLogs(call: Etherscan, address: string, params: Optional<LogsRe
 // PROXY //
 ///////////
 
+/** Returns the number of most recent block */
 async function blockNumber(call: Etherscan) {
   const res = await call<string>({ module: 'proxy', action: 'eth_blockNumber' });
   return hexToNumber(res);
 }
 
+/** Returns information about a block by block number. */
 async function getBlockByNumber(call: Etherscan, tag: ProxyTag, boolean: boolean) {
   if (boolean === true) {
     const res = await call<BlockResponse<TransactionResponse[]>>({ module: 'proxy', action: 'eth_getBlockByNumber', tag, boolean });
@@ -438,6 +496,7 @@ async function getBlockByNumber(call: Etherscan, tag: ProxyTag, boolean: boolean
   }
 }
 
+/** Returns information about a uncle by block number. */
 async function getUncleByBlockNumberAndIndex(call: Etherscan, tag: ProxyTag, params: Optional<UncleByBlockNumberAndIndexRequest>) {
   const res = await call<UncleBlockResponse>({ module: 'proxy', action: 'eth_getUncleByBlockNumberAndIndex', tag, ...params });
   return {
@@ -453,11 +512,13 @@ async function getUncleByBlockNumberAndIndex(call: Etherscan, tag: ProxyTag, par
   }
 }
 
+/** Returns the number of transactions in a block. */
 async function getBlockTransactionCountByNumber(call: Etherscan, params: Optional<BlockTransactionCountByNumberRequest>) {
   const res = await call<string>({ module: 'proxy', action: 'eth_getBlockTransactionCountByNumber', ...params });
   return hexToNumber(res);
 }
 
+/** Returns the information about a transaction requested by transaction hash. */
 async function getTransactionByHash(call: Etherscan, txhash: string) {
   const res = await call<TransactionInfosResponse>({ module: 'proxy', action: 'eth_getTransactionByHash', txhash });
   return {
@@ -475,6 +536,7 @@ async function getTransactionByHash(call: Etherscan, txhash: string) {
   }
 }
 
+/** Returns information about a transaction by block number and transaction index position. */
 async function getTransactionByBlockNumberAndIndex(call: Etherscan, tag: ProxyTag, params: Optional<TransactionByBlockNumberAndIndexRequest>) {
   const res = await call<TxByBlockNumberAndIndexResponse>({ module: 'proxy', action: 'eth_getTransactionByBlockNumberAndIndex',tag , ...params});
   return {
@@ -492,15 +554,18 @@ async function getTransactionByBlockNumberAndIndex(call: Etherscan, tag: ProxyTa
   }
 }
 
+/** Returns the number of transactions performed by an address. */
 async function getTransactionCount(call: Etherscan, address: string, params: Optional<TransactionCountRequest>) {
   const res = await call<string>({ module: 'proxy', action: 'eth_getTransactionCount', address, ...params });
   return hexToNumber(res);
 }
 
+/** Submits a pre-signed transaction for broadcast to the Ethereum network. */
 function sendRawTransaction(call: Etherscan, params: RawTransactionRequest) {
   return  call<string>({ module: 'proxy', action: 'eth_sendRawTransaction', ...params});
 }
 
+/** Returns the receipt of a transaction by transaction hash. */
 async function getTransactionReceipt(call: Etherscan, txHash: string) {
   const res = await call<TxReceiptResponse>({ module: 'proxy', action: 'eth_getTransactionReceipt', txHash});
   return {
@@ -516,21 +581,136 @@ async function getTransactionReceipt(call: Etherscan, txHash: string) {
 
 }
 
+/** Executes a new message call immediately without creating a transaction on the block chain. */
 function call(call: Etherscan, to: string, params: Optional<CallRequest>) {
   return call<string>({ module: 'proxy', action: 'eth_call', to, ...params});
 }
 
+/** Returns code at a given address. */
 function getCode(call: Etherscan, address: string, params: Optional<CodeRequest>) {
   return call<string>({ module: 'proxy', action: 'eth_getCode', address, ...params});
 }
 
+/** Returns the current price per gas in wei. */
 async function gasPrice(call: Etherscan) {
   const res = await call<string>({ module: 'proxy', action: 'eth_gasPrice' });
   return toBigNumber(res);
 }
 
+/** Makes a call or transaction, which won't be added to the blockchain and returns the used gas. */
 async function estimateGas(call: Etherscan, to: string, data: string, params: Optional<EstimateGasRequest>) {
   const res = await call<string>({ module: 'proxy', action: 'eth_estimateGas', to, data, ...params});
   return toBigNumber(res);
+}
+
+
+////////////
+// TOKENS //
+////////////
+
+/** Returns the current amount of an ERC-20 token in circulation. */
+async function tokenSupply(call: Etherscan, contractaddress: string) {
+  const res = await call<string>({ module: 'stats', action: 'tokensupply', contractaddress});
+  return toBigNumber(res);
+}
+
+/** Returns the current balance of an ERC-20 token of an address. */
+async function tokenbalance(call: Etherscan, address: string, contractaddress: string, params: Optional<TokenBalanceRequest>) {
+  const res = await call<string>({ module: 'account', action: 'tokenbalance', contractaddress, address, ...params});
+  return toBigNumber(res);
+}
+
+/** Returns the amount of an ERC-20 token in circulation at a certain block height. */
+async function  totalSupplyHistory(call: Etherscan, contractaddress: string, blockno: number) {
+  const res = await call<string>({ module: 'stats', action: 'tokensupplyhistory', contractaddress, blockno});
+  return toBigNumber(res);  
+}
+
+/** Returns the balance of an ERC-20 token of an address at a certain block height. */
+async function tokenBalanceHistory(call: Etherscan, contractaddress: string, address: string, blockno: number) {
+  const res = await call<string>({ module: 'account', action:'tokenbalancehistory', contractaddress, address, blockno});
+  return toBigNumber(res);
+}
+
+/** Returns project information and social media links of an ERC20/ERC721/ERC1155 token. */
+async function tokenInfo(call: Etherscan, contractaddress: string) {
+  const res = await call<TokenInfoResponse[]>({module: 'token', action: 'tokeninfo', contractaddress});
+  return res.map(data => ({
+    ...data,
+    totalSupply: toBigNumber(data.totalSupply),
+    divisor: toNumber(data.divisor)
+  }))
+}
+
+/////////////////
+// GAS TRACKER //
+/////////////////
+
+/** Returns the estimated time, in seconds, for a transaction to be confirmed on the blockchain. */
+async function gasTracker(call: Etherscan, gasprice: number) {
+  const res = await call<string>({ module: 'gastracker', action: 'gasestimate', gasprice});
+  return toNumber(res);
+}
+
+/** Returns the current Safe, Proposed and Fast gas prices. */
+async function gasOracle(call: Etherscan) {
+  const res = await call<GasOracleResponse>({ module: 'gastracker', action: 'gasoracle'});
+  return {
+    LastBlock: toNumber(res.LastBlock),
+    SafeGasPrice:toBigNumber(res.SafeGasPrice),
+    ProposeGasPrice: toBigNumber(res.ProposeGasPrice),
+    FastGasPrice: toBigNumber(res.FastGasPrice),
+    suggestBaseFee: toNumber(res.suggestBaseFee),
+    gasUsedRatio: toBigNumber(res.gasUsedRatio),
+  }
+}
+
+/** Returns the historical daily average gas limit of the Ethereum network. */
+async function dailyAvgGasLimit(call: Etherscan, startDate: Date, endDate: Date, sort: string) {
+  const res = await call<DailyAvgGasLimitResponse[]>({
+    module: 'stats',
+    action: 'dailyavggaslimit',
+    startdate : formatDate(startDate),
+    enddate: formatDate(endDate),
+    sort
+  });
+  return res.map(data => ({
+    UTCDate: utcToDate(data.UTCDate),
+    unixTimeStamp: data.unixTimeStamp,
+    gasLimit: toBigNumber(data.gasLimit)
+  }))
+}
+/** Returns the total amount of gas used daily for transctions on the Ethereum network. */
+async function dailyGasUsed(call: Etherscan, startDate: Date, endDate: Date, sort: string) {
+  const res = await call<DailyGasUsedResponse[]>({
+    module: 'stats',
+    action: 'dailyavggaslimit',
+    startdate : formatDate(startDate),
+    enddate: formatDate(endDate),
+    sort
+  });
+  return res.map(data => ({
+    UTCDate: utcToDate(data.UTCDate),
+    unixTimeStamp: data.unixTimeStamp,
+    gasUsed: toBigNumber(data.gasUsed)
+  }))
+}
+
+/** Returns the daily average gas price used on the Ethereum network. */
+async function dailyAvgGasPrice(call: Etherscan, startDate: Date, endDate: Date, sort: string) {
+  const res = await call<DailyAvgGasPriceResponse[]>({
+    module: 'stats',
+    action: 'dailyavggaslimit',
+    startdate : formatDate(startDate),
+    enddate: formatDate(endDate),
+    sort
+  });
+  return res.map(data => ({
+    UTCDate: utcToDate(data.UTCDate),
+    unixTimeStamp: data.unixTimeStamp,
+    maxGasPrice_Wei: toNumber(data.maxGasPrice_Wei),
+    minGasPrice_Wei: toNumber(data.minGasPrice_Wei),
+    avgGasPrice_Wei: toNumber(data.avgGasPrice_Wei),
+  }))
 }
 
