@@ -93,16 +93,16 @@ Run `nx test etherscan` to execute the unit tests via [Jest](https://jestjs.io).
 
 ### Stats
 
-- [] ethsupply
-- [] ethsupply2
-- [] ethprice
-- [] chainsize
-- [] nodecount
-- [] dailytxnfee
-- [] dailynewaddress
-- [] dailynetutilization
-- [] dailyavghashrate
-- [] dailytx
-- [] dailyavgnetdifficulty
-- [] ethdailymarketcap
-- [] ethdailyprice
+- [x] ethsupply
+- [x] ethsupply2
+- [x] ethprice
+- [x] chainsize
+- [x] nodecount
+- [x] dailytxnfee
+- [x] dailynewaddress
+- [x] dailynetutilization
+- [x] dailyavghashrate
+- [x] dailytx
+- [x] dailyavgnetdifficulty
+- [x] ethdailymarketcap
+- [x] ethdailyprice

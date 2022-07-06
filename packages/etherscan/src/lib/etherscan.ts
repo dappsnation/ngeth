@@ -27,6 +27,18 @@ import {
   LogsByAddressRequest,
   LogsByTopicsRequest,
   LogsRequest,
+  EthereumNodesSizeRequest,
+  DailyNetworkTxFeeRequest,
+  DailyAvgGasLimitRequest,
+  DailyGasUsedRequest,
+  DailyAvgGasPriceRequest,
+  DailyNewAddressCountRequest,
+  DailyNetworkUtilisationRequest,
+  DailyAVGNetworkHashRequest,
+  DailyTxCountRequest,
+  DailyAvgNetworkDifficultyRequest,
+  EthDailyHistoricalPriceRequest,
+  EthDailyMarketCapRequest,
 } from "./type/request";
 import {
    BalanceMultiResponse, 
@@ -56,6 +68,18 @@ import {
    DailyAvgGasLimitResponse,
    DailyGasUsedResponse,
    DailyAvgGasPriceResponse,
+   EthSupply2Response,
+   EthPriceResponse,
+   EthNodesSizeResponse,
+   NodeCountResponse,
+   DailyTxFeesResponse,
+   DailyNewAddressCountResponse,
+   DailyNetworkUtilisationResponse,
+   DailyAvgNetworkHahResponse,
+   DailyTxCountResponse,
+   DailyAvgNetworkDifficultyResponse,
+   EthDailyHistoricalPriceResponse,
+   EthDailyMarketCapResponse,
   } from "./type/response";
 
 type Etherscan = ReturnType<typeof initEtherscan>;
@@ -561,8 +585,8 @@ async function getTransactionCount(call: Etherscan, address: string, params: Opt
 }
 
 /** Submits a pre-signed transaction for broadcast to the Ethereum network. */
-function sendRawTransaction(call: Etherscan, params: RawTransactionRequest) {
-  return  call<string>({ module: 'proxy', action: 'eth_sendRawTransaction', ...params});
+function sendRawTransaction(call: Etherscan, hex: string) {
+  return  call<string>({ module: 'proxy', action: 'eth_sendRawTransaction', hex });
 }
 
 /** Returns the receipt of a transaction by transaction hash. */
@@ -666,13 +690,13 @@ async function gasOracle(call: Etherscan) {
 }
 
 /** Returns the historical daily average gas limit of the Ethereum network. */
-async function dailyAvgGasLimit(call: Etherscan, startDate: Date, endDate: Date, sort: string) {
+async function dailyAvgGasLimit(call: Etherscan, startDate: Date, endDate: Date, params : Optional<DailyAvgGasLimitRequest>) {
   const res = await call<DailyAvgGasLimitResponse[]>({
     module: 'stats',
     action: 'dailyavggaslimit',
     startdate : formatDate(startDate),
     enddate: formatDate(endDate),
-    sort
+    ...params
   });
   return res.map(data => ({
     UTCDate: utcToDate(data.UTCDate),
@@ -681,13 +705,13 @@ async function dailyAvgGasLimit(call: Etherscan, startDate: Date, endDate: Date,
   }))
 }
 /** Returns the total amount of gas used daily for transctions on the Ethereum network. */
-async function dailyGasUsed(call: Etherscan, startDate: Date, endDate: Date, sort: string) {
+async function dailyGasUsed(call: Etherscan, startDate: Date, endDate: Date, params : Optional<DailyGasUsedRequest>) {
   const res = await call<DailyGasUsedResponse[]>({
     module: 'stats',
     action: 'dailyavggaslimit',
     startdate : formatDate(startDate),
     enddate: formatDate(endDate),
-    sort
+    ...params
   });
   return res.map(data => ({
     UTCDate: utcToDate(data.UTCDate),
@@ -697,13 +721,13 @@ async function dailyGasUsed(call: Etherscan, startDate: Date, endDate: Date, sor
 }
 
 /** Returns the daily average gas price used on the Ethereum network. */
-async function dailyAvgGasPrice(call: Etherscan, startDate: Date, endDate: Date, sort: string) {
+async function dailyAvgGasPrice(call: Etherscan, startDate: Date, endDate: Date, params : Optional<DailyAvgGasPriceRequest>) {
   const res = await call<DailyAvgGasPriceResponse[]>({
     module: 'stats',
     action: 'dailyavggaslimit',
     startdate : formatDate(startDate),
     enddate: formatDate(endDate),
-    sort
+    ...params
   });
   return res.map(data => ({
     UTCDate: utcToDate(data.UTCDate),
@@ -714,3 +738,182 @@ async function dailyAvgGasPrice(call: Etherscan, startDate: Date, endDate: Date,
   }))
 }
 
+///////////
+// STATS //
+///////////
+
+/** Returns the current amount of Ether in circulation excluding ETH2 Staking rewards and EIP1559 burnt fees. */
+async function ethSupply(call: Etherscan) {
+  const res = await call<string>({ module: 'stats', action: 'ethsupply'});
+  return toBigNumber(res);
+}
+
+/** Returns the current amount of Ether in circulation, ETH2 Staking rewards and EIP1559 burnt fees statistics. */
+async function ethSupply2(call: Etherscan) {
+  const res = await call<EthSupply2Response>({ module: 'stats', action: 'ethsupply2'});
+  return {
+    EthSupply: toBigNumber(res.EthSupply),
+    Eth2Staking: toBigNumber(res.Eth2Staking),
+    BurntFees: toBigNumber(res.BurntFees),
+  }
+}
+/** Returns the latest price of 1 ETH. */
+async function ethPrice(call: Etherscan) {
+  const res = await call<EthPriceResponse>({ module: 'stats', action: 'ethprice'});
+  return {
+    ethbtc: toNumber(res.ethbtc),
+    ethbtc_timestamp: toNumber(res.ethbtc_timestamp),
+    ethusd: toNumber(res.ethusd),
+    ethusd_timestamp: toNumber(res.ethusd_timestamp)
+  }
+}
+
+/** Returns the size of the Ethereum blockchain, in bytes, over a date range. */
+async function ethNodesSize(call: Etherscan, params: Optional<EthereumNodesSizeRequest>) {
+  const res = await call<EthNodesSizeResponse[]>({ module: 'stats', action: 'chainsize', ...params});
+  return res.map(data =>({
+    ...data,
+    blockNumber: toNumber(data.blockNumber),
+    chainTimeStamp: utcToDate(data.chainTimeStamp),
+    chainSize: toNumber(data.chainSize),
+  }))
+}
+
+/** Returns the total number of discoverable Ethereum nodes. */
+async function nodeCount(call: Etherscan) {
+  const res = await call<NodeCountResponse>({ module: 'stats', action: 'nodecount'});
+  return {
+    UTCDate: utcToDate(res.UTCDate),
+    TotalNodeCount: toNumber(res.TotalNodeCount),
+  }
+}
+
+/** Returns the amount of transaction fees paid to miners per day. */
+async function dailyNetworkTxFee(call: Etherscan, startDate: Date, endDate: Date, params: Optional<DailyNetworkTxFeeRequest>) {
+  const res = await call<DailyTxFeesResponse[]>({
+    module: 'stats',
+    action: 'dailytxnfee',
+    startdate : formatDate(startDate),
+    enddate: formatDate(endDate),
+    ...params
+  });
+  return res.map(data => ({
+    UTCDate: utcToDate(data.UTCDate),
+    unixTimeStamp: toNumber(data.unixTimeStamp),
+    transactionFee_Eth: toBigNumber(data.transactionFee_Eth)
+  }))
+}
+
+/** Returns the number of new Ethereum addresses created per day. */
+async function dailyNewAddressCount(call: Etherscan, startDate: Date, endDate: Date, params: Optional<DailyNewAddressCountRequest>) {
+  const res = await call<DailyNewAddressCountResponse[]>({
+    module: 'stats',
+    action: 'dailynewaddress',
+    startdate : formatDate(startDate),
+    enddate: formatDate(endDate),
+    ...params
+  });
+  return res.map(data => ({
+    UTCDate: utcToDate(data.UTCDate),
+    unixTimeStamp: toNumber(data.unixTimeStamp),
+    newAddressCount: toNumber(data.newAddressCount)
+  }))
+}
+
+/** Returns the daily average gas used over gas limit, in percentage. */
+async function dailyNetworkUtilisation(call: Etherscan, startDate: Date, endDate: Date, params: Optional<DailyNetworkUtilisationRequest>) {
+  const res = await call<DailyNetworkUtilisationResponse[]>({
+    module: 'stats',
+    action: 'dailynetutilization',
+    startdate : formatDate(startDate),
+    enddate: formatDate(endDate),
+    ...params
+  });
+  return res.map(data => ({
+    UTCDate: utcToDate(data.UTCDate),
+    unixTimeStamp: toNumber(data.unixTimeStamp),
+    networkUtilization: toNumber(data.networkUtilization)
+  }))
+}
+
+/** Returns the historical measure of processing power of the Ethereum network. */
+async function dailyAvgNetworkHash(call: Etherscan, startDate: Date, endDate: Date, params: Optional<DailyAVGNetworkHashRequest>) {
+  const res = await call<DailyAvgNetworkHahResponse[]>({
+    module: 'stats',
+    action: 'dailyavghashrate',
+    startdate : formatDate(startDate),
+    enddate: formatDate(endDate),
+    ...params
+  });
+  return res.map(data => ({
+    UTCDate: utcToDate(data.UTCDate),
+    unixTimeStamp: toNumber(data.unixTimeStamp),
+    networkHashRate: toNumber(data.networkHashRate)
+  }))
+}
+
+/** Returns the number of transactions performed on the Ethereum blockchain per day. */
+async function dailyTxCount(call: Etherscan, startDate: Date, endDate: Date, params: Optional<DailyTxCountRequest>) {
+  const res = await call<DailyTxCountResponse[]>({
+    module: 'stats',
+    action: 'dailytx',
+    startdate : formatDate(startDate),
+    enddate: formatDate(endDate),
+    ...params
+  });
+  return res.map(data => ({
+    UTCDate: utcToDate(data.UTCDate),
+    unixTimeStamp: toNumber(data.unixTimeStamp),
+    transactionCount: toNumber(data.transactionCount)
+  }))
+}
+
+/** Returns the historical mining difficulty of the Ethereum network. */
+async function dailyAvgNetworkDifficulty(call: Etherscan, startDate: Date, endDate: Date, params: Optional<DailyAvgNetworkDifficultyRequest>) {
+  const res = await call<DailyAvgNetworkDifficultyResponse[]>({
+    module: 'stats',
+    action: 'dailynewaddress',
+    startdate : formatDate(startDate),
+    enddate: formatDate(endDate),
+    ...params
+  });
+  return res.map(data => ({
+    UTCDate: utcToDate(data.UTCDate),
+    unixTimeStamp: toNumber(data.unixTimeStamp),
+    networkDifficulty: toNumber(data.networkDifficulty)
+  }))
+}
+
+/** Returns the historical Ether daily market capitalization. */
+async function ethDailyMarketCap(call: Etherscan, startDate: Date, endDate: Date, params: Optional<EthDailyMarketCapRequest>) {
+  const res = await call<EthDailyMarketCapResponse[]>({
+    module: 'stats',
+    action: 'dailynewaddress',
+    startdate : formatDate(startDate),
+    enddate: formatDate(endDate),
+    ...params
+  });
+  return res.map(data => ({
+    UTCDate: utcToDate(data.UTCDate),
+    unixTimeStamp: toNumber(data.unixTimeStamp),
+    supply: toBigNumber(data.supply),
+    marketCap: toNumber(data.marketCap),
+    price: toNumber(data.price),
+  }))
+}
+
+/** Returns the historical price of 1 ETH. */
+async function ethDailyHistoricalPrice(call: Etherscan, startDate: Date, endDate: Date, params: Optional<EthDailyHistoricalPriceRequest>) {
+  const res = await call<EthDailyHistoricalPriceResponse[]>({
+    module: 'stats',
+    action: 'dailynewaddress',
+    startdate : formatDate(startDate),
+    enddate: formatDate(endDate),
+    ...params
+  });
+  return res.map(data => ({
+    UTCDate: utcToDate(data.UTCDate),
+    unixTimeStamp: toNumber(data.unixTimeStamp),
+    value: toBigNumber(data.value)
+  }))
+}

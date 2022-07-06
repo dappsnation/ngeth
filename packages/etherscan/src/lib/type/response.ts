@@ -390,3 +390,76 @@ export interface DailyAvgGasPriceResponse {
   minGasPrice_Wei: string;
   avgGasPrice_Wei: string;
 }
+
+///////////
+// STATS //
+///////////
+
+export interface EthSupply2Response {
+  EthSupply: string;
+  Eth2Staking: string;
+  BurntFees: string;
+}
+
+export interface EthPriceResponse {
+  ethbtc: string;
+  ethbtc_timestamp: string;
+  ethusd: string;
+  ethusd_timestamp: string
+}
+
+export interface EthNodesSizeResponse {
+  blockNumber: string;
+  chainTimeStamp: string;
+  chainSize: string;
+  clientType: string;
+  syncMode: string;
+}
+
+export interface NodeCountResponse {
+  UTCDate: string;
+  TotalNodeCount: string;
+}
+
+export interface DailyTxFeesResponse {
+  UTCDate: string;
+  unixTimeStamp: string;
+  transactionFee_Eth: string;
+}
+export interface DailyNewAddressCountResponse {
+  UTCDate: string;
+  unixTimeStamp: string;
+  newAddressCount: string;
+}
+export interface DailyNetworkUtilisationResponse {
+  UTCDate: string;
+  unixTimeStamp: string;
+  networkUtilization: string;
+}
+export interface DailyAvgNetworkHahResponse {
+  UTCDate: string;
+  unixTimeStamp: string;
+  networkHashRate: string;
+}
+export interface DailyTxCountResponse {
+  UTCDate: string;
+  unixTimeStamp: string;
+  transactionCount: string;
+}
+export interface DailyAvgNetworkDifficultyResponse {
+  UTCDate: string;
+  unixTimeStamp: string;
+  networkDifficulty: string;
+}
+export interface EthDailyMarketCapResponse {
+  UTCDate: string;
+  unixTimeStamp: string;
+  supply: string;
+  marketCap: string;
+  price: string;
+}
+export interface EthDailyHistoricalPriceResponse {
+  UTCDate: string;
+  unixTimeStamp: string;
+  value: string;
+}
