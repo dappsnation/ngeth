@@ -17,9 +17,9 @@ Run `nx test etherscan` to execute the unit tests via [Jest](https://jestjs.io).
 - [x] balance
 - [x] balancemulti
 - [x] txlist
-- [] txlistinternal (by address)
-- [] txlistinternal (by txHash)
-- [] txlistinternal (by block range)
+- [x] txlistinternal (by address)
+- [x] txlistinternal (by txHash)
+- [x] txlistinternal (by block range)
 - [x] tokentx
 - [x] tokennfttx
 - [x] token1155tx
@@ -89,7 +89,7 @@ Run `nx test etherscan` to execute the unit tests via [Jest](https://jestjs.io).
 - [x] gasoracle
 - [x] dailyavggaslimit
 - [x] dailygasused
-- [] dailyavggasprice
+- [x] dailyavggasprice
 
 ### Stats
 
