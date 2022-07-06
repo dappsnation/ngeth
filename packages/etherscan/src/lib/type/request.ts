@@ -247,7 +247,7 @@ export type DailyUncleBlockCountRequest = BaseBlock<'dailyuncleblkcount'>;
 // PROXY //
 ///////////
 
-export interface BlockByNumber {
+export interface BlockByNumberRequest {
   /** the block number, in hex  */
   tag: string;
   /** the boolean value to show full transaction objects */
@@ -269,4 +269,43 @@ export type ProxyIndex = string;
 export interface BlockTransactionCountByNumberRequest {
   /** the block number, in hex */
   tag?: string;
+}
+
+export interface TransactionByBlockNumberAndIndexRequest {
+  tag?: string;
+  index?: string;
+}
+
+/** Returns the number of transactions performed by an address. */
+export interface TransactionCountRequest {
+  address: string;
+  tag?: string;
+}
+
+/** Submits a pre-signed transaction for broadcast to the Ethereum network. */
+export interface RawTransactionRequest {
+  hex: string;
+}
+
+export interface TxReceiptRequest {
+  txHash: string;
+}
+
+export interface CallRequest {
+  to: string;
+  data?: string;
+  tag?: string;
+}
+
+export interface CodeRequest {
+  address: string;
+  tag?: string;
+}
+
+export interface EstimateGasRequest {
+  data: string;
+  to: string;
+  value?: string;
+  gasPrice?: string;
+  gas?: string;
 }

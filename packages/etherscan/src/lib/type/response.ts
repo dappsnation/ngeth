@@ -1,4 +1,4 @@
-import { TransactionResponse } from "@ethersproject/abstract-provider";
+import { TransactionResponse, Log } from "@ethersproject/abstract-provider";
 
 export interface TransferTransactionResponse {
   blockNumber: string;
@@ -51,7 +51,68 @@ export interface TxListResponse {
   contractAddress: string,
   cumulativesGasUsed: string,
   gasUsed: string,
-  confirmation: string
+  confirmation: string,
+}
+
+export interface TokenTxResponse {
+  blockNumber: string,
+  timeStamp: string,
+  hash: string,
+  nonce: string,
+  blockHash: string,
+  from: string,
+  contractAddress: string,
+  to: string,
+  value: string,
+  tokenName: string,
+  tokenSymbol: string,
+  tokenDecimal: string,
+  transactionIndex: string,
+  gas: string,
+  gasPrice: string,
+  gasUsed: string,
+  cumulativeGasUsed: string,
+  confirmations: string,
+}
+export interface TokenNftTxResponse {
+  blockNumber: string,
+  timeStamp: string,
+  hash: string,
+  nonce: string,
+  blockHash: string,
+  from: string,
+  contractAddress: string,
+  to: string,
+  tokenID: string,
+  tokenName: string,
+  tokenSymbol: string,
+  tokenDecimal: string,
+  transactionIndex: string,
+  gas: string,
+  gasPrice: string,
+  gasUsed: string,
+  cumulativeGasUsed: string,
+  confirmations: string,
+}
+export interface Token1155TxResponse {
+  blockNumber: string,
+  timeStamp: string,
+  hash: string,
+  nonce: string,
+  blockHash: string,
+  transactionIndex: string,
+  gas: string,
+  gasPrice: string,
+  gasUsed: string,
+  cumulativeGasUsed: string,
+  contractAddress: string,
+  from: string,
+  to: string,
+  tokenID: string,
+  tokenValue: string,
+  tokenName: string,
+  tokenSymbol: string,
+  confirmations: string
 }
 
 export interface TokenInfoResponse {
@@ -253,4 +314,47 @@ export interface TransactionInfosResponse {
   v: string;
   r: string;
   s: string;
+}
+
+export interface TxByBlockNumberAndIndexResponse {
+    accessList: string[];
+    blockHash: string;
+    blockNumber: string;
+    chainId: string;
+    condition: string;
+    creates: string;
+    from: string;
+    gas: string;
+    gasPrice: string;
+    hash: string;
+    input: string;
+    maxFeePerGas: string;
+    maxPriorityFeePerGas: string;
+    nonce: string;
+    publicKey: string;
+    r: string;
+    raw: string;
+    s: string;
+    to: string;
+    transactionIndex: string;
+    type: string;
+    v: string;
+    value: string;
+}
+
+export interface TxReceiptResponse {
+  blockHash: string;
+  blockNumber: string;
+  contractAddress: string;
+  cumulativeGasUsed: string;
+  effectiveGasPrice: string;
+  from: string;
+  gasUsed: string;
+  logs: Log[];
+  logsBloom: string;
+  status:string;
+  to: string;
+  transactionHash: string;
+  transactionIndex: string;
+  type: string;
 }
