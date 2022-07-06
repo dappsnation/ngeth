@@ -294,8 +294,6 @@ async function balanceHistory(call: Etherscan, address: string, blockno: number)
 // CONTRACTS //
 ///////////////
 
-//TODO : add `verifysourcecode`, `checkverifystatus`, `verifyproxycontract`, `checkproxyverification`
-
 /** Returns the Contract Application Binary Interface ( ABI ) of a verified smart contract. */
 async function getAbi(call: Etherscan, address: string) {
   const abi = await call<string>({ module: 'contract', action: 'getabi', address });
@@ -309,6 +307,10 @@ async function getSourceCode(call: Etherscan, address: string) {
     res.ABI = JSON.parse(res.ABI);
     return res as ContractSourceCodeResponse;
   });
+}
+
+function checkverifystatus(call: Etherscan, guid: string) {
+  return call<string>({ module: 'contract', action: 'checkverifystatus', guid });
 }
 
 //////////////////
