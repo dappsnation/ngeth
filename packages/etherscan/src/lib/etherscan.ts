@@ -90,8 +90,8 @@ function toBigNumber(value: string): BigNumber {
   return BigNumber.from(value);
 }
 /** Transform a string into boolean */
-function toBoolean(bool: '0' | '1'): boolean {
-  return bool === '0' ? false : true;
+function toBoolean(bool: string): boolean {
+  return bool === "0" ? false : true;
 }
 /** Transform a string into a number */
 function toNumber(value: string): number {
@@ -120,8 +120,23 @@ async function balanceMulti(call: Etherscan, addresses: string[], tag: Tag) {
   }))
 }
 
-function txList(call: Etherscan, address: string, params: Optional<TxListRequest> = {}) {
-  return call<TxListResponse[]>({ module: 'account', action: 'txlist', address, ...params });
+async function txList(call: Etherscan, address: string, params: Optional<TxListRequest> = {}) {
+  const res = await call<TxListResponse[]>({ module: 'account', action: 'txlist', address, ...params });
+  return res.map(data => ({
+    ...data,
+    blockNumber: toNumber(data.blockNumber),
+    timeStamp: unixToDate(data.timeStamp),
+    nonce: toNumber(data.nonce),
+    transactionIndex: toNumber(data.transactionIndex),
+    value: toBigNumber(data.value),
+    gas: toBigNumber(data.gas),
+    gasPrice: toBigNumber(data.gasPrice),
+    isError: toBoolean(data.isError),
+    txreceipt_status: toBoolean(data.txreceipt_status),
+    cumulativesGasUsed: toBigNumber(data.cumulativesGasUsed),
+    gasUsed: toBigNumber(data.gasUsed),
+    confirmation: toNumber(data.confirmation),
+  }))
 }
 
 //TODO: Finish the implementation of the 3 `txlistinternal` functions
@@ -156,7 +171,7 @@ async function tokenTx(call: Etherscan, contractaddress: string, params: Optiona
     blockNumber: toNumber(data.blockNumber),
     timeStamp: unixToDate(data.timeStamp),
     nonce: toNumber(data.nonce),
-    value: toNumber(data.value),
+    value: toBigNumber(data.value),
     tokenDecimal: toNumber(data.tokenDecimal),
     transactionIndex: toNumber(data.transactionIndex),
     gas: toBigNumber(data.gas),
@@ -491,7 +506,6 @@ async function getTransactionReceipt(call: Etherscan, txHash: string) {
   return {
     ...res,
     blockNumber: hexToNumber(res.blockNumber),
-    contractAddress: res.contractAddress,
     cumulativeGasUsed: toBigNumber(res.cumulativeGasUsed),
     effectiveGasPrice: toBigNumber(res.effectiveGasPrice),
     gasUsed: toBigNumber(res.gasUsed),

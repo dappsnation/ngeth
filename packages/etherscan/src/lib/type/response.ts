@@ -51,7 +51,7 @@ export interface TxListResponse {
   contractAddress: string,
   cumulativesGasUsed: string,
   gasUsed: string,
-  confirmation: string
+  confirmation: string,
 }
 
 export interface TokenTxResponse {
