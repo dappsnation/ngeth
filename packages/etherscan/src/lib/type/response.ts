@@ -34,6 +34,7 @@ export interface ERC1155TxResponse extends TransferTransactionResponse {
   tokenName: string;
   tokenValue: string;
 }
+
 export interface TxListResponse {
   blockNumber: string,
   timeStamp: string,
@@ -52,6 +53,23 @@ export interface TxListResponse {
   cumulativesGasUsed: string,
   gasUsed: string,
   confirmation: string,
+}
+
+export interface TxListInternalResponse {
+  blockNumber: string;
+  timeStamp: string;
+  hash: string;
+  from: string;
+  to: string;
+  value: string;
+  contractAddress: string;
+  input: string;
+  type: string;
+  gas: string;
+  gasUsed: string;
+  traceId: string;
+  isError: string;
+  errCode: string;
 }
 
 export interface TokenTxResponse {

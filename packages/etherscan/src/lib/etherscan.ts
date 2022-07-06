@@ -39,6 +39,8 @@ import {
   DailyAvgNetworkDifficultyRequest,
   EthDailyHistoricalPriceRequest,
   EthDailyMarketCapRequest,
+  TxListInternalByAddressRequest,
+  TxListInternalByBlockRangeRequest,
 } from "./type/request";
 import {
    BalanceMultiResponse, 
@@ -80,6 +82,7 @@ import {
    DailyAvgNetworkDifficultyResponse,
    EthDailyHistoricalPriceResponse,
    EthDailyMarketCapResponse,
+   TxListInternalResponse,
   } from "./type/response";
 
 type Etherscan = ReturnType<typeof initEtherscan>;
@@ -174,29 +177,45 @@ async function txList(call: Etherscan, address: string, params: Optional<TxListR
   }))
 }
 
-//TODO: Finish the implementation of the 3 `txlistinternal` functions
-
-// function txListInternal(call: Etherscan, txhash: string)
-// function txListInternal(call: Etherscan, address: string, params: Optional<TxListInternal>)
-// function txListInternal(call: Etherscan, startBlock: number, endBlock: number, params: Optional<TxListInternal>)
-// function txListInternal(
-//   call: Etherscan,
-//   addressOrParams: number | string,
-//   paramsOrEndBlock?: number | Optional<TxListInternal>,
-//   params: Optional<TxListInternal> = {}
-// ): Promise<any[]> {
-//   let query: Record<string, unknown>;
-//   if (typeof addressOrParams === 'number') {
-//     query = { startblock: addressOrParams, endblock: paramsOrEndBlock, ...params };
-//   } else if (addressOrParams.length > 42) {
-//     query = { txhash: addressOrParams };
-//   } else if (typeof paramsOrEndBlock !== 'number') {
-//     query = { address: addressOrParams, ...paramsOrEndBlock }
-//   }
-//   return call<any[]>({ module: 'account', action: 'txlistinternal', ...query });
-// }
-// const etherscan = initEtherscan('sup', 'sup');
-// txListInternal(etherscan, 10, 30)
+async  function txListInternalByTxHash(call: Etherscan, txhash: string) {
+  const res = await call<TxListInternalResponse[]>({module: 'account', action: 'txlistinternal', txhash});
+  return res.map(data => ({
+    ...data,
+    blockNumber: toNumber(data.blockNumber),
+    timeStamp: unixToDate(data.timeStamp),
+    value: toBigNumber(data.value),
+    gas: toBigNumber(data.gas),
+    gasUsed: toBigNumber(data.gasUsed),
+    traceId: toNumber(data.traceId),
+    isError: toBoolean(data.isError),
+  }))
+}
+async function txListInternalByAddress(call: Etherscan, address: string, params: Optional<TxListInternalByAddressRequest>) {
+  const res = await call<TxListInternalResponse[]>({module: 'account', action: 'txlistinternal', address, ...params});
+  return res.map(data => ({
+    ...data,
+    blockNumber: toNumber(data.blockNumber),
+    timeStamp: unixToDate(data.timeStamp),
+    value: toBigNumber(data.value),
+    gas: toBigNumber(data.gas),
+    gasUsed: toBigNumber(data.gasUsed),
+    traceId: toNumber(data.traceId),
+    isError: toBoolean(data.isError),
+  }))
+}
+async function txListInternalByBlockRange(call: Etherscan, startBlock: number, endBlock: number, params: Optional<TxListInternalByBlockRangeRequest>) {
+  const res = await call<TxListInternalResponse[]>({module: 'account', action: 'txlistinternal', startBlock , endBlock, ...params});
+  return res.map(data => ({
+    ...data,
+    blockNumber: toNumber(data.blockNumber),
+    timeStamp: unixToDate(data.timeStamp),
+    value: toBigNumber(data.value),
+    gas: toBigNumber(data.gas),
+    gasUsed: toBigNumber(data.gasUsed),
+    traceId: toNumber(data.traceId),
+    isError: toBoolean(data.isError),
+  }))
+}
 
 /** Returns the list of ERC-20 tokens transferred by an address, with optional filtering by token contract. */
 async function tokenTx(call: Etherscan, contractaddress: string, params: Optional<TokenTxRequest>) {

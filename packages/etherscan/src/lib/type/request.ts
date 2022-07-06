@@ -20,7 +20,7 @@ export type GetParams<T> = Omit<T, 'module' | 'action' | 'apiKey'>
 // ACCOUNT //
 /////////////
 // Params
-export type AccountsParams = BalanceRequest | BalanceMultiRequest | BalanceHistoryRequest | TxListRequest | TxListInternalRequest | MinedBlockRequest | TokenBalanceRequest | TokenBalanceHistoryRequest | TokenTxRequest | TokenNftTxRequest | Token1155TxRequest;
+export type AccountsParams = BalanceRequest | BalanceMultiRequest | BalanceHistoryRequest | TxListRequest | TxListInternalByAddressRequest| TxListInternalByTxHashRequest | TxListInternalByBlockRangeRequest | MinedBlockRequest | TokenBalanceRequest | TokenBalanceHistoryRequest | TokenTxRequest | TokenNftTxRequest | Token1155TxRequest;
 
 export interface BalanceRequest extends BaseParams<'account', 'balance'> {
   /** the string representing the address to check for balance   */
@@ -54,7 +54,8 @@ export interface TxListRequest extends BaseParams<'account', 'txlist'> {
   /** the sorting preference, use asc to sort by ascending and desc to sort by descendin Tip: Specify a smaller startblock and endblock range for faster search results. */
   sort?: Sort;
 }
-export interface TxListInternalRequest extends BaseParams<'account', 'txlistinternal'> {
+
+export interface TxListInternalByAddressRequest extends BaseParams<'account', 'txlistinternal'> {
   /** the strings representing the addresses to check for balance, separated by , up to 20 addresses per call */
   address: string;
   /** the integer block number to start searching for transactions */
@@ -62,15 +63,29 @@ export interface TxListInternalRequest extends BaseParams<'account', 'txlistinte
   /** the integer block number to stop searching for transactions */
   endblock: number;
   /** the integer page number, if pagination is enabled */
-  page: number;
+  page?: number;
   /** the number of transactions displayed per page */
-  offset: number;
+  offset?: number;
   /** the sorting preference, use asc to sort by ascending and desc to sort by descendin Tip: Specify a smaller startblock and endblock range for faster search results. */
-  sort: Sort;
+  sort?: Sort;
+}
+export interface TxListInternalByTxHashRequest extends BaseParams<'account', 'txlistinternal'> {
   /** the string representing the transaction hash to check for internal transactions */
   txhash?: string;
-
 }
+export interface TxListInternalByBlockRangeRequest extends BaseParams<'account', 'txlistinternal'> {
+  /** the integer block number to start searching for transactions */
+  startblock: number;
+  /** the integer block number to stop searching for transactions */
+  endblock: number;
+  /** the integer page number, if pagination is enabled */
+  page?: number;
+  /** the number of transactions displayed per page */
+  offset?: number;
+  /** the sorting preference, use asc to sort by ascending and desc to sort by descendin Tip: Specify a smaller startblock and endblock range for faster search results. */
+  sort?: Sort;
+}
+
 export interface MinedBlockRequest extends BaseParams<'account', 'getminedblocks'> {
   /** the string representing the address to check for balance */
   address: string;
