@@ -1,14 +1,13 @@
 import { dirname, join, resolve } from 'path';
 import { existsSync, mkdirSync, promises as fs } from 'fs';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
-import { getEthersContract, getNgContract, getContractManager, getFactory, getContractImport } from '@ngeth/tools';
+import { getEthersContract, getFactory, getContractImport } from '@ngeth/tools';
 import { formatTs, getCompiledOutput } from './utils';
 import { exportAddress } from './deploy';
 
-const contractIndex = (contractName: string, type: 'angular' | 'typescript') => formatTs(`
+const contractIndex = (contractName: string) => formatTs(`
   export * from './contract';
   export * from './factory';
-  ${type === 'angular' ? "export * from './manager';" : ''}
   export { default as ${contractName}Abi } from './abi';
   export { default as ${contractName}Bytecode } from './bytecode';
 `);
@@ -35,35 +34,19 @@ export async function generate(hre: HardhatRuntimeEnvironment) {
       const writeFile = (filename: string, content: string) => {
         return fs.writeFile(join(contractFolder, filename), content)
       }
-  
-      const type = hre.config.ngeth.outputType;
-      const actions = [];
-  
-      if (type === 'angular') {
-        const contract = getNgContract(contractName, artifact);
-        const manager = getContractManager(contractName);
-        actions.push(
-          writeFile('contract.ts', formatTs(contract)),
-          writeFile('manager.ts', formatTs(manager)),
-        );
-      }
-  
-      if (type === 'typescript') {
-        const contract = getEthersContract(contractName, artifact);
-        actions.push(writeFile('contract.ts', formatTs(contract)));
-      }
-    
+      
+      const contract = getEthersContract(contractName, artifact);
       const factory = getFactory(contractName, artifact);
       const abi = `export default ${JSON.stringify(artifact.abi)}`;
       const bytecode = `export default "${artifact.bytecode}"`;
-      const index = contractIndex(contractName, type);
+      const index = contractIndex(contractName);
     
       return Promise.all([
+        writeFile('contract.ts', formatTs(contract)),
         writeFile('abi.ts', abi),
         writeFile('bytecode.ts', bytecode),
         writeFile('factory.ts', formatTs(factory)),
         writeFile('index.ts', index),
-        ...actions
       ]);
     })
     await Promise.all(write);

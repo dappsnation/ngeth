@@ -6,7 +6,7 @@ import { defaultAbiCoder } from '@ethersproject/abi';
 import { id } from '@ethersproject/hash';
 import { ABIDescription } from '@type/solc';
 import { provider } from './provider';
-import { BuildInfo } from 'hardhat/types'
+import { BuildInfo, CompilerOutputContract } from 'hardhat/types'
 import { Contract } from 'ethers';
 
 function bignumberReviver(key: string, value: any) {
@@ -241,25 +241,31 @@ export function getArtifact(code: string): ContractArtifact {
   for (const info of Object.values(store.buildInfos)) {
     for (const sourceName in info.output.contracts) {
       for (const contractName in info.output.contracts[sourceName]) {
-        const output = info.output.contracts[sourceName][contractName];
-        const refs = output.evm.deployedBytecode.immutableReferences;
-        if (!refs || !Object.values(refs).length) continue;
-        let replaced = code;
-        for (const ref of Object.values(refs)) {
-          for (const { start, length } of ref) {
-            // length is in bytes -> 2 chars
-            const from = (start + 1) * 2;
-            const size = length * 2;
-            replaced = `${code.substring(0, from)}${''.padEnd(size, '0')}${code.substring(from + size)}`;
-          }
-        }
-        if (`0x${output.evm.deployedBytecode.object}` === replaced) {
-          return store.artifacts[artifactKey({ sourceName, contractName })];
-        }
+        const matched = compareWithEvmOutput(code, info.output.contracts[sourceName][contractName].evm);
+        if (matched) return store.artifacts[artifactKey({ sourceName, contractName })];
       }
     }
   }
   // TODO: check proxy
+}
+
+/** Replace immutableReference in the code with "0" to compare with the code */
+export function compareWithEvmOutput(code: string, evmOutput: CompilerOutputContract['evm']) {
+  const refs = evmOutput.deployedBytecode.immutableReferences;
+  if (!refs || !Object.values(refs).length) return false;
+  let replaced = code;
+  for (const ref of Object.values(refs)) {
+    for (const { start, length } of ref) {
+      // length is in bytes -> 2 chars
+      const from = (start + 1) * 2;
+      const size = length * 2;
+      replaced = `${code.substring(0, from)}${''.padEnd(size, '0')}${code.substring(from + size)}`;
+    }
+  }
+  if (`0x${evmOutput.deployedBytecode.object}` === replaced) {
+    return true; // store.artifacts[artifactKey({ sourceName, contractName })];
+  }
+  return false;
 }
 
 async function linkArtifactToContract(address: string) {

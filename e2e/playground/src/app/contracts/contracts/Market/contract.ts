@@ -1,6 +1,4 @@
-import { NgZone } from "@angular/core";
-import { FilterParam, TypedFilter } from "@ngeth/ethers-core";
-import { NgContract } from "@ngeth/ethers-angular";
+import { EthersContract, FilterParam, TypedFilter } from "@ngeth/ethers-core";
 import type {
   BigNumber,
   Overrides,
@@ -78,9 +76,7 @@ export interface MarketEvents {
   };
 }
 
-/**
- */
-export class Market extends NgContract<MarketEvents> {
+export class Market extends EthersContract<MarketEvents> {
   // Read
   offers!: (
     arg: string,
@@ -115,7 +111,7 @@ export class Market extends NgContract<MarketEvents> {
     overrides?: Overrides
   ) => Promise<ContractTransaction>;
 
-  constructor(address: string, signer?: Signer | Provider, zone?: NgZone) {
-    super(address, abi, signer, zone);
+  constructor(address: string, signer?: Signer | Provider) {
+    super(address, abi, signer);
   }
 }

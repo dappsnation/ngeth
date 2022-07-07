@@ -1,5 +1,4 @@
-import { FilterParam, TypedFilter } from "@ngeth/ethers-core";
-import { NgContract } from "@ngeth/ethers-angular";
+import { EthersContract, FilterParam, TypedFilter } from "@ngeth/ethers-core";
 import {
   BigNumber,
   Overrides,
@@ -63,7 +62,7 @@ export interface ChildMintableERC1155Events {
   };
 }
 
-export class ChildMintableERC1155 extends NgContract<ChildMintableERC1155Events> {
+export class ChildMintableERC1155 extends EthersContract<ChildMintableERC1155Events> {
   // Read
   DEFAULT_ADMIN_ROLE!: (overrides?: CallOverrides) => Promise<BytesLike>;
   DEPOSITOR_ROLE!: (overrides?: CallOverrides) => Promise<BytesLike>;

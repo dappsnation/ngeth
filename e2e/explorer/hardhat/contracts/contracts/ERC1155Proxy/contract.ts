@@ -40,8 +40,6 @@ export interface ERC1155ProxyEvents {
   };
 }
 
-/**
- */
 export class ERC1155Proxy extends EthersContract<ERC1155ProxyEvents> {
   // Read
 

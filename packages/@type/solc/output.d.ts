@@ -2,6 +2,11 @@
 // RESULT //
 ////////////
 
+import { YulBlock } from "./yul-ast";
+import { SolidityNode, AstNodeLegacy } from "./solidity-ast";
+import { OpCode } from "./opcode";
+import { ABIDescription } from "./abi";
+
 export interface CompilationResult {
   /** not present if no errors/warnings were encountered */
   errors?: CompilationError[]
@@ -74,49 +79,9 @@ export interface CompilationSource {
   /** Identifier of the source (used in source maps) */
   id: number
   /** The AST object */
-  ast: AstNode
+  ast: SolidityNode
   /** The legacy AST object */
   legacyAST: AstNodeLegacy
-}
-
-/////////
-// AST //
-/////////
-export interface AstNode {
-  absolutePath?: string
-  exportedSymbols?: Record<string, unknown>
-  id: number
-  nodeType: string
-  nodes?: Array<AstNode>
-  src: string
-  literals?: Array<string>
-  file?: string
-  scope?: number
-  sourceUnit?: number
-  symbolAliases?: Array<string>
-  [x: string]: any
-}
-
-export interface AstNodeLegacy {
-  id: number
-  name: string
-  src: string
-  children?: Array<AstNodeLegacy>
-  attributes?: AstNodeAtt
-}
-
-export interface AstNodeAtt {
-  operator?: string
-  string?: null
-  type?: string
-  value?: string
-  constant?: boolean
-  name?: string
-  public?: boolean
-  exportedSymbols?: Record<string, unknown>
-  argumentTypes?: null
-  absolutePath?: string
-  [x: string]: any
 }
 
 //////////////
@@ -124,17 +89,11 @@ export interface AstNodeAtt {
 //////////////
 export interface CompiledContract {
   /** The Ethereum Contract ABI. If empty, it is represented as an empty array. */
-  abi: ABIDescription[]
-  // See the Metadata Output documentation (serialised JSON string)
-  metadata: string
-  /** User documentation (natural specification) */
-  userdoc: UserDocumentation
+  abi?: ABIDescription[]
   /** Developer documentation (natural specification) */
-  devdoc: DeveloperDocumentation
-  /** Intermediate representation (string) */
-  ir: string
+  devdoc?: DeveloperDocumentation
   /** EVM-related outputs */
-  evm: EvmOutputs
+  evm?: EvmOutputs
   /** eWASM related outputs */
   ewasm: {
     /** S-expressions format */
@@ -142,85 +101,14 @@ export interface CompiledContract {
     /** Binary format (hex string) */
     wasm: string
   }
+  // See the Metadata Output documentation (serialised JSON string)
+  metadata?: string
+  storageLayout?: any
+  /** User documentation (natural specification) */
+  userdoc?: UserDocumentation
+  /** Intermediate representation (string) */
+  ir?: string
 }
-
-/////////
-// ABI //
-/////////
-type bytes = '8' | '16' | '32' | '64' | '128' | '256';
-
-type ABISingleTypeParameter = 
-| 'string'
-| 'uint'
-| 'int'
-| 'address'
-| 'bool'
-| 'fixed'
-| `fixed${bytes}`
-| 'ufixed'
-| `ufixed${bytes}`
-| 'bytes'
-| `bytes${bytes}`
-| 'function'
-| 'tuple';
-
-type ABIArrayType<T extends string> = `${T}[]` | `${T}[${number}]`;
-
-export type ABITypeParameter = ABISingleTypeParameter | ABIArrayType<ABISingleTypeParameter>;
-
-
-export interface ABIParameter {
-  /** The name of the parameter */
-  name: string;
-  /** The canonical type of the parameter */
-  type: ABITypeParameter;
-  /** Used for tuple types */
-  components?: ABIParameter[];
-  /**
-   * @example "struct StructName"
-   * @example "struct Contract.StructName"
-   */
-  internalType?: string;
-}
-
-interface ABIEventParameter extends ABIParameter {
-  /** true if the field is part of the log’s topics, false if it one of the log’s data segment. */
-  indexed: boolean;
-}
-
-export interface FunctionDescription {
-  /** Type of the method. default is 'function' */
-  type?: 'function' | 'constructor' | 'fallback' | 'receive';
-  /** The name of the function. Constructor and fallback functions never have a name */
-  name?: string;
-  /** List of parameters of the method. Fallback functions don’t have inputs. */
-  inputs?: ABIParameter[];
-  /** List of the output parameters for the method, if any */
-  outputs?: ABIParameter[];
-  /** State mutability of the method */
-  stateMutability: 'pure' | 'view' | 'nonpayable' | 'payable';
-  /** true if function accepts Ether, false otherwise. Default is false */
-  payable?: boolean;
-  /** true if function is either pure or view, false otherwise. Default is false  */
-  constant?: boolean;
-}
-
-export interface EventDescription {
-  type: 'event';
-  name: string;
-  inputs: ABIEventParameter[];
-  /** true if the event was declared as anonymous. */
-  anonymous: boolean;
-}
-
-export interface ErrorDescription {
-  type: 'error';
-  name: string;
-  inputs: ABIEventParameter[];
-}
-
-export type ABIDescription = FunctionDescription | EventDescription | ErrorDescription;
-
 
 ///////////////////////////
 // NATURAL SPECIFICATION //
@@ -228,15 +116,12 @@ export type ABIDescription = FunctionDescription | EventDescription | ErrorDescr
 
 // Userdoc
 export interface UserDocumentation {
-  methods: UserMethodList
+  kind: 'user'
+  methods?: Record<string, UserMethodDoc>
+  stateVariables?: Record<string, UserMethodDoc>
   notice: string
 }
 
-export type UserMethodList = {
-  [functionIdentifier: string]: UserMethodDoc
-} & {
-  'constructor'?: string
-}
 
 export interface UserMethodDoc {
   notice: string
@@ -244,64 +129,78 @@ export interface UserMethodDoc {
 
 // Devdoc
 export interface DeveloperDocumentation {
-  author: string
-  title: string
-  details: string
-  methods?: DevMethodList
-  events?: DevMethodList
+  kind: 'dev'
+  version: number
+  author?: string
+  title?: string
+  details?: string
+  stateVariables?: Record<string, DevStateVariableDoc>
+  events?: Record<string, DevEventDoc>
+  methods?: Record<string, DevMethodDoc>
+  [custom: `custom:${string}`]: string
 }
 
-export interface DevMethodList {
-  [functionIdentifier: string]: DevMethodDoc
+export interface DevStateVariableDoc {
+  details?: string
+  return?: string
+  [custom: `custom:${string}`]: string
+}
+
+export interface DevEventDoc {
+  details?: string
+  params?: {
+    [param: string]: string
+  }
+  [custom: `custom:${string}`]: string
 }
 
 export interface DevMethodDoc {
-  author: string
-  details: string
-  return: string
-  returns: {
+  details?: string
+  return?: string
+  returns?: {
     [param: string]: string
   }
-  params: {
+  params?: {
     [param: string]: string
   }
+  [custom: `custom:${string}`]: string
 }
 
 ////////////////
 // EVM OUTPUT //
 ////////////////
 export interface EvmOutputs {
-  assembly: string
-  legacyAssembly: Record<string, unknown>
+  assembly?: string
   /** Bytecode and related details. */
-  bytecode: BytecodeObject
-  deployedBytecode: BytecodeObject
+  bytecode: Bytecode
+  legacyAssembly: Record<string, LegacyAssembly[]> | null
+  deployedBytecode: DeployedBytecode
+  /** Function gas estimates */
+  gasEstimates?: GasEstimates | null
   /** The list of function hashes */
   methodIdentifiers: {
     [functionIdentifier: string]: string
   }
-  /** Function gas estimates */
-  gasEstimates: GasEstimates
 }
 
-export interface BytecodeObject {
+export interface Bytecode {
   /** 
    * Debugging data at the level of functions.
    * Set of functions including compiler-internal and user-defined function.
    */
   functionDebugData: {
-    [internalName: string]: Partial<FunctionDebugData>
+    [internalName: string]: FunctionDebugData
   }
+  /** Array of sources generated by the compiler. Currently only contains a single Yul file. */
+  generatedSources: GeneratedSources[],
   /** The bytecode as a hex string. */
   object: string
   /** Opcodes list */
   opcodes: string
   /** The source mapping as a string. See the source mapping definition. */
-  sourceMap: string
-  /** Array of sources generated by the compiler. Currently only contains a single Yul file. */
-  generatedSources: GeneratedSources[],
+  sourceMap?: string
   /** If given, this is an unlinked object. */
-  linkReferences?: {
+  linkReferences: {
     [contractName: string]: {
       /** Byte offsets into the bytecode. */
       [library: string]: { start: number; length: number }[]
@@ -309,11 +208,18 @@ export interface BytecodeObject {
   }
 }
 
+export interface DeployedBytecode extends Bytecode {
+  immutableReferences?: {
+    /** Byte offsets into the bytecode. */
+    [nodeId: string]: { start: number; length: number }[]
+  }
+}
+
 export interface FunctionDebugData {
   /** Byte offset into the bytecode where the function starts */
   entryPoint: number;
   /** AST ID of the function definition or null for compiler-internal functions */
-  id: number;
+  id: number | null;
   /** Number of EVM stack slots for the function parameters */
   parameterSlots: number;
   /** Number of EVM stack slots for the return values */
@@ -322,7 +228,7 @@ export interface FunctionDebugData {
 
 export interface GeneratedSources {
     /** Yul AST */
-    ast: Record<string, unknown> // TODO: Find Yul AST type
+    ast: YulBlock
     /** Source file in its text form (may contain comments) */ 
     contents: string
     /** Source file ID, used for source references, same namespace as the Solidity source files */
@@ -334,15 +240,52 @@ export interface GeneratedSources {
 export interface GasEstimates {
   creation: {
     codeDepositCost: string
-    executionCost: 'infinite' | string
-    totalCost: 'infinite' | string
+    executionCost: 'infinite' | `${number}`
+    totalCost: 'infinite' | `${number}`
   }
   external: {
-    [functionIdentifier: string]: string
+    [functionIdentifier: string]: 'infinite' | `${number}`
   }
   internal: {
-    [functionIdentifier: string]: 'infinite' | string
+    [functionIdentifier: string]: 'infinite' | `${number}`
   }
+}
+
+export interface LegacyAssembly {
+  ['.code']: LegacyAssemblyNode[];
+  ['.data']: Record<string, {
+    ['.auxdata']: string;
+    ['.code']: LegacyAssemblyNode[];
+  }>
+}
+
+export interface LegacyAssemblyNode {
+  begin: number;
+  end: number;
+  name: OpCode | 'PUSH [tag]';
+  source: number;
+  value: string;
+}
+
+export interface StorageLayout {
+  storage: StorageNode[];
+  types: Record<string, StorageType> | null
+}
+
+export interface StorageNode {
+  astId: string;
+  contract: string;
+  label: string;
+  offset: number;
+  slot: `${number}`;
+  type: string;
+}
+
+export interface StorageType {
+  base?: string;
+  encoding: string;
+  label: string;
+  numberOfBytes: `${number}`;
 }
 
 /////////////

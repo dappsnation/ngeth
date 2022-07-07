@@ -1,6 +1,4 @@
-import { NgZone } from "@angular/core";
-import { FilterParam, TypedFilter } from "@ngeth/ethers-core";
-import { NgContract } from "@ngeth/ethers-angular";
+import { EthersContract, FilterParam, TypedFilter } from "@ngeth/ethers-core";
 import type {
   BigNumber,
   Overrides,
@@ -25,15 +23,13 @@ export interface ERC1155FactoryEvents {
   };
 }
 
-/**
- */
-export class ERC1155Factory extends NgContract<ERC1155FactoryEvents> {
+export class ERC1155Factory extends EthersContract<ERC1155FactoryEvents> {
   // Read
 
   // Write
   create!: (_contractURI: string, _tokenURI: string, overrides?: Overrides) => Promise<ContractTransaction>;
 
-  constructor(address: string, signer?: Signer | Provider, zone?: NgZone) {
-    super(address, abi, signer, zone);
+  constructor(address: string, signer?: Signer | Provider) {
+    super(address, abi, signer);
   }
 }

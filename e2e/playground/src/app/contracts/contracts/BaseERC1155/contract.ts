@@ -1,6 +1,4 @@
-import { NgZone } from "@angular/core";
-import { FilterParam, TypedFilter } from "@ngeth/ethers-core";
-import { NgContract } from "@ngeth/ethers-angular";
+import { EthersContract, FilterParam, TypedFilter } from "@ngeth/ethers-core";
 import type {
   BigNumber,
   Overrides,
@@ -71,9 +69,7 @@ export interface BaseERC1155Events {
   };
 }
 
-/**
- */
-export class BaseERC1155 extends NgContract<BaseERC1155Events> {
+export class BaseERC1155 extends EthersContract<BaseERC1155Events> {
   // Read
   /**
    * Returns the amount of tokens of token type `id` owned by `account`. Requirements: - `account` cannot be the zero address.
@@ -151,7 +147,7 @@ export class BaseERC1155 extends NgContract<BaseERC1155Events> {
    */
   transferOwnership!: (newOwner: string, overrides?: Overrides) => Promise<ContractTransaction>;
 
-  constructor(address: string, signer?: Signer | Provider, zone?: NgZone) {
-    super(address, abi, signer, zone);
+  constructor(address: string, signer?: Signer | Provider) {
+    super(address, abi, signer);
   }
 }

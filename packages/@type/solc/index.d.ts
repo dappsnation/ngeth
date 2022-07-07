@@ -1,5 +1,8 @@
 export * from './output'
 export * from './input'
+export * from './abi'
+export * from './solidity-ast'
+export * from './yul-ast'
 
 export interface ImportCallback {
   import: (path: string) => { contents: string } | { error: string }

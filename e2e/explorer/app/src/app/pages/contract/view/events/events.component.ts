@@ -33,7 +33,7 @@ export class EventsComponent {
     this.interface$,
     this.logs$,
   ]).pipe(
-    map(([parser, logs]) => logs.map(log => this.getEvent(parser, log))),
+    map(([parser, logs = []]) => logs.map(log => this.getEvent(parser, log))),
   )
 
   constructor(

@@ -5,14 +5,18 @@ import '@ngeth/hardhat';
  * @type import('hardhat/config').HardhatUserConfig
  */
 export default {
-  solidity: '0.8.11',
   paths: {
     sources: './src',
     tests: './tests',
     artifacts: './artifacts',
   },
+  solidity: {
+    version: '0.8.11',
+    settings: {
+      outputSelection: { "*": { "*": [ "*" ], "": [ "*" ] } }
+    },
+  },
   ngeth: {
-    outputType: 'typescript',
     outputPath: './contracts',
     withImports: true,
     explorer: false,

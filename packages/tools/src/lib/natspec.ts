@@ -18,7 +18,7 @@ export function toMethodJsDoc(method?: DevMethodDoc) {
 }
 
 export function toContractJsDoc(devdoc?: DeveloperDocumentation) {
-  if (!devdoc) return '';
+  if (!devdoc || (!devdoc.title && !devdoc.details)) return '';
   const title = devdoc.title ? `\n\t * ${devdoc.title}` : '';
   const details = devdoc.details ? `\n\t * ${devdoc.details}` : '';
   const lines = [title, details].filter(v => !!v).join('');

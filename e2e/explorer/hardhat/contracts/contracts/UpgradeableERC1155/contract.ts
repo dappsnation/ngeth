@@ -69,8 +69,6 @@ export interface UpgradeableERC1155Events {
   };
 }
 
-/**
- */
 export class UpgradeableERC1155 extends EthersContract<UpgradeableERC1155Events> {
   // Read
   /**
