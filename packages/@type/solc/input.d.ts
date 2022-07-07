@@ -1,14 +1,15 @@
 export interface CompilationInput {
   /** Source code language */
-  language: 'Solidity' | 'Vyper' | 'lll' | 'assembly' | 'yul'
+  language: CompilerLanguage
   sources: SourcesInput
   settings?: CompilerSettings
 }
 
+export type CompilerLanguage = 'Solidity' | 'Yul';
 export type EvmVersion = 'london' | 'berlin' | 'istanbul' | 'petersburg' | 'constantinople' | 'byzantium' | 'spuriousDragon' | 'tangerineWhistle' | 'homestead';
 
 export interface CondensedCompilationInput {
-  language: 'Solidity' | 'Vyper' | 'lll' | 'assembly' | 'yul'
+  language: CompilerLanguage
   optimize: boolean
   /** e.g: 0.6.8+commit.0bbfe453 */
   version: string
@@ -33,8 +34,15 @@ export interface SourceInputUrls {
 export interface SourceInputContent {
   /** Hash of the source file. */
   keccak256?: string
+  /**
+   * Required (unless "content" is used, see below): URL(s) to the source file.
+   * URL(s) should be imported in this order and the result checked against the
+   * keccak256 hash (if available). If the hash doesn't match or none of the
+   * URL(s) result in success, an error should be raised.
+   */
+  urls?: string[]
   /** Literal contents of the source file */
-  content: string
+  content?: string
 }
 
 export interface SourcesInput {
