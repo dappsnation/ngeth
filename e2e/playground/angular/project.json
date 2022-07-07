@@ -1,15 +1,15 @@
 {
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
-  "sourceRoot": "e2e/playground/src",
+  "sourceRoot": "e2e/playground/angular/src",
   "prefix": "ngeth",
   "targets": {
     "build": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "commands": [
-          "nx run playground:hardhat-build",
-          "nx run playground:build-app"
+          "nx run playground-angular:hardhat-build",
+          "nx run playground-angular:build-app"
         ],
         "parallel": false
       }
@@ -18,17 +18,17 @@
       "executor": "@angular-devkit/build-angular:browser",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/e2e/playground",
-        "index": "e2e/playground/src/index.html",
-        "main": "e2e/playground/src/main.ts",
-        "polyfills": "e2e/playground/src/polyfills.ts",
-        "tsConfig": "e2e/playground/tsconfig.app.json",
+        "outputPath": "dist/e2e/playground/angular",
+        "index": "e2e/playground/angular/src/index.html",
+        "main": "e2e/playground/angular/src/main.ts",
+        "polyfills": "e2e/playground/angular/src/polyfills.ts",
+        "tsConfig": "e2e/playground/angular/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": [
-          "e2e/playground/src/favicon.ico",
-          "e2e/playground/src/assets"
+          "e2e/playground/angular/src/favicon.ico",
+          "e2e/playground/angular/src/assets"
         ],
-        "styles": ["e2e/playground/src/styles.scss"],
+        "styles": ["e2e/playground/angular/src/styles.scss"],
         "scripts": []
       },
       "configurations": {
@@ -47,8 +47,8 @@
           ],
           "fileReplacements": [
             {
-              "replace": "e2e/playground/src/environments/environment.ts",
-              "with": "e2e/playground/src/environments/environment.prod.ts"
+              "replace": "e2e/playground/angular/src/environments/environment.ts",
+              "with": "e2e/playground/angular/src/environments/environment.prod.ts"
             }
           ],
           "outputHashing": "all"
@@ -67,7 +67,7 @@
     "analyze": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "command": "source-map-explorer dist/e2e/playground/*.js"
+        "command": "source-map-explorer dist/e2e/playground/angular/*.js"
       }
     },
     "ipfs-serve": {
@@ -80,10 +80,10 @@
       "executor": "@angular-devkit/build-angular:dev-server",
       "configurations": {
         "production": {
-          "browserTarget": "playground:build-app:production"
+          "browserTarget": "playground-angular:build-app:production"
         },
         "development": {
-          "browserTarget": "playground:build-app:development"
+          "browserTarget": "playground-angular:build-app:development"
         }
       },
       "defaultConfiguration": "development"
@@ -91,45 +91,45 @@
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
       "options": {
-        "browserTarget": "playground:build"
+        "browserTarget": "playground-angular:build"
       }
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "options": {
         "lintFilePatterns": [
-          "e2e/playground/src/**/*.ts",
-          "e2e/playground/src/**/*.html"
+          "e2e/playground/angular/src/**/*.ts",
+          "e2e/playground/angular/src/**/*.html"
         ]
       }
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/e2e/playground"],
+      "outputs": ["coverage/e2e/playground/angular"],
       "options": {
-        "jestConfig": "e2e/playground/jest.config.ts",
+        "jestConfig": "e2e/playground/angular/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "hardhat-build": {
       "executor": "@ngeth/hardhat:build",
       "options": {
-        "config": "e2e/playground/hardhat.config.ts",
-        "tsconfig": "e2e/playground/tsconfig.hardhat.json"
+        "config": "e2e/playground/angular/hardhat.config.ts",
+        "tsconfig": "e2e/playground/angular/tsconfig.hardhat.json"
       }
     },
     "hardhat-serve": {
       "executor": "@ngeth/hardhat:serve",
       "options": {
-        "config": "e2e/playground/hardhat.config.ts",
-        "tsconfig": "e2e/playground/tsconfig.hardhat.json"
+        "config": "e2e/playground/angular/hardhat.config.ts",
+        "tsconfig": "e2e/playground/angular/tsconfig.hardhat.json"
       }
     },
     "hardhat-test": {
       "executor": "@ngeth/hardhat:test",
       "options": {
-        "config": "e2e/playground/hardhat.config.ts",
-        "tsconfig": "e2e/playground/tsconfig.hardhat.json"
+        "config": "e2e/playground/angular/hardhat.config.ts",
+        "tsconfig": "e2e/playground/angular/tsconfig.hardhat.json"
       }
     },
     "ipfs-daemon": {
