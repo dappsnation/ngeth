@@ -328,6 +328,12 @@ export interface TxReceiptRequest extends BaseParams<'proxy', 'eth_getTransactio
   txHash: string;
 }
 
+export interface StorageAtRequest extends BaseParams<'proxy', 'eth_getStorageAt'> {
+  address: string;
+  position?: string;
+  tag?: Tag;
+}
+
 export interface CallRequest extends BaseParams<'proxy', 'eth_call'> {
   to: string;
   data?: string;

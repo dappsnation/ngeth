@@ -41,6 +41,7 @@ import {
   EthDailyMarketCapRequest,
   TxListInternalByAddressRequest,
   TxListInternalByBlockRangeRequest,
+  StorageAtRequest,
 } from "./type/request";
 import {
    BalanceMultiResponse, 
@@ -634,6 +635,12 @@ function call(call: Etherscan, to: string, params: Optional<CallRequest>) {
 /** Returns code at a given address. */
 function getCode(call: Etherscan, address: string, params: Optional<CodeRequest>) {
   return call<string>({ module: 'proxy', action: 'eth_getCode', address, ...params});
+}
+
+/** Experimental Endpoint : returns the value from a storage position at a given address. */
+async function getStorageAt(call: Etherscan, address: string, params: Optional<StorageAtRequest>) {
+  const res = await call<string>({ module: 'proxy', action: 'eth_getStorageAt', address, ...params});
+  return toBigNumber(res);
 }
 
 /** Returns the current price per gas in wei. */

@@ -33,7 +33,7 @@ Run `nx test etherscan` to execute the unit tests via [Jest](https://jestjs.io).
 - [] verifyproxycontract : not implement, method POST
 - [] verifysourcecode : not implement, method POST
 - [] checkproxyverification : not implement, method POST
-- [] checkverifystatus
+- [x] checkverifystatus
 
 ### Transactions
 
@@ -70,7 +70,7 @@ Run `nx test etherscan` to execute the unit tests via [Jest](https://jestjs.io).
 - [x] eth_getTransactionReceipt
 - [x] eth_call
 - [x] eth_getCode
-- [ ] eth_getStorageAt: no implement because this endpoint is still experimental
+- [x] eth_getStorageAt
 - [x] eth_gasPrice
 - [x] eth_estimateGas
 
@@ -81,7 +81,7 @@ Run `nx test etherscan` to execute the unit tests via [Jest](https://jestjs.io).
 - [x] tokensupplyhistory
 - [x] tokenbalancehistory
 - [x] tokeninfo
-- [] addresstokennftinventory : no visible response on docs.etherscan.io
+- [ ] addresstokennftinventory : no visible response on docs.etherscan.io
 
 ### Gas Tracker
 
