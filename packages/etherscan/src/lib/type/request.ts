@@ -6,7 +6,7 @@ export type Tag = number | 'latest' | 'pending' | 'earliest';
 export type Sort = 'asc' | 'desc';
 export type Block = 'blocks' | 'uncles';
 export type Closest = 'before' | 'after';
-type Module = 'account' | 'contract' | 'transaction' | 'stats' | 'token' | 'logs';
+type Module = 'account' | 'contract' | 'transaction' | 'stats' | 'token' | 'logs' | 'proxy';
 
 interface BaseParams<M extends Module, Action> {
   module: M;
@@ -20,7 +20,7 @@ export type GetParams<T> = Omit<T, 'module' | 'action' | 'apiKey'>
 // ACCOUNT //
 /////////////
 // Params
-export type AccountsParams = BalanceRequest | BalanceMultiRequest | BalanceHistoryRequest | TxListRequest | TxListInternalRequest | MinedBlockRequest | TokenBalanceRequest | TokenBalanceHistoryRequest | TokenTxRequest | TokenNftTxRequest | Token1155TxRequest;
+export type AccountsParams = BalanceRequest | BalanceMultiRequest | BalanceHistoryRequest | TxListRequest | TxListInternalByAddressRequest| TxListInternalByTxHashRequest | TxListInternalByBlockRangeRequest | MinedBlockRequest | TokenBalanceRequest | TokenBalanceHistoryRequest | TokenTxRequest | TokenNftTxRequest | Token1155TxRequest;
 
 export interface BalanceRequest extends BaseParams<'account', 'balance'> {
   /** the string representing the address to check for balance   */
@@ -54,7 +54,8 @@ export interface TxListRequest extends BaseParams<'account', 'txlist'> {
   /** the sorting preference, use asc to sort by ascending and desc to sort by descendin Tip: Specify a smaller startblock and endblock range for faster search results. */
   sort?: Sort;
 }
-export interface TxListInternalRequest extends BaseParams<'account', 'txlistinternal'> {
+
+export interface TxListInternalByAddressRequest extends BaseParams<'account', 'txlistinternal'> {
   /** the strings representing the addresses to check for balance, separated by , up to 20 addresses per call */
   address: string;
   /** the integer block number to start searching for transactions */
@@ -62,15 +63,29 @@ export interface TxListInternalRequest extends BaseParams<'account', 'txlistinte
   /** the integer block number to stop searching for transactions */
   endblock: number;
   /** the integer page number, if pagination is enabled */
-  page: number;
+  page?: number;
   /** the number of transactions displayed per page */
-  offset: number;
+  offset?: number;
   /** the sorting preference, use asc to sort by ascending and desc to sort by descendin Tip: Specify a smaller startblock and endblock range for faster search results. */
-  sort: Sort;
+  sort?: Sort;
+}
+export interface TxListInternalByTxHashRequest extends BaseParams<'account', 'txlistinternal'> {
   /** the string representing the transaction hash to check for internal transactions */
   txhash?: string;
-
 }
+export interface TxListInternalByBlockRangeRequest extends BaseParams<'account', 'txlistinternal'> {
+  /** the integer block number to start searching for transactions */
+  startblock: number;
+  /** the integer block number to stop searching for transactions */
+  endblock: number;
+  /** the integer page number, if pagination is enabled */
+  page?: number;
+  /** the number of transactions displayed per page */
+  offset?: number;
+  /** the sorting preference, use asc to sort by ascending and desc to sort by descendin Tip: Specify a smaller startblock and endblock range for faster search results. */
+  sort?: Sort;
+}
+
 export interface MinedBlockRequest extends BaseParams<'account', 'getminedblocks'> {
   /** the string representing the address to check for balance */
   address: string;
@@ -148,15 +163,20 @@ interface VerifySourceCodeParams extends BaseParams<'contract', 'verifysourcecod
 export type VerifySourceCode = VerifySourceCodeParams & Library<1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10>;
 
 
-/////////////////
-// TRANSACTION //
-/////////////////
-//logs
-export type LogParams = LogsRequest;
-export interface LogsRequest extends BaseParams<'logs', "getLogs"> {
+//////////
+// LOGS //
+//////////
+
+export type LogParams = LogsByAddressRequest | LogsByTopicsRequest | LogsRequest;
+export interface LogsByAddressRequest extends BaseParams<'logs', "getLogs"> {
+  fromBlock?: number | "latest";
+  toBlock?: number | "latest";
+  address: string;
+}
+
+export interface LogsByTopicsRequest extends BaseParams<'logs', "getLogs"> {
   fromBlock: number | "latest";
   toBlock: number | "latest";
-  address: string;
   topic0?: string;
   topic1?: string;
   topic2?: string;
@@ -169,6 +189,25 @@ export interface LogsRequest extends BaseParams<'logs', "getLogs"> {
   topic2_3_opr?: 'and' | 'or';
 }
 
+export interface LogsRequest extends BaseParams <'logs', "getLogs"> {
+  address: string;
+  fromBlock: number | "latest";
+  toBlock: number | "latest";
+  topic0?: string;
+  topic1?: string;
+  topic2?: string;
+  topic3?: string;
+  topic0_1_opr?: 'and' | 'or';
+  topic0_2_opr?: 'and' | 'or';
+  topic0_3_opr?: 'and' | 'or';
+  topic1_2_opr?: 'and' | 'or';
+  topic1_3_opr?: 'and' | 'or';
+  topic2_3_opr?: 'and' | 'or';
+}
+
+/////////////////
+// TRANSACTION //
+/////////////////
 // Params
 export type TransactionParams = GetStatusRequest | GetTxReceiptStatusRequest;
 export interface GetStatusRequest extends BaseParams<'transaction', 'getstatus'> {
@@ -180,17 +219,9 @@ export interface GetTxReceiptStatusRequest extends BaseParams<'transaction', 'ge
   txhash: string;
 }
 
-/////////
-//Stats//
-/////////
-
-export type StatsParams = TokenSupplyRequest | TokenSupplyHistoryRequest | EthSupply;
-
-export type EthSupply = BaseParams<'stats', 'ethsupply'>;
-
-/////////
-//Token//
-/////////
+////////////
+// TOKENS //
+////////////
 
 export type TokenParams = TokenInfoRequest;
 
@@ -247,14 +278,16 @@ export type DailyUncleBlockCountRequest = BaseBlock<'dailyuncleblkcount'>;
 // PROXY //
 ///////////
 
-export interface BlockByNumberRequest {
+export type BlockNumber = BaseParams<'proxy', 'eth_blockNumber'>;
+
+export interface BlockByNumberRequest extends BaseParams<'proxy', 'eth_getBlockByNumber'> {
   /** the block number, in hex  */
   tag: string;
   /** the boolean value to show full transaction objects */
   boolean: boolean;
 }
 
-export interface UncleByBlockNumberAndIndexRequest {
+export interface UncleByBlockNumberAndIndexRequest extends BaseParams<'proxy', 'eth_getUncleByBlockNumberAndIndex'>{
   /** the block number, in hex  */
   tag: string;
   /** the position of the uncle's index in the block, in hex  */
@@ -266,46 +299,120 @@ export type ProxyTag = string;
 /** the position of the uncle's index in the block, in hex */
 export type ProxyIndex = string;
 
-export interface BlockTransactionCountByNumberRequest {
+export interface BlockTransactionCountByNumberRequest extends BaseParams<'proxy', 'eth_getBlockTransactionCountByNumber'> {
   /** the block number, in hex */
   tag?: string;
 }
 
-export interface TransactionByBlockNumberAndIndexRequest {
+export interface TransactionByHash extends BaseParams<'proxy', 'eth_getTransactionByHash'> {
+  txhash: string;
+}
+
+export interface TransactionByBlockNumberAndIndexRequest extends BaseParams<'proxy', 'eth_getTransactionByBlockNumberAndIndex'> {
   tag?: string;
   index?: string;
 }
 
 /** Returns the number of transactions performed by an address. */
-export interface TransactionCountRequest {
+export interface TransactionCountRequest extends BaseParams<'proxy', 'eth_getTransactionCount'> {
   address: string;
   tag?: string;
 }
 
 /** Submits a pre-signed transaction for broadcast to the Ethereum network. */
-export interface RawTransactionRequest {
+export interface RawTransactionRequest extends BaseParams<'proxy', 'eth_sendRawTransaction'> {
   hex: string;
 }
 
-export interface TxReceiptRequest {
+export interface TxReceiptRequest extends BaseParams<'proxy', 'eth_getTransactionReceipt'> {
   txHash: string;
 }
 
-export interface CallRequest {
+export interface StorageAtRequest extends BaseParams<'proxy', 'eth_getStorageAt'> {
+  address: string;
+  position?: string;
+  tag?: Tag;
+}
+
+export interface CallRequest extends BaseParams<'proxy', 'eth_call'> {
   to: string;
   data?: string;
   tag?: string;
 }
 
-export interface CodeRequest {
+export interface CodeRequest extends BaseParams<'proxy', 'eth_getCode'> {
   address: string;
   tag?: string;
 }
+export type GasPrice = BaseParams<'proxy', 'eth_gasPrice'>;
 
-export interface EstimateGasRequest {
+export interface EstimateGasRequest extends BaseParams<'proxy', 'eth_estimateGas'> {
   data: string;
   to: string;
   value?: string;
   gasPrice?: string;
   gas?: string;
 }
+
+/////////////////
+// GAS TRACKER //
+/////////////////
+export interface BaseGasTracker<action extends string> extends BaseParams<'stats', action> {
+  /** the starting date in yyyy-MM-dd format, eg. 2019-02-01 */
+  startDate: Date; 
+  /** the ending date in yyyy-MM-dd format, eg. 2019-02-28 */
+  endDate: Date; 
+  /** the sorting preference, use asc to sort by ascending and desc to sort by descending */
+  sort?: Sort
+}
+
+export type DailyAvgGasLimitRequest = BaseGasTracker<'dailyavggaslimit'>;
+
+export type DailyGasUsedRequest = BaseGasTracker<'dailygasused'>;
+
+export type DailyAvgGasPriceRequest = BaseGasTracker<'dailyavggasprice'>;
+
+
+
+///////////
+// STATS //
+///////////
+export type StatsParams = TokenSupplyRequest | TokenSupplyHistoryRequest | EthSupply | EthereumNodesSizeRequest;
+
+export type EthSupply = BaseParams<'stats', 'ethsupply'>;
+export type EthSupply2 = BaseParams<'stats', 'ethsupply2'>;
+export type EthLastPrice = BaseParams<'stats', 'ethprice'>;
+export type NodeCount = BaseParams<'stats', 'nodecount'>;
+
+export interface EthereumNodesSizeRequest extends BaseParams<'stats', 'chainsize'> {
+  startdate: string;
+  enddate: string;
+  clienttype: string;
+  syncmode: string;
+  sort: string;
+}
+
+export interface BaseStats<action extends string> extends BaseParams<'stats', action> {
+  /** the starting date in yyyy-MM-dd format, eg. 2019-02-01 */
+  startDate: Date; 
+  /** the ending date in yyyy-MM-dd format, eg. 2019-02-28 */
+  endDate: Date; 
+  /** the sorting preference, use asc to sort by ascending and desc to sort by descending */
+  sort?: Sort
+}
+
+export type DailyNetworkTxFeeRequest = BaseStats<'dailytxnfee'>;
+
+export type DailyNewAddressCountRequest = BaseStats<'dailynewaddress'>;
+
+export type DailyNetworkUtilisationRequest = BaseStats<'dailynetutilization'>;
+
+export type DailyAVGNetworkHashRequest = BaseStats<'dailyavghashrate'>;
+
+export type DailyTxCountRequest = BaseStats<'dailytx'>;
+
+export type DailyAvgNetworkDifficultyRequest = BaseStats<'dailyavgnetdifficulty'>;
+
+export type EthDailyMarketCapRequest = BaseStats<'ethdailymarketcap'>;
+
+export type EthDailyHistoricalPriceRequest = BaseStats<'ethdailyprice'>;

@@ -34,6 +34,7 @@ export interface ERC1155TxResponse extends TransferTransactionResponse {
   tokenName: string;
   tokenValue: string;
 }
+
 export interface TxListResponse {
   blockNumber: string,
   timeStamp: string,
@@ -52,6 +53,23 @@ export interface TxListResponse {
   cumulativesGasUsed: string,
   gasUsed: string,
   confirmation: string,
+}
+
+export interface TxListInternalResponse {
+  blockNumber: string;
+  timeStamp: string;
+  hash: string;
+  from: string;
+  to: string;
+  value: string;
+  contractAddress: string;
+  input: string;
+  type: string;
+  gas: string;
+  gasUsed: string;
+  traceId: string;
+  isError: string;
+  errCode: string;
 }
 
 export interface TokenTxResponse {
@@ -357,4 +375,109 @@ export interface TxReceiptResponse {
   transactionHash: string;
   transactionIndex: string;
   type: string;
+}
+
+/////////////////
+// GAS TRACKER //
+/////////////////
+
+export interface GasOracleResponse {
+  LastBlock: string;
+  SafeGasPrice:string;
+  ProposeGasPrice: string;
+  FastGasPrice: string;
+  suggestBaseFee: string;
+  gasUsedRatio: string;
+}
+
+export interface DailyAvgGasLimitResponse {
+  UTCDate: string;
+  unixTimeStamp: string;
+  gasLimit: string;
+}
+export interface DailyGasUsedResponse {
+  UTCDate: string;
+  unixTimeStamp: string;
+  gasUsed: string;
+}
+
+export interface DailyAvgGasPriceResponse {
+  UTCDate: string;
+  unixTimeStamp: string;
+  maxGasPrice_Wei: string;
+  minGasPrice_Wei: string;
+  avgGasPrice_Wei: string;
+}
+
+///////////
+// STATS //
+///////////
+
+export interface EthSupply2Response {
+  EthSupply: string;
+  Eth2Staking: string;
+  BurntFees: string;
+}
+
+export interface EthPriceResponse {
+  ethbtc: string;
+  ethbtc_timestamp: string;
+  ethusd: string;
+  ethusd_timestamp: string
+}
+
+export interface EthNodesSizeResponse {
+  blockNumber: string;
+  chainTimeStamp: string;
+  chainSize: string;
+  clientType: string;
+  syncMode: string;
+}
+
+export interface NodeCountResponse {
+  UTCDate: string;
+  TotalNodeCount: string;
+}
+
+export interface DailyTxFeesResponse {
+  UTCDate: string;
+  unixTimeStamp: string;
+  transactionFee_Eth: string;
+}
+export interface DailyNewAddressCountResponse {
+  UTCDate: string;
+  unixTimeStamp: string;
+  newAddressCount: string;
+}
+export interface DailyNetworkUtilisationResponse {
+  UTCDate: string;
+  unixTimeStamp: string;
+  networkUtilization: string;
+}
+export interface DailyAvgNetworkHahResponse {
+  UTCDate: string;
+  unixTimeStamp: string;
+  networkHashRate: string;
+}
+export interface DailyTxCountResponse {
+  UTCDate: string;
+  unixTimeStamp: string;
+  transactionCount: string;
+}
+export interface DailyAvgNetworkDifficultyResponse {
+  UTCDate: string;
+  unixTimeStamp: string;
+  networkDifficulty: string;
+}
+export interface EthDailyMarketCapResponse {
+  UTCDate: string;
+  unixTimeStamp: string;
+  supply: string;
+  marketCap: string;
+  price: string;
+}
+export interface EthDailyHistoricalPriceResponse {
+  UTCDate: string;
+  unixTimeStamp: string;
+  value: string;
 }
