@@ -45,7 +45,6 @@ import {
 } from "./type/request";
 import {
    BalanceMultiResponse, 
-   ContractSourceCodeResponse, 
    MinedBlockResponse,
    BlockRewardResponse,
    BlockCountdownResponse,
@@ -265,6 +264,7 @@ async function token1155Tx(call: Etherscan, contractaddress: string, params: Opt
     timeStamp: unixToDate(data.timeStamp),
     nonce: toNumber(data.nonce),
     tokenID: toNumber(data.tokenID),
+    tokenValue: toNumber(data.tokenValue),
     transactionIndex: toNumber(data.transactionIndex),
     gas: toBigNumber(data.gas),
     gasPrice: toBigNumber(data.gasPrice),
@@ -304,10 +304,13 @@ async function getAbi(call: Etherscan, address: string) {
 /** Returns the Solidity source code of a verified smart contract. */
 async function getSourceCode(call: Etherscan, address: string) {
   const data = await call<any[]>({ module: 'contract', action: 'getsourcecode', address });
-  return data.map(res => {
-    res.ABI = JSON.parse(res.ABI);
-    return res as ContractSourceCodeResponse;
-  });
+  return data.map(res => ({
+      ...res,
+      ABI: JSON.parse(res.ABI),
+      OptimizationUsed: toNumber(res.OptimizationUsed),
+      Runs: toNumber(res.Runs),
+      ConstructorArguments: toNumber(res.ConstructorArguments)
+  }));
 }
 
 function checkverifystatus(call: Etherscan, guid: string) {
