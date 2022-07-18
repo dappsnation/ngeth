@@ -5,15 +5,15 @@
 import { ABIDescription } from "@type/solc";
 import { BigNumber } from "ethers";
 
-export interface balanceSDKresponse {
+export interface balance {
   balance: BigNumber;
 }
-export interface balanceMultiSDKresponse {
+export interface balanceMulti {
   account: string;
   balance: BigNumber;
 }
 
-export interface TxListSDKResponse {
+export interface TxList {
   blockNumber: number,
   timeStamp: Date,
   hash: string,
@@ -33,7 +33,7 @@ export interface TxListSDKResponse {
   confirmation: number,
 }
 
-export interface TxListInternalSDKResponse {
+export interface TxListInternal {
   blockNumber: number;
   timeStamp: Date;
   hash: string;
@@ -50,7 +50,7 @@ export interface TxListInternalSDKResponse {
   errCode: string;
 }
 
-export interface TokenTxSDKResponse {
+export interface TokenTx {
   blockNumber: number,
   timeStamp: Date,
   hash: string,
@@ -70,7 +70,7 @@ export interface TokenTxSDKResponse {
   cumulativeGasUsed: BigNumber,
   confirmations: number,
 }
-export interface TokenNftTxSDKResponse {
+export interface TokenNftTx {
   blockNumber: number,
   timeStamp: Date,
   hash: string,
@@ -91,7 +91,7 @@ export interface TokenNftTxSDKResponse {
   confirmations: number,
 }
 
-export interface Token1155TxSDKResponse {
+export interface Token1155Tx {
   blockNumber: number,
   timeStamp: Date,
   hash: string,
@@ -111,13 +111,13 @@ export interface Token1155TxSDKResponse {
   tokenSymbol: string,
   confirmations: number
 }
-export interface MinedBlockSDKResponse {
+export interface MinedBlock {
   blockNumber: number;
   timeStamp: Date;
   blockReward: BigNumber;
 }
 
-export interface BalanceHistorySDKResponse {
+export interface BalanceHistory {
   balance: BigNumber;
 }
 
@@ -125,10 +125,10 @@ export interface BalanceHistorySDKResponse {
 // CONTRACTS //
 ///////////////
 
-export interface GetAbiSDKResponse {
+export interface GetAbi {
   abi: ABIDescription[]
 }
-export interface GetSourceCodeSDKResponse {
+export interface GetSourceCode {
   SourceCode: string;
   ABI: ABIDescription[];
   ContractName: string;
@@ -152,12 +152,12 @@ export interface CheckVerifyStatus {
 // TRANSACTIONS //
 //////////////////
 
-export interface StatusSDKResponse {
+export interface Status {
   isError: boolean;
   errDescription: string;
 }
 
-export interface TxReceiptStatusSDKResponse {
+export interface TxReceiptStatus {
   status: boolean;
 }
 
@@ -165,53 +165,53 @@ export interface TxReceiptStatusSDKResponse {
 // BLOCKS //
 ////////////
 
-export interface BlockRewardSDKResponse {
+export interface BlockReward {
   blockNumber: number;
   timeStamp: string;
   blockMiner: string;
   blockReward: BigNumber;
-  uncles: UnclesSDKResponse[];
+  uncles: Uncles[];
   uncleInclusionReward: number;
 }
-export interface UnclesSDKResponse {
+export interface Uncles {
   miner: string;
   unclePosition: number;
   blockreward: BigNumber;
 }
 
-export interface BlockCountdownSDKResponse {
+export interface BlockCountdown {
   CurrentBlock: number;
   CountdownBlock: number;
   RemainingBlock: number;
   EstimateTimeInSec: number;
 }
 
-export interface BlocknoByTimeSDKResponse {
+export interface BlocknoByTime {
   blockNumber: number;
 }
 
-export interface DailyAvgBlockSizeSDKResponse {
+export interface DailyAvgBlockSize {
   UTCDate: Date;
   unixTimeStamp: number;
   blockSize_bytes: number;
 }
-export interface dailyBlkCountSDKResponse {
+export interface dailyBlkCount {
   UTCDate: Date;
   unixTimeStamp: number;
   blockCount: number
   blockRewards_Eth: BigNumber;
 }
-export interface dailyBlockRewardsSDKResponse {
+export interface dailyBlockRewards {
   UTCDate: Date;
   unixTimeStamp: number;
   blockRewards_Eth: BigNumber;
 }
-export interface dailyBlockTimeSDKResponse {
+export interface dailyBlockTime {
   UTCDate: Date;
   unixTimeStamp: number;
   blockTime_sec: BigNumber;
 }
-export interface dailyUncleBlkCountSDKResponse {
+export interface dailyUncleBlkCount {
   UTCDate: Date;
   unixTimeStamp: number;
   uncleBlockCount: number;
@@ -222,7 +222,7 @@ export interface dailyUncleBlkCountSDKResponse {
 // LOGS //
 //////////
 
-export interface LogsSDKResponse {
+export interface Logs {
   address: string;
   topics: string[];
   data: string;
@@ -239,11 +239,11 @@ export interface LogsSDKResponse {
 // PROXY //
 ///////////
 
-export interface BlockNumberSDKResponse {
+export interface BlockNumber {
   blockNumber: number;
 }
 
-export interface BlockByNumberSDKResponse {
+export interface BlockByNumber {
   difficulty: number;
   baseFeePerGas: BigNumber;
   extraData: string;
@@ -267,7 +267,7 @@ export interface BlockByNumberSDKResponse {
   uncles: string[];
 }
 
-export interface UncleByBlockNumberAndIndexSDKResponse {
+export interface UncleByBlockNumberAndIndex {
   baseFeePerGas: BigNumber;
   difficulty: number;
   extraData: string;
@@ -289,11 +289,11 @@ export interface UncleByBlockNumberAndIndexSDKResponse {
   uncles: string[];
 }
 
-export interface BlockTransactionCountByNumberSDKResponse {
+export interface BlockTransactionCountByNumber {
   count: number;
 }
 
-export interface TransactionByHashSDKResponse {
+export interface TransactionByHash {
   blockHash: string;
   blockNumber: number;
   from: string;
@@ -315,7 +315,7 @@ export interface TransactionByHashSDKResponse {
   s: string;
 }
 
-export interface TransactionByBlockNumberAndIndexSDKResponse {
+export interface TransactionByBlockNumberAndIndex {
   accessList: string[];
   blockHash: string;
   blockNumber: number;
@@ -345,11 +345,11 @@ export interface TransactionCountSDKRsponse {
   txCount: number;
 }
 
-export interface RawTransactionSDKResponse {
+export interface RawTransaction {
   raw: string;
 }
 
-export interface TransactionReceiptSDKResponse {
+export interface TransactionReceipt {
   blockHash: string;
   blockNumber: number;
   contractAddress: string;
@@ -366,20 +366,20 @@ export interface TransactionReceiptSDKResponse {
   type: number;
 }
 
-export interface CallSDKResponse {
+export interface Call {
   call: string;
 }
-export interface CodeSDKResponse {
+export interface Code {
   code: string;
 }
-export interface StorageAtSDKResponse {
+export interface StorageAt {
   storageAt: BigNumber;
 }
 
-export interface GasPriceSDKResponse {
+export interface GasPrice {
   gasPrice: BigNumber;
 }
-export interface EstimateGasSDKResponse {
+export interface EstimateGas {
   estimatiteGas: BigNumber;
 }
 
@@ -387,23 +387,23 @@ export interface EstimateGasSDKResponse {
 // TOKENS //
 ////////////
 
-export interface TokenSupplySDKResponse {
+export interface TokenSupply {
   amount: BigNumber;
 }
 
-export interface TokenBalanceSDKResponse {
+export interface TokenBalance {
   balance: BigNumber;
 }
 
-export interface TokenSupplyHistorySDKResponse {
+export interface TokenSupplyHistory {
   amount: BigNumber;
 }
 
-export interface TokenBalanceHistorySDKResponse {
+export interface TokenBalanceHistory {
   balance: BigNumber;
 }
 
-export interface TokenInfoSDKResponse {
+export interface TokenInfo {
   contractAddress: string;
   tokenName: string;
   symbol: string;
@@ -433,11 +433,11 @@ export interface TokenInfoSDKResponse {
 // GAS TRACKER //
 /////////////////
 
-export interface GasTrackerSDKResponse {
+export interface GasTracker {
   time: number;
 }
 
-export interface GasOracleSDKResponse {
+export interface GasOracle {
   LastBlock: number;
   SafeGasPrice:BigNumber;
   ProposeGasPrice: BigNumber;
@@ -446,19 +446,19 @@ export interface GasOracleSDKResponse {
   gasUsedRatio: BigNumber;
 }
 
-export interface DailyAvgGasLimitSDKResponse {
+export interface DailyAvgGasLimit {
   UTCDate: Date;
   unixTimeStamp: string;
   gasLimit: BigNumber;
 }
 
-export interface DailyGasUsedSDKResponse {
+export interface DailyGasUsed {
   UTCDate: Date;
   unixTimeStamp: string;
   gasUsed: BigNumber;
 }
 
-export interface DailyAvgGasPriceSDKResponse {
+export interface DailyAvgGasPrice {
   UTCDate: Date;
   unixTimeStamp: string;
   maxGasPrice_Wei: number;
@@ -471,24 +471,24 @@ export interface DailyAvgGasPriceSDKResponse {
 // STATS //
 ///////////
 
-export interface EthSupplySDKResponse {
+export interface EthSupply {
   supply: BigNumber;
 }
 
-export interface EthSupply2SDKResponse {
+export interface EthSupply2 {
   EthSupply: BigNumber;
   Eth2Staking: BigNumber;
   BurntFees: BigNumber;
 }
 
-export interface EthPriceSDKResponse {
+export interface EthPrice {
   ethbtc: number;
   ethbtc_timestamp: number;
   ethusd: number;
   ethusd_timestamp: number
 }
 
-export interface EthNodesSizeSDKResponse {
+export interface EthNodesSize {
   blockNumber: number;
   chainTimeStamp: Date;
   chainSize: number;
@@ -496,49 +496,49 @@ export interface EthNodesSizeSDKResponse {
   syncMode: string;
 }
 
-export interface NodeCountSDKResponse {
+export interface NodeCount {
   UTCDate: Date;
   TotalNodeCount: number;
 }
 
-export interface DailyTxFeesSDKResponse {
+export interface DailyTxFees {
   UTCDate: Date;
   unixTimeStamp: number;
   transactionFee_Eth: BigNumber;
 }
-export interface DailyNewAddressCountSDKResponse {
+export interface DailyNewAddressCount {
   UTCDate: Date;
   unixTimeStamp: number;
   newAddressCount: number;
 }
-export interface DailyNetworkUtilisationSDKResponse {
+export interface DailyNetworkUtilisation {
   UTCDate: Date;
   unixTimeStamp: number;
   networkUtilization: number;
 }
-export interface DailyAvgNetworkHahSDKResponse {
+export interface DailyAvgNetworkHah {
   UTCDate: Date;
   unixTimeStamp: number;
   networkHashRate: number;
 }
-export interface DailyTxCountSDKResponse {
+export interface DailyTxCount {
   UTCDate: Date;
   unixTimeStamp: number;
   transactionCount: number;
 }
-export interface DailyAvgNetworkDifficultySDKResponse {
+export interface DailyAvgNetworkDifficulty {
   UTCDate: Date;
   unixTimeStamp: number;
   networkDifficulty: number;
 }
-export interface EthDailyMarketCapSDKResponse {
+export interface EthDailyMarketCap {
   UTCDate: Date;
   unixTimeStamp: number;
   supply: BigNumber;
   marketCap: number;
   price: BigNumber;
 }
-export interface EthDailyHistoricalPriceSDKResponse {
+export interface EthDailyHistoricalPrice {
   UTCDate: Date;
   unixTimeStamp: number;
   value: BigNumber;
