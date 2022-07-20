@@ -4,6 +4,7 @@
     "devkit": "packages/devkit",
     "ethers-angular": "packages/ethers/angular",
     "ethers-core": "packages/ethers/core",
+    "ethers-react": "packages/ethers/react",
     "etherscan": "packages/etherscan",
     "explorer": "e2e/explorer",
     "explorer-api": "e2e/explorer/api",

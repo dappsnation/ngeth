@@ -31,7 +31,6 @@ type Constructor<T> = new (...args: any[]) => T;
 
 export type GetEvents<T extends EthersContract<any>> = T extends EthersContract<infer I> ? I : never;
 
-
 export type NgContract<
   Contract extends EthersContract<Events, EventKeys, FilterKeys>,
   Events extends ContractEvents<EventKeys, FilterKeys> = GetEvents<Contract>,
