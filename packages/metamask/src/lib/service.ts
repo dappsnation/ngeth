@@ -42,7 +42,7 @@ export class MetaMask extends ERC1193 {
     const metamask = metamaskWallet();
     if (metamask) {
       this.wallets.push(metamask);
-      super.selectWallet(); // Use super to avoid notInitializedError warning at loadtime
+      super.selectWallet(metamask); // Use super to avoid notInitializedError warning at loadtime
     }
   }
 
@@ -77,7 +77,7 @@ export class MetaMask extends ERC1193 {
   override selectWallet() {
     if (!this.wallets.length) throw new Error('No metamask injected');
     if (!(this.wallets[0].provider as any)._state.initialized) this.notInitializedError();
-    return super.selectWallet();
+    return super.selectWallet(this.wallets[0]);
   }
 
   /** Gets the caller's current permissions */

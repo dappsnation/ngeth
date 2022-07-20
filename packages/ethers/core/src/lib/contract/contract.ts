@@ -4,7 +4,6 @@ import { BaseContract, EventFilter } from '@ethersproject/contracts';
 import type { Signer } from '@ethersproject/abstract-signer';
 import type { Event } from '@ethersproject/contracts';
 import type { Listener, Provider, BlockTag } from "@ethersproject/providers";
-import type { EventManager } from './events';
 
 export type FilterParam<T> = T | T[] | null;
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -27,8 +26,6 @@ export class EthersContract<
   EventKeys extends Extract<keyof Events['events'], string> = Extract<keyof Events['events'], string>,
   FilterKeys extends Extract<keyof Events['filters'], string> = Extract<keyof Events['filters'], string>,
 > extends BaseContract {
-  /** Properties that keeps track of the events */
-  private __events__: Record<string, EventManager<this, any>> = {};
   
   // FILTERS
   override filters!: Events['filters'];
