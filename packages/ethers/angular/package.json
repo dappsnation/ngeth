@@ -1,10 +1,10 @@
 {
   "name": "@ngeth/ethers-angular",
-  "version": "0.0.22",
+  "version": "0.0.23",
   "peerDependencies": {
     "@angular/common": ">13.0.0",
     "@angular/core": ">13.0.0",
-    "@ngeth/ethers-core": "0.0.22"
+    "@ngeth/ethers-core": "0.0.23"
   },
   "dependencies": {
     "tslib": "^2.3.0",

@@ -1,6 +1,6 @@
 {
   "name": "@ngeth/metamask",
-  "version": "0.0.22",
+  "version": "0.0.23",
   "peerDependencies": {
     "@angular/common": "^13.2.0",
     "@angular/core": "^13.2.0"
