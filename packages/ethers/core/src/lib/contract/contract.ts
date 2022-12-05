@@ -20,11 +20,12 @@ export interface ContractEvents<EventKeys extends string, FilterKeys extends str
   queries: {[name in FilterKeys]: any }
 }
 
+
 export class EthersContract<
   Events extends ContractEvents<EventKeys, FilterKeys>,
   EventKeys extends Extract<keyof Events['events'], string> = Extract<keyof Events['events'], string>,
   FilterKeys extends Extract<keyof Events['filters'], string> = Extract<keyof Events['filters'], string>,
-> extends BaseContract {  
+> extends BaseContract {
   
   // FILTERS
   override filters!: Events['filters'];

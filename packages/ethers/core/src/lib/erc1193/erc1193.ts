@@ -20,7 +20,7 @@ export abstract class ERC1193<Wallet extends WalletProfile = WalletProfile> {
   abstract chainId?: number;
   abstract wallets: Wallet[];
   /** Method used to ask the user which wallet to select if multiple wallet available */
-  protected abstract getWallet(): Promise<Wallet | undefined>;
+  // protected abstract getWallet(): Promise<Wallet | undefined>;
   protected abstract onWalletChange(wallet: Wallet): void;
   /** Used to run AFTER constructor from the mixins like ngErc1193 */
   protected onInit?(): void;
@@ -34,12 +34,7 @@ export abstract class ERC1193<Wallet extends WalletProfile = WalletProfile> {
   }
 
   /** Select a wallet to setup the provider & signer */
-  async selectWallet(wallet?: Wallet) {
-    if (!wallet) {
-      if (!this.wallets.length) throw new Error('No wallet provided or found');
-      wallet = await this.getWallet();
-      if (!wallet) throw new Error('No wallet selected');
-    }
+  async selectWallet(wallet: Wallet) {
     if (wallet.provider !== this.provider) {
       this.#ethersProvider = new Web3Provider(wallet.provider);
       this.#ethersSigner = this.#ethersProvider.getSigner();
@@ -49,9 +44,8 @@ export abstract class ERC1193<Wallet extends WalletProfile = WalletProfile> {
   }
 
   /** Select a wallet and connect to it */
-  async enable(wallet?: Wallet): Promise<string[]> {
-    await this.selectWallet(wallet);
-    if (!this.provider) throw new Error('No provider connected to ERC1193');
+  async enable(): Promise<string[]> {
+    if (!this.provider) throw new Error('No provider connected to ERC1193. Use selectWallet(wallet) first.');
     return this.provider.request({ method: 'eth_requestAccounts' });
   }
 
@@ -81,7 +75,7 @@ export abstract class ERC1193<Wallet extends WalletProfile = WalletProfile> {
     if (!this.provider) throw new Error('No provider connected to ERC1193');
     return this.provider.request<boolean>({
       method: 'wallet_watchAsset',
-      params: { type: 'ERC20', options: params }
+      params: [{ type: 'ERC20', options: params }]
     });
   }
 }

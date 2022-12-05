@@ -82,7 +82,8 @@ export function blockListener() {
   const initialized = init().then(() => emit());
 
   let lastBlock: number;
-  // Listen on block changes (Hardh hat doesn't support pending transaction event)
+
+  // Listen on block changes (Hardhhat doesn't support pending transaction event)
   provider.on('block', async (blockNumber: number) => {
     if (lastBlock === blockNumber) return; // For some reason the callback is triggered 4times
     lastBlock = blockNumber;

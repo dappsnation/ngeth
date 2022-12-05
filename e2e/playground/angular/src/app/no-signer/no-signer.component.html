@@ -1,0 +1,7 @@
+<h1>You're not connected with Metamask ?</h1>
+<ng-container *ngFor="let wallet of wallets">
+  <button (click)="enable(wallet)">
+    Connect with {{ wallet.label }}
+  </button>
+
+</ng-container>

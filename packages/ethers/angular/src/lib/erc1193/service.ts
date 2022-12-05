@@ -1,7 +1,7 @@
 import { inject, NgZone } from '@angular/core';
 import { getAddress } from '@ethersproject/address';
-import { NgERC1193Events, NgERC1193Param, WalletProfile } from './types';
-import { toChainId, ERC1193, ProviderMessage } from '@ngeth/ethers-core';
+import { NgERC1193Events, NgERC1193Param } from './types';
+import { toChainId, ERC1193, ProviderMessage, WalletProfile } from '@ngeth/ethers-core';
 import { timer, Observable, of, combineLatest, defer, BehaviorSubject } from 'rxjs';
 import { map, shareReplay, switchMap, filter } from 'rxjs/operators';
 import { fromEthEvent } from '../events';

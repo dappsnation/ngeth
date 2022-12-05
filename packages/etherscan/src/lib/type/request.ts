@@ -175,8 +175,8 @@ export interface LogsByAddressRequest extends BaseParams<'logs', "getLogs"> {
 }
 
 export interface LogsByTopicsRequest extends BaseParams<'logs', "getLogs"> {
-  fromBlock: number | "latest";
-  toBlock: number | "latest";
+  fromBlock?: number | "latest";
+  toBlock?: number | "latest";
   topic0?: string;
   topic1?: string;
   topic2?: string;
@@ -190,9 +190,9 @@ export interface LogsByTopicsRequest extends BaseParams<'logs', "getLogs"> {
 }
 
 export interface LogsRequest extends BaseParams <'logs', "getLogs"> {
-  address: string;
-  fromBlock: number | "latest";
-  toBlock: number | "latest";
+  address?: string;
+  fromBlock?: number | "latest";
+  toBlock?: number | "latest";
   topic0?: string;
   topic1?: string;
   topic2?: string;

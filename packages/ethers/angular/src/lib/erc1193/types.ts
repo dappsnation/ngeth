@@ -1,35 +1,37 @@
-export interface RequestArguments {
-  readonly method: string;
-  readonly params?: readonly unknown[] | object;
-}
+// export interface RequestArguments {
+//   readonly method: string;
+//   readonly params?: readonly unknown[] | object;
+// }
 
-export interface ProviderRpcError extends Error {
-  code: number;
-  data?: unknown;
-}
+import { ProviderConnectInfo, ProviderMessage, ProviderRpcError, RequestArguments } from "@ngeth/ethers-core";
 
-export interface ProviderMessage {
-  readonly type: string;
-  readonly data: unknown;
-}
+// export interface ProviderRpcError extends Error {
+//   code: number;
+//   data?: unknown;
+// }
 
-export interface EthSubscription extends ProviderMessage {
-  readonly type: 'eth_subscription';
-  readonly data: {
-    readonly subscription: string;
-    readonly result: unknown;
-  };
-}
+// export interface ProviderMessage {
+//   readonly type: string;
+//   readonly data: unknown;
+// }
 
-export interface ProviderConnectInfo {
-  readonly chainId: string;
-}
+// export interface EthSubscription extends ProviderMessage {
+//   readonly type: 'eth_subscription';
+//   readonly data: {
+//     readonly subscription: string;
+//     readonly result: unknown;
+//   };
+// }
+
+// export interface ProviderConnectInfo {
+//   readonly chainId: string;
+// }
 
 
-export interface WalletProfile {
-  label: string;
-  provider: ERC1193Provider;
-}
+// export interface WalletProfile {
+//   label: string;
+//   provider: ERC1193Provider;
+// }
 
 export interface NgERC1193Events {
   accountsChanged: (accounts: string[]) => void;
@@ -70,32 +72,32 @@ export interface ERC1193Provider {
   removeAllListeners(event: keyof NgERC1193Events): this;
 }
 
-export interface AddChainParameter {
-  /** 0x-prefixed hexadecimal string */
-  chainId: string;
-  chainName: string;
-  nativeCurrency: {
-    name: string;
-    /** 2-6 characters long */
-    symbol: string;
-    decimals: number;
-  };
-  rpcUrls: string[];
-  blockExplorerUrls?: string[];
-  iconUrls?: string[]; // Currently ignored.
-}
+// export interface AddChainParameter {
+//   /** 0x-prefixed hexadecimal string */
+//   chainId: string;
+//   chainName: string;
+//   nativeCurrency: {
+//     name: string;
+//     /** 2-6 characters long */
+//     symbol: string;
+//     decimals: number;
+//   };
+//   rpcUrls: string[];
+//   blockExplorerUrls?: string[];
+//   iconUrls?: string[]; // Currently ignored.
+// }
 
-export interface WatchAssetParams {
-  /** Type of asset: In the future, other standards will be supported */
-  type: 'ERC20';
-  options: {
-    /** The address of the token contract */
-    address: string;
-    /** A ticker symbol or shorthand, up to 5 characters */
-    symbol: string;
-    /** The number of token decimals */
-    decimals: number;
-    /** A string url of the token logo. If not provided, use blocky */
-    image?: string;
-  };
-}
+// export interface WatchAssetParams {
+//   /** Type of asset: In the future, other standards will be supported */
+//   type: 'ERC20';
+//   options: {
+//     /** The address of the token contract */
+//     address: string;
+//     /** A ticker symbol or shorthand, up to 5 characters */
+//     symbol: string;
+//     /** The number of token decimals */
+//     decimals: number;
+//     /** A string url of the token logo. If not provided, use blocky */
+//     image?: string;
+//   };
+// }

@@ -1,8 +1,8 @@
 import { Type } from '@angular/core';
 import { Provider } from '@ethersproject/abstract-provider';
 import { Signer } from '@ethersproject/abstract-signer';
+import { WalletProfile } from '@ngeth/ethers-core';
 import { NgERC1193 } from './service';
-import { WalletProfile } from './types';
 
 
 export function ethersProviders<T extends WalletProfile>(erc1193: Type<NgERC1193<T>>) {

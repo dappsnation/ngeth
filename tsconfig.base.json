@@ -20,6 +20,7 @@
       "@ngeth/devkit": ["packages/devkit/src/index.ts"],
       "@ngeth/ethers-angular": ["packages/ethers/angular/src/index.ts"],
       "@ngeth/ethers-core": ["packages/ethers/core/src/index.ts"],
+      "@ngeth/ethers-react": ["packages/ethers/react/src/index.ts"],
       "@ngeth/etherscan": ["packages/etherscan/src/index.ts"],
       "@ngeth/hardhat": ["packages/hardhat/src/index.ts"],
       "@ngeth/ipfs": ["packages/ipfs/src/index.ts"],

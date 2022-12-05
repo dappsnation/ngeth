@@ -6,8 +6,6 @@ import { RouterModule } from '@angular/router';
 import { ContractsManager, SUPPORTED_CHAINS, IsSupportedChainGuard, HasSignerGuard, EthersModule, HasWalletGuard, ngEthersProviders } from '@ngeth/ethers-angular';
 import { InjectedProviders } from '@ngeth/ethers-core';
 import { MetaMaskModule, METAMASK_RELOAD } from '@ngeth/metamask';
-import { FIREBASE_CONFIG } from 'ngfire';
-import { environment } from '../environments/environment';
 
 import { AppComponent } from './app.component';
 import { BaseContractsManager } from './services/manager';

@@ -54,20 +54,20 @@ export interface ERC1193Provider {
   on<K extends keyof NgERC1193Events>(
     event: K,
     listener: NgERC1193Events[K]
-  ): this;
+  ): unknown
   once<K extends keyof NgERC1193Events>(
     event: K,
     listener: NgERC1193Events[K]
-  ): this;
+  ): unknown
   addListener<K extends keyof NgERC1193Events>(
     event: K,
     listener: NgERC1193Events[K]
-  ): this;
+  ): unknown
   removeListener<K extends keyof NgERC1193Events>(
     event: K,
     listener: NgERC1193Events[K]
-  ): this;
-  removeAllListeners(event: keyof NgERC1193Events): this;
+  ): unknown
+  removeAllListeners(event: keyof NgERC1193Events): unknown
 }
 
 export interface AddChainParameter {
