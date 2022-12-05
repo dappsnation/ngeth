@@ -4,6 +4,8 @@
   "peerDependencies": {
     "@angular/common": ">13.0.0",
     "@angular/core": ">13.0.0",
+    "@angular/router": ">13.0.0",
+    "@angular/forms": ">13.0.0",
     "@ngeth/ethers-core": "0.0.23"
   },
   "dependencies": {

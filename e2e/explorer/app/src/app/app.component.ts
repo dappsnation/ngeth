@@ -25,7 +25,6 @@ export class AppComponent {
   ) {
     this.walletManager.add(privateKeys);
     this.select(this.walletManager.accounts[0]);
-    this.walletManager.signer?.sendTransaction({ value: parseEther('1'), to: this.walletManager.accounts[1] })
   }
 
   async search(event: Event, input: HTMLInputElement) {
