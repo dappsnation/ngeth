@@ -1,15 +1,6 @@
-import { EthersContract, FilterParam, TypedFilter } from "@ngeth/ethers-core";
-import type {
-  Contract,
-  BigNumber,
-  Overrides,
-  CallOverrides,
-  PayableOverrides,
-  Signer,
-  ContractTransaction,
-  BytesLike,
-  BigNumberish,
-} from "ethers";
+import { EthersContract } from "@ngeth/ethers-core";
+import type { FilterParam, TypedFilter } from "@ngeth/ethers-core";
+import type { CallOverrides, ContractTransaction, Overrides } from "ethers";
 
 export interface OwnableEvents {
   events: { OwnershipTransferred: (previousOwner: string, newOwner: string) => void };

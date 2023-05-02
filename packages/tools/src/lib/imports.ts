@@ -1,4 +1,5 @@
 import { FunctionDescription } from '@type/solc';
+import { getContractDeps } from './deps';
 import { getContractEvents } from './events';
 import { toContractJsDoc } from './natspec';
 import { Config, GenerateConfig, getAllCalls, getAllMethods, getAllStructs, isRead, isWrite } from './utils';
@@ -9,10 +10,12 @@ export const getContractImport = (contractName: string, { abi, natspec }: Genera
   const methods: FunctionDescription[] = abi.filter(isWrite);
   const structs = getAllStructs(abi);
   const doc = toContractJsDoc(natspec);
+  const deps = getContractDeps(abi);
 
   return `
-  import { EthersContract, FilterParam, TypedFilter } from '@ngeth/ethers-core';
-  import type { Contract, BigNumber, Overrides, CallOverrides, PayableOverrides, Signer, ContractTransaction, BytesLike, BigNumberish } from "ethers";
+  import { EthersContract } from '@ngeth/ethers-core';
+  import type { FilterParam, TypedFilter } from '@ngeth/ethers-core';
+  import type { ${deps} } from "ethers";
   
   ${getContractEvents(contractName, abi, config)}
   

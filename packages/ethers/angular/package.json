@@ -1,12 +1,12 @@
 {
   "name": "@ngeth/ethers-angular",
-  "version": "0.0.24",
+  "version": "0.0.25",
   "peerDependencies": {
     "@angular/common": ">13.0.0",
     "@angular/core": ">13.0.0",
     "@angular/router": ">13.0.0",
     "@angular/forms": ">13.0.0",
-    "@ngeth/ethers-core": "0.0.24"
+    "@ngeth/ethers-core": "0.0.25"
   },
   "dependencies": {
     "tslib": "^2.3.0",

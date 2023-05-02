@@ -1,15 +1,6 @@
-import { EthersContract, FilterParam, TypedFilter } from "@ngeth/ethers-core";
-import type {
-  Contract,
-  BigNumber,
-  Overrides,
-  CallOverrides,
-  PayableOverrides,
-  Signer,
-  ContractTransaction,
-  BytesLike,
-  BigNumberish,
-} from "ethers";
+import { EthersContract } from "@ngeth/ethers-core";
+import type { FilterParam, TypedFilter } from "@ngeth/ethers-core";
+import type { BigNumber, CallOverrides, ContractTransaction, Overrides, BigNumberish } from "ethers";
 
 export interface ERC20Events {
   events: {
@@ -63,7 +54,7 @@ export interface ERC20 extends EthersContract<ERC20Events> {
    */
   totalSupply: (overrides?: CallOverrides) => Promise<BigNumber>;
   /**
-   * Requirements: - `spender` cannot be the zero address.
+   * See {IERC20-approve}. Requirements: - `spender` cannot be the zero address.
    */
   approve: (spender: string, amount: BigNumberish, overrides?: Overrides) => Promise<ContractTransaction>;
   /**

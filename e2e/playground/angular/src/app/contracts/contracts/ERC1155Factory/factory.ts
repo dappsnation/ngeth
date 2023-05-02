@@ -1,6 +1,6 @@
 import { ContractFactory } from "@ethersproject/contracts";
 import type { ERC1155Factory } from "./contract";
-import type { BigNumber, Overrides, CallOverrides, PayableOverrides, Signer, BytesLike, BigNumberish } from "ethers";
+import type { Signer, PayableOverrides } from "ethers";
 import abi from "./abi";
 import bytecode from "./bytecode";
 

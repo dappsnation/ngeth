@@ -137,13 +137,6 @@
       "options": {
         "path": ".ipfs"
       }
-    },
-    "firebase-serve": {
-      "executor": "@nrwl/workspace:run-commands",
-      "options": {
-        "command": "firebase emulators:start",
-        "cwd": "e2e/playground"
-      }
     }
   },
   "tags": [],

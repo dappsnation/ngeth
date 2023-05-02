@@ -1,3 +1,4 @@
+import { getFactoryDeps } from "./deps";
 import { toMethodJsDoc } from "./natspec";
 import { GenerateConfig, getDeploy, isConstrutor } from "./utils";
 
@@ -6,11 +7,12 @@ export const getFactory = (contractName: string, { abi, natspec }: GenerateConfi
   const node = abi.find(isConstrutor);
   const deploy = getDeploy(contractName, node?.inputs);
   const doc = node ? toMethodJsDoc(natspec?.methods?.['constructor']) : '';
+  const deps = getFactoryDeps(node);
 
   return `
   import { ContractFactory } from '@ethersproject/contracts';
   import type { ${contractName} } from './contract';
-  import type { BigNumber, Overrides, CallOverrides, PayableOverrides, Signer, BytesLike, BigNumberish } from "ethers";
+  import type { ${deps} } from "ethers";
   import abi from './abi';
   import bytecode from './bytecode';
 

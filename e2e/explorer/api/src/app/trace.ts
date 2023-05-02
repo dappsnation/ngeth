@@ -4,7 +4,7 @@ import { hexlify, hexZeroPad, hexStripZeros, arrayify } from '@ethersproject/byt
 import { provider } from './provider';
 import { Trace } from './types';
 
-// TODO: implement tracer based on : https://github.com/zemse/hardhat-tracer/blob/master/src/trace/print-trace.ts#L166
+// TODO: implement tracer based on : https://github.com/zemse/hardhat-tracer
 
 export function parseHex(str: string) {
   return !str.startsWith('0x') ? '0x' + str : str;

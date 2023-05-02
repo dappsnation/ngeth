@@ -45,7 +45,7 @@ const getParam = (param: ABIParameter, index: number) => {
   if (!index) return `arg: ${getType(param, 'input')}`;
   return `arg${index}: ${getType(param, 'input')}`;
 }
-const getType = (param: ABIParameter, kind: 'input' | 'output'): string => {
+export const getType = (param: ABIParameter, kind: 'input' | 'output'): string => {
   const type = param.type;
   if (type.endsWith(']')) return getArray(param, kind);
   if (type === 'tuple') return getStructName(param.internalType) ?? '';

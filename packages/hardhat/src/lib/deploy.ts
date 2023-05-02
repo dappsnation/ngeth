@@ -3,7 +3,7 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { join } from "path";
 import { formatJson } from "./utils";
 
-export const exportAddress = 'export { default as addresses } from "./addresses.json";';
+export const exportAddress = 'export { default as addresses } from "./contracts/addresses.json";';
 
 /**
  * Deploy a list of contract with their constructor arguments
@@ -64,7 +64,7 @@ export async function saveAddresses(hre: HardhatRuntimeEnvironment, addresses: R
   const root = hre.config.paths.root;
   const outputPath = join(root, hre.config.ngeth.outputPath);
   // Create the addresses content
-  const addressPath = join(outputPath, 'addresses.json');
+  const addressPath = join(outputPath, 'contracts', 'addresses.json');
   if (existsSync(addressPath)) {
     const result = await fs.readFile(addressPath, 'utf-8');
     const file = JSON.parse(result);

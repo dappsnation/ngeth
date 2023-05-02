@@ -1,14 +1,6 @@
-import { EthersContract, FilterParam, TypedFilter } from "@ngeth/ethers-core";
-import type {
-  BigNumber,
-  Overrides,
-  CallOverrides,
-  PayableOverrides,
-  Signer,
-  ContractTransaction,
-  BytesLike,
-  BigNumberish,
-} from "ethers";
+import { EthersContract } from "@ngeth/ethers-core";
+import type { FilterParam, TypedFilter } from "@ngeth/ethers-core";
+import type { Signer, BigNumber, CallOverrides, BigNumberish, ContractTransaction, Overrides, BytesLike } from "ethers";
 import type { Provider } from "@ethersproject/providers";
 import abi from "./abi";
 
@@ -72,7 +64,7 @@ export interface BaseERC1155Events {
 export class BaseERC1155 extends EthersContract<BaseERC1155Events> {
   // Read
   /**
-   * Returns the amount of tokens of token type `id` owned by `account`. Requirements: - `account` cannot be the zero address.
+   * See {IERC1155-balanceOf}. Requirements: - `account` cannot be the zero address.
    */
   balanceOf!: (account: string, id: BigNumberish, overrides?: CallOverrides) => Promise<BigNumber>;
   /**
@@ -80,7 +72,7 @@ export class BaseERC1155 extends EthersContract<BaseERC1155Events> {
    */
   balanceOfBatch!: (accounts: string[], ids: BigNumberish[], overrides?: CallOverrides) => Promise<BigNumber[]>;
   /**
-   * Returns true if `operator` is approved to transfer ``account``'s tokens. See {setApprovalForAll}.
+   * See {IERC1155-isApprovedForAll}.
    */
   isApprovedForAll!: (account: string, operator: string, overrides?: CallOverrides) => Promise<boolean>;
   /**
@@ -138,7 +130,7 @@ export class BaseERC1155 extends EthersContract<BaseERC1155Events> {
     overrides?: Overrides
   ) => Promise<ContractTransaction>;
   /**
-   * Grants or revokes permission to `operator` to transfer the caller's tokens, according to `approved`, Emits an {ApprovalForAll} event. Requirements: - `operator` cannot be the caller.
+   * See {IERC1155-setApprovalForAll}.
    */
   setApprovalForAll!: (operator: string, approved: boolean, overrides?: Overrides) => Promise<ContractTransaction>;
   setURI!: (newuri: string, overrides?: Overrides) => Promise<ContractTransaction>;

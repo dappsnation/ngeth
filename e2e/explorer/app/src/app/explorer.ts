@@ -43,7 +43,9 @@ export class BlockExplorer {
   async init() {
     const res = await fetch('/assets/config.json');
     const { api } = await res.json();
-    const socket = io(api);
+    const socket = io(api, {
+      withCredentials: true
+    });
     socket.on('block', (source: EthStore) => {
       this.source = source;
       this.#sourceChanges.next();

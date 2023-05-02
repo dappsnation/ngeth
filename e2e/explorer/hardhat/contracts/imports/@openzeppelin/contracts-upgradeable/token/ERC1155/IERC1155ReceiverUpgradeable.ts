@@ -1,15 +1,6 @@
-import { EthersContract, FilterParam, TypedFilter } from "@ngeth/ethers-core";
-import type {
-  Contract,
-  BigNumber,
-  Overrides,
-  CallOverrides,
-  PayableOverrides,
-  Signer,
-  ContractTransaction,
-  BytesLike,
-  BigNumberish,
-} from "ethers";
+import { EthersContract } from "@ngeth/ethers-core";
+import type { FilterParam, TypedFilter } from "@ngeth/ethers-core";
+import type { ContractTransaction, Overrides, BytesLike, BigNumberish, CallOverrides } from "ethers";
 
 export interface IERC1155ReceiverUpgradeableEvents {
   events: never;
